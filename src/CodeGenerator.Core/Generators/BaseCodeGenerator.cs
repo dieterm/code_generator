@@ -205,12 +205,15 @@ public abstract class BaseCodeGenerator : ICodeGenerator
     protected virtual string ResolveOutputPath(TemplateReference template, EntityModel entity, GeneratorConfiguration config, GeneratorSettings settings)
     {
         var pattern = config.OutputPathPattern;
-        return pattern
+        var path = pattern
             .Replace("{Entity}", entity.Name)
             .Replace("{entity}", entity.Name.ToLowerInvariant())
             .Replace("{Layer}", Layer.ToString())
             .Replace("{layer}", Layer.ToString().ToLowerInvariant())
             .Replace("{Namespace}", entity.Namespace.Replace(".", Path.DirectorySeparatorChar.ToString()));
+
+        // Normalize path separators to the current platform
+        return NormalizePath(path);
     }
 
     protected virtual string ResolveFileName(TemplateReference template, EntityModel entity)
@@ -220,6 +223,18 @@ public abstract class BaseCodeGenerator : ICodeGenerator
             .Replace("{entity}", entity.Name.ToLowerInvariant());
     }
 
+    /// <summary>
+    /// Normalize path separators to the current platform
+    /// </summary>
+    protected static string NormalizePath(string path)
+    {
+        if (string.IsNullOrEmpty(path))
+            return path;
+
+        return path.Replace('/', Path.DirectorySeparatorChar)
+                   .Replace('\\', Path.DirectorySeparatorChar);
+    }
+
     protected FolderNode BuildFolderStructure(GenerationPreview preview)
     {
         var root = new FolderNode { Name = "Output", FullPath = "" };
@@ -227,9 +242,18 @@ public abstract class BaseCodeGenerator : ICodeGenerator
 
         foreach (var file in allFiles)
         {
-            var parts = file.RelativePath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
+            // Combine RelativePath with FileName to get full path
+            var fullPath = string.IsNullOrEmpty(file.RelativePath) 
+                ? file.FileName 
+                : Path.Combine(file.RelativePath, file.FileName);
+
+            // Normalize path separators to the current platform
+            fullPath = NormalizePath(fullPath);
+
+            var parts = fullPath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
             var current = root;
 
+            // Navigate/create folder structure (all parts except the last, which is the filename)
             for (int i = 0; i < parts.Length - 1; i++)
             {
                 var folder = current.Folders.FirstOrDefault(f => f.Name == parts[i]);
@@ -245,6 +269,7 @@ public abstract class BaseCodeGenerator : ICodeGenerator
                 current = folder;
             }
 
+            // Add file to the deepest folder
             current.Files.Add(file);
         }
 

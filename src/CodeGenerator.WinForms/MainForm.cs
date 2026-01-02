@@ -5,6 +5,8 @@ using CodeGenerator.Core.Models.Domain;
 using CodeGenerator.Core.Models.Output;
 using CodeGenerator.Core.Models.Schema;
 using CodeGenerator.Generators;
+using CodeGenerator.WinForms.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.WinForms;
@@ -21,6 +23,7 @@ public partial class MainForm : Form
     private DomainSchema? _currentSchema;
     private DomainContext? _currentContext;
     private GeneratorSettings _settings;
+    private GenerationPreview? _currentGenerationPreview;
     private string? _currentFilePath;
     private bool _isDirty;
 
@@ -112,9 +115,135 @@ public partial class MainForm : Form
     {
         if (e.Node?.Tag is FilePreview preview)
         {
+            // Show code preview
             _previewTextBox.Text = preview.Content;
-            _previewTabControl.SelectedIndex = 2; // Switch to Preview tab
+            _previewTabControl.SelectedIndex = 2; // Switch to Code Preview tab
+
+            // If it's a previewable UserControl, try to compile and show visual preview
+            if (preview.IsPreviewable && _currentGenerationPreview != null)
+            {
+                await ShowUserControlPreviewAsync(preview);
+            }
+            else
+            {
+                // Clear visual preview if not previewable
+                ClearUserControlPreview();
+            }
         }
+    }
+
+    private async Task ShowUserControlPreviewAsync(FilePreview preview)
+    {
+        try
+        {
+            SetBusy(true, "Compiling UserControl preview...");
+            ClearUserControlPreview();
+
+            var previewService = Program.ServiceProvider.GetRequiredService<UserControlPreviewService>();
+            var result = await previewService.CreateUserControlPreviewAsync(
+                preview, 
+                _currentGenerationPreview!,
+                CancellationToken.None);
+
+            if (result.Success && result.UserControl != null)
+            {
+                // Add the compiled UserControl to the preview panel
+                result.UserControl.Dock = DockStyle.Fill;
+                _userControlPreviewPanel.Controls.Add(result.UserControl);
+                
+                Log($"Visual preview loaded for {preview.FileName}");
+
+                // Switch to visual preview tab
+                _previewTabControl.SelectedIndex = 3; // Visual Preview tab
+            }
+            else
+            {
+                // Show compilation errors in the preview panel
+                ShowCompilationErrors(result);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to show UserControl preview");
+            ShowErrorInPreviewPanel($"Failed to show visual preview:\n{ex.Message}");
+        }
+        finally
+        {
+            SetBusy(false);
+        }
+    }
+
+    private void ClearUserControlPreview()
+    {
+        // Remove all controls from preview panel
+        foreach (Control control in _userControlPreviewPanel.Controls)
+        {
+            control.Dispose();
+        }
+        _userControlPreviewPanel.Controls.Clear();
+    }
+
+    private void ShowCompilationErrors(UserControlPreviewResult result)
+    {
+        var errorPanel = new Panel
+        {
+            Dock = DockStyle.Fill,
+            Padding = new Padding(10),
+            BackColor = Color.FromArgb(255, 250, 250)
+        };
+
+        var errorText = new RichTextBox
+        {
+            Dock = DockStyle.Fill,
+            ReadOnly = true,
+            BackColor = Color.FromArgb(255, 250, 250),
+            Font = new Font("Consolas", 9),
+            BorderStyle = BorderStyle.None
+        };
+
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("? Compilation Failed");
+        sb.AppendLine();
+        sb.AppendLine(result.ErrorMessage);
+        
+        if (result.CompilationErrors.Any())
+        {
+            sb.AppendLine();
+            sb.AppendLine("Errors:");
+            foreach (var error in result.CompilationErrors)
+            {
+                sb.AppendLine($"  • {error}");
+            }
+        }
+
+        if (result.CompilationWarnings.Any())
+        {
+            sb.AppendLine();
+            sb.AppendLine("Warnings:");
+            foreach (var warning in result.CompilationWarnings)
+            {
+                sb.AppendLine($"  ? {warning}");
+            }
+        }
+
+        errorText.Text = sb.ToString();
+        errorPanel.Controls.Add(errorText);
+        _userControlPreviewPanel.Controls.Add(errorPanel);
+
+        Log($"Compilation failed: {result.ErrorMessage}");
+    }
+
+    private void ShowErrorInPreviewPanel(string message)
+    {
+        var errorLabel = new Label
+        {
+            Text = message,
+            Dock = DockStyle.Fill,
+            TextAlign = ContentAlignment.MiddleCenter,
+            ForeColor = Color.Red,
+            Font = new Font(Font.FontFamily, 10)
+        };
+        _userControlPreviewPanel.Controls.Add(errorLabel);
     }
 
     private void MainForm_FormClosing(object? sender, FormClosingEventArgs e)
@@ -377,6 +506,7 @@ public partial class MainForm : Form
             _settings.SchemaFilePath = _currentFilePath;
 
             var preview = await _orchestrator.PreviewAllAsync(_settings);
+            _currentGenerationPreview = preview; // Store for UserControl preview
 
             RefreshOutputTree(preview);
             _previewTabControl.SelectedIndex = 1; // Switch to Output Structure tab
@@ -640,6 +770,20 @@ public partial class MainForm : Form
         _outputTreeView.BeginUpdate();
         _outputTreeView.Nodes.Clear();
 
+        // Debug: Log folder structure
+        _logger.LogInformation("Root folder: {Name}, Folders: {FolderCount}, Files: {FileCount}", 
+            preview.RootFolder.Name, 
+            preview.RootFolder.Folders.Count, 
+            preview.RootFolder.Files.Count);
+
+        foreach (var folder in preview.RootFolder.Folders)
+        {
+            _logger.LogInformation("  Subfolder: {Name}, Folders: {FolderCount}, Files: {FileCount}", 
+                folder.Name, 
+                folder.Folders.Count, 
+                folder.Files.Count);
+        }
+
         AddFolderNode(_outputTreeView.Nodes, preview.RootFolder);
 
         if (_outputTreeView.Nodes.Count > 0)
@@ -654,12 +798,14 @@ public partial class MainForm : Form
     {
         var node = new TreeNode(folder.Name);
 
-        foreach (var subFolder in folder.Folders)
+        // First add all subfolders
+        foreach (var subFolder in folder.Folders.OrderBy(f => f.Name))
         {
             AddFolderNode(node.Nodes, subFolder);
         }
 
-        foreach (var file in folder.Files)
+        // Then add all files
+        foreach (var file in folder.Files.OrderBy(f => f.FileName))
         {
             var fileNode = new TreeNode(file.FileName)
             {

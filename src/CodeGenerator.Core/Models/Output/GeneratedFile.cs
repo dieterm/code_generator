@@ -54,4 +54,17 @@ public class GeneratedFile
     /// File size in bytes
     /// </summary>
     public long Size => Content?.Length ?? 0;
+
+    /// <summary>
+    /// Whether this file can be previewed as a UserControl
+    /// </summary>
+    public bool IsPreviewable => 
+        GeneratorId == "View_WinForms" && 
+        !FileName.EndsWith(".Designer.cs") &&
+        FileName.EndsWith(".cs");
+
+    /// <summary>
+    /// Additional files needed for compilation (e.g., Designer.cs for WinForms)
+    /// </summary>
+    public List<string>? RelatedFiles { get; set; }
 }

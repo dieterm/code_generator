@@ -6,6 +6,7 @@ using CodeGenerator.Generators.Domain;
 using CodeGenerator.Generators.Infrastructure;
 using CodeGenerator.Generators.Presentation;
 using CodeGenerator.Templates;
+using CodeGenerator.WinForms.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -42,6 +43,10 @@ internal static class Program
         services.AddSingleton<ISchemaParser, SchemaParser>();
         services.AddSingleton<ITemplateEngine, ScribanTemplateEngine>();
         services.AddSingleton<IProjectGenerator, DotNetProjectGenerator>();
+
+        // Runtime compilation services
+        services.AddSingleton<RuntimeCompiler>();
+        services.AddSingleton<UserControlPreviewService>();
 
         // Generators
         services.AddSingleton<ICodeGenerator, EntityGenerator>();

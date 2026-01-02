@@ -261,9 +261,18 @@ public class GeneratorOrchestrator
 
         foreach (var file in allFiles)
         {
-            var parts = file.RelativePath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
+            // Combine RelativePath with FileName to get full path
+            var fullPath = string.IsNullOrEmpty(file.RelativePath) 
+                ? file.FileName 
+                : Path.Combine(file.RelativePath, file.FileName);
+
+            // Normalize path separators to the current platform
+            fullPath = NormalizePath(fullPath);
+
+            var parts = fullPath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
             var current = root;
 
+            // Navigate/create folder structure (all parts except the last, which is the filename)
             for (int i = 0; i < parts.Length - 1; i++)
             {
                 var folder = current.Folders.FirstOrDefault(f => f.Name == parts[i]);
@@ -279,9 +288,19 @@ public class GeneratorOrchestrator
                 current = folder;
             }
 
+            // Add file to the deepest folder
             current.Files.Add(file);
         }
 
         return root;
+    }
+
+    private static string NormalizePath(string path)
+    {
+        if (string.IsNullOrEmpty(path))
+            return path;
+
+        return path.Replace('/', Path.DirectorySeparatorChar)
+                   .Replace('\\', Path.DirectorySeparatorChar);
     }
 }

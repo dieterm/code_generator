@@ -16,6 +16,7 @@ partial class MainForm
     private RichTextBox _jsonEditor;
     private TreeView _outputTreeView;
     private RichTextBox _previewTextBox;
+    private Panel _userControlPreviewPanel;
     private StatusStrip _statusStrip;
     private ToolStripStatusLabel _statusLabel;
     private ToolStripProgressBar _progressBar;
@@ -103,7 +104,7 @@ partial class MainForm
         };
         outputTab.Controls.Add(_outputTreeView);
 
-        var previewTab = new TabPage("File Preview");
+        var previewTab = new TabPage("Code Preview");
         _previewTextBox = new RichTextBox
         {
             Dock = DockStyle.Fill,
@@ -112,6 +113,15 @@ partial class MainForm
             WordWrap = false
         };
         previewTab.Controls.Add(_previewTextBox);
+
+        var userControlTab = new TabPage("Visual Preview");
+        _userControlPreviewPanel = new Panel
+        {
+            Dock = DockStyle.Fill,
+            BackColor = SystemColors.Control,
+            AutoScroll = true
+        };
+        userControlTab.Controls.Add(_userControlPreviewPanel);
 
         var logTab = new TabPage("Log");
         _logListBox = new ListBox
@@ -122,7 +132,7 @@ partial class MainForm
         };
         logTab.Controls.Add(_logListBox);
 
-        _previewTabControl.TabPages.AddRange(new[] { jsonTab, outputTab, previewTab, logTab });
+        _previewTabControl.TabPages.AddRange(new[] { jsonTab, outputTab, previewTab, userControlTab, logTab });
 
         _leftSplitContainer.Panel1.Controls.Add(_schemaTreeView);
         _leftSplitContainer.Panel2.Controls.Add(_propertyGrid);
