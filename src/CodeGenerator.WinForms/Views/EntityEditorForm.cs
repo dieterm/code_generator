@@ -72,6 +72,12 @@ public partial class EntityEditorForm : Form
                 GenerateController = _generateControllerCheckBox.Checked,
                 GenerateViewModel = _generateViewModelCheckBox.Checked,
                 GenerateView = _generateViewCheckBox.Checked
+            },
+            DomainDrivenDesignMetadata = new EntityDomainDrivenDesignMetadata
+            {
+                AggregateRoot = _isAggregateRootCheckBox.Checked,
+                Hierarchical = _isHierarchicalCheckBox.Checked,
+                ValueObject = _isValueObjectCheckBox.Checked
             }
         };
     }
