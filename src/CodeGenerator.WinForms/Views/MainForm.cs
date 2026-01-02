@@ -1,4 +1,4 @@
-using System.Text.Json;
+Ôªøusing System.Text.Json;
 using CodeGenerator.Core.Interfaces;
 using CodeGenerator.Core.Models.Configuration;
 using CodeGenerator.Core.Models.Domain;
@@ -45,6 +45,30 @@ public partial class MainForm : Form
         LoadSettingsAsync();
     }
 
+    private void GenerateDomainLayer_Click(object? sender, EventArgs e)
+    {
+        OnGenerateLayer("Entity");
+    }
+
+    private void GenerateInfrastructureLayer_Click(object? sender, EventArgs e)
+    {
+        OnGenerateLayer("DbContext");
+    }
+
+    private void GenerateApplicationLayer_Click(object? sender, EventArgs e)
+    {
+        OnGenerateLayer("Controller");
+    }
+
+    private void GeneratePresentationLayer_Click(object? sender, EventArgs e)
+    {
+        OnGenerateLayer("View_WinForms");
+    }
+
+    private void GenerateDatabaseScripts_Click(object? sender, EventArgs e)
+    {
+        OnGenerateLayer("DbScript");
+    }
     private async void LoadSettingsAsync()
     {
         try
@@ -202,7 +226,7 @@ public partial class MainForm : Form
         };
 
         var sb = new System.Text.StringBuilder();
-        sb.AppendLine("? Compilation Failed");
+        sb.AppendLine("‚ùå Compilation Failed");
         sb.AppendLine();
         sb.AppendLine(result.ErrorMessage);
         
@@ -212,7 +236,7 @@ public partial class MainForm : Form
             sb.AppendLine("Errors:");
             foreach (var error in result.CompilationErrors)
             {
-                sb.AppendLine($"  ï {error}");
+                sb.AppendLine($"  ‚Ä¢ {error}");
             }
         }
 
@@ -222,7 +246,7 @@ public partial class MainForm : Form
             sb.AppendLine("Warnings:");
             foreach (var warning in result.CompilationWarnings)
             {
-                sb.AppendLine($"  ? {warning}");
+                sb.AppendLine($"  ‚ö† {warning}");
             }
         }
 
@@ -625,9 +649,9 @@ public partial class MainForm : Form
             "Code Generator - Domain Driven Design\n\n" +
             "A versatile code generation tool for DDD architectures.\n\n" +
             "Supports:\n" +
-            "ï Multiple programming languages (C#, SQL, JavaScript, etc.)\n" +
-            "ï Multiple presentation technologies (WinForms, WPF, WinUI, React, etc.)\n" +
-            "ï Multiple data layer technologies (EF Core, Dapper, etc.)\n\n" +
+            "‚Ä¢ Multiple programming languages (C#, SQL, JavaScript, etc.)\n" +
+            "‚Ä¢ Multiple presentation technologies (WinForms, WPF, WinUI, React, etc.)\n" +
+            "‚Ä¢ Multiple data layer technologies (EF Core, Dapper, etc.)\n\n" +
             "Version 1.0.0",
             "About",
             MessageBoxButtons.OK,
