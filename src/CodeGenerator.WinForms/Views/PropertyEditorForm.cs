@@ -155,6 +155,7 @@ public partial class PropertyEditorForm : Form
 
     private void LoadProperty()
     {
+        Text = string.IsNullOrEmpty(PropertyName) ? "Add Property" : $"Edit Property - {PropertyName}";
         _nameTextBox.Text = PropertyName;
         _typeComboBox.Text = Property.Type ?? "string";
         _formatTextBox.Text = Property.Format;

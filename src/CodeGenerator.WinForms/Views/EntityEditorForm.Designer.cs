@@ -38,7 +38,7 @@ partial class EntityEditorForm
     {
         components = new System.ComponentModel.Container();
 
-        Text = string.IsNullOrEmpty(EntityName) ? "Add Entity" : $"Edit Entity - {EntityName}";
+        Text = "New or Edit Entity";
         Size = new Size(500, 620);
         StartPosition = FormStartPosition.CenterParent;
         FormBorderStyle = FormBorderStyle.FixedDialog;

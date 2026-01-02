@@ -22,6 +22,7 @@ public partial class EntityEditorForm : Form
 
     private void LoadEntity()
     {
+        Text = string.IsNullOrEmpty(EntityName) ? "Add Entity" : $"Edit Entity - {EntityName}";
         _nameTextBox.Text = EntityName;
         _titleTextBox.Text = Entity.Title;
         _descriptionTextBox.Text = Entity.Description;
