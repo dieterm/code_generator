@@ -484,25 +484,81 @@ public partial class MainForm : Form
 
         var rootNode = new TreeNode(_currentSchema.Title ?? "Domain Schema")
         {
+            ImageKey="Schema",
+            SelectedImageKey="Schema",
             Tag = _currentSchema
         };
 
+        if(_currentSchema.CodeGenMetadata==null)
+            _currentSchema.CodeGenMetadata = new CodeGenMetadata();
+
         if (_currentSchema.CodeGenMetadata != null)
         {
-            var codeGenNode = new TreeNode("Code Generation Settings") { Tag = _currentSchema.CodeGenMetadata };
+            var codeGenNode = new TreeNode("Code Generation Settings") { 
+                Tag = _currentSchema.CodeGenMetadata ,
+                ImageKey= "CodeGenSettings",
+                SelectedImageKey= "CodeGenSettings"
+            };
             rootNode.Nodes.Add(codeGenNode);
         }
+        if (_currentSchema.DatabaseMetadata == null)
+            _currentSchema.DatabaseMetadata = new DatabaseMetadata();
 
         if (_currentSchema.DatabaseMetadata != null)
         {
-            var dbNode = new TreeNode("Database Settings") { Tag = _currentSchema.DatabaseMetadata };
+            var dbNode = new TreeNode("Database Settings") { 
+                Tag = _currentSchema.DatabaseMetadata,
+                ImageKey= "DatabaseSettings",
+                SelectedImageKey= "DatabaseSettings"
+            };
+            rootNode.Nodes.Add(dbNode);
+        }
+        if (_currentSchema.DomainDrivenDesignMetadata == null)
+            _currentSchema.DomainDrivenDesignMetadata = new DomainDrivenDesignMetadata();
+
+        if (_currentSchema.DomainDrivenDesignMetadata != null)
+        {
+            var dbNode = new TreeNode("Domain Driven Design Settings") {
+                Tag = _currentSchema.DomainDrivenDesignMetadata,
+                ImageKey= "DDDSettings",
+                SelectedImageKey= "DDDSettings"
+            };
             rootNode.Nodes.Add(dbNode);
         }
 
         if (_currentSchema.Definitions != null)
         {
-            var entitiesNode = new TreeNode("Entities");
-            foreach (var (name, entity) in _currentSchema.Definitions)
+            var valueTypeNodes = new TreeNode("Value Types") {
+                ImageKey= "ValueTypes",
+                SelectedImageKey= "ValueTypes"
+            };
+            foreach (var (name, entity) in _currentSchema.Definitions.Where(d => d.Value.DomainDrivenDesignMetadata != null && d.Value.DomainDrivenDesignMetadata.ValueObject==true))
+            {
+                var valueTypeNode = new TreeNode(name) { Tag = entity };
+
+                if (entity.Properties != null)
+                {
+                    foreach (var (propName, prop) in entity.Properties)
+                    {
+                        var propNode = new TreeNode($"{propName}: {prop.Type ?? "object"}")
+                        {
+                            Tag = prop
+                        };
+                        valueTypeNode.Nodes.Add(propNode);
+                    }
+                }
+
+                valueTypeNodes.Nodes.Add(valueTypeNode);
+            }
+            rootNode.Nodes.Add(valueTypeNodes);
+
+            var entitiesNode = new TreeNode("Entities")
+            {
+                ImageKey = "Entities",
+                SelectedImageKey = "Entities"
+            };
+
+            foreach (var (name, entity) in _currentSchema.Definitions.Where(d => d.Value.DomainDrivenDesignMetadata == null || d.Value.DomainDrivenDesignMetadata.ValueObject==false))
             {
                 var entityNode = new TreeNode(name) { Tag = entity };
 

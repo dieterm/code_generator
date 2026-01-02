@@ -1,3 +1,5 @@
+using CodeGenerator.WinForms.Properties;
+
 namespace CodeGenerator.WinForms;
 
 partial class MainForm
@@ -215,6 +217,12 @@ partial class MainForm
     private ImageList CreateImageList()
     {
         var imageList = new ImageList { ImageSize = new Size(16, 16) };
+        imageList.Images.Add("Schema", Resources.SchemaIcon);
+        imageList.Images.Add("ValueTypes", Resources.ValueTypesIcon);
+        imageList.Images.Add("Entities", Resources.EntitiesIcon);
+        imageList.Images.Add("CodeGenSettings", Resources.SettingsIcon);
+        imageList.Images.Add("DatabaseSettings", Resources.SettingsIcon);
+        imageList.Images.Add("DDDSettings", Resources.SettingsIcon);
         return imageList;
     }
 }

@@ -36,4 +36,7 @@ public class DomainSchema
 
     [JsonPropertyName("x-db")]
     public DatabaseMetadata? DatabaseMetadata { get; set; }
+
+    [JsonPropertyName("x-ddd")]
+    public DomainDrivenDesignMetadata? DomainDrivenDesignMetadata { get; set; }
 }

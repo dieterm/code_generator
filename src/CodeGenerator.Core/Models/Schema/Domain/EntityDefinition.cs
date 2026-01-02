@@ -28,6 +28,9 @@ public class EntityDefinition
     [JsonPropertyName("x-db")]
     public EntityDatabaseMetadata? DatabaseMetadata { get; set; }
 
+    [JsonPropertyName("x-ddd")]
+    public EntityDomainDrivenDesignMetadata? DomainDrivenDesignMetadata { get; set; }
+
     [JsonPropertyName("allOf")]
     public List<SchemaReference>? AllOf { get; set; }
 

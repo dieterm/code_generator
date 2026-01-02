@@ -19,6 +19,9 @@ partial class EntityEditorForm
     private CheckBox _generateControllerCheckBox;
     private CheckBox _generateViewModelCheckBox;
     private CheckBox _generateViewCheckBox;
+    private CheckBox _isValueObjectCheckBox;
+    private CheckBox _isAggregateRootCheckBox;
+    private CheckBox _isHierarchicalCheckBox;
     private Button _okButton;
     private Button _cancelButton;
 
@@ -36,7 +39,7 @@ partial class EntityEditorForm
         components = new System.ComponentModel.Container();
 
         Text = string.IsNullOrEmpty(EntityName) ? "Add Entity" : $"Edit Entity - {EntityName}";
-        Size = new Size(500, 550);
+        Size = new Size(500, 620);
         StartPosition = FormStartPosition.CenterParent;
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false;
@@ -47,7 +50,7 @@ partial class EntityEditorForm
             Dock = DockStyle.Fill,
             Padding = new Padding(10),
             ColumnCount = 2,
-            RowCount = 16
+            RowCount = 20
         };
 
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150));
@@ -69,6 +72,20 @@ partial class EntityEditorForm
         layout.Controls.Add(new Label { Text = "Description:", Anchor = AnchorStyles.Left }, 0, row);
         _descriptionTextBox = new TextBox { Dock = DockStyle.Fill, Multiline = true, Height = 60 };
         layout.Controls.Add(_descriptionTextBox, 1, row++);
+
+        // DDD Settings Header
+        var dddLabel = new Label { Text = "Domain-Driven Design", Font = new Font(Font, FontStyle.Bold), Anchor = AnchorStyles.Left };
+        layout.Controls.Add(dddLabel, 0, row++);
+        layout.SetColumnSpan(dddLabel, 2);
+
+        _isValueObjectCheckBox = new CheckBox { Text = "Value Object (immutable, no identity)", Anchor = AnchorStyles.Left };
+        layout.Controls.Add(_isValueObjectCheckBox, 1, row++);
+
+        _isAggregateRootCheckBox = new CheckBox { Text = "Aggregate Root (entry point)", Anchor = AnchorStyles.Left };
+        layout.Controls.Add(_isAggregateRootCheckBox, 1, row++);
+
+        _isHierarchicalCheckBox = new CheckBox { Text = "Hierarchical (parent-child)", Anchor = AnchorStyles.Left };
+        layout.Controls.Add(_isHierarchicalCheckBox, 1, row++);
 
         // Database Settings Header
         var dbLabel = new Label { Text = "Database Settings", Font = new Font(Font, FontStyle.Bold), Anchor = AnchorStyles.Left };

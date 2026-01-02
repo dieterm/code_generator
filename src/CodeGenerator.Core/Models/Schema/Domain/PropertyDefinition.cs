@@ -69,4 +69,7 @@ public class PropertyDefinition
 
     [JsonPropertyName("x-db")]
     public PropertyDatabaseMetadata? DatabaseMetadata { get; set; }
+
+    [JsonPropertyName("x-ddd")]
+    public PropertyDomainDrivenDesignMetadata? DomainDrivenDesignMetadata { get; set; }
 }
