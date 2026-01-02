@@ -46,6 +46,28 @@ public class ScribanTemplateEngine : ITemplateEngine
         }
     }
 
+    private async Task<string> RenderAsync(string templateContent, string templatePath, object model, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var template = Template.Parse(templateContent, templatePath);
+            if (template.HasErrors)
+            {
+                var errors = string.Join(Environment.NewLine, template.Messages.Select(m => m.Message));
+                throw new InvalidOperationException($"Template parsing errors: {errors}");
+            }
+
+            var context = CreateContext(model);
+            var result = await template.RenderAsync(context);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error rendering template");
+            throw;
+        }
+    }
+
     public async Task<string> RenderFileAsync(string templatePath, object model, CancellationToken cancellationToken = default)
     {
         try
@@ -56,7 +78,7 @@ public class ScribanTemplateEngine : ITemplateEngine
             }
 
             var templateContent = await File.ReadAllTextAsync(templatePath, cancellationToken);
-            return await RenderAsync(templateContent, model, cancellationToken);
+            return await RenderAsync(templateContent, templatePath, model, cancellationToken);
         }
         catch (Exception ex)
         {

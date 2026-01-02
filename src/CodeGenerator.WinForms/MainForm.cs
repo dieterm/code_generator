@@ -16,6 +16,7 @@ public partial class MainForm : Form
     private readonly ITemplateEngine _templateEngine;
     private readonly GeneratorOrchestrator _orchestrator;
     private readonly ILogger<MainForm> _logger;
+    private const string ConfigFileName = "AppConfig.json";
 
     private DomainSchema? _currentSchema;
     private DomainContext? _currentContext;
@@ -35,10 +36,48 @@ public partial class MainForm : Form
         _templateEngine = templateEngine;
         _orchestrator = orchestrator;
         _logger = logger;
-        _settings = settingsService.GetDefaultSettings();
 
         InitializeComponent();
         SetupEventHandlers();
+        LoadSettingsAsync();
+    }
+
+    private async void LoadSettingsAsync()
+    {
+        try
+        {
+            var configPath = GetConfigFilePath();
+            
+            if (File.Exists(configPath))
+            {
+                _settings = await _settingsService.LoadSettingsAsync(configPath);
+                Log($"Loaded settings from: {configPath}");
+            }
+            else
+            {
+                _settings = _settingsService.GetDefaultSettings();
+                Log("Using default settings (no saved configuration found)");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load settings, using defaults");
+            _settings = _settingsService.GetDefaultSettings();
+            Log("Failed to load settings, using defaults");
+        }
+    }
+
+    private string GetConfigFilePath()
+    {
+        var appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        var appFolder = Path.Combine(appDataFolder, "CodeGenerator");
+        
+        if (!Directory.Exists(appFolder))
+        {
+            Directory.CreateDirectory(appFolder);
+        }
+        
+        return Path.Combine(appFolder, ConfigFileName);
     }
 
     private void SetupEventHandlers()

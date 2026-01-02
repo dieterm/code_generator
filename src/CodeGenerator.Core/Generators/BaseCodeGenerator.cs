@@ -120,15 +120,15 @@ public abstract class BaseCodeGenerator : ICodeGenerator
                 };
 
                 // Generate preview content
+                var templatePath = Path.Combine(settings.TemplateFolder, template.FileName);
                 try
                 {
                     var model = CreateTemplateModel(entity, context, settings);
-                    var templatePath = Path.Combine(settings.TemplateFolder, template.FileName);
                     filePreview.Content = await TemplateEngine.RenderFileAsync(templatePath, model, cancellationToken);
                 }
                 catch (Exception ex)
                 {
-                    filePreview.Content = $"// Error generating preview: {ex.Message}";
+                    filePreview.Content = $"//{templatePath}\r\n// Error generating preview: {ex.Message}";
                 }
 
                 if (filePreview.WillOverwrite)

@@ -6,6 +6,7 @@ namespace CodeGenerator.WinForms;
 public partial class SettingsForm : Form
 {
     private readonly ISettingsService _settingsService;
+    private const string ConfigFileName = "AppConfig.json";
     public GeneratorSettings Settings { get; private set; }
 
     public SettingsForm()
@@ -177,12 +178,31 @@ public partial class SettingsForm : Form
                 config.OutputPathPattern = row.Cells["OutputPath"].Value?.ToString() ?? config.OutputPathPattern;
             }
         }
-        
     }
 
-    private void SaveButton_Click(object? sender, EventArgs e)
+    private async void SaveButton_Click(object? sender, EventArgs e)
     {
-        SaveSettings();
+        try
+        {
+            SaveSettings();
+            
+            var configPath = GetConfigFilePath();
+            await _settingsService.SaveSettingsAsync(Settings, configPath);
+            
+            MessageBox.Show(
+                $"Settings successfully saved to:\n{configPath}",
+                "Settings Saved",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(
+                $"Failed to save settings:\n{ex.Message}",
+                "Error",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+        }
     }
 
     private void LoadDefaultsButton_Click(object? sender, EventArgs e)
@@ -208,5 +228,18 @@ public partial class SettingsForm : Form
     {
         var json = System.Text.Json.JsonSerializer.Serialize(settings);
         return System.Text.Json.JsonSerializer.Deserialize<GeneratorSettings>(json) ?? new GeneratorSettings();
+    }
+
+    private string GetConfigFilePath()
+    {
+        var appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        var appFolder = Path.Combine(appDataFolder, "CodeGenerator");
+        
+        if (!Directory.Exists(appFolder))
+        {
+            Directory.CreateDirectory(appFolder);
+        }
+        
+        return Path.Combine(appFolder, ConfigFileName);
     }
 }

@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.1.11312.151 d18.0
+VisualStudioVersion = 18.1.11312.151
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core", "CodeGenerator.Core\CodeGenerator.Core.csproj", "{A1B2C3D4-E5F6-4A5B-8C9D-0E1F2A3B4C5D}"
 EndProject
@@ -24,6 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WinForms", "WinForms", "{84A86A53-628C-4E18-A322-6B192F47585B}"
 	ProjectSection(SolutionItems) = preProject
+		Templates\CSharp\WinForms\View.Designer.scriban = Templates\CSharp\WinForms\View.Designer.scriban
 		Templates\CSharp\WinForms\View.scriban = Templates\CSharp\WinForms\View.scriban
 	EndProjectSection
 EndProject
