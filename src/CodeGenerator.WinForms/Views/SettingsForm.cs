@@ -20,7 +20,7 @@ public partial class SettingsForm : Form
         _settingsService = settingsService;
 
         InitializeComponent();
-        CreateGeneratorsTab();
+
         LoadSettings();
     }
 
@@ -37,28 +37,6 @@ public partial class SettingsForm : Form
     private void OutputBrowseBtn_Click(object? sender, EventArgs e)
     {
         BrowseFolder(_outputFolderTextBox);
-    }
-
-    private void CreateGeneratorsTab()
-    {
-        _generatorsGrid = new DataGridView();
-        _generatorsGrid.Dock = DockStyle.Fill;
-        _generatorsGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        _generatorsGrid.AllowUserToAddRows = false;
-        _generatorsGrid.AllowUserToDeleteRows = false;
-        _generatorsGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-        _generatorsGrid.MultiSelect = false;
-
-        _generatorsGrid.Columns.AddRange(new DataGridViewColumn[]
-        {
-            new DataGridViewCheckBoxColumn { Name = "Enabled", HeaderText = "Enabled", Width = 60 },
-            new DataGridViewTextBoxColumn { Name = "Id", HeaderText = "ID", ReadOnly = true },
-            new DataGridViewTextBoxColumn { Name = "Name", HeaderText = "Name", ReadOnly = true },
-            new DataGridViewTextBoxColumn { Name = "Layer", HeaderText = "Layer", ReadOnly = true },
-            new DataGridViewTextBoxColumn { Name = "OutputPath", HeaderText = "Output Path" }
-        });
-
-        _generatorsTab.Controls.Add(_generatorsGrid);
     }
 
     private void LoadSettings()

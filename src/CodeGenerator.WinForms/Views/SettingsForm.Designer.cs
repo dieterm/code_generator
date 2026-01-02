@@ -26,6 +26,11 @@ partial class SettingsForm
     private CheckBox _overwriteCheckBox;
     private CheckBox _backupCheckBox;
     private DataGridView _generatorsGrid;
+    private DataGridViewCheckBoxColumn _generatorsEnabledColumn;
+    private DataGridViewTextBoxColumn _generatorsIdColumn;
+    private DataGridViewTextBoxColumn _generatorsNameColumn;
+    private DataGridViewTextBoxColumn _generatorsLayerColumn;
+    private DataGridViewTextBoxColumn _generatorsOutputPathColumn;
     private DataGridView _packagesGrid;
     private Button _saveButton;
     private Button _cancelButton;
@@ -63,6 +68,12 @@ partial class SettingsForm
         _overwriteCheckBox = new CheckBox();
         _backupCheckBox = new CheckBox();
         _generatorsTab = new TabPage();
+        _generatorsGrid = new DataGridView();
+        _generatorsEnabledColumn = new DataGridViewCheckBoxColumn();
+        _generatorsIdColumn = new DataGridViewTextBoxColumn();
+        _generatorsNameColumn = new DataGridViewTextBoxColumn();
+        _generatorsLayerColumn = new DataGridViewTextBoxColumn();
+        _generatorsOutputPathColumn = new DataGridViewTextBoxColumn();
         _packagesTab = new TabPage();
         _packagesGrid = new DataGridView();
         _packagesPackageIdColumn = new DataGridViewTextBoxColumn();
@@ -75,6 +86,8 @@ partial class SettingsForm
         _tabControl.SuspendLayout();
         _generalTab.SuspendLayout();
         _generalTabLayout.SuspendLayout();
+        _generatorsTab.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)_generatorsGrid).BeginInit();
         _packagesTab.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)_packagesGrid).BeginInit();
         _buttonPanel.SuspendLayout();
@@ -275,11 +288,54 @@ partial class SettingsForm
         // 
         // _generatorsTab
         // 
+        _generatorsTab.Controls.Add(_generatorsGrid);
         _generatorsTab.Location = new Point(4, 24);
         _generatorsTab.Name = "_generatorsTab";
         _generatorsTab.Size = new Size(776, 483);
         _generatorsTab.TabIndex = 1;
         _generatorsTab.Text = "Generators";
+        // 
+        // _generatorsGrid
+        // 
+        _generatorsGrid.AllowUserToAddRows = false;
+        _generatorsGrid.AllowUserToDeleteRows = false;
+        _generatorsGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        _generatorsGrid.Columns.AddRange(new DataGridViewColumn[] { _generatorsEnabledColumn, _generatorsIdColumn, _generatorsNameColumn, _generatorsLayerColumn, _generatorsOutputPathColumn });
+        _generatorsGrid.Dock = DockStyle.Fill;
+        _generatorsGrid.Location = new Point(0, 0);
+        _generatorsGrid.MultiSelect = false;
+        _generatorsGrid.Name = "_generatorsGrid";
+        _generatorsGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        _generatorsGrid.Size = new Size(776, 483);
+        _generatorsGrid.TabIndex = 0;
+        // 
+        // _generatorsEnabledColumn
+        // 
+        _generatorsEnabledColumn.HeaderText = "Enabled";
+        _generatorsEnabledColumn.Name = "_generatorsEnabledColumn";
+        // 
+        // _generatorsIdColumn
+        // 
+        _generatorsIdColumn.HeaderText = "ID";
+        _generatorsIdColumn.Name = "_generatorsIdColumn";
+        _generatorsIdColumn.ReadOnly = true;
+        // 
+        // _generatorsNameColumn
+        // 
+        _generatorsNameColumn.HeaderText = "Name";
+        _generatorsNameColumn.Name = "_generatorsNameColumn";
+        _generatorsNameColumn.ReadOnly = true;
+        // 
+        // _generatorsLayerColumn
+        // 
+        _generatorsLayerColumn.HeaderText = "Layer";
+        _generatorsLayerColumn.Name = "_generatorsLayerColumn";
+        _generatorsLayerColumn.ReadOnly = true;
+        // 
+        // _generatorsOutputPathColumn
+        // 
+        _generatorsOutputPathColumn.HeaderText = "Output Path";
+        _generatorsOutputPathColumn.Name = "_generatorsOutputPathColumn";
         // 
         // _packagesTab
         // 
@@ -372,6 +428,8 @@ partial class SettingsForm
         _generalTab.ResumeLayout(false);
         _generalTabLayout.ResumeLayout(false);
         _generalTabLayout.PerformLayout();
+        _generatorsTab.ResumeLayout(false);
+        ((System.ComponentModel.ISupportInitialize)_generatorsGrid).EndInit();
         _packagesTab.ResumeLayout(false);
         ((System.ComponentModel.ISupportInitialize)_packagesGrid).EndInit();
         _buttonPanel.ResumeLayout(false);
