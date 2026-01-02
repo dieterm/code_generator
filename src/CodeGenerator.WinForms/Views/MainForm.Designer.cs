@@ -34,6 +34,46 @@ partial class MainForm
     private ToolStripButton _settingsButton;
     private ImageList _treeViewImageList;
 
+    // Menu items - File Menu
+    private ToolStripMenuItem _fileMenu;
+    private ToolStripMenuItem _newSchemaMenuItem;
+    private ToolStripMenuItem _openSchemaMenuItem;
+    private ToolStripSeparator _fileMenuSeparator1;
+    private ToolStripMenuItem _saveMenuItem;
+    private ToolStripMenuItem _saveAsMenuItem;
+    private ToolStripSeparator _fileMenuSeparator2;
+    private ToolStripMenuItem _settingsMenuItem;
+    private ToolStripSeparator _fileMenuSeparator3;
+    private ToolStripMenuItem _exitMenuItem;
+
+    // Menu items - Edit Menu
+    private ToolStripMenuItem _editMenu;
+    private ToolStripMenuItem _addEntityMenuItem;
+    private ToolStripMenuItem _addPropertyMenuItem;
+    private ToolStripSeparator _editMenuSeparator;
+    private ToolStripMenuItem _deleteMenuItem;
+
+    // Menu items - Generate Menu
+    private ToolStripMenuItem _generateMenu;
+    private ToolStripMenuItem _previewAllMenuItem;
+    private ToolStripSeparator _generateMenuSeparator1;
+    private ToolStripMenuItem _generateAllMenuItem;
+    private ToolStripMenuItem _generateDomainMenuItem;
+    private ToolStripMenuItem _generateInfraMenuItem;
+    private ToolStripMenuItem _generateAppMenuItem;
+    private ToolStripMenuItem _generatePresentationMenuItem;
+    private ToolStripSeparator _generateMenuSeparator2;
+    private ToolStripMenuItem _generateDbScriptMenuItem;
+
+    // Menu items - View Menu
+    private ToolStripMenuItem _viewMenu;
+    private ToolStripMenuItem _refreshPreviewMenuItem;
+    private ToolStripMenuItem _clearLogMenuItem;
+
+    // Menu items - Help Menu
+    private ToolStripMenuItem _helpMenu;
+    private ToolStripMenuItem _aboutMenuItem;
+
     protected override void Dispose(bool disposing)
     {
         if (disposing && (components != null))
@@ -101,6 +141,158 @@ partial class MainForm
         _menuStrip.Name = "_menuStrip";
         _menuStrip.Size = new Size(1384, 24);
         _menuStrip.TabIndex = 2;
+        // File Menu
+        _fileMenu = new ToolStripMenuItem();
+        _fileMenu.Text = "&File";
+
+        _newSchemaMenuItem = new ToolStripMenuItem();
+        _newSchemaMenuItem.Text = "&New Schema";
+        _newSchemaMenuItem.ShortcutKeys = Keys.Control | Keys.N;
+        _newSchemaMenuItem.Click += OnNewSchema;
+
+        _openSchemaMenuItem = new ToolStripMenuItem();
+        _openSchemaMenuItem.Text = "&Open Schema...";
+        _openSchemaMenuItem.ShortcutKeys = Keys.Control | Keys.O;
+        _openSchemaMenuItem.Click += OnOpenSchema;
+
+        _fileMenuSeparator1 = new ToolStripSeparator();
+
+        _saveMenuItem = new ToolStripMenuItem();
+        _saveMenuItem.Text = "&Save";
+        _saveMenuItem.ShortcutKeys = Keys.Control | Keys.S;
+        _saveMenuItem.Click += OnSaveSchema;
+
+        _saveAsMenuItem = new ToolStripMenuItem();
+        _saveAsMenuItem.Text = "Save &As...";
+        _saveAsMenuItem.Click += OnSaveSchemaAs;
+
+        _fileMenuSeparator2 = new ToolStripSeparator();
+
+        _settingsMenuItem = new ToolStripMenuItem();
+        _settingsMenuItem.Text = "&Settings...";
+        _settingsMenuItem.Click += OnOpenSettings;
+
+        _fileMenuSeparator3 = new ToolStripSeparator();
+
+        _exitMenuItem = new ToolStripMenuItem();
+        _exitMenuItem.Text = "E&xit";
+        _exitMenuItem.ShortcutKeys = Keys.Alt | Keys.F4;
+        _exitMenuItem.Click += OnExit;
+
+        _fileMenu.DropDownItems.Add(_newSchemaMenuItem);
+        _fileMenu.DropDownItems.Add(_openSchemaMenuItem);
+        _fileMenu.DropDownItems.Add(_fileMenuSeparator1);
+        _fileMenu.DropDownItems.Add(_saveMenuItem);
+        _fileMenu.DropDownItems.Add(_saveAsMenuItem);
+        _fileMenu.DropDownItems.Add(_fileMenuSeparator2);
+        _fileMenu.DropDownItems.Add(_settingsMenuItem);
+        _fileMenu.DropDownItems.Add(_fileMenuSeparator3);
+        _fileMenu.DropDownItems.Add(_exitMenuItem);
+
+        // Edit Menu
+        _editMenu = new ToolStripMenuItem();
+        _editMenu.Text = "&Edit";
+
+        _addEntityMenuItem = new ToolStripMenuItem();
+        _addEntityMenuItem.Text = "Add &Entity...";
+        _addEntityMenuItem.Click += OnAddEntity;
+
+        _addPropertyMenuItem = new ToolStripMenuItem();
+        _addPropertyMenuItem.Text = "Add &Property...";
+        _addPropertyMenuItem.Click += OnAddProperty;
+
+        _editMenuSeparator = new ToolStripSeparator();
+
+        _deleteMenuItem = new ToolStripMenuItem();
+        _deleteMenuItem.Text = "&Delete";
+        _deleteMenuItem.ShortcutKeys = Keys.Delete;
+        _deleteMenuItem.Click += OnDeleteSelected;
+
+        _editMenu.DropDownItems.Add(_addEntityMenuItem);
+        _editMenu.DropDownItems.Add(_addPropertyMenuItem);
+        _editMenu.DropDownItems.Add(_editMenuSeparator);
+        _editMenu.DropDownItems.Add(_deleteMenuItem);
+
+        // Generate Menu
+        _generateMenu = new ToolStripMenuItem();
+        _generateMenu.Text = "&Generate";
+
+        _previewAllMenuItem = new ToolStripMenuItem();
+        _previewAllMenuItem.Text = "&Preview All";
+        _previewAllMenuItem.ShortcutKeys = Keys.F5;
+        _previewAllMenuItem.Click += OnPreviewAll;
+
+        _generateMenuSeparator1 = new ToolStripSeparator();
+
+        _generateAllMenuItem = new ToolStripMenuItem();
+        _generateAllMenuItem.Text = "Generate &All";
+        _generateAllMenuItem.ShortcutKeys = Keys.F6;
+        _generateAllMenuItem.Click += OnGenerateAll;
+
+        _generateDomainMenuItem = new ToolStripMenuItem();
+        _generateDomainMenuItem.Text = "Generate &Domain Layer";
+        _generateDomainMenuItem.Click += GenerateDomainLayer_Click;
+
+        _generateInfraMenuItem = new ToolStripMenuItem();
+        _generateInfraMenuItem.Text = "Generate &Infrastructure Layer";
+        _generateInfraMenuItem.Click += GenerateInfrastructureLayer_Click;
+
+        _generateAppMenuItem = new ToolStripMenuItem();
+        _generateAppMenuItem.Text = "Generate &Application Layer";
+        _generateAppMenuItem.Click += GenerateApplicationLayer_Click;
+
+        _generatePresentationMenuItem = new ToolStripMenuItem();
+        _generatePresentationMenuItem.Text = "Generate &Presentation Layer";
+        _generatePresentationMenuItem.Click += GeneratePresentationLayer_Click;
+
+        _generateMenuSeparator2 = new ToolStripSeparator();
+
+        _generateDbScriptMenuItem = new ToolStripMenuItem();
+        _generateDbScriptMenuItem.Text = "Generate &Database Scripts";
+        _generateDbScriptMenuItem.Click += GenerateDatabaseScripts_Click;
+
+        _generateMenu.DropDownItems.Add(_previewAllMenuItem);
+        _generateMenu.DropDownItems.Add(_generateMenuSeparator1);
+        _generateMenu.DropDownItems.Add(_generateAllMenuItem);
+        _generateMenu.DropDownItems.Add(_generateDomainMenuItem);
+        _generateMenu.DropDownItems.Add(_generateInfraMenuItem);
+        _generateMenu.DropDownItems.Add(_generateAppMenuItem);
+        _generateMenu.DropDownItems.Add(_generatePresentationMenuItem);
+        _generateMenu.DropDownItems.Add(_generateMenuSeparator2);
+        _generateMenu.DropDownItems.Add(_generateDbScriptMenuItem);
+
+        // View Menu
+        _viewMenu = new ToolStripMenuItem();
+        _viewMenu.Text = "&View";
+
+        _refreshPreviewMenuItem = new ToolStripMenuItem();
+        _refreshPreviewMenuItem.Text = "&Refresh Preview";
+        _refreshPreviewMenuItem.ShortcutKeys = Keys.F5;
+        _refreshPreviewMenuItem.Click += OnRefreshPreview;
+
+        _clearLogMenuItem = new ToolStripMenuItem();
+        _clearLogMenuItem.Text = "&Clear Log";
+        _clearLogMenuItem.Click += OnClearLog;
+
+        _viewMenu.DropDownItems.Add(_refreshPreviewMenuItem);
+        _viewMenu.DropDownItems.Add(_clearLogMenuItem);
+
+        // Help Menu
+        _helpMenu = new ToolStripMenuItem();
+        _helpMenu.Text = "&Help";
+
+        _aboutMenuItem = new ToolStripMenuItem();
+        _aboutMenuItem.Text = "&About...";
+        _aboutMenuItem.Click += OnAbout;
+
+        _helpMenu.DropDownItems.Add(_aboutMenuItem);
+
+        // Add menus to MenuStrip
+        _menuStrip.Items.Add(_fileMenu);
+        _menuStrip.Items.Add(_editMenu);
+        _menuStrip.Items.Add(_generateMenu);
+        _menuStrip.Items.Add(_viewMenu);
+        _menuStrip.Items.Add(_helpMenu);
         // 
         // _toolStrip
         // 
@@ -387,162 +579,6 @@ partial class MainForm
         PerformLayout();
     }
 
-    private void CreateMenus()
-    {
-        // File Menu
-        var fileMenu = new ToolStripMenuItem();
-        fileMenu.Text = "&File";
-
-        var newSchemaMenuItem = new ToolStripMenuItem();
-        newSchemaMenuItem.Text = "&New Schema";
-        newSchemaMenuItem.ShortcutKeys = Keys.Control | Keys.N;
-        newSchemaMenuItem.Click += OnNewSchema;
-
-        var openSchemaMenuItem = new ToolStripMenuItem();
-        openSchemaMenuItem.Text = "&Open Schema...";
-        openSchemaMenuItem.ShortcutKeys = Keys.Control | Keys.O;
-        openSchemaMenuItem.Click += OnOpenSchema;
-
-        var separator1 = new ToolStripSeparator();
-
-        var saveMenuItem = new ToolStripMenuItem();
-        saveMenuItem.Text = "&Save";
-        saveMenuItem.ShortcutKeys = Keys.Control | Keys.S;
-        saveMenuItem.Click += OnSaveSchema;
-
-        var saveAsMenuItem = new ToolStripMenuItem();
-        saveAsMenuItem.Text = "Save &As...";
-        saveAsMenuItem.Click += OnSaveSchemaAs;
-
-        var separator2 = new ToolStripSeparator();
-
-        var settingsMenuItem = new ToolStripMenuItem();
-        settingsMenuItem.Text = "&Settings...";
-        settingsMenuItem.Click += OnOpenSettings;
-
-        var separator3 = new ToolStripSeparator();
-
-        var exitMenuItem = new ToolStripMenuItem();
-        exitMenuItem.Text = "E&xit";
-        exitMenuItem.ShortcutKeys = Keys.Alt | Keys.F4;
-        exitMenuItem.Click += OnExit;
-
-        fileMenu.DropDownItems.Add(newSchemaMenuItem);
-        fileMenu.DropDownItems.Add(openSchemaMenuItem);
-        fileMenu.DropDownItems.Add(separator1);
-        fileMenu.DropDownItems.Add(saveMenuItem);
-        fileMenu.DropDownItems.Add(saveAsMenuItem);
-        fileMenu.DropDownItems.Add(separator2);
-        fileMenu.DropDownItems.Add(settingsMenuItem);
-        fileMenu.DropDownItems.Add(separator3);
-        fileMenu.DropDownItems.Add(exitMenuItem);
-
-        // Edit Menu
-        var editMenu = new ToolStripMenuItem();
-        editMenu.Text = "&Edit";
-
-        var addEntityMenuItem = new ToolStripMenuItem();
-        addEntityMenuItem.Text = "Add &Entity...";
-        addEntityMenuItem.Click += OnAddEntity;
-
-        var addPropertyMenuItem = new ToolStripMenuItem();
-        addPropertyMenuItem.Text = "Add &Property...";
-        addPropertyMenuItem.Click += OnAddProperty;
-
-        var separator4 = new ToolStripSeparator();
-
-        var deleteMenuItem = new ToolStripMenuItem();
-        deleteMenuItem.Text = "&Delete";
-        deleteMenuItem.ShortcutKeys = Keys.Delete;
-        deleteMenuItem.Click += OnDeleteSelected;
-
-        editMenu.DropDownItems.Add(addEntityMenuItem);
-        editMenu.DropDownItems.Add(addPropertyMenuItem);
-        editMenu.DropDownItems.Add(separator4);
-        editMenu.DropDownItems.Add(deleteMenuItem);
-
-        // Generate Menu
-        var generateMenu = new ToolStripMenuItem();
-        generateMenu.Text = "&Generate";
-
-        var previewAllMenuItem = new ToolStripMenuItem();
-        previewAllMenuItem.Text = "&Preview All";
-        previewAllMenuItem.ShortcutKeys = Keys.F5;
-        previewAllMenuItem.Click += OnPreviewAll;
-
-        var separator5 = new ToolStripSeparator();
-
-        var generateAllMenuItem = new ToolStripMenuItem();
-        generateAllMenuItem.Text = "Generate &All";
-        generateAllMenuItem.ShortcutKeys = Keys.F6;
-        generateAllMenuItem.Click += OnGenerateAll;
-
-        var generateDomainMenuItem = new ToolStripMenuItem();
-        generateDomainMenuItem.Text = "Generate &Domain Layer";
-        generateDomainMenuItem.Click += GenerateDomainLayer_Click;
-
-        var generateInfraMenuItem = new ToolStripMenuItem();
-        generateInfraMenuItem.Text = "Generate &Infrastructure Layer";
-        generateInfraMenuItem.Click += GenerateInfrastructureLayer_Click;
-
-        var generateAppMenuItem = new ToolStripMenuItem();
-        generateAppMenuItem.Text = "Generate &Application Layer";
-        generateAppMenuItem.Click += GenerateApplicationLayer_Click;
-
-        var generatePresentationMenuItem = new ToolStripMenuItem();
-        generatePresentationMenuItem.Text = "Generate &Presentation Layer";
-        generatePresentationMenuItem.Click += GeneratePresentationLayer_Click;
-
-        var separator6 = new ToolStripSeparator();
-
-        var generateDbScriptMenuItem = new ToolStripMenuItem();
-        generateDbScriptMenuItem.Text = "Generate &Database Scripts";
-        generateDbScriptMenuItem.Click += GenerateDatabaseScripts_Click;
-
-        generateMenu.DropDownItems.Add(previewAllMenuItem);
-        generateMenu.DropDownItems.Add(separator5);
-        generateMenu.DropDownItems.Add(generateAllMenuItem);
-        generateMenu.DropDownItems.Add(generateDomainMenuItem);
-        generateMenu.DropDownItems.Add(generateInfraMenuItem);
-        generateMenu.DropDownItems.Add(generateAppMenuItem);
-        generateMenu.DropDownItems.Add(generatePresentationMenuItem);
-        generateMenu.DropDownItems.Add(separator6);
-        generateMenu.DropDownItems.Add(generateDbScriptMenuItem);
-
-        // View Menu
-        var viewMenu = new ToolStripMenuItem();
-        viewMenu.Text = "&View";
-
-        var refreshPreviewMenuItem = new ToolStripMenuItem();
-        refreshPreviewMenuItem.Text = "&Refresh Preview";
-        refreshPreviewMenuItem.ShortcutKeys = Keys.F5;
-        refreshPreviewMenuItem.Click += OnRefreshPreview;
-
-        var clearLogMenuItem = new ToolStripMenuItem();
-        clearLogMenuItem.Text = "&Clear Log";
-        clearLogMenuItem.Click += OnClearLog;
-
-        viewMenu.DropDownItems.Add(refreshPreviewMenuItem);
-        viewMenu.DropDownItems.Add(clearLogMenuItem);
-
-        // Help Menu
-        var helpMenu = new ToolStripMenuItem();
-        helpMenu.Text = "&Help";
-
-        var aboutMenuItem = new ToolStripMenuItem();
-        aboutMenuItem.Text = "&About...";
-        aboutMenuItem.Click += OnAbout;
-
-        helpMenu.DropDownItems.Add(aboutMenuItem);
-
-        // Add menus to MenuStrip
-        _menuStrip.Items.Add(fileMenu);
-        _menuStrip.Items.Add(editMenu);
-        _menuStrip.Items.Add(generateMenu);
-        _menuStrip.Items.Add(viewMenu);
-        _menuStrip.Items.Add(helpMenu);
-    }
-    
 
     private TabPage jsonTab;
     private TabPage outputTab;
