@@ -22,7 +22,6 @@ public partial class SettingsForm : Form
         InitializeComponent();
         CreateGeneralTab();
         CreateGeneratorsTab();
-        CreatePackagesTab();
         LoadSettings();
 
         _solutionBrowseBtn.Click += (s, e) => BrowseFolder(_solutionRootTextBox);
@@ -242,4 +241,86 @@ public partial class SettingsForm : Form
         
         return Path.Combine(appFolder, ConfigFileName);
     }
+
+
+    private void CreateGeneralTab()
+    {
+        var _generalTabLayout = new TableLayoutPanel();
+        _generalTabLayout.Dock = DockStyle.Fill;
+        _generalTabLayout.Padding = new Padding(10);
+        _generalTabLayout.ColumnCount = 3;
+        _generalTabLayout.RowCount = 8;
+
+        _generalTabLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150));
+        _generalTabLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        _generalTabLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80));
+
+        //int row = 0;
+
+        _generalTabLayout.Controls.Add(new Label { Text = "Solution Root Folder:", Anchor = AnchorStyles.Left }, 0, 0);
+        _solutionRootTextBox = new TextBox { Dock = DockStyle.Fill };
+        _generalTabLayout.Controls.Add(_solutionRootTextBox, 1, 0);
+        var solutionBrowseBtn = new Button { Text = "Browse", Dock = DockStyle.Fill };
+        solutionBrowseBtn.Click += (s, e) => BrowseFolder(_solutionRootTextBox);
+        _generalTabLayout.Controls.Add(solutionBrowseBtn, 2, 0);
+
+        _generalTabLayout.Controls.Add(new Label { Text = "Root Namespace:", Anchor = AnchorStyles.Left }, 0, 1);
+        _namespaceTextBox = new TextBox { Dock = DockStyle.Fill };
+        _generalTabLayout.Controls.Add(_namespaceTextBox, 1, 1);
+        _generalTabLayout.SetColumnSpan(_namespaceTextBox, 2);
+
+        _generalTabLayout.Controls.Add(new Label { Text = "Template Folder:", Anchor = AnchorStyles.Left }, 0, 2);
+        _templateFolderTextBox = new TextBox { Dock = DockStyle.Fill };
+        _generalTabLayout.Controls.Add(_templateFolderTextBox, 1, 2);
+        var templateBrowseBtn = new Button { Text = "Browse", Dock = DockStyle.Fill };
+        templateBrowseBtn.Click += (s, e) => BrowseFolder(_templateFolderTextBox);
+        _generalTabLayout.Controls.Add(templateBrowseBtn, 2, 2);
+
+        _generalTabLayout.Controls.Add(new Label { Text = "Output Folder:", Anchor = AnchorStyles.Left }, 0, 3);
+        _outputFolderTextBox = new TextBox { Dock = DockStyle.Fill };
+        _generalTabLayout.Controls.Add(_outputFolderTextBox, 1, 3);
+        var outputBrowseBtn = new Button { Text = "Browse", Dock = DockStyle.Fill };
+        outputBrowseBtn.Click += (s, e) => BrowseFolder(_outputFolderTextBox);
+        _generalTabLayout.Controls.Add(outputBrowseBtn, 2, 3);
+
+        _generalTabLayout.Controls.Add(new Label { Text = "Target Framework:", Anchor = AnchorStyles.Left }, 0, 4);
+        _targetFrameworkTextBox = new TextBox { Dock = DockStyle.Fill };
+        _generalTabLayout.Controls.Add(_targetFrameworkTextBox, 1, 4);
+        _generalTabLayout.SetColumnSpan(_targetFrameworkTextBox, 2);
+
+        _overwriteCheckBox = new CheckBox { Text = "Overwrite existing files", Anchor = AnchorStyles.Left };
+        _generalTabLayout.Controls.Add(_overwriteCheckBox, 1, 5);
+        _generalTabLayout.SetColumnSpan(_overwriteCheckBox, 2);
+
+        _backupCheckBox = new CheckBox { Text = "Create backup before overwriting", Anchor = AnchorStyles.Left };
+        _generalTabLayout.Controls.Add(_backupCheckBox, 1, 6);
+        _generalTabLayout.SetColumnSpan(_backupCheckBox, 2);
+        _generalTab.Controls.Clear();
+        _generalTab.Controls.Add(_generalTabLayout);
+    }
+
+    private void CreateGeneratorsTab()
+    {
+        _generatorsGrid = new DataGridView
+        {
+            Dock = DockStyle.Fill,
+            AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+            AllowUserToAddRows = false,
+            AllowUserToDeleteRows = false,
+            SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+            MultiSelect = false
+        };
+
+        _generatorsGrid.Columns.AddRange(new DataGridViewColumn[]
+        {
+            new DataGridViewCheckBoxColumn { Name = "Enabled", HeaderText = "Enabled", Width = 60 },
+            new DataGridViewTextBoxColumn { Name = "Id", HeaderText = "ID", ReadOnly = true },
+            new DataGridViewTextBoxColumn { Name = "Name", HeaderText = "Name", ReadOnly = true },
+            new DataGridViewTextBoxColumn { Name = "Layer", HeaderText = "Layer", ReadOnly = true },
+            new DataGridViewTextBoxColumn { Name = "OutputPath", HeaderText = "Output Path" }
+        });
+
+        _generatorsTab.Controls.Add(_generatorsGrid);
+    }
+
 }

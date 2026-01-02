@@ -25,6 +25,9 @@ partial class SettingsForm
     private Button _solutionBrowseBtn;
     private Button _templateBrowseBtn;
     private Button _outputBrowseBtn;
+    private DataGridViewTextBoxColumn _packagesPackageIdColumn;
+    private DataGridViewTextBoxColumn _packagesVersionColumn;
+    private DataGridViewTextBoxColumn _packagesLayersColumn;
     protected override void Dispose(bool disposing)
     {
         if (disposing && (components != null))
@@ -51,6 +54,10 @@ partial class SettingsForm
         _backupCheckBox = new CheckBox();
         _generatorsTab = new TabPage();
         _packagesTab = new TabPage();
+        _packagesGrid = new DataGridView();
+        _packagesPackageIdColumn = new DataGridViewTextBoxColumn();
+        _packagesVersionColumn = new DataGridViewTextBoxColumn();
+        _packagesLayersColumn = new DataGridViewTextBoxColumn();
         _buttonPanel = new Panel();
         _saveButton = new Button();
         _cancelButton = new Button();
@@ -58,6 +65,8 @@ partial class SettingsForm
         _tabControl.SuspendLayout();
         _generalTab.SuspendLayout();
         _generalTabLayout.SuspendLayout();
+        _packagesTab.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)_packagesGrid).BeginInit();
         _buttonPanel.SuspendLayout();
         SuspendLayout();
         // 
@@ -204,11 +213,38 @@ partial class SettingsForm
         // 
         // _packagesTab
         // 
+        _packagesTab.Controls.Add(_packagesGrid);
         _packagesTab.Location = new Point(4, 24);
         _packagesTab.Name = "_packagesTab";
         _packagesTab.Size = new Size(776, 483);
         _packagesTab.TabIndex = 2;
         _packagesTab.Text = "NuGet Packages";
+        // 
+        // _packagesGrid
+        // 
+        _packagesGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        _packagesGrid.Columns.AddRange(new DataGridViewColumn[] { _packagesPackageIdColumn, _packagesVersionColumn, _packagesLayersColumn });
+        _packagesGrid.Dock = DockStyle.Fill;
+        _packagesGrid.Location = new Point(0, 0);
+        _packagesGrid.Name = "_packagesGrid";
+        _packagesGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        _packagesGrid.Size = new Size(776, 483);
+        _packagesGrid.TabIndex = 0;
+        // 
+        // _packagesPackageIdColumn
+        // 
+        _packagesPackageIdColumn.HeaderText = "Package ID";
+        _packagesPackageIdColumn.Name = "_packagesPackageIdColumn";
+        // 
+        // _packagesVersionColumn
+        // 
+        _packagesVersionColumn.HeaderText = "Version";
+        _packagesVersionColumn.Name = "_packagesVersionColumn";
+        // 
+        // _packagesLayersColumn
+        // 
+        _packagesLayersColumn.HeaderText = "Layers";
+        _packagesLayersColumn.Name = "_packagesLayersColumn";
         // 
         // _buttonPanel
         // 
@@ -266,108 +302,10 @@ partial class SettingsForm
         _generalTab.ResumeLayout(false);
         _generalTabLayout.ResumeLayout(false);
         _generalTabLayout.PerformLayout();
+        _packagesTab.ResumeLayout(false);
+        ((System.ComponentModel.ISupportInitialize)_packagesGrid).EndInit();
         _buttonPanel.ResumeLayout(false);
         ResumeLayout(false);
     }
 
-    private void CreateGeneralTab()
-    {
-        var _generalTabLayout = new TableLayoutPanel();
-        _generalTabLayout.Dock = DockStyle.Fill;
-        _generalTabLayout.Padding = new Padding(10);
-        _generalTabLayout.ColumnCount = 3;
-        _generalTabLayout.RowCount = 8;
-
-        _generalTabLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150));
-        _generalTabLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-        _generalTabLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80));
-
-        //int row = 0;
-
-        _generalTabLayout.Controls.Add(new Label { Text = "Solution Root Folder:", Anchor = AnchorStyles.Left }, 0, 0);
-        _solutionRootTextBox = new TextBox { Dock = DockStyle.Fill };
-        _generalTabLayout.Controls.Add(_solutionRootTextBox, 1, 0);
-        var solutionBrowseBtn = new Button { Text = "Browse", Dock = DockStyle.Fill };
-        solutionBrowseBtn.Click += (s, e) => BrowseFolder(_solutionRootTextBox);
-        _generalTabLayout.Controls.Add(solutionBrowseBtn, 2, 0);
-
-        _generalTabLayout.Controls.Add(new Label { Text = "Root Namespace:", Anchor = AnchorStyles.Left }, 0, 1);
-        _namespaceTextBox = new TextBox { Dock = DockStyle.Fill };
-        _generalTabLayout.Controls.Add(_namespaceTextBox, 1, 1);
-        _generalTabLayout.SetColumnSpan(_namespaceTextBox, 2);
-
-        _generalTabLayout.Controls.Add(new Label { Text = "Template Folder:", Anchor = AnchorStyles.Left }, 0, 2);
-        _templateFolderTextBox = new TextBox { Dock = DockStyle.Fill };
-        _generalTabLayout.Controls.Add(_templateFolderTextBox, 1, 2);
-        var templateBrowseBtn = new Button { Text = "Browse", Dock = DockStyle.Fill };
-        templateBrowseBtn.Click += (s, e) => BrowseFolder(_templateFolderTextBox);
-        _generalTabLayout.Controls.Add(templateBrowseBtn, 2, 2);
-
-        _generalTabLayout.Controls.Add(new Label { Text = "Output Folder:", Anchor = AnchorStyles.Left }, 0, 3);
-        _outputFolderTextBox = new TextBox { Dock = DockStyle.Fill };
-        _generalTabLayout.Controls.Add(_outputFolderTextBox, 1, 3);
-        var outputBrowseBtn = new Button { Text = "Browse", Dock = DockStyle.Fill };
-        outputBrowseBtn.Click += (s, e) => BrowseFolder(_outputFolderTextBox);
-        _generalTabLayout.Controls.Add(outputBrowseBtn, 2, 3);
-
-        _generalTabLayout.Controls.Add(new Label { Text = "Target Framework:", Anchor = AnchorStyles.Left }, 0, 4);
-        _targetFrameworkTextBox = new TextBox { Dock = DockStyle.Fill };
-        _generalTabLayout.Controls.Add(_targetFrameworkTextBox, 1, 4);
-        _generalTabLayout.SetColumnSpan(_targetFrameworkTextBox, 2);
-
-        _overwriteCheckBox = new CheckBox { Text = "Overwrite existing files", Anchor = AnchorStyles.Left };
-        _generalTabLayout.Controls.Add(_overwriteCheckBox, 1, 5);
-        _generalTabLayout.SetColumnSpan(_overwriteCheckBox, 2);
-
-        _backupCheckBox = new CheckBox { Text = "Create backup before overwriting", Anchor = AnchorStyles.Left };
-        _generalTabLayout.Controls.Add(_backupCheckBox, 1, 6);
-        _generalTabLayout.SetColumnSpan(_backupCheckBox, 2);
-        _generalTab.Controls.Clear();
-        _generalTab.Controls.Add(_generalTabLayout);
-    }
-
-    private void CreateGeneratorsTab()
-    {
-        _generatorsGrid = new DataGridView
-        {
-            Dock = DockStyle.Fill,
-            AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-            AllowUserToAddRows = false,
-            AllowUserToDeleteRows = false,
-            SelectionMode = DataGridViewSelectionMode.FullRowSelect,
-            MultiSelect = false
-        };
-
-        _generatorsGrid.Columns.AddRange(new DataGridViewColumn[]
-        {
-            new DataGridViewCheckBoxColumn { Name = "Enabled", HeaderText = "Enabled", Width = 60 },
-            new DataGridViewTextBoxColumn { Name = "Id", HeaderText = "ID", ReadOnly = true },
-            new DataGridViewTextBoxColumn { Name = "Name", HeaderText = "Name", ReadOnly = true },
-            new DataGridViewTextBoxColumn { Name = "Layer", HeaderText = "Layer", ReadOnly = true },
-            new DataGridViewTextBoxColumn { Name = "OutputPath", HeaderText = "Output Path" }
-        });
-
-        _generatorsTab.Controls.Add(_generatorsGrid);
-    }
-
-    private void CreatePackagesTab()
-    {
-        _packagesGrid = new DataGridView
-        {
-            Dock = DockStyle.Fill,
-            AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-            AllowUserToAddRows = true,
-            AllowUserToDeleteRows = true,
-            SelectionMode = DataGridViewSelectionMode.FullRowSelect
-        };
-
-        _packagesGrid.Columns.AddRange(new DataGridViewColumn[]
-        {
-            new DataGridViewTextBoxColumn { Name = "PackageId", HeaderText = "Package ID" },
-            new DataGridViewTextBoxColumn { Name = "Version", HeaderText = "Version" },
-            new DataGridViewTextBoxColumn { Name = "Layers", HeaderText = "Layers" }
-        });
-
-        _packagesTab.Controls.Add(_packagesGrid);
-    }
 }
