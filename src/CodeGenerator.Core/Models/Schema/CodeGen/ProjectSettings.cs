@@ -24,4 +24,7 @@ public class ProjectSettings
 
     [JsonPropertyName("testsProjectName")]
     public string? TestsProjectName { get; set; }
+
+    [JsonPropertyName("sharedProjectName")]
+    public string? SharedProjectName { get; set; }
 }

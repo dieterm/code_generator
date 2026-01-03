@@ -1,3 +1,5 @@
+using CodeGenerator.Core;
+using CodeGenerator.Core.Events;
 using CodeGenerator.Core.Interfaces;
 using CodeGenerator.Core.Services;
 using CodeGenerator.Generators;
@@ -5,16 +7,20 @@ using CodeGenerator.Generators.Application;
 using CodeGenerator.Generators.Domain;
 using CodeGenerator.Generators.Infrastructure;
 using CodeGenerator.Generators.Presentation;
+using CodeGenerator.Generators.Shared;
 using CodeGenerator.Templates;
 using CodeGenerator.WinForms.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using CodeGenerator.Generators;
+using CodeGenerator.Core;
 
 namespace CodeGenerator.WinForms;
 
 internal static class Program
 {
     public static IServiceProvider ServiceProvider { get; private set; } = null!;
+    public static LoggingService LoggingService { get; } = new LoggingService();
 
     [STAThread]
     static void Main()
@@ -24,41 +30,26 @@ internal static class Program
         var services = new ServiceCollection();
         ConfigureServices(services);
         ServiceProvider = services.BuildServiceProvider();
-
+        ServiceProviderHolder.Initialize(ServiceProvider);
         Application.Run(ServiceProvider.GetRequiredService<MainForm>());
     }
 
     private static void ConfigureServices(IServiceCollection services)
     {
-        // Logging
+        // Logging - add both Debug and LoggingService logger
         services.AddLogging(builder =>
         {
             builder.AddDebug();
+            builder.AddLoggingService(LoggingService, LogLevel.Information);
             builder.SetMinimumLevel(LogLevel.Debug);
         });
-
-        // Core services
-        services.AddSingleton<IFileService, FileService>();
-        services.AddSingleton<ISettingsService, SettingsService>();
-        services.AddSingleton<ISchemaParser, SchemaParser>();
-        services.AddSingleton<ITemplateEngine, ScribanTemplateEngine>();
-        services.AddSingleton<IProjectGenerator, DotNetProjectGenerator>();
-
-        // Runtime compilation services
-        services.AddSingleton<RuntimeCompiler>();
+        // Preview service
         services.AddSingleton<UserControlPreviewService>();
-
+        services.AddSingleton<LoggingService>(LoggingService);
+        // Core
+        services.AddCodeGeneratorCoreServices();
         // Generators
-        services.AddSingleton<ICodeGenerator, EntityGenerator>();
-        services.AddSingleton<ICodeGenerator, DbContextGenerator>();
-        services.AddSingleton<ICodeGenerator, RepositoryGenerator>();
-        services.AddSingleton<ICodeGenerator, DbScriptGenerator>();
-        services.AddSingleton<ICodeGenerator, ControllerGenerator>();
-        services.AddSingleton<ICodeGenerator, ViewModelGenerator>();
-        services.AddSingleton<ICodeGenerator, WinFormsViewGenerator>();
-
-        // Orchestrator
-        services.AddSingleton<GeneratorOrchestrator>();
+        services.AddCodeGeneratorGeneratorsServices();
 
         // Forms
         services.AddTransient<MainForm>();

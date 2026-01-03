@@ -13,7 +13,7 @@ public class SettingsService : ISettingsService
 {
     private readonly ILogger<SettingsService> _logger;
     private readonly JsonSerializerOptions _jsonOptions;
-
+    public GeneratorSettings Settings { get; private set; }
     public SettingsService(ILogger<SettingsService> logger)
     {
         _logger = logger;
@@ -24,19 +24,21 @@ public class SettingsService : ISettingsService
         };
     }
 
-    public async Task<GeneratorSettings> LoadSettingsAsync(string path, CancellationToken cancellationToken = default)
+    public async Task<bool> LoadSettingsAsync(string path, CancellationToken cancellationToken = default)
     {
         try
         {
             if (!File.Exists(path))
             {
                 _logger.LogWarning("Settings file not found at {Path}, using defaults", path);
-                return GetDefaultSettings();
+                Settings = GetDefaultSettings();
+                return false;
             }
 
             var json = await File.ReadAllTextAsync(path, cancellationToken);
             var settings = JsonSerializer.Deserialize<GeneratorSettings>(json, _jsonOptions);
-            return settings ?? GetDefaultSettings();
+            Settings = settings ?? GetDefaultSettings();
+            return settings!=null;
         }
         catch (Exception ex)
         {
@@ -57,6 +59,7 @@ public class SettingsService : ISettingsService
 
             var json = JsonSerializer.Serialize(settings, _jsonOptions);
             await File.WriteAllTextAsync(path, json, cancellationToken);
+            Settings = settings;
             _logger.LogInformation("Saved settings to {Path}", path);
         }
         catch (Exception ex)
@@ -123,11 +126,11 @@ public class SettingsService : ISettingsService
         // Default NuGet packages
         settings.NuGetPackages = new List<NuGetPackageReference>
         {
-            new() { PackageId = "Microsoft.Extensions.DependencyInjection", Version = "8.0.0", Layers = new[] { ArchitectureLayer.Infrastructure, ArchitectureLayer.Application } },
-            new() { PackageId = "Microsoft.Extensions.Logging", Version = "8.0.0", Layers = new[] { ArchitectureLayer.Infrastructure, ArchitectureLayer.Application } },
-            new() { PackageId = "Microsoft.Extensions.Configuration", Version = "8.0.0", Layers = new[] { ArchitectureLayer.Infrastructure } },
-            new() { PackageId = "Microsoft.EntityFrameworkCore", Version = "8.0.0", Layers = new[] { ArchitectureLayer.Infrastructure } },
-            new() { PackageId = "Microsoft.EntityFrameworkCore.SqlServer", Version = "8.0.0", Layers = new[] { ArchitectureLayer.Infrastructure } }
+            new() { PackageId = NuGetPackages.Microsoft_Extensions_DependencyInjection.PackageId, Version = NuGetPackages.Microsoft_Extensions_DependencyInjection.Version, Layers = new[] { ArchitectureLayer.Infrastructure, ArchitectureLayer.Application } },
+            new() { PackageId = NuGetPackages.Microsoft_Extensions_Logging.PackageId, Version = NuGetPackages.Microsoft_Extensions_Logging.Version, Layers = new[] { ArchitectureLayer.Infrastructure, ArchitectureLayer.Application } },
+            new() { PackageId = NuGetPackages.Microsoft_Extensions_Configuration.PackageId, Version = NuGetPackages.Microsoft_Extensions_Configuration.Version, Layers = new[] { ArchitectureLayer.Infrastructure } },
+            new() { PackageId = NuGetPackages.Microsoft_EntityFrameworkCore.PackageId, Version = NuGetPackages.Microsoft_EntityFrameworkCore.Version, Layers = new[] { ArchitectureLayer.Infrastructure } },
+            new() { PackageId = NuGetPackages.Microsoft_EntityFrameworkCore_Relational.PackageId, Version = NuGetPackages.Microsoft_EntityFrameworkCore_Relational.Version, Layers = new[] { ArchitectureLayer.Infrastructure } }
         };
 
         return settings;

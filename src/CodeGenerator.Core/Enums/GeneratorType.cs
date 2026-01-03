@@ -20,5 +20,6 @@ public enum GeneratorType
     Mapper,
     Validator,
     UnitTest,
-    IntegrationTest
+    IntegrationTest,
+    Other
 }

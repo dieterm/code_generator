@@ -53,7 +53,7 @@ public abstract class BaseCodeGenerator : ICodeGenerator
                 result.Success = true;
                 return result;
             }
-
+            
             foreach (var entity in context.Entities)
             {
                 if (cancellationToken.IsCancellationRequested)

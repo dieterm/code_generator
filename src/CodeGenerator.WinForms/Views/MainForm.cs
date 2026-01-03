@@ -19,6 +19,7 @@ public partial class MainForm : Form
     private readonly ITemplateEngine _templateEngine;
     private readonly GeneratorOrchestrator _orchestrator;
     private readonly ILogger<MainForm> _logger;
+    private readonly LoggingService _loggingService;
     private const string ConfigFileName = "AppConfig.json";
 
     private DomainSchema? _currentSchema;
@@ -33,17 +34,43 @@ public partial class MainForm : Form
         ISettingsService settingsService,
         ITemplateEngine templateEngine,
         GeneratorOrchestrator orchestrator,
-        ILogger<MainForm> logger)
+        ILogger<MainForm> logger,
+        LoggingService loggingService)
     {
         _schemaParser = schemaParser;
         _settingsService = settingsService;
         _templateEngine = templateEngine;
         _orchestrator = orchestrator;
         _logger = logger;
+        _loggingService = loggingService;
 
         InitializeComponent();
         SetupEventHandlers();
+        SetupLogging();
         LoadSettingsAsync();
+    }
+
+    private void SetupLogging()
+    {
+        // Register handler to receive log messages from all loggers
+        _loggingService.RegisterHandler(entry =>
+        {
+            // Ensure we're on the UI thread
+            if (_logListBox.InvokeRequired)
+            {
+                _logListBox.BeginInvoke(() => AddLogEntry(entry));
+            }
+            else
+            {
+                AddLogEntry(entry);
+            }
+        });
+    }
+
+    private void AddLogEntry(LogEntry entry)
+    {
+        _logListBox.Items.Add(entry.GetFormattedMessage());
+        _logListBox.TopIndex = _logListBox.Items.Count - 1;
     }
 
     private void GenerateDomainLayer_Click(object? sender, EventArgs e)
@@ -78,7 +105,8 @@ public partial class MainForm : Form
             
             if (File.Exists(configPath))
             {
-                _settings = await _settingsService.LoadSettingsAsync(configPath);
+                var successfulLoad= await _settingsService.LoadSettingsAsync(configPath);
+                _settings = _settingsService.Settings;
                 Log($"Loaded settings from: {configPath}");
             }
             else
@@ -752,9 +780,7 @@ public partial class MainForm : Form
 
     private void Log(string message)
     {
-        var timestamp = DateTime.Now.ToString("HH:mm:ss");
-        _logListBox.Items.Add($"[{timestamp}] {message}");
-        _logListBox.TopIndex = _logListBox.Items.Count - 1;
+        _logger.LogInformation(message);
     }
 
     private bool ConfirmDiscardChanges()

@@ -50,7 +50,8 @@ public class MainFormController : ControllerBase<ViewModels.MainFormViewModel>
             
             if (File.Exists(configPath))
             {
-                ViewModel.Settings = await _settingsService.LoadSettingsAsync(configPath);
+                var settingsLoadedSuccesfully = await _settingsService.LoadSettingsAsync(configPath);
+                ViewModel.Settings = _settingsService.Settings;
                 Log($"Loaded settings from: {configPath}");
             }
             else

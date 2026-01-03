@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using CodeGenerator.Core.Events;
 using CodeGenerator.Core.Interfaces;
 using CodeGenerator.Core.Models.Configuration;
 using CodeGenerator.Core.Services;
@@ -8,6 +9,7 @@ using CodeGenerator.Generators.Application;
 using CodeGenerator.Generators.Domain;
 using CodeGenerator.Generators.Infrastructure;
 using CodeGenerator.Generators.Presentation;
+using CodeGenerator.Generators.Shared;
 using CodeGenerator.Templates;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -200,7 +202,8 @@ class Program
             GeneratorSettings settings;
             if (settingsFile != null && settingsFile.Exists)
             {
-                settings = await settingsService.LoadSettingsAsync(settingsFile.FullName, cancellationToken);
+                var loaded = await settingsService.LoadSettingsAsync(settingsFile.FullName, cancellationToken);
+                settings = settingsService.Settings;
             }
             else
             {
@@ -309,6 +312,9 @@ class Program
         services.AddSingleton<ISchemaParser, SchemaParser>();
         services.AddSingleton<ITemplateEngine, ScribanTemplateEngine>();
         services.AddSingleton<IProjectGenerator, DotNetProjectGenerator>();
+        
+        // Message Bus
+        services.AddSingleton<IGeneratorMessageBus, GeneratorMessageBus>();
 
         // Generators
         services.AddSingleton<ICodeGenerator, EntityGenerator>();
@@ -318,6 +324,10 @@ class Program
         services.AddSingleton<ICodeGenerator, ControllerGenerator>();
         services.AddSingleton<ICodeGenerator, ViewModelGenerator>();
         services.AddSingleton<ICodeGenerator, WinFormsViewGenerator>();
+
+        // Message Bus Aware Generators
+        services.AddSingleton<IMessageBusAwareGenerator, SharedProjectGenerator>();
+        services.AddSingleton<IMessageBusAwareGenerator, UserControlsProjectGenerator>();
 
         // Orchestrator
         services.AddSingleton<GeneratorOrchestrator>();

@@ -10,10 +10,11 @@ namespace CodeGenerator.Core.Interfaces;
 /// </summary>
 public interface ISettingsService
 {
+    GeneratorSettings Settings { get; }
     /// <summary>
     /// Load settings from file
     /// </summary>
-    Task<GeneratorSettings> LoadSettingsAsync(string path, CancellationToken cancellationToken = default);
+    Task<bool> LoadSettingsAsync(string path, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Save settings to file
