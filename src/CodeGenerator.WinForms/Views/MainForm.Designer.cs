@@ -85,15 +85,58 @@ partial class MainForm
 
     private void InitializeComponent()
     {
+        components = new System.ComponentModel.Container();
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
         _menuStrip = new MenuStrip();
+        _fileMenu = new ToolStripMenuItem();
+        _newSchemaMenuItem = new ToolStripMenuItem();
+        _openSchemaMenuItem = new ToolStripMenuItem();
+        _fileMenuSeparator1 = new ToolStripSeparator();
+        _saveMenuItem = new ToolStripMenuItem();
+        _saveAsMenuItem = new ToolStripMenuItem();
+        _fileMenuSeparator2 = new ToolStripSeparator();
+        _settingsMenuItem = new ToolStripMenuItem();
+        _fileMenuSeparator3 = new ToolStripSeparator();
+        _exitMenuItem = new ToolStripMenuItem();
+        _editMenu = new ToolStripMenuItem();
+        _addEntityMenuItem = new ToolStripMenuItem();
+        _addPropertyMenuItem = new ToolStripMenuItem();
+        _editMenuSeparator = new ToolStripSeparator();
+        _deleteMenuItem = new ToolStripMenuItem();
+        _generateMenu = new ToolStripMenuItem();
+        _previewAllMenuItem = new ToolStripMenuItem();
+        _generateMenuSeparator1 = new ToolStripSeparator();
+        _generateAllMenuItem = new ToolStripMenuItem();
+        _generateDomainMenuItem = new ToolStripMenuItem();
+        _generateInfraMenuItem = new ToolStripMenuItem();
+        _generateAppMenuItem = new ToolStripMenuItem();
+        _generatePresentationMenuItem = new ToolStripMenuItem();
+        _generateMenuSeparator2 = new ToolStripSeparator();
+        _generateDbScriptMenuItem = new ToolStripMenuItem();
+        _viewMenu = new ToolStripMenuItem();
+        _refreshPreviewMenuItem = new ToolStripMenuItem();
+        _clearLogMenuItem = new ToolStripMenuItem();
+        _helpMenu = new ToolStripMenuItem();
+        _aboutMenuItem = new ToolStripMenuItem();
         _toolStrip = new ToolStrip();
+        _newButton = new ToolStripButton();
+        _openButton = new ToolStripButton();
+        _saveButton = new ToolStripButton();
+        _separator1 = new ToolStripSeparator();
+        _addEntityButton = new ToolStripButton();
+        _addPropertyButton = new ToolStripButton();
+        _separator2 = new ToolStripSeparator();
+        _previewButton = new ToolStripButton();
+        _generateButton = new ToolStripButton();
+        _separator3 = new ToolStripSeparator();
+        _settingsButton = new ToolStripButton();
         _statusStrip = new StatusStrip();
         _statusLabel = new ToolStripStatusLabel();
         _progressBar = new ToolStripProgressBar();
         _mainSplitContainer = new SplitContainer();
         _leftSplitContainer = new SplitContainer();
         _schemaTreeView = new TreeView();
+        _treeViewImageList = new ImageList(components);
         _propertyGrid = new PropertyGrid();
         _previewTabControl = new TabControl();
         jsonTab = new TabPage();
@@ -106,6 +149,8 @@ partial class MainForm
         _userControlPreviewPanel = new Panel();
         logTab = new TabPage();
         _logListBox = new ListBox();
+        _menuStrip.SuspendLayout();
+        _toolStrip.SuspendLayout();
         _statusStrip.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)_mainSplitContainer).BeginInit();
         _mainSplitContainer.Panel1.SuspendLayout();
@@ -122,242 +167,307 @@ partial class MainForm
         userControlTab.SuspendLayout();
         logTab.SuspendLayout();
         SuspendLayout();
-        //
-        // _treeViewImageList
-        //
-        _treeViewImageList = new ImageList();
-        _treeViewImageList.ImageSize = new Size(16, 16);
-
-        _treeViewImageList.Images.Add("Schema", Resources.SchemaIcon);
-        _treeViewImageList.Images.Add("ValueTypes", Resources.ValueTypesIcon);
-        _treeViewImageList.Images.Add("Entities", Resources.EntitiesIcon);
-        _treeViewImageList.Images.Add("CodeGenSettings", Resources.SettingsIcon);
-        _treeViewImageList.Images.Add("DatabaseSettings", Resources.SettingsIcon);
-        _treeViewImageList.Images.Add("DDDSettings", Resources.SettingsIcon);
         // 
         // _menuStrip
         // 
+        _menuStrip.Items.AddRange(new ToolStripItem[] { _fileMenu, _editMenu, _generateMenu, _viewMenu, _helpMenu });
         _menuStrip.Location = new Point(0, 0);
         _menuStrip.Name = "_menuStrip";
         _menuStrip.Size = new Size(1384, 24);
         _menuStrip.TabIndex = 2;
-        // File Menu
-        _fileMenu = new ToolStripMenuItem();
+        // 
+        // _fileMenu
+        // 
+        _fileMenu.DropDownItems.AddRange(new ToolStripItem[] { _newSchemaMenuItem, _openSchemaMenuItem, _fileMenuSeparator1, _saveMenuItem, _saveAsMenuItem, _fileMenuSeparator2, _settingsMenuItem, _fileMenuSeparator3, _exitMenuItem });
+        _fileMenu.Name = "_fileMenu";
+        _fileMenu.Size = new Size(37, 20);
         _fileMenu.Text = "&File";
-
-        _newSchemaMenuItem = new ToolStripMenuItem();
-        _newSchemaMenuItem.Text = "&New Schema";
+        // 
+        // _newSchemaMenuItem
+        // 
+        _newSchemaMenuItem.Name = "_newSchemaMenuItem";
         _newSchemaMenuItem.ShortcutKeys = Keys.Control | Keys.N;
+        _newSchemaMenuItem.Size = new Size(32, 19);
+        _newSchemaMenuItem.Text = "&New Schema";
         _newSchemaMenuItem.Click += OnNewSchema;
-
-        _openSchemaMenuItem = new ToolStripMenuItem();
-        _openSchemaMenuItem.Text = "&Open Schema...";
+        // 
+        // _openSchemaMenuItem
+        // 
+        _openSchemaMenuItem.Name = "_openSchemaMenuItem";
         _openSchemaMenuItem.ShortcutKeys = Keys.Control | Keys.O;
+        _openSchemaMenuItem.Size = new Size(32, 19);
+        _openSchemaMenuItem.Text = "&Open Schema...";
         _openSchemaMenuItem.Click += OnOpenSchema;
-
-        _fileMenuSeparator1 = new ToolStripSeparator();
-
-        _saveMenuItem = new ToolStripMenuItem();
-        _saveMenuItem.Text = "&Save";
+        // 
+        // _fileMenuSeparator1
+        // 
+        _fileMenuSeparator1.Name = "_fileMenuSeparator1";
+        _fileMenuSeparator1.Size = new Size(6, 6);
+        // 
+        // _saveMenuItem
+        // 
+        _saveMenuItem.Name = "_saveMenuItem";
         _saveMenuItem.ShortcutKeys = Keys.Control | Keys.S;
+        _saveMenuItem.Size = new Size(32, 19);
+        _saveMenuItem.Text = "&Save";
         _saveMenuItem.Click += OnSaveSchema;
-
-        _saveAsMenuItem = new ToolStripMenuItem();
+        // 
+        // _saveAsMenuItem
+        // 
+        _saveAsMenuItem.Name = "_saveAsMenuItem";
+        _saveAsMenuItem.Size = new Size(32, 19);
         _saveAsMenuItem.Text = "Save &As...";
         _saveAsMenuItem.Click += OnSaveSchemaAs;
-
-        _fileMenuSeparator2 = new ToolStripSeparator();
-
-        _settingsMenuItem = new ToolStripMenuItem();
+        // 
+        // _fileMenuSeparator2
+        // 
+        _fileMenuSeparator2.Name = "_fileMenuSeparator2";
+        _fileMenuSeparator2.Size = new Size(6, 6);
+        // 
+        // _settingsMenuItem
+        // 
+        _settingsMenuItem.Name = "_settingsMenuItem";
+        _settingsMenuItem.Size = new Size(32, 19);
         _settingsMenuItem.Text = "&Settings...";
         _settingsMenuItem.Click += OnOpenSettings;
-
-        _fileMenuSeparator3 = new ToolStripSeparator();
-
-        _exitMenuItem = new ToolStripMenuItem();
-        _exitMenuItem.Text = "E&xit";
+        // 
+        // _fileMenuSeparator3
+        // 
+        _fileMenuSeparator3.Name = "_fileMenuSeparator3";
+        _fileMenuSeparator3.Size = new Size(6, 6);
+        // 
+        // _exitMenuItem
+        // 
+        _exitMenuItem.Name = "_exitMenuItem";
         _exitMenuItem.ShortcutKeys = Keys.Alt | Keys.F4;
+        _exitMenuItem.Size = new Size(32, 19);
+        _exitMenuItem.Text = "E&xit";
         _exitMenuItem.Click += OnExit;
-
-        _fileMenu.DropDownItems.Add(_newSchemaMenuItem);
-        _fileMenu.DropDownItems.Add(_openSchemaMenuItem);
-        _fileMenu.DropDownItems.Add(_fileMenuSeparator1);
-        _fileMenu.DropDownItems.Add(_saveMenuItem);
-        _fileMenu.DropDownItems.Add(_saveAsMenuItem);
-        _fileMenu.DropDownItems.Add(_fileMenuSeparator2);
-        _fileMenu.DropDownItems.Add(_settingsMenuItem);
-        _fileMenu.DropDownItems.Add(_fileMenuSeparator3);
-        _fileMenu.DropDownItems.Add(_exitMenuItem);
-
-        // Edit Menu
-        _editMenu = new ToolStripMenuItem();
+        // 
+        // _editMenu
+        // 
+        _editMenu.DropDownItems.AddRange(new ToolStripItem[] { _addEntityMenuItem, _addPropertyMenuItem, _editMenuSeparator, _deleteMenuItem });
+        _editMenu.Name = "_editMenu";
+        _editMenu.Size = new Size(39, 20);
         _editMenu.Text = "&Edit";
-
-        _addEntityMenuItem = new ToolStripMenuItem();
+        // 
+        // _addEntityMenuItem
+        // 
+        _addEntityMenuItem.Name = "_addEntityMenuItem";
+        _addEntityMenuItem.Size = new Size(32, 19);
         _addEntityMenuItem.Text = "Add &Entity...";
         _addEntityMenuItem.Click += OnAddEntity;
-
-        _addPropertyMenuItem = new ToolStripMenuItem();
+        // 
+        // _addPropertyMenuItem
+        // 
+        _addPropertyMenuItem.Name = "_addPropertyMenuItem";
+        _addPropertyMenuItem.Size = new Size(32, 19);
         _addPropertyMenuItem.Text = "Add &Property...";
         _addPropertyMenuItem.Click += OnAddProperty;
-
-        _editMenuSeparator = new ToolStripSeparator();
-
-        _deleteMenuItem = new ToolStripMenuItem();
-        _deleteMenuItem.Text = "&Delete";
+        // 
+        // _editMenuSeparator
+        // 
+        _editMenuSeparator.Name = "_editMenuSeparator";
+        _editMenuSeparator.Size = new Size(6, 6);
+        // 
+        // _deleteMenuItem
+        // 
+        _deleteMenuItem.Name = "_deleteMenuItem";
         _deleteMenuItem.ShortcutKeys = Keys.Delete;
+        _deleteMenuItem.Size = new Size(32, 19);
+        _deleteMenuItem.Text = "&Delete";
         _deleteMenuItem.Click += OnDeleteSelected;
-
-        _editMenu.DropDownItems.Add(_addEntityMenuItem);
-        _editMenu.DropDownItems.Add(_addPropertyMenuItem);
-        _editMenu.DropDownItems.Add(_editMenuSeparator);
-        _editMenu.DropDownItems.Add(_deleteMenuItem);
-
-        // Generate Menu
-        _generateMenu = new ToolStripMenuItem();
+        // 
+        // _generateMenu
+        // 
+        _generateMenu.DropDownItems.AddRange(new ToolStripItem[] { _previewAllMenuItem, _generateMenuSeparator1, _generateAllMenuItem, _generateDomainMenuItem, _generateInfraMenuItem, _generateAppMenuItem, _generatePresentationMenuItem, _generateMenuSeparator2, _generateDbScriptMenuItem });
+        _generateMenu.Name = "_generateMenu";
+        _generateMenu.Size = new Size(66, 20);
         _generateMenu.Text = "&Generate";
-
-        _previewAllMenuItem = new ToolStripMenuItem();
-        _previewAllMenuItem.Text = "&Preview All";
+        // 
+        // _previewAllMenuItem
+        // 
+        _previewAllMenuItem.Name = "_previewAllMenuItem";
         _previewAllMenuItem.ShortcutKeys = Keys.F5;
+        _previewAllMenuItem.Size = new Size(226, 22);
+        _previewAllMenuItem.Text = "&Preview All";
         _previewAllMenuItem.Click += OnPreviewAll;
-
-        _generateMenuSeparator1 = new ToolStripSeparator();
-
-        _generateAllMenuItem = new ToolStripMenuItem();
-        _generateAllMenuItem.Text = "Generate &All";
+        // 
+        // _generateMenuSeparator1
+        // 
+        _generateMenuSeparator1.Name = "_generateMenuSeparator1";
+        _generateMenuSeparator1.Size = new Size(223, 6);
+        // 
+        // _generateAllMenuItem
+        // 
+        _generateAllMenuItem.Name = "_generateAllMenuItem";
         _generateAllMenuItem.ShortcutKeys = Keys.F6;
+        _generateAllMenuItem.Size = new Size(226, 22);
+        _generateAllMenuItem.Text = "Generate &All";
         _generateAllMenuItem.Click += OnGenerateAll;
-
-        _generateDomainMenuItem = new ToolStripMenuItem();
+        // 
+        // _generateDomainMenuItem
+        // 
+        _generateDomainMenuItem.Name = "_generateDomainMenuItem";
+        _generateDomainMenuItem.Size = new Size(226, 22);
         _generateDomainMenuItem.Text = "Generate &Domain Layer";
         _generateDomainMenuItem.Click += GenerateDomainLayer_Click;
-
-        _generateInfraMenuItem = new ToolStripMenuItem();
+        // 
+        // _generateInfraMenuItem
+        // 
+        _generateInfraMenuItem.Name = "_generateInfraMenuItem";
+        _generateInfraMenuItem.Size = new Size(226, 22);
         _generateInfraMenuItem.Text = "Generate &Infrastructure Layer";
         _generateInfraMenuItem.Click += GenerateInfrastructureLayer_Click;
-
-        _generateAppMenuItem = new ToolStripMenuItem();
+        // 
+        // _generateAppMenuItem
+        // 
+        _generateAppMenuItem.Name = "_generateAppMenuItem";
+        _generateAppMenuItem.Size = new Size(226, 22);
         _generateAppMenuItem.Text = "Generate &Application Layer";
         _generateAppMenuItem.Click += GenerateApplicationLayer_Click;
-
-        _generatePresentationMenuItem = new ToolStripMenuItem();
+        // 
+        // _generatePresentationMenuItem
+        // 
+        _generatePresentationMenuItem.Name = "_generatePresentationMenuItem";
+        _generatePresentationMenuItem.Size = new Size(226, 22);
         _generatePresentationMenuItem.Text = "Generate &Presentation Layer";
         _generatePresentationMenuItem.Click += GeneratePresentationLayer_Click;
-
-        _generateMenuSeparator2 = new ToolStripSeparator();
-
-        _generateDbScriptMenuItem = new ToolStripMenuItem();
+        // 
+        // _generateMenuSeparator2
+        // 
+        _generateMenuSeparator2.Name = "_generateMenuSeparator2";
+        _generateMenuSeparator2.Size = new Size(223, 6);
+        // 
+        // _generateDbScriptMenuItem
+        // 
+        _generateDbScriptMenuItem.Name = "_generateDbScriptMenuItem";
+        _generateDbScriptMenuItem.Size = new Size(226, 22);
         _generateDbScriptMenuItem.Text = "Generate &Database Scripts";
         _generateDbScriptMenuItem.Click += GenerateDatabaseScripts_Click;
-
-        _generateMenu.DropDownItems.Add(_previewAllMenuItem);
-        _generateMenu.DropDownItems.Add(_generateMenuSeparator1);
-        _generateMenu.DropDownItems.Add(_generateAllMenuItem);
-        _generateMenu.DropDownItems.Add(_generateDomainMenuItem);
-        _generateMenu.DropDownItems.Add(_generateInfraMenuItem);
-        _generateMenu.DropDownItems.Add(_generateAppMenuItem);
-        _generateMenu.DropDownItems.Add(_generatePresentationMenuItem);
-        _generateMenu.DropDownItems.Add(_generateMenuSeparator2);
-        _generateMenu.DropDownItems.Add(_generateDbScriptMenuItem);
-
-        // View Menu
-        _viewMenu = new ToolStripMenuItem();
+        // 
+        // _viewMenu
+        // 
+        _viewMenu.DropDownItems.AddRange(new ToolStripItem[] { _refreshPreviewMenuItem, _clearLogMenuItem });
+        _viewMenu.Name = "_viewMenu";
+        _viewMenu.Size = new Size(44, 20);
         _viewMenu.Text = "&View";
-
-        _refreshPreviewMenuItem = new ToolStripMenuItem();
-        _refreshPreviewMenuItem.Text = "&Refresh Preview";
+        // 
+        // _refreshPreviewMenuItem
+        // 
+        _refreshPreviewMenuItem.Name = "_refreshPreviewMenuItem";
         _refreshPreviewMenuItem.ShortcutKeys = Keys.F5;
+        _refreshPreviewMenuItem.Size = new Size(32, 19);
+        _refreshPreviewMenuItem.Text = "&Refresh Preview";
         _refreshPreviewMenuItem.Click += OnRefreshPreview;
-
-        _clearLogMenuItem = new ToolStripMenuItem();
+        // 
+        // _clearLogMenuItem
+        // 
+        _clearLogMenuItem.Name = "_clearLogMenuItem";
+        _clearLogMenuItem.Size = new Size(32, 19);
         _clearLogMenuItem.Text = "&Clear Log";
         _clearLogMenuItem.Click += OnClearLog;
-
-        _viewMenu.DropDownItems.Add(_refreshPreviewMenuItem);
-        _viewMenu.DropDownItems.Add(_clearLogMenuItem);
-
-        // Help Menu
-        _helpMenu = new ToolStripMenuItem();
+        // 
+        // _helpMenu
+        // 
+        _helpMenu.DropDownItems.AddRange(new ToolStripItem[] { _aboutMenuItem });
+        _helpMenu.Name = "_helpMenu";
+        _helpMenu.Size = new Size(44, 20);
         _helpMenu.Text = "&Help";
-
-        _aboutMenuItem = new ToolStripMenuItem();
+        // 
+        // _aboutMenuItem
+        // 
+        _aboutMenuItem.Name = "_aboutMenuItem";
+        _aboutMenuItem.Size = new Size(32, 19);
         _aboutMenuItem.Text = "&About...";
         _aboutMenuItem.Click += OnAbout;
-
-        _helpMenu.DropDownItems.Add(_aboutMenuItem);
-
-        // Add menus to MenuStrip
-        _menuStrip.Items.Add(_fileMenu);
-        _menuStrip.Items.Add(_editMenu);
-        _menuStrip.Items.Add(_generateMenu);
-        _menuStrip.Items.Add(_viewMenu);
-        _menuStrip.Items.Add(_helpMenu);
         // 
         // _toolStrip
         // 
+        _toolStrip.Items.AddRange(new ToolStripItem[] { _newButton, _openButton, _saveButton, _separator1, _addEntityButton, _addPropertyButton, _separator2, _previewButton, _generateButton, _separator3, _settingsButton });
         _toolStrip.Location = new Point(0, 24);
         _toolStrip.Name = "_toolStrip";
         _toolStrip.Size = new Size(1384, 25);
         _toolStrip.TabIndex = 1;
-
-        _newButton = new ToolStripButton();
+        // 
+        // _newButton
+        // 
+        _newButton.Name = "_newButton";
+        _newButton.Size = new Size(35, 22);
         _newButton.Text = "New";
         _newButton.ToolTipText = "New Schema";
         _newButton.Click += OnNewSchema;
-
-        _openButton = new ToolStripButton();
+        // 
+        // _openButton
+        // 
+        _openButton.Name = "_openButton";
+        _openButton.Size = new Size(40, 22);
         _openButton.Text = "Open";
         _openButton.ToolTipText = "Open Schema";
         _openButton.Click += OnOpenSchema;
-
-        _saveButton = new ToolStripButton();
+        // 
+        // _saveButton
+        // 
+        _saveButton.Name = "_saveButton";
+        _saveButton.Size = new Size(35, 22);
         _saveButton.Text = "Save";
         _saveButton.ToolTipText = "Save Schema";
         _saveButton.Click += OnSaveSchema;
-
-        _separator1 = new ToolStripSeparator();
-
-        _addEntityButton = new ToolStripButton();
+        // 
+        // _separator1
+        // 
+        _separator1.Name = "_separator1";
+        _separator1.Size = new Size(6, 25);
+        // 
+        // _addEntityButton
+        // 
+        _addEntityButton.Name = "_addEntityButton";
+        _addEntityButton.Size = new Size(66, 22);
         _addEntityButton.Text = "Add Entity";
         _addEntityButton.ToolTipText = "Add New Entity";
         _addEntityButton.Click += OnAddEntity;
-
-        _addPropertyButton = new ToolStripButton();
+        // 
+        // _addPropertyButton
+        // 
+        _addPropertyButton.Name = "_addPropertyButton";
+        _addPropertyButton.Size = new Size(81, 22);
         _addPropertyButton.Text = "Add Property";
         _addPropertyButton.ToolTipText = "Add New Property";
         _addPropertyButton.Click += OnAddProperty;
-
-        _separator2 = new ToolStripSeparator();
-
-        _previewButton = new ToolStripButton();
+        // 
+        // _separator2
+        // 
+        _separator2.Name = "_separator2";
+        _separator2.Size = new Size(6, 25);
+        // 
+        // _previewButton
+        // 
+        _previewButton.Name = "_previewButton";
+        _previewButton.Size = new Size(52, 22);
         _previewButton.Text = "Preview";
         _previewButton.ToolTipText = "Preview Generated Code (F5)";
         _previewButton.Click += OnPreviewAll;
-
-        _generateButton = new ToolStripButton();
+        // 
+        // _generateButton
+        // 
+        _generateButton.Name = "_generateButton";
+        _generateButton.Size = new Size(58, 22);
         _generateButton.Text = "Generate";
         _generateButton.ToolTipText = "Generate All Code (F6)";
         _generateButton.Click += OnGenerateAll;
-
-        _separator3 = new ToolStripSeparator();
-
-        _settingsButton = new ToolStripButton();
+        // 
+        // _separator3
+        // 
+        _separator3.Name = "_separator3";
+        _separator3.Size = new Size(6, 25);
+        // 
+        // _settingsButton
+        // 
+        _settingsButton.Name = "_settingsButton";
+        _settingsButton.Size = new Size(53, 22);
         _settingsButton.Text = "Settings";
         _settingsButton.ToolTipText = "Open Settings";
         _settingsButton.Click += OnOpenSettings;
-
-        _toolStrip.Items.Add(_newButton);
-        _toolStrip.Items.Add(_openButton);
-        _toolStrip.Items.Add(_saveButton);
-        _toolStrip.Items.Add(_separator1);
-        _toolStrip.Items.Add(_addEntityButton);
-        _toolStrip.Items.Add(_addPropertyButton);
-        _toolStrip.Items.Add(_separator2);
-        _toolStrip.Items.Add(_previewButton);
-        _toolStrip.Items.Add(_generateButton);
-        _toolStrip.Items.Add(_separator3);
-        _toolStrip.Items.Add(_settingsButton);
         // 
         // _statusStrip
         // 
@@ -420,11 +530,19 @@ partial class MainForm
         // 
         _schemaTreeView.Dock = DockStyle.Fill;
         _schemaTreeView.HideSelection = false;
+        _schemaTreeView.ImageIndex = 0;
+        _schemaTreeView.ImageList = _treeViewImageList;
         _schemaTreeView.Location = new Point(0, 0);
         _schemaTreeView.Name = "_schemaTreeView";
+        _schemaTreeView.SelectedImageIndex = 0;
         _schemaTreeView.Size = new Size(1116, 560);
         _schemaTreeView.TabIndex = 0;
-        _schemaTreeView.ImageList = _treeViewImageList;
+        // 
+        // _treeViewImageList
+        // 
+        _treeViewImageList.ColorDepth = ColorDepth.Depth32Bit;
+        _treeViewImageList.ImageSize = new Size(16, 16);
+        _treeViewImageList.TransparentColor = Color.Transparent;
         // 
         // _propertyGrid
         // 
@@ -476,7 +594,7 @@ partial class MainForm
         outputTab.Controls.Add(_outputTreeView);
         outputTab.Location = new Point(4, 24);
         outputTab.Name = "outputTab";
-        outputTab.Size = new Size(17, 72);
+        outputTab.Size = new Size(256, 762);
         outputTab.TabIndex = 1;
         outputTab.Text = "Output Structure";
         // 
@@ -485,7 +603,7 @@ partial class MainForm
         _outputTreeView.Dock = DockStyle.Fill;
         _outputTreeView.Location = new Point(0, 0);
         _outputTreeView.Name = "_outputTreeView";
-        _outputTreeView.Size = new Size(17, 72);
+        _outputTreeView.Size = new Size(256, 762);
         _outputTreeView.TabIndex = 0;
         // 
         // previewTab
@@ -493,7 +611,7 @@ partial class MainForm
         previewTab.Controls.Add(_previewTextBox);
         previewTab.Location = new Point(4, 24);
         previewTab.Name = "previewTab";
-        previewTab.Size = new Size(17, 72);
+        previewTab.Size = new Size(256, 762);
         previewTab.TabIndex = 2;
         previewTab.Text = "Code Preview";
         // 
@@ -504,7 +622,7 @@ partial class MainForm
         _previewTextBox.Location = new Point(0, 0);
         _previewTextBox.Name = "_previewTextBox";
         _previewTextBox.ReadOnly = true;
-        _previewTextBox.Size = new Size(17, 72);
+        _previewTextBox.Size = new Size(256, 762);
         _previewTextBox.TabIndex = 0;
         _previewTextBox.Text = "";
         _previewTextBox.WordWrap = false;
@@ -514,7 +632,7 @@ partial class MainForm
         userControlTab.Controls.Add(_userControlPreviewPanel);
         userControlTab.Location = new Point(4, 24);
         userControlTab.Name = "userControlTab";
-        userControlTab.Size = new Size(17, 72);
+        userControlTab.Size = new Size(256, 762);
         userControlTab.TabIndex = 3;
         userControlTab.Text = "Visual Preview";
         // 
@@ -525,7 +643,7 @@ partial class MainForm
         _userControlPreviewPanel.Dock = DockStyle.Fill;
         _userControlPreviewPanel.Location = new Point(0, 0);
         _userControlPreviewPanel.Name = "_userControlPreviewPanel";
-        _userControlPreviewPanel.Size = new Size(17, 72);
+        _userControlPreviewPanel.Size = new Size(256, 762);
         _userControlPreviewPanel.TabIndex = 0;
         // 
         // logTab
@@ -533,7 +651,7 @@ partial class MainForm
         logTab.Controls.Add(_logListBox);
         logTab.Location = new Point(4, 24);
         logTab.Name = "logTab";
-        logTab.Size = new Size(17, 72);
+        logTab.Size = new Size(256, 762);
         logTab.TabIndex = 4;
         logTab.Text = "Log";
         // 
@@ -544,7 +662,7 @@ partial class MainForm
         _logListBox.IntegralHeight = false;
         _logListBox.Location = new Point(0, 0);
         _logListBox.Name = "_logListBox";
-        _logListBox.Size = new Size(17, 72);
+        _logListBox.Size = new Size(256, 762);
         _logListBox.TabIndex = 0;
         // 
         // MainForm
@@ -559,6 +677,10 @@ partial class MainForm
         Name = "MainForm";
         StartPosition = FormStartPosition.CenterScreen;
         Text = "Code Generator - Domain Driven Design";
+        _menuStrip.ResumeLayout(false);
+        _menuStrip.PerformLayout();
+        _toolStrip.ResumeLayout(false);
+        _toolStrip.PerformLayout();
         _statusStrip.ResumeLayout(false);
         _statusStrip.PerformLayout();
         _mainSplitContainer.Panel1.ResumeLayout(false);
