@@ -26,29 +26,52 @@ public class SchemaParser : ISchemaParser
         };
     }
 
-    public async Task<DomainContext> ParseAsync(string filePath, CancellationToken cancellationToken = default)
+    public async Task<DomainContext> ParseFileAsync(string filePath, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Parsing schema from {FilePath}", filePath);
 
         if (!File.Exists(filePath))
             throw new FileNotFoundException($"Schema file not found: {filePath}");
-
-        var json = await File.ReadAllTextAsync(filePath, cancellationToken);
-        return await ParseContentAsync(json, cancellationToken);
+        var schema = await LoadSchemaAsync(filePath, cancellationToken);
+        //var json = await File.ReadAllTextAsync(filePath, cancellationToken);
+        //return await ParseContentAsync(json, cancellationToken);
+        return await ParseSchemaAsync(schema, cancellationToken);
     }
 
-    public async Task<DomainContext> ParseContentAsync(string jsonContent, CancellationToken cancellationToken = default)
+    public async Task<DomainSchema> LoadSchemaAsync(string filePath, CancellationToken cancellationToken = default)
     {
-        var schema = JsonSerializer.Deserialize<DomainSchema>(jsonContent, _jsonOptions)
+        _logger.LogInformation("Loading schema from {FilePath}", filePath);
+        if (!File.Exists(filePath))
+            throw new FileNotFoundException($"Schema file not found: {filePath}");
+        var json = await File.ReadAllTextAsync(filePath, cancellationToken);
+        var schema = JsonSerializer.Deserialize<DomainSchema>(json, _jsonOptions)
             ?? throw new InvalidOperationException("Failed to parse schema");
+        foreach(var (name, definition) in schema.Definitions ?? new Dictionary<string, EntityDefinition>())
+        {
+            definition.Key = name;
+            if (string.IsNullOrWhiteSpace(definition.Title))
+            {
+                definition.Title = name;
+            }
+        }
 
+        return schema;
+    }
+
+    public async Task<DomainContext> ParseSchemaAsync(DomainSchema schema, CancellationToken cancellationToken = default)
+    {
+        if(schema==null) throw new ArgumentNullException(nameof(schema));
+        //var schema = JsonSerializer.Deserialize<DomainSchema>(jsonContent, _jsonOptions)
+        //    ?? throw new InvalidOperationException("Failed to parse schema");
+        //var schema = await LoadSchemaAsync()
         var context = new DomainContext
         {
-            Name = schema.Title ?? "DomainContext",
+            Name = schema.Title ?? schema.DomainDrivenDesignMetadata?.BoundedContext?? "DomainContext",
             Description = schema.Description,
             Namespace = schema.CodeGenMetadata?.Namespace ?? "Generated",
             CodeGenMetadata = schema.CodeGenMetadata,
             DatabaseMetadata = schema.DatabaseMetadata,
+            DomainDrivenDesignMetadata = schema.DomainDrivenDesignMetadata,
             OriginalSchema = schema
         };
 
@@ -58,6 +81,11 @@ public class SchemaParser : ISchemaParser
             foreach (var (name, definition) in schema.Definitions)
             {
                 var entity = ParseEntity(name, definition, context.Namespace);
+                if(string.IsNullOrWhiteSpace(entity.Name))
+                {
+                    entity.Name = name;
+                    entity.FullName = $"{entity.Namespace}.{entity.Name}";
+                }
                 context.Entities.Add(entity);
             }
         }
@@ -67,6 +95,10 @@ public class SchemaParser : ISchemaParser
         {
             foreach (var (name, property) in schema.Properties)
             {
+                if(string.IsNullOrWhiteSpace(property.Title))
+                {
+                    property.Title = name;
+                }
                 if (property.Type == "object" && property.Ref == null)
                 {
                     // This could be an inline entity definition
@@ -104,8 +136,9 @@ public class SchemaParser : ISchemaParser
                 return result;
             }
 
-            var json = await File.ReadAllTextAsync(filePath, cancellationToken);
-            var schema = JsonSerializer.Deserialize<DomainSchema>(json, _jsonOptions);
+            var schema = await LoadSchemaAsync(filePath, cancellationToken);
+            //var json = await File.ReadAllTextAsync(filePath, cancellationToken);
+            //var schema = JsonSerializer.Deserialize<DomainSchema>(json, _jsonOptions);
 
             if (schema == null)
             {
@@ -183,6 +216,7 @@ public class SchemaParser : ISchemaParser
             IsOwnedType = definition.CodeGenMetadata?.IsOwnedType ?? false,
             CodeGenSettings = definition.CodeGenMetadata,
             DatabaseSettings = definition.DatabaseMetadata,
+            DomainDrivenDesignMetadata = definition.DomainDrivenDesignMetadata,
             OriginalDefinition = definition
         };
 
@@ -238,6 +272,7 @@ public class SchemaParser : ISchemaParser
             IsReadOnly = definition.CodeGenMetadata?.IsReadOnly ?? false,
             CodeGenSettings = definition.CodeGenMetadata,
             DatabaseSettings = definition.DatabaseMetadata,
+            DomainDrivenDesignSettings = definition.DomainDrivenDesignMetadata,
             DisplaySettings = definition.CodeGenMetadata?.DisplaySettings,
             OriginalDefinition = definition
         };

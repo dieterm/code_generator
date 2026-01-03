@@ -1,4 +1,3 @@
-Ôªøusing System.Text.Json;
 using CodeGenerator.Core.Interfaces;
 using CodeGenerator.Core.Models.Configuration;
 using CodeGenerator.Core.Models.Domain;
@@ -8,6 +7,8 @@ using CodeGenerator.Generators;
 using CodeGenerator.WinForms.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace CodeGenerator.WinForms;
 
@@ -109,8 +110,8 @@ public partial class MainForm : Form
 
     private void SetupEventHandlers()
     {
-        _schemaTreeView.AfterSelect += SchemaTreeView_AfterSelect;
-        _schemaTreeView.NodeMouseDoubleClick += SchemaTreeView_NodeMouseDoubleClick;
+        _domainSchemaEditor.AfterSelect += SchemaTreeView_AfterSelect;
+        _domainSchemaEditor.NodeMouseDoubleClick += SchemaTreeView_NodeMouseDoubleClick;
         _jsonEditor.TextChanged += JsonEditor_TextChanged;
         _outputTreeView.AfterSelect += OutputTreeView_AfterSelect;
         FormClosing += MainForm_FormClosing;
@@ -120,7 +121,7 @@ public partial class MainForm : Form
     {
         if (e.Node?.Tag != null)
         {
-            _propertyGrid.SelectedObject = e.Node.Tag;
+            // _propertyGrid.SelectedObject handled by DomainSchemaEditor = e.Node.Tag;
         }
     }
 
@@ -226,7 +227,7 @@ public partial class MainForm : Form
         };
 
         var sb = new System.Text.StringBuilder();
-        sb.AppendLine("‚ùå Compilation Failed");
+        sb.AppendLine("? Compilation Failed");
         sb.AppendLine();
         sb.AppendLine(result.ErrorMessage);
         
@@ -236,7 +237,7 @@ public partial class MainForm : Form
             sb.AppendLine("Errors:");
             foreach (var error in result.CompilationErrors)
             {
-                sb.AppendLine($"  ‚Ä¢ {error}");
+                sb.AppendLine($"  ï {error}");
             }
         }
 
@@ -246,7 +247,7 @@ public partial class MainForm : Form
             sb.AppendLine("Warnings:");
             foreach (var warning in result.CompilationWarnings)
             {
-                sb.AppendLine($"  ‚ö† {warning}");
+                sb.AppendLine($"  ? {warning}");
             }
         }
 
@@ -344,14 +345,15 @@ public partial class MainForm : Form
         {
             SetBusy(true, "Loading schema...");
 
-            var json = await File.ReadAllTextAsync(filePath);
+            _currentSchema = await _schemaParser.LoadSchemaAsync(filePath);
+            /*var json = await File.ReadAllTextAsync(filePath);
             _currentSchema = JsonSerializer.Deserialize<DomainSchema>(json, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
                 ReadCommentHandling = JsonCommentHandling.Skip
-            });
+            });*/
 
-            _currentContext = await _schemaParser.ParseAsync(filePath);
+            _currentContext = await _schemaParser.ParseSchemaAsync(_currentSchema);
             _currentFilePath = filePath;
             _isDirty = false;
 
@@ -402,12 +404,13 @@ public partial class MainForm : Form
         {
             SetBusy(true, "Saving schema...");
 
-            var json = JsonSerializer.Serialize(_currentSchema, new JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
+            await _currentSchema.SaveToFile(filePath);
+            //var json = JsonSerializer.Serialize(_currentSchema, new JsonSerializerOptions
+            //{
+            //WriteIndented = true
+            //});
 
-            await File.WriteAllTextAsync(filePath, json);
+            //await File.WriteAllTextAsync(filePath, json);
 
             _currentFilePath = filePath;
             _isDirty = false;
@@ -461,7 +464,7 @@ public partial class MainForm : Form
 
     private void OnAddProperty(object? sender, EventArgs e)
     {
-        var selectedNode = _schemaTreeView.SelectedNode;
+        var selectedNode = _domainSchemaEditor.SelectedNode;
         if (selectedNode?.Tag is not EntityDefinition entity && selectedNode?.Parent?.Tag is not EntityDefinition)
         {
             MessageBox.Show("Please select an entity first.", "No Entity Selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -485,7 +488,7 @@ public partial class MainForm : Form
 
     private void OnDeleteSelected(object? sender, EventArgs e)
     {
-        var selectedNode = _schemaTreeView.SelectedNode;
+        var selectedNode = _domainSchemaEditor.SelectedNode;
         if (selectedNode == null || _currentSchema == null) return;
 
         var result = MessageBox.Show(
@@ -649,9 +652,9 @@ public partial class MainForm : Form
             "Code Generator - Domain Driven Design\n\n" +
             "A versatile code generation tool for DDD architectures.\n\n" +
             "Supports:\n" +
-            "‚Ä¢ Multiple programming languages (C#, SQL, JavaScript, etc.)\n" +
-            "‚Ä¢ Multiple presentation technologies (WinForms, WPF, WinUI, React, etc.)\n" +
-            "‚Ä¢ Multiple data layer technologies (EF Core, Dapper, etc.)\n\n" +
+            "ï Multiple programming languages (C#, SQL, JavaScript, etc.)\n" +
+            "ï Multiple presentation technologies (WinForms, WPF, WinUI, React, etc.)\n" +
+            "ï Multiple data layer technologies (EF Core, Dapper, etc.)\n\n" +
             "Version 1.0.0",
             "About",
             MessageBoxButtons.OK,
@@ -660,121 +663,8 @@ public partial class MainForm : Form
 
     private void RefreshUI()
     {
-        RefreshSchemaTree();
+        _domainSchemaEditor.Schema = _currentSchema;
         RefreshJsonEditor();
-    }
-
-    private void RefreshSchemaTree()
-    {
-        _schemaTreeView.BeginUpdate();
-        _schemaTreeView.Nodes.Clear();
-
-        if (_currentSchema == null)
-        {
-            _schemaTreeView.EndUpdate();
-            return;
-        }
-
-        var rootNode = new TreeNode(_currentSchema.Title ?? "Domain Schema")
-        {
-            ImageKey="Schema",
-            SelectedImageKey="Schema",
-            Tag = _currentSchema
-        };
-
-        if(_currentSchema.CodeGenMetadata==null)
-            _currentSchema.CodeGenMetadata = new CodeGenMetadata();
-
-        if (_currentSchema.CodeGenMetadata != null)
-        {
-            var codeGenNode = new TreeNode("Code Generation Settings") { 
-                Tag = _currentSchema.CodeGenMetadata ,
-                ImageKey= "CodeGenSettings",
-                SelectedImageKey= "CodeGenSettings"
-            };
-            rootNode.Nodes.Add(codeGenNode);
-        }
-        if (_currentSchema.DatabaseMetadata == null)
-            _currentSchema.DatabaseMetadata = new DatabaseMetadata();
-
-        if (_currentSchema.DatabaseMetadata != null)
-        {
-            var dbNode = new TreeNode("Database Settings") { 
-                Tag = _currentSchema.DatabaseMetadata,
-                ImageKey= "DatabaseSettings",
-                SelectedImageKey= "DatabaseSettings"
-            };
-            rootNode.Nodes.Add(dbNode);
-        }
-        if (_currentSchema.DomainDrivenDesignMetadata == null)
-            _currentSchema.DomainDrivenDesignMetadata = new DomainDrivenDesignMetadata();
-
-        if (_currentSchema.DomainDrivenDesignMetadata != null)
-        {
-            var dbNode = new TreeNode("Domain Driven Design Settings") {
-                Tag = _currentSchema.DomainDrivenDesignMetadata,
-                ImageKey= "DDDSettings",
-                SelectedImageKey= "DDDSettings"
-            };
-            rootNode.Nodes.Add(dbNode);
-        }
-
-        if (_currentSchema.Definitions != null)
-        {
-            var valueTypeNodes = new TreeNode("Value Types") {
-                ImageKey= "ValueTypes",
-                SelectedImageKey= "ValueTypes"
-            };
-            foreach (var (name, entity) in _currentSchema.Definitions.Where(d => d.Value.DomainDrivenDesignMetadata != null && d.Value.DomainDrivenDesignMetadata.ValueObject==true))
-            {
-                var valueTypeNode = new TreeNode(name) { Tag = entity };
-
-                if (entity.Properties != null)
-                {
-                    foreach (var (propName, prop) in entity.Properties)
-                    {
-                        var propNode = new TreeNode($"{propName}: {prop.Type ?? "object"}")
-                        {
-                            Tag = prop
-                        };
-                        valueTypeNode.Nodes.Add(propNode);
-                    }
-                }
-
-                valueTypeNodes.Nodes.Add(valueTypeNode);
-            }
-            rootNode.Nodes.Add(valueTypeNodes);
-
-            var entitiesNode = new TreeNode("Entities")
-            {
-                ImageKey = "Entities",
-                SelectedImageKey = "Entities"
-            };
-
-            foreach (var (name, entity) in _currentSchema.Definitions.Where(d => d.Value.DomainDrivenDesignMetadata == null || d.Value.DomainDrivenDesignMetadata.ValueObject==false))
-            {
-                var entityNode = new TreeNode(name) { Tag = entity };
-
-                if (entity.Properties != null)
-                {
-                    foreach (var (propName, prop) in entity.Properties)
-                    {
-                        var propNode = new TreeNode($"{propName}: {prop.Type ?? "object"}")
-                        {
-                            Tag = prop
-                        };
-                        entityNode.Nodes.Add(propNode);
-                    }
-                }
-
-                entitiesNode.Nodes.Add(entityNode);
-            }
-            rootNode.Nodes.Add(entitiesNode);
-        }
-
-        _schemaTreeView.Nodes.Add(rootNode);
-        rootNode.ExpandAll();
-        _schemaTreeView.EndUpdate();
     }
 
     private void RefreshJsonEditor()
@@ -785,7 +675,9 @@ public partial class MainForm : Form
             return;
         }
 
-        var json = JsonSerializer.Serialize(_currentSchema, new JsonSerializerOptions { WriteIndented = true });
+        var json = JsonSerializer.Serialize(_currentSchema, new JsonSerializerOptions { WriteIndented = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        });
         _jsonEditor.Text = json;
     }
 
@@ -874,3 +766,4 @@ public partial class MainForm : Form
             MessageBoxIcon.Warning) == DialogResult.Yes;
     }
 }
+

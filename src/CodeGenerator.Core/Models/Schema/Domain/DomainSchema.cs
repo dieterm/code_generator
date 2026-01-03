@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace CodeGenerator.Core.Models.Schema;
@@ -39,4 +40,15 @@ public class DomainSchema
 
     [JsonPropertyName("x-ddd")]
     public DomainDrivenDesignMetadata? DomainDrivenDesignMetadata { get; set; }
+
+    public async Task SaveToFile(string filePath)
+    {
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        };
+        var json = JsonSerializer.Serialize(this, options);
+        await File.WriteAllTextAsync(filePath, json);
+    }
 }

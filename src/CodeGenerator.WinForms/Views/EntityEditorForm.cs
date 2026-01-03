@@ -51,6 +51,7 @@ public partial class EntityEditorForm : Form
 
         Entity = new EntityDefinition
         {
+            Key = EntityName,
             Type = "object",
             Title = _titleTextBox.Text,
             Description = _descriptionTextBox.Text,

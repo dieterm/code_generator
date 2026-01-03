@@ -79,6 +79,11 @@ public class EntityModel
     public EntityDatabaseMetadata? DatabaseSettings { get; set; }
 
     /// <summary>
+    /// Domain Drive Design settings
+    /// </summary>
+    public EntityDomainDrivenDesignMetadata? DomainDrivenDesignMetadata { get; set; }
+
+    /// <summary>
     /// Custom attributes to apply
     /// </summary>
     public List<AttributeModel> Attributes { get; set; } = new();

@@ -7,6 +7,9 @@ namespace CodeGenerator.Core.Models.Schema;
 /// </summary>
 public class EntityDefinition
 {
+    [JsonIgnore]
+    public string Key { get; set; }
+
     [JsonPropertyName("type")]
     public string Type { get; set; } = "object";
 

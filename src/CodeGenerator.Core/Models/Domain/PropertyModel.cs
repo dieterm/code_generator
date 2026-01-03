@@ -109,6 +109,11 @@ public class PropertyModel
     public PropertyDatabaseMetadata? DatabaseSettings { get; set; }
 
     /// <summary>
+    /// Domain Driven Design settings
+    /// </summary>
+    public PropertyDomainDrivenDesignMetadata? DomainDrivenDesignSettings { get; set; }
+
+    /// <summary>
     /// Display settings for UI
     /// </summary>
     public DisplaySettings? DisplaySettings { get; set; }

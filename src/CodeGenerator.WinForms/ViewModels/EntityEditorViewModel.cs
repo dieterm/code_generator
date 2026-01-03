@@ -8,6 +8,7 @@ namespace CodeGenerator.WinForms.ViewModels;
 public class EntityEditorViewModel : ViewModelBase
 {
     private string _entityName = string.Empty;
+    private string _key = string.Empty;
     private string _title = string.Empty;
     private string _description = string.Empty;
     private string _tableName = string.Empty;
@@ -31,7 +32,11 @@ public class EntityEditorViewModel : ViewModelBase
         get => _entityName;
         set => SetProperty(ref _entityName, value);
     }
-
+    public string Key
+    {
+        get => _key;
+        set => SetProperty(ref _key, value);
+    }
     public string Title
     {
         get => _title;
@@ -145,6 +150,7 @@ public class EntityEditorViewModel : ViewModelBase
 
     private void LoadFromEntity(EntityDefinition entity)
     {
+        Key = entity.Key;
         Title = entity.Title ?? string.Empty;
         Description = entity.Description ?? string.Empty;
         TableName = entity.DatabaseMetadata?.TableName ?? string.Empty;
@@ -170,6 +176,7 @@ public class EntityEditorViewModel : ViewModelBase
     {
         return new EntityDefinition
         {
+            Key = Key,
             Type = "object",
             Title = Title,
             Description = Description,

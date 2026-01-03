@@ -44,7 +44,8 @@ public class GeneratorOrchestrator
             _logger.LogInformation("Starting code generation from {SchemaPath}", settings.SchemaFilePath);
 
             // Parse schema
-            var context = await _schemaParser.ParseAsync(settings.SchemaFilePath, cancellationToken);
+            var schema = await _schemaParser.LoadSchemaAsync(settings.SchemaFilePath, cancellationToken);
+            var context = await _schemaParser.ParseSchemaAsync(schema, cancellationToken);
             _logger.LogInformation("Parsed {EntityCount} entities from schema", context.Entities.Count);
 
             // Create projects if needed
@@ -111,8 +112,8 @@ public class GeneratorOrchestrator
                 Errors = { $"Generator '{generatorId}' not found" }
             };
         }
-
-        var context = await _schemaParser.ParseAsync(settings.SchemaFilePath, cancellationToken);
+        var schema = await _schemaParser.LoadSchemaAsync(settings.SchemaFilePath, cancellationToken);
+        var context = await _schemaParser.ParseSchemaAsync(schema, cancellationToken);
         return await generator.GenerateAsync(context, settings, cancellationToken);
     }
 
@@ -127,7 +128,8 @@ public class GeneratorOrchestrator
 
         try
         {
-            var context = await _schemaParser.ParseAsync(settings.SchemaFilePath, cancellationToken);
+            var schema = await _schemaParser.LoadSchemaAsync(settings.SchemaFilePath, cancellationToken);
+            var context = await _schemaParser.ParseSchemaAsync(schema, cancellationToken);
 
             foreach (var generator in _generators)
             {

@@ -1,4 +1,5 @@
 using CodeGenerator.WinForms.Properties;
+using CodeGenerator.WinForms.Controls;
 
 namespace CodeGenerator.WinForms;
 
@@ -9,9 +10,7 @@ partial class MainForm
     private MenuStrip _menuStrip;
     private ToolStrip _toolStrip;
     private SplitContainer _mainSplitContainer;
-    private SplitContainer _leftSplitContainer;
-    private TreeView _schemaTreeView;
-    private PropertyGrid _propertyGrid;
+    private DomainSchemaEditor _domainSchemaEditor;
     private TabControl _previewTabControl;
     private RichTextBox _jsonEditor;
     private TreeView _outputTreeView;
@@ -32,7 +31,6 @@ partial class MainForm
     private ToolStripButton _generateButton;
     private ToolStripSeparator _separator3;
     private ToolStripButton _settingsButton;
-    private ImageList _treeViewImageList;
 
     // Menu items - File Menu
     private ToolStripMenuItem _fileMenu;
@@ -134,10 +132,7 @@ partial class MainForm
         _statusLabel = new ToolStripStatusLabel();
         _progressBar = new ToolStripProgressBar();
         _mainSplitContainer = new SplitContainer();
-        _leftSplitContainer = new SplitContainer();
-        _schemaTreeView = new TreeView();
-        _treeViewImageList = new ImageList(components);
-        _propertyGrid = new PropertyGrid();
+        _domainSchemaEditor = new DomainSchemaEditor();
         _previewTabControl = new TabControl();
         jsonTab = new TabPage();
         _jsonEditor = new RichTextBox();
@@ -156,10 +151,6 @@ partial class MainForm
         _mainSplitContainer.Panel1.SuspendLayout();
         _mainSplitContainer.Panel2.SuspendLayout();
         _mainSplitContainer.SuspendLayout();
-        ((System.ComponentModel.ISupportInitialize)_leftSplitContainer).BeginInit();
-        _leftSplitContainer.Panel1.SuspendLayout();
-        _leftSplitContainer.Panel2.SuspendLayout();
-        _leftSplitContainer.SuspendLayout();
         _previewTabControl.SuspendLayout();
         jsonTab.SuspendLayout();
         outputTab.SuspendLayout();
@@ -499,7 +490,7 @@ partial class MainForm
         // 
         // _mainSplitContainer.Panel1
         // 
-        _mainSplitContainer.Panel1.Controls.Add(_leftSplitContainer);
+        _mainSplitContainer.Panel1.Controls.Add(_domainSchemaEditor);
         // 
         // _mainSplitContainer.Panel2
         // 
@@ -508,51 +499,13 @@ partial class MainForm
         _mainSplitContainer.SplitterDistance = 1116;
         _mainSplitContainer.TabIndex = 0;
         // 
-        // _leftSplitContainer
+        // _domainSchemaEditor
         // 
-        _leftSplitContainer.Dock = DockStyle.Fill;
-        _leftSplitContainer.Location = new Point(0, 0);
-        _leftSplitContainer.Name = "_leftSplitContainer";
-        _leftSplitContainer.Orientation = Orientation.Horizontal;
-        // 
-        // _leftSplitContainer.Panel1
-        // 
-        _leftSplitContainer.Panel1.Controls.Add(_schemaTreeView);
-        // 
-        // _leftSplitContainer.Panel2
-        // 
-        _leftSplitContainer.Panel2.Controls.Add(_propertyGrid);
-        _leftSplitContainer.Size = new Size(1116, 790);
-        _leftSplitContainer.SplitterDistance = 560;
-        _leftSplitContainer.TabIndex = 0;
-        // 
-        // _schemaTreeView
-        // 
-        _schemaTreeView.Dock = DockStyle.Fill;
-        _schemaTreeView.HideSelection = false;
-        _schemaTreeView.ImageIndex = 0;
-        _schemaTreeView.ImageList = _treeViewImageList;
-        _schemaTreeView.Location = new Point(0, 0);
-        _schemaTreeView.Name = "_schemaTreeView";
-        _schemaTreeView.SelectedImageIndex = 0;
-        _schemaTreeView.Size = new Size(1116, 560);
-        _schemaTreeView.TabIndex = 0;
-        // 
-        // _treeViewImageList
-        // 
-        _treeViewImageList.ColorDepth = ColorDepth.Depth32Bit;
-        _treeViewImageList.ImageSize = new Size(16, 16);
-        _treeViewImageList.TransparentColor = Color.Transparent;
-        // 
-        // _propertyGrid
-        // 
-        _propertyGrid.BackColor = SystemColors.Control;
-        _propertyGrid.Dock = DockStyle.Fill;
-        _propertyGrid.Location = new Point(0, 0);
-        _propertyGrid.Name = "_propertyGrid";
-        _propertyGrid.PropertySort = PropertySort.Categorized;
-        _propertyGrid.Size = new Size(1116, 226);
-        _propertyGrid.TabIndex = 0;
+        _domainSchemaEditor.Dock = DockStyle.Fill;
+        _domainSchemaEditor.Location = new Point(0, 0);
+        _domainSchemaEditor.Name = "_domainSchemaEditor";
+        _domainSchemaEditor.Size = new Size(1116, 790);
+        _domainSchemaEditor.TabIndex = 0;
         // 
         // _previewTabControl
         // 
@@ -687,10 +640,6 @@ partial class MainForm
         _mainSplitContainer.Panel2.ResumeLayout(false);
         ((System.ComponentModel.ISupportInitialize)_mainSplitContainer).EndInit();
         _mainSplitContainer.ResumeLayout(false);
-        _leftSplitContainer.Panel1.ResumeLayout(false);
-        _leftSplitContainer.Panel2.ResumeLayout(false);
-        ((System.ComponentModel.ISupportInitialize)_leftSplitContainer).EndInit();
-        _leftSplitContainer.ResumeLayout(false);
         _previewTabControl.ResumeLayout(false);
         jsonTab.ResumeLayout(false);
         outputTab.ResumeLayout(false);

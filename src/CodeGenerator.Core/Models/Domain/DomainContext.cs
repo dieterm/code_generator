@@ -43,6 +43,10 @@ public class DomainContext
     public DatabaseMetadata? DatabaseMetadata { get; set; }
 
     /// <summary>
+    /// Domain Driven Design metadata
+    /// </summary>
+    public DomainDrivenDesignMetadata? DomainDrivenDesignMetadata { get; set; }
+    /// <summary>
     /// Original schema
     /// </summary>
     public DomainSchema? OriginalSchema { get; set; }

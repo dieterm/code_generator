@@ -86,15 +86,15 @@ public class MainFormController : ControllerBase<ViewModels.MainFormViewModel>
             ViewModel.IsBusy = true;
             ViewModel.StatusMessage = "Loading schema...";
 
-            var json = await File.ReadAllTextAsync(filePath);
-            var schema = JsonSerializer.Deserialize<DomainSchema>(json, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                ReadCommentHandling = JsonCommentHandling.Skip
-            });
-
+            //var json = await File.ReadAllTextAsync(filePath);
+            //var schema = JsonSerializer.Deserialize<DomainSchema>(json, new JsonSerializerOptions
+            //{
+            //    PropertyNameCaseInsensitive = true,
+            //    ReadCommentHandling = JsonCommentHandling.Skip
+            //});
+            var schema = await _schemaParser.LoadSchemaAsync(filePath);
             ViewModel.CurrentSchema = schema;
-            ViewModel.CurrentContext = await _schemaParser.ParseAsync(filePath);
+            ViewModel.CurrentContext = await _schemaParser.ParseSchemaAsync(schema);
             ViewModel.CurrentFilePath = filePath;
             ViewModel.IsDirty = false;
 
@@ -123,12 +123,14 @@ public class MainFormController : ControllerBase<ViewModels.MainFormViewModel>
             ViewModel.IsBusy = true;
             ViewModel.StatusMessage = "Saving schema...";
 
-            var json = JsonSerializer.Serialize(ViewModel.CurrentSchema, new JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
+            await ViewModel.CurrentSchema.SaveToFile(filePath);
+            //var json = JsonSerializer.Serialize(ViewModel.CurrentSchema, new JsonSerializerOptions
+            //{
+            //    WriteIndented = true,
+            //    DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+            //});
 
-            await File.WriteAllTextAsync(filePath, json);
+            //await File.WriteAllTextAsync(filePath, json);
 
             ViewModel.CurrentFilePath = filePath;
             ViewModel.IsDirty = false;
