@@ -1,8 +1,9 @@
 using CodeGenerator.Core.Models.Schema;
+using CodeGenerator.Shared.ViewModels;
 
 namespace CodeGenerator.WinForms.ViewModels;
 
-public class PropertyDefinitionEditViewModel : ViewModelBase
+public class PropertyDefinitionEditViewModel : ValidationViewModelBase
 {
     private PropertyDefinition? _property;
     private string _type = "string";

@@ -1,4 +1,5 @@
 using CodeGenerator.Core.Enums;
+using CodeGenerator.Core.Events;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Interfaces;
 using CodeGenerator.Core.Models.Configuration;
@@ -11,23 +12,18 @@ namespace CodeGenerator.Generators.Presentation;
 /// <summary>
 /// Generates WinForms UserControl views
 /// </summary>
-public class WinFormsViewGenerator : BaseCodeGenerator
+public class WinFormsViewGenerator : MessageBusAwareGeneratorBase
 {
     public override string Id => "View_WinForms";
     public override string Name => "WinForms View Generator";
     public override string Description => "Generates WinForms UserControl views";
-    public override GeneratorType Type => GeneratorType.View;
-    public override ArchitectureLayer Layer => ArchitectureLayer.Presentation;
 
-    public WinFormsViewGenerator(
-        ITemplateEngine templateEngine,
-        IFileService fileService,
-        ILogger<WinFormsViewGenerator> logger)
-        : base(templateEngine, fileService, logger)
+    public WinFormsViewGenerator(ILogger<WinFormsViewGenerator> logger)
+        : base(logger)
     {
     }
 
-    public override async Task<GenerationResult> GenerateForEntityAsync(
+    public async Task<GenerationResult> GenerateForEntityAsync(
         EntityModel entity,
         DomainContext context,
         GeneratorSettings settings,
@@ -83,7 +79,7 @@ public class WinFormsViewGenerator : BaseCodeGenerator
         return result;
     }
 
-    protected override object CreateTemplateModel(EntityModel entity, DomainContext context, GeneratorSettings settings)
+    protected object CreateTemplateModel(EntityModel entity, DomainContext context, GeneratorSettings settings)
     {
         var primaryKey = entity.PrimaryKeyProperties.FirstOrDefault();
 
@@ -180,5 +176,20 @@ public class WinFormsViewGenerator : BaseCodeGenerator
             PropertyDataType.Guid => "Syncfusion.Windows.Forms.Tools.TextBoxExt",
             _ => "Syncfusion.Windows.Forms.Tools.TextBoxExt"
         };
+    }
+
+    public override void SubscribeToEvents(IGeneratorMessageBus messageBus)
+    {
+        base.SubscribeToEvents(messageBus);
+
+        messageBus.Subscribe<CreatingProjectEventArgs>(OnCreatingProject);
+    }
+
+    private async void OnCreatingProject(CreatingProjectEventArgs args)
+    {
+        if (!IsProject<PresentationProjectGenerator>(args.Schema, args.Project)) return;
+        // only continue if it's the PresentationLayer project
+
+
     }
 }

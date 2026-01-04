@@ -1,8 +1,9 @@
 using CodeGenerator.Core.Models.Schema;
+using CodeGenerator.Shared.ViewModels;
 
 namespace CodeGenerator.WinForms.ViewModels;
 
-public class EntityDefinitionEditViewModel : ViewModelBase
+public class EntityDefinitionEditViewModel : ValidationViewModelBase
 {
     private EntityDefinition? _entity;
     private string _title = string.Empty;

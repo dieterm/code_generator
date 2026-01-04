@@ -1,8 +1,9 @@
 using CodeGenerator.Core.Models.Schema;
+using CodeGenerator.Shared.ViewModels;
 
 namespace CodeGenerator.WinForms.ViewModels;
 
-public class DomainSchemaEditViewModel : ViewModelBase
+public class DomainSchemaEditViewModel : ValidationViewModelBase
 {
     private DomainSchema? _schema;
     private string _schemaUrl = string.Empty;

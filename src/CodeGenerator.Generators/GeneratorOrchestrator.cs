@@ -59,6 +59,7 @@ public class GeneratorOrchestrator
     /// </summary>
     public async Task<GenerationResult> GenerateAllAsync(
         GeneratorSettings settings,
+        IProgress<GenerationProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
         var result = new GenerationResult();
@@ -66,54 +67,79 @@ public class GeneratorOrchestrator
 
         try
         {
+            // Phase: Initializing
+            ReportProgress(progress, GenerationPhase.Initializing, "Loading schema...", 0);
             _logger.LogInformation("Starting code generation from {SchemaPath}", settings.SchemaFilePath);
 
             // Parse schema
             var schema = await _schemaParser.LoadSchemaAsync(settings.SchemaFilePath, cancellationToken);
+            ReportProgress(progress, GenerationPhase.Initializing, "Parsing schema...", 5);
+            
             var context = await _schemaParser.ParseSchemaAsync(schema, cancellationToken);
             _logger.LogInformation("Parsed {EntityCount} entities from schema", context.Entities.Count);
+            ReportProgress(progress, GenerationPhase.Initializing, $"Parsed {context.Entities.Count} entities", 10);
 
             // Create solution and projects
-            await CreateSolutionAndProjectsAsync(schema, context, settings, result, cancellationToken);
+            ReportProgress(progress, GenerationPhase.CreatingSolution, "Creating solution and projects...", 15);
+            await CreateSolutionAndProjectsAsync(schema, context, settings, result, progress, cancellationToken);
 
             // Run generators in dependency order
             var orderedGenerators = OrderGeneratorsByDependency(settings);
+            var enabledGenerators = orderedGenerators
+                .Where(g => settings.Generators.GetValueOrDefault(g.Id)?.Enabled == true)
+                .ToList();
 
-            foreach (var generator in orderedGenerators)
+            if (enabledGenerators.Count > 0)
             {
-                if (cancellationToken.IsCancellationRequested)
-                    break;
-
-                var config = settings.Generators.GetValueOrDefault(generator.Id);
-                if (config == null || !config.Enabled)
-                    continue;
-
-                _logger.LogInformation("Running generator: {GeneratorName}", generator.Name);
-
-                var genResult = await generator.GenerateAsync(context, settings, cancellationToken);
+                ReportProgress(progress, GenerationPhase.RunningGenerators, "Running generators...", 70);
                 
-                // Publish events for each generated file
-                foreach (var file in genResult.Files)
+                int generatorIndex = 0;
+                foreach (var generator in enabledGenerators)
                 {
-                    var createdFileEvent = new CreatedFileEventArgs(schema, context, file);
-                    await _messageBus.PublishAsync(createdFileEvent, cancellationToken);
-                }
-                
-                MergeResults(result, genResult);
+                    if (cancellationToken.IsCancellationRequested)
+                        break;
 
-                if (!genResult.Success)
-                {
-                    _logger.LogWarning("Generator {GeneratorName} completed with errors", generator.Name);
+                    var percentInGeneratorPhase = 70 + (int)((generatorIndex / (float)enabledGenerators.Count) * 25);
+                    ReportProgress(progress, GenerationPhase.RunningGenerators, 
+                        $"Running generator: {generator.Name}", percentInGeneratorPhase,
+                        enabledGenerators.Count, generatorIndex);
+
+                    _logger.LogInformation("Running generator: {GeneratorName}", generator.Name);
+
+                    var genResult = await generator.GenerateAsync(context, settings, cancellationToken);
+                    
+                    // Publish events for each generated file
+                    foreach (var file in genResult.Files)
+                    {
+                        var createdFileEvent = new CreatedFileEventArgs(schema, context, file);
+                        await _messageBus.PublishAsync(createdFileEvent, cancellationToken);
+                    }
+                    
+                    MergeResults(result, genResult);
+
+                    if (!genResult.Success)
+                    {
+                        _logger.LogWarning("Generator {GeneratorName} completed with errors", generator.Name);
+                    }
+
+                    generatorIndex++;
                 }
             }
 
+            // Phase: Finalizing
+            ReportProgress(progress, GenerationPhase.Finalizing, "Finalizing...", 95);
             result.Success = !result.Errors.Any();
+
+            // Phase: Completed
+            ReportProgress(progress, GenerationPhase.Completed, 
+                $"Completed: {result.Files.Count} files generated", 100);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Code generation failed");
             result.Errors.Add($"Code generation failed: {ex.Message}");
             result.Success = false;
+            ReportProgress(progress, GenerationPhase.Completed, $"Failed: {ex.Message}", 100);
         }
         finally
         {
@@ -128,153 +154,58 @@ public class GeneratorOrchestrator
         return result;
     }
 
-    private async Task CreateSolutionAndProjectsAsync(
-        DomainSchema schema,
-        DomainContext context,
+    /// <summary>
+    /// Run a specific generator by ID
+    /// </summary>
+    public async Task<GenerationResult> GenerateAsync(
+        string generatorId,
         GeneratorSettings settings,
-        GenerationResult result,
-        CancellationToken cancellationToken)
+        IProgress<GenerationProgress>? progress = null,
+        CancellationToken cancellationToken = default)
     {
-        var projectSettings = context.CodeGenMetadata?.ProjectSettings;
-        if (projectSettings == null) return;
-
-        // Create solution info
-        var solutionInfo = new SolutionInfo
+        var generator = _generators.FirstOrDefault(g => g.Id.Equals(generatorId, StringComparison.OrdinalIgnoreCase));
+        if (generator == null)
         {
-            SolutionName = projectSettings.SolutionName ?? "GeneratedSolution",
-            SolutionPath = settings.OutputFolder,
-            TargetFramework = settings.TargetFramework
-        };
-
-        // Publish CreatingSolution event - generators can register projects
-        var creatingSolutionEvent = new CreatingSolutionEventArgs(schema, context, solutionInfo, settings);
-        
-        // Register default projects based on settings
-        //RegisterDefaultProjects(creatingSolutionEvent, projectSettings, settings);
-        
-        await _messageBus.PublishAsync(creatingSolutionEvent, cancellationToken);
-        
-        _logger.LogInformation("CreatingSolution event published. {ProjectCount} projects registered.", 
-            creatingSolutionEvent.ProjectRegistrations.Count);
-
-        var createdProjects = new List<GeneratedProject>();
-        var projectRegistrations = new Dictionary<ProjectRegistration, (CreatingProjectEventArgs args, GeneratedProject project)>();
-        // Create each registered project
-        foreach (var projectReg in creatingSolutionEvent.ProjectRegistrations)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            try
+            return new GenerationResult
             {
-                // Publish CreatingProject event - generators can register files
-                var creatingProjectEvent = new CreatingProjectEventArgs(schema, context, projectReg);
-                await _messageBus.PublishAsync(creatingProjectEvent, cancellationToken);
-                
-                _logger.LogInformation("CreatingProject event for {ProjectName}. {FileCount} files, {PackageCount} packages registered.",
-                    projectReg.ProjectName, 
-                    creatingProjectEvent.FileRegistrations.Count,
-                    creatingProjectEvent.AdditionalPackages.Count);
-
-                
-                // Create the project
-                var projectDir = Path.Combine(settings.OutputFolder, projectReg.ProjectName);
-                var project = await _projectGenerator.CreateProjectAsync(
-                    projectReg.ProjectName, 
-                    projectDir, 
-                    projectReg.ProjectType, 
-                    projectReg.TargetFramework, 
-                    cancellationToken);
-
-                // save event args for creating project references once all projects are generated (see outside foreach-loop)
-                projectRegistrations.Add(projectReg, (creatingProjectEvent, project));
-
-                // Add NuGet packages
-                var allPackages = projectReg.NuGetPackages.Concat(creatingProjectEvent.AdditionalPackages);
-                foreach (var package in allPackages)
-                {
-                    await _projectGenerator.AddPackageAsync(project.ProjectFilePath, package.PackageId, package.Version, cancellationToken);
-                }
-                
-                // Create registered files
-                var createdFiles = new List<GeneratedFile>();
-                foreach (var fileReg in creatingProjectEvent.FileRegistrations)
-                {
-                    var creatingFileEvent = new CreatingFileEventArgs(schema, context, fileReg, project, fileReg.TemplateName);
-                    await _messageBus.PublishAsync(creatingFileEvent, cancellationToken);
-                    
-                    if (creatingFileEvent.Cancel)
-                    {
-                        _logger.LogDebug("File creation cancelled: {FileName}. Reason: {Reason}", 
-                            fileReg.FileName, creatingFileEvent.CancelReason);
-                        continue;
-                    }
-                    var filePath = Path.Combine(projectDir, fileReg.RelativePath, fileReg.FileName);
-
-                    if (File.Exists(filePath) && !settings.OverwriteExisting){
-                        _logger.LogDebug("Skipped File. File already exists and overwrite is disabled in settings: {FilePath}", filePath);
-                        continue;
-                    }
-                    
-                    var fileDir = Path.GetDirectoryName(filePath);
-                    if (!string.IsNullOrEmpty(fileDir) && !Directory.Exists(fileDir))
-                    {
-                        Directory.CreateDirectory(fileDir);
-                    }
-
-                    await File.WriteAllTextAsync(filePath, fileReg.Content, cancellationToken);
-                    
-                    var generatedFile = new GeneratedFile
-                    {
-                        FileName = fileReg.FileName,
-                        RelativePath = fileReg.RelativePath,
-                        AbsolutePath = filePath,
-                        Content = fileReg.Content                        
-                    };
-                    createdFiles.Add(generatedFile);
-                    result.Files.Add(generatedFile);
-                    
-                    await _messageBus.PublishAsync(new CreatedFileEventArgs(schema, context, generatedFile, project), cancellationToken);
-                }
-
-                createdProjects.Add(project);
-                result.Projects.Add(project);
-                result.Messages.Add($"Created project: {projectReg.ProjectName}");
-
-                // Publish CreatedProject event
-                var createdProjectEvent = new CreatedProjectEventArgs(schema, context, project, createdFiles);
-                await _messageBus.PublishAsync(createdProjectEvent, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                result.Warnings.Add($"Failed to create project {projectReg.ProjectName}: {ex.Message}");
-                _logger.LogError(ex, "Failed to create project {ProjectName}", projectReg.ProjectName);
-            }
+                Success = false,
+                Errors = { $"Generator '{generatorId}' not found" }
+            };
         }
-        // add project references 
-        foreach(var projectReg in creatingSolutionEvent.ProjectRegistrations)
-        {
-            (CreatingProjectEventArgs creatingProjectEvent, GeneratedProject project) = projectRegistrations[projectReg];
-            var allProjectRefs = projectReg.ProjectReferences.Concat(creatingProjectEvent.AdditionalProjectReferences);
 
-            foreach (var projRef in allProjectRefs)
-            {
-                var refProject = createdProjects.FirstOrDefault(p => p.Name.Equals(projRef, StringComparison.OrdinalIgnoreCase));
-                if (refProject != null)
-                {
-                    await _projectGenerator.AddProjectReferenceAsync(project.ProjectFilePath, refProject.ProjectFilePath, cancellationToken);
-                }
-                else
-                {
-                    _logger.LogWarning("Project reference {ProjectReference} not found for project {ProjectName}.", projRef, projectReg.ProjectName);
-                }
-            }
-        }
-        // Create the .sln solution file
-        await _projectGenerator.CreateSolutionAsync(solutionInfo.SolutionName, solutionInfo.SolutionPath, createdProjects.Select(p => p.Directory), cancellationToken);
+        ReportProgress(progress, GenerationPhase.Initializing, "Loading schema...", 0);
+        var schema = await _schemaParser.LoadSchemaAsync(settings.SchemaFilePath, cancellationToken);
         
-        // Publish CreatedSolution event
-        var createdSolutionEvent = new CreatedSolutionEventArgs(schema, context, solutionInfo, createdProjects);
-        await _messageBus.PublishAsync(createdSolutionEvent, cancellationToken);
+        ReportProgress(progress, GenerationPhase.Initializing, "Parsing schema...", 20);
+        var context = await _schemaParser.ParseSchemaAsync(schema, cancellationToken);
+        
+        ReportProgress(progress, GenerationPhase.RunningGenerators, $"Running {generator.Name}...", 40);
+        var result = await generator.GenerateAsync(context, settings, cancellationToken);
+        
+        ReportProgress(progress, GenerationPhase.Completed, 
+            $"Completed: {result.Files.Count} files generated", 100);
+        
+        return result;
+    }
+
+    private void ReportProgress(
+        IProgress<GenerationProgress>? progress, 
+        GenerationPhase phase, 
+        string message, 
+        int percentComplete,
+        int totalItems = 0,
+        int completedItems = 0)
+    {
+        progress?.Report(new GenerationProgress
+        {
+            Phase = phase,
+            CurrentStep = phase.ToString(),
+            Message = message,
+            PercentComplete = percentComplete,
+            TotalItems = totalItems,
+            CompletedItems = completedItems,
+            IsIndeterminate = false
+        });
     }
 
     private void RegisterDefaultProjects(CreatingSolutionEventArgs eventArgs, ProjectSettings projectSettings, GeneratorSettings settings)
@@ -312,28 +243,6 @@ public class GeneratorOrchestrator
 
             eventArgs.ProjectRegistrations.Add(registration);
         }
-    }
-
-    /// <summary>
-    /// Run a specific generator by ID
-    /// </summary>
-    public async Task<GenerationResult> GenerateAsync(
-        string generatorId,
-        GeneratorSettings settings,
-        CancellationToken cancellationToken = default)
-    {
-        var generator = _generators.FirstOrDefault(g => g.Id.Equals(generatorId, StringComparison.OrdinalIgnoreCase));
-        if (generator == null)
-        {
-            return new GenerationResult
-            {
-                Success = false,
-                Errors = { $"Generator '{generatorId}' not found" }
-            };
-        }
-        var schema = await _schemaParser.LoadSchemaAsync(settings.SchemaFilePath, cancellationToken);
-        var context = await _schemaParser.ParseSchemaAsync(schema, cancellationToken);
-        return await generator.GenerateAsync(context, settings, cancellationToken);
     }
 
     /// <summary>
@@ -523,5 +432,188 @@ public class GeneratorOrchestrator
 
         return path.Replace('/', Path.DirectorySeparatorChar)
                    .Replace('\\', Path.DirectorySeparatorChar);
+    }
+
+    private async Task CreateSolutionAndProjectsAsync(
+        DomainSchema schema,
+        DomainContext context,
+        GeneratorSettings settings,
+        GenerationResult result,
+        IProgress<GenerationProgress>? progress,
+        CancellationToken cancellationToken)
+    {
+        var projectSettings = context.CodeGenMetadata?.ProjectSettings;
+        if (projectSettings == null) return;
+
+        // Create solution info
+        var solutionInfo = new SolutionInfo
+        {
+            SolutionName = projectSettings.SolutionName ?? "GeneratedSolution",
+            SolutionPath = settings.OutputFolder,
+            TargetFramework = settings.TargetFramework
+        };
+
+        // Publish CreatingSolution event - generators can register projects
+        var creatingSolutionEvent = new CreatingSolutionEventArgs(schema, context, solutionInfo, settings);
+        
+        await _messageBus.PublishAsync(creatingSolutionEvent, cancellationToken);
+        
+        _logger.LogInformation("CreatingSolution event published. {ProjectCount} projects registered.", 
+            creatingSolutionEvent.ProjectRegistrations.Count);
+
+        var createdProjects = new List<GeneratedProject>();
+        var projectRegistrations = new Dictionary<ProjectRegistration, (CreatingProjectEventArgs args, GeneratedProject project)>();
+        
+        var totalProjects = creatingSolutionEvent.ProjectRegistrations.Count;
+        var projectIndex = 0;
+
+        // Create each registered project
+        foreach (var projectReg in creatingSolutionEvent.ProjectRegistrations)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var projectPercent = 15 + (int)((projectIndex / (float)Math.Max(totalProjects, 1)) * 40);
+            ReportProgress(progress, GenerationPhase.CreatingProjects, 
+                $"Creating project: {projectReg.ProjectName}", projectPercent,
+                totalProjects, projectIndex);
+
+            try
+            {
+                // Publish CreatingProject event - generators can register files
+                var creatingProjectEvent = new CreatingProjectEventArgs(schema, context, projectReg);
+                await _messageBus.PublishAsync(creatingProjectEvent, cancellationToken);
+                
+                _logger.LogInformation("CreatingProject event for {ProjectName}. {FileCount} files, {PackageCount} packages registered.",
+                    projectReg.ProjectName, 
+                    creatingProjectEvent.FileRegistrations.Count,
+                    creatingProjectEvent.AdditionalPackages.Count);
+
+                
+                // Create the project
+                var projectDir = Path.Combine(settings.OutputFolder, projectReg.ProjectName);
+                var project = await _projectGenerator.CreateProjectAsync(
+                    projectReg.ProjectName, 
+                    projectDir, 
+                    projectReg.ProjectType, 
+                    projectReg.TargetFramework, 
+                    cancellationToken);
+
+                // save event args for creating project references once all projects are generated
+                projectRegistrations.Add(projectReg, (creatingProjectEvent, project));
+
+                // Add NuGet packages
+                var allPackages = projectReg.NuGetPackages.Concat(creatingProjectEvent.AdditionalPackages).ToList();
+                if (allPackages.Count > 0)
+                {
+                    ReportProgress(progress, GenerationPhase.AddingPackages, 
+                        $"Adding packages to {projectReg.ProjectName}", projectPercent,
+                        allPackages.Count, 0);
+                        
+                    foreach (var package in allPackages)
+                    {
+                        await _projectGenerator.AddPackageAsync(project.ProjectFilePath, package.PackageId, package.Version, cancellationToken);
+                    }
+                }
+                
+                // Create registered files
+                var createdFiles = new List<GeneratedFile>();
+                var totalFiles = creatingProjectEvent.FileRegistrations.Count;
+                var fileIndex = 0;
+
+                foreach (var fileReg in creatingProjectEvent.FileRegistrations)
+                {
+                    if (totalFiles > 0 && fileIndex % 10 == 0) // Report every 10 files to avoid too many updates
+                    {
+                        ReportProgress(progress, GenerationPhase.GeneratingFiles, 
+                            $"Generating files for {projectReg.ProjectName} ({fileIndex}/{totalFiles})", 
+                            projectPercent, totalFiles, fileIndex);
+                    }
+
+                    var creatingFileEvent = new CreatingFileEventArgs(schema, context, fileReg, project, fileReg.TemplateName);
+                    await _messageBus.PublishAsync(creatingFileEvent, cancellationToken);
+                    
+                    if (creatingFileEvent.Cancel)
+                    {
+                        _logger.LogDebug("File creation cancelled: {FileName}. Reason: {Reason}", 
+                            fileReg.FileName, creatingFileEvent.CancelReason);
+                        fileIndex++;
+                        continue;
+                    }
+                    var filePath = Path.Combine(projectDir, fileReg.RelativePath, fileReg.FileName);
+
+                    if (File.Exists(filePath) && !settings.OverwriteExisting){
+                        _logger.LogDebug("Skipped File. File already exists and overwrite is disabled in settings: {FilePath}", filePath);
+                        fileIndex++;
+                        continue;
+                    }
+                    
+                    var fileDir = Path.GetDirectoryName(filePath);
+                    if (!string.IsNullOrEmpty(fileDir) && !Directory.Exists(fileDir))
+                    {
+                        Directory.CreateDirectory(fileDir);
+                    }
+
+                    await File.WriteAllTextAsync(filePath, fileReg.Content, cancellationToken);
+                    
+                    var generatedFile = new GeneratedFile
+                    {
+                        FileName = fileReg.FileName,
+                        RelativePath = fileReg.RelativePath,
+                        AbsolutePath = filePath,
+                        Content = fileReg.Content                        
+                    };
+                    createdFiles.Add(generatedFile);
+                    result.Files.Add(generatedFile);
+                    
+                    await _messageBus.PublishAsync(new CreatedFileEventArgs(schema, context, generatedFile, project), cancellationToken);
+                    fileIndex++;
+                }
+
+                createdProjects.Add(project);
+                result.Projects.Add(project);
+                result.Messages.Add($"Created project: {projectReg.ProjectName}");
+
+                // Publish CreatedProject event
+                var createdProjectEvent = new CreatedProjectEventArgs(schema, context, project, createdFiles);
+                await _messageBus.PublishAsync(createdProjectEvent, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                result.Warnings.Add($"Failed to create project {projectReg.ProjectName}: {ex.Message}");
+                _logger.LogError(ex, "Failed to create project {ProjectName}", projectReg.ProjectName);
+            }
+
+            projectIndex++;
+        }
+
+        // Add project references
+        ReportProgress(progress, GenerationPhase.AddingReferences, "Adding project references...", 58);
+        
+        foreach(var projectReg in creatingSolutionEvent.ProjectRegistrations)
+        {
+            (CreatingProjectEventArgs creatingProjectEvent, GeneratedProject project) = projectRegistrations[projectReg];
+            var allProjectRefs = projectReg.ProjectReferences.Concat(creatingProjectEvent.AdditionalProjectReferences);
+
+            foreach (var projRef in allProjectRefs)
+            {
+                var refProject = createdProjects.FirstOrDefault(p => p.Name.Equals(projRef, StringComparison.OrdinalIgnoreCase));
+                if (refProject != null)
+                {
+                    await _projectGenerator.AddProjectReferenceAsync(project.ProjectFilePath, refProject.ProjectFilePath, cancellationToken);
+                }
+                else
+                {
+                    _logger.LogWarning("Project reference {ProjectReference} not found for project {ProjectName}.", projRef, projectReg.ProjectName);
+                }
+            }
+        }
+
+        // Create the .sln solution file
+        ReportProgress(progress, GenerationPhase.CreatingSolution, "Creating solution file...", 65);
+        await _projectGenerator.CreateSolutionAsync(solutionInfo.SolutionName, solutionInfo.SolutionPath, createdProjects.Select(p => p.Directory), cancellationToken);
+        
+        // Publish CreatedSolution event
+        var createdSolutionEvent = new CreatedSolutionEventArgs(schema, context, solutionInfo, createdProjects);
+        await _messageBus.PublishAsync(createdSolutionEvent, cancellationToken);
     }
 }

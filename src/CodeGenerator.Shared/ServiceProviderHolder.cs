@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CodeGenerator.Core.Services;
+namespace CodeGenerator.Shared;
 
 /// <summary>
 /// Static class to hold the application's service provider

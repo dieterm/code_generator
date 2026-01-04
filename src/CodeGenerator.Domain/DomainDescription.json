@@ -1,0 +1,17 @@
+{
+	"artifacts": {
+		"Name" : {
+			"properties": {
+				"Name" : "string"
+			}
+		}
+		"File" : {
+			"properties": {
+				"Extension": "string",
+				"Content": "byte[]",
+				"Size": "long"
+			},
+			"decorators": [ "Name" ]
+		}
+	}
+}

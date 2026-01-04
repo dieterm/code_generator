@@ -1,8 +1,9 @@
 using CodeGenerator.Core.Models.Schema;
+using CodeGenerator.Shared.ViewModels;
 
 namespace CodeGenerator.WinForms.ViewModels;
 
-public class DatabaseMetadataEditViewModel : ViewModelBase
+public class DatabaseMetadataEditViewModel : ValidationViewModelBase
 {
     private DatabaseMetadata? _metadata;
     private string _databaseName = string.Empty;

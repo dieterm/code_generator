@@ -1,11 +1,13 @@
+using CodeGenerator.WinForms.ViewModels;
+
 namespace CodeGenerator.WinForms.Controllers;
 
 /// <summary>
 /// Controller for EntityEditorForm
 /// </summary>
-public class EntityEditorController : ControllerBase<ViewModels.EntityEditorViewModel>
+public class EntityEditorController : ControllerBase<EntityEditorViewModel>
 {
-    public EntityEditorController(ViewModels.EntityEditorViewModel viewModel) 
+    public EntityEditorController(EntityEditorViewModel viewModel) 
         : base(viewModel)
     {
     }

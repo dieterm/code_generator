@@ -1,12 +1,13 @@
 using CodeGenerator.Core.Interfaces;
 using CodeGenerator.Core.Models.Configuration;
+using CodeGenerator.WinForms.ViewModels;
 
 namespace CodeGenerator.WinForms.Controllers;
 
 /// <summary>
 /// Controller for SettingsForm
 /// </summary>
-public class SettingsController : ControllerBase<ViewModels.SettingsViewModel>
+public class SettingsController : ControllerBase<SettingsViewModel>
 {
     private readonly ISettingsService _settingsService;
     private const string ConfigFileName = "AppConfig.json";

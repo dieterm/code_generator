@@ -1,11 +1,12 @@
 using CodeGenerator.Core.Models.Schema;
+using CodeGenerator.Shared.ViewModels;
 
 namespace CodeGenerator.WinForms.ViewModels;
 
 /// <summary>
 /// ViewModel for EntityEditorForm
 /// </summary>
-public class EntityEditorViewModel : ViewModelBase
+public class EntityEditorViewModel : ValidationViewModelBase
 {
     private string _entityName = string.Empty;
     private string _key = string.Empty;

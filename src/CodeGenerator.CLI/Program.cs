@@ -3,6 +3,7 @@ using System.CommandLine.Invocation;
 using CodeGenerator.Core.Events;
 using CodeGenerator.Core.Interfaces;
 using CodeGenerator.Core.Models.Configuration;
+using CodeGenerator.Core.Models.Output;
 using CodeGenerator.Core.Services;
 using CodeGenerator.Generators;
 using CodeGenerator.Generators.Application;
@@ -236,10 +237,18 @@ class Program
                 outputDir.Create();
             }
 
+            // Create progress reporter for console
+            var progress = new Progress<GenerationProgress>(p =>
+            {
+                Console.Write($"\r{p.Message.PadRight(60)}");
+            });
+
             // Run generation
             var result = string.IsNullOrEmpty(generatorId)
-                ? await orchestrator.GenerateAllAsync(settings, cancellationToken)
-                : await orchestrator.GenerateAsync(generatorId, settings, cancellationToken);
+                ? await orchestrator.GenerateAllAsync(settings, progress, cancellationToken)
+                : await orchestrator.GenerateAsync(generatorId, settings, progress, cancellationToken);
+
+            Console.WriteLine(); // New line after progress
 
             // Output results
             Console.WriteLine();

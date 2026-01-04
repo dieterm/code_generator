@@ -77,11 +77,11 @@ public partial class SettingsForm : Form
         {
             if (row.IsNewRow) continue;
 
-            var id = row.Cells["Id"].Value?.ToString();
+            var id = row.Cells[nameof(_generatorsIdColumn)].Value?.ToString();
             if (id != null && Settings.Generators.TryGetValue(id, out var config))
             {
-                config.Enabled = (bool)(row.Cells["Enabled"].Value ?? false);
-                config.OutputPathPattern = row.Cells["OutputPath"].Value?.ToString() ?? config.OutputPathPattern;
+                config.Enabled = (bool)(row.Cells[nameof(_generatorsEnabledColumn)].Value ?? false);
+                config.OutputPathPattern = row.Cells[nameof(_generatorsOutputPathColumn)].Value?.ToString() ?? config.OutputPathPattern;
             }
         }
     }

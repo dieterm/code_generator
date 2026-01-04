@@ -1,11 +1,12 @@
 using CodeGenerator.Core.Models.Schema;
+using CodeGenerator.Shared.ViewModels;
 
 namespace CodeGenerator.WinForms.ViewModels;
 
 /// <summary>
 /// ViewModel for PropertyEditorForm
 /// </summary>
-public class PropertyEditorViewModel : ViewModelBase
+public class PropertyEditorViewModel : ValidationViewModelBase
 {
     private string _propertyName = string.Empty;
     private string _type = "string";

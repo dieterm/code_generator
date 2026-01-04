@@ -1,9 +1,11 @@
+using CodeGenerator.Shared.ViewModels;
+
 namespace CodeGenerator.WinForms.Controllers;
 
 /// <summary>
 /// Base class for all Controllers
 /// </summary>
-public abstract class ControllerBase<TViewModel> where TViewModel : ViewModels.ViewModelBase
+public abstract class ControllerBase<TViewModel> where TViewModel : ValidationViewModelBase
 {
     protected TViewModel ViewModel { get; }
 

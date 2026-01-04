@@ -1,8 +1,9 @@
 using CodeGenerator.Core.Models.Schema;
+using CodeGenerator.Shared.ViewModels;
 
 namespace CodeGenerator.WinForms.ViewModels;
 
-public class CodeGenMetadataEditViewModel : ViewModelBase
+public class CodeGenMetadataEditViewModel : ValidationViewModelBase
 {
     private CodeGenMetadata? _metadata;
     private string _namespace = string.Empty;

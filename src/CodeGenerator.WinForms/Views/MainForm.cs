@@ -613,17 +613,35 @@ public partial class MainForm : Form
 
         try
         {
-            SetBusy(true, "Generating code...");
+            SetBusy(true, "Initializing code generation...");
             _settings.SchemaFilePath = _currentFilePath;
+
+            // Create progress reporter that updates the UI
+            var progress = new Progress<GenerationProgress>(p =>
+            {
+                // Update progress bar
+                if (p.IsIndeterminate)
+                {
+                    _progressBar.Style = ProgressBarStyle.Marquee;
+                }
+                else
+                {
+                    _progressBar.Style = ProgressBarStyle.Continuous;
+                    _progressBar.Value = Math.Min(p.PercentComplete, 100);
+                }
+
+                // Update status label
+                _statusLabel.Text = p.Message;
+            });
 
             GenerationResult genResult;
             if (string.IsNullOrEmpty(generatorId))
             {
-                genResult = await _orchestrator.GenerateAllAsync(_settings);
+                genResult = await _orchestrator.GenerateAllAsync(_settings, progress);
             }
             else
             {
-                genResult = await _orchestrator.GenerateAsync(generatorId, _settings);
+                genResult = await _orchestrator.GenerateAsync(generatorId, _settings, progress);
             }
 
             foreach (var msg in genResult.Messages)
@@ -660,6 +678,8 @@ public partial class MainForm : Form
         }
         finally
         {
+            _progressBar.Value = 0;
+            _progressBar.Style = ProgressBarStyle.Continuous;
             SetBusy(false);
         }
     }

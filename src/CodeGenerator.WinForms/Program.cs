@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using CodeGenerator.Generators;
 using CodeGenerator.Core;
+using CodeGenerator.Shared;
 
 namespace CodeGenerator.WinForms;
 

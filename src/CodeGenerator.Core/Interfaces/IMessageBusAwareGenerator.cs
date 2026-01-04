@@ -1,4 +1,5 @@
 using CodeGenerator.Core.Events;
+using CodeGenerator.Core.Models.Configuration;
 
 namespace CodeGenerator.Core.Interfaces;
 
@@ -7,20 +8,8 @@ namespace CodeGenerator.Core.Interfaces;
 /// </summary>
 public interface IMessageBusAwareGenerator //: ICodeGenerator
 {
-    /// <summary>
-    /// Unique identifier for this generator
-    /// </summary>
-    string Id { get; }
 
-    /// <summary>
-    /// Display name
-    /// </summary>
-    string Name { get; }
-
-    /// <summary>
-    /// Description of what this generator produces
-    /// </summary>
-    string Description { get; }
+    GeneratorSettingsDescription SettingsDescription { get; }
 
     /// <summary>
     /// Initialize the generator with the message bus

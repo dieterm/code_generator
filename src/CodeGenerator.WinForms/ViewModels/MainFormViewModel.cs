@@ -2,13 +2,14 @@ using CodeGenerator.Core.Models.Configuration;
 using CodeGenerator.Core.Models.Domain;
 using CodeGenerator.Core.Models.Output;
 using CodeGenerator.Core.Models.Schema;
+using CodeGenerator.Shared.ViewModels;
 
 namespace CodeGenerator.WinForms.ViewModels;
 
 /// <summary>
 /// ViewModel for MainForm
 /// </summary>
-public class MainFormViewModel : ViewModelBase
+public class MainFormViewModel : ValidationViewModelBase
 {
     private DomainSchema? _currentSchema;
     private DomainContext? _currentContext;

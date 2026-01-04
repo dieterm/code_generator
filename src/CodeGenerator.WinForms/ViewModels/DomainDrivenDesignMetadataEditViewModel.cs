@@ -1,8 +1,9 @@
 using CodeGenerator.Core.Models.Schema;
+using CodeGenerator.Shared.ViewModels;
 
 namespace CodeGenerator.WinForms.ViewModels;
 
-public class DomainDrivenDesignMetadataEditViewModel : ViewModelBase
+public class DomainDrivenDesignMetadataEditViewModel : ValidationViewModelBase
 {
     private DomainDrivenDesignMetadata? _metadata;
     private string _boundedContext = string.Empty;

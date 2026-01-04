@@ -17,11 +17,22 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Generators.Shared
 {
+    public enum SharedProjectGeneratorTemplates
+    {
+        ProjectXyzSharedProject
+    }
     public class SharedProjectGenerator : BaseProjectGenerator
     {
         public SharedProjectGenerator(ILogger<SharedProjectGenerator> logger) 
-            : base(logger, ArchitectureLayer.Shared, DotNetProjectType.ClassLib, nameof(SharedProjectGenerator), "Shared Project Generator", "Generates a common project structure")
+            : base(logger, ArchitectureLayer.Shared, DotNetProjectType.ClassLib)
         {
+        }
+
+        protected override GeneratorSettingsDescription CreateGeneratorSettingsDescription()
+        {
+            return new GeneratorSettingsDescription(nameof(SharedProjectGenerator), "Shared Project Generator", "Generates a common .csproj project for shared code and base classes", new[] {
+                new TemplateRequirement(Enum.GetName(SharedProjectGeneratorTemplates.ProjectXyzSharedProject), "A folder containing a CSharp project with some shared code and base classes", "{{GeneratorProjectName}}", TemplateType.Folder)
+            });
         }
 
         protected override List<NuGetPackageInfo> GetRequiredNugetPackages()
@@ -62,32 +73,6 @@ namespace CodeGenerator.Generators.Shared
             
             args.FileRegistrations.AddRange(fileRegistrations);
         }
-
-        //private async Task<List<FileRegistration>> ProcessFilesInTemplateFolder(string projectName, string templateSubFolder, string filesFilter)
-        //{
-        //    var settings = GetSettings();
-        //    var sharedProjectTemplateFolder = Path.Combine(settings.TemplateFolder, templateSubFolder);
-        //    var projectDirInfo = new DirectoryInfo(sharedProjectTemplateFolder);
-        //    if (!projectDirInfo.Exists)
-        //    {
-        //        throw new ArgumentException("'ProjectXYZ.Shared' directory does not exist: " + sharedProjectTemplateFolder);
-        //    }
-        //    var fileRegistrations = new List<FileRegistration>();
-        //    // Add common files to the Shared project
-        //    var csFiles = projectDirInfo.GetFiles(filesFilter, SearchOption.AllDirectories);
-        //    foreach (var csFile in csFiles)
-        //    {
-        //        var relativePath = Path.GetRelativePath(sharedProjectTemplateFolder, csFile.FullName);
-        //        // remove filename from path:
-        //        relativePath = relativePath.Substring(0, relativePath.Length - csFile.Name.Length);
-        //        // determine what to do with file
-        //        var fileRegistration = await ProcessFileInTemplate(projectName, csFile, relativePath);
-        //        // if FileRegistration-object is returned, than register it
-        //        if (fileRegistration != null)
-        //            fileRegistrations.Add(fileRegistration);
-        //    }
-        //    return fileRegistrations;
-        //}
 
         private async Task<FileRegistration?> ProcessFileInTemplate(string projectName, FileInfo csFile, string relativePath)
         {

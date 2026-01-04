@@ -4,52 +4,50 @@ using CodeGenerator.Core.Interfaces;
 using CodeGenerator.Core.Models.Configuration;
 using CodeGenerator.Core.Models.Domain;
 using CodeGenerator.Core.Models.Output;
+using CodeGenerator.Core.Models.Schema;
+using CodeGenerator.Core.Services;
+using CodeGenerator.Shared;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace CodeGenerator.Generators;
+namespace CodeGenerator.Core.Generators;
 
 /// <summary>
 /// Base class for generators that use the message bus
 /// </summary>
 public abstract class MessageBusAwareGeneratorBase : IMessageBusAwareGenerator
 {
+    private readonly Lazy<ITemplateEngine> _templateEngine;
+    private readonly Lazy<IFileService> _fileService;
+    private readonly Lazy<GeneratorSettingsDescription> _generatorSettingsDescription;
     protected IGeneratorMessageBus? MessageBus { get; private set; }
     protected ILogger Logger { get; }
-
+    protected ITemplateEngine TemplateEngine { get { return _templateEngine.Value; } }
+    protected IFileService FileService { get { return _fileService.Value; } }
     protected MessageBusAwareGeneratorBase(ILogger logger)
     {
         Logger = logger;
+        _templateEngine = new Lazy<ITemplateEngine>(() => ServiceProviderHolder.ServiceProvider.GetRequiredService<ITemplateEngine>());
+        _fileService = new Lazy<IFileService>(() => ServiceProviderHolder.ServiceProvider.GetRequiredService<IFileService>());
+        _generatorSettingsDescription = new Lazy<GeneratorSettingsDescription>(CreateGeneratorSettingsDescription);
     }
 
-    public abstract string Id { get; }
-    public abstract string Name { get; }
-    public abstract string Description { get; }
-    public abstract GeneratorType Type { get; }
-    public abstract ArchitectureLayer Layer { get; }
-    public abstract IReadOnlyList<TargetLanguage> SupportedLanguages { get; }
+    protected abstract GeneratorSettingsDescription CreateGeneratorSettingsDescription();
+
+    public GeneratorSettingsDescription SettingsDescription { get { return _generatorSettingsDescription.Value; } }
 
     public virtual void Initialize(IGeneratorMessageBus messageBus)
     {
         MessageBus = messageBus ?? throw new ArgumentNullException(nameof(messageBus));
     }
 
-    public virtual void SubscribeToEvents(IGeneratorMessageBus messageBus)
-    {
-        // Override in derived classes to subscribe to events
-    }
+    public abstract void SubscribeToEvents(IGeneratorMessageBus messageBus);
+
 
     public virtual void UnsubscribeFromEvents(IGeneratorMessageBus messageBus)
     {
         // Override in derived classes to unsubscribe from events
     }
-
-    public abstract Task<GenerationResult> GenerateAsync(DomainContext context, GeneratorSettings settings, CancellationToken cancellationToken = default);
-    
-    public abstract Task<GenerationResult> GenerateForEntityAsync(EntityModel entity, DomainContext context, GeneratorSettings settings, CancellationToken cancellationToken = default);
-    
-    public abstract Task<GenerationPreview> PreviewAsync(DomainContext context, GeneratorSettings settings, CancellationToken cancellationToken = default);
-    
-    public abstract ValidationResult Validate(GeneratorConfiguration configuration);
 
     /// <summary>
     /// Request content for a placeholder from other generators
@@ -103,5 +101,31 @@ public abstract class MessageBusAwareGeneratorBase : IMessageBusAwareGenerator
         {
             await MessageBus.PublishAsync(eventArgs, cancellationToken);
         }
+    }
+
+    protected virtual string GetRootNamespace()
+    {
+        var settings = GetSettings();
+        var rootNamespace = string.IsNullOrWhiteSpace(settings.RootNamespace) ? "<Settings_RootNamespace_NotSet>" : settings.RootNamespace;
+        return rootNamespace;
+    }
+
+    protected virtual string GetSchemaNamespace(DomainSchema schema)
+    {
+        var schemaNamespace = string.IsNullOrWhiteSpace(schema.CodeGenMetadata?.Namespace) ? "<Schema_XCodegen_Namespace_NotSet>" : schema.CodeGenMetadata?.Namespace;
+        return schemaNamespace;
+    }
+
+    protected GeneratorSettings GetSettings()
+    {
+        var settingsService = ServiceProviderHolder.GetRequiredService<ISettingsService>();
+        return settingsService.Settings;
+    }
+
+    protected bool IsProject<T>(DomainSchema schema, ProjectRegistration project) where T : BaseProjectGenerator
+    {
+        var projectGenerator = ServiceProviderHolder.GetRequiredService<T>();
+        var projectName = projectGenerator.GetProjectName(schema);
+        return string.Equals(projectName, project.ProjectName, StringComparison.OrdinalIgnoreCase);
     }
 }

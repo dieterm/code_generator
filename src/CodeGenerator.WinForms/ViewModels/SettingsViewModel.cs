@@ -1,11 +1,12 @@
 using CodeGenerator.Core.Models.Configuration;
+using CodeGenerator.Shared.ViewModels;
 
 namespace CodeGenerator.WinForms.ViewModels;
 
 /// <summary>
 /// ViewModel for SettingsForm
 /// </summary>
-public class SettingsViewModel : ViewModelBase
+public class SettingsViewModel : ValidationViewModelBase
 {
     private string _solutionRootFolder = string.Empty;
     private string _rootNamespace = string.Empty;

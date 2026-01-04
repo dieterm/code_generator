@@ -5,6 +5,7 @@ using CodeGenerator.Core.Models.Configuration;
 using CodeGenerator.Core.Models.Output;
 using CodeGenerator.Core.Models.Schema;
 using CodeGenerator.Core.Services;
+using CodeGenerator.Shared;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -15,31 +16,29 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Core.Generators
 {
-    public abstract class BaseProjectGenerator : IMessageBusAwareGenerator
+    public abstract class BaseProjectGenerator : MessageBusAwareGeneratorBase
     {
-        public BaseProjectGenerator(ILogger logger, ArchitectureLayer layer, string projectType, string id, string name, string? description = null) 
+        //private readonly string _id;
+        //private readonly string _name;
+        public BaseProjectGenerator(ILogger logger, ArchitectureLayer layer, string projectType) 
+            : base(logger)
         {
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            Id = id;
-            Name = name;
-            Description = description ?? string.Empty;
+            //Id = id;
+            //Name = name;
+            //Description = description ?? string.Empty;
             ProjectType = projectType;
             Layer = layer;
         }
         protected string ProjectType { get; }
         protected ArchitectureLayer Layer { get; }
 
-        protected ILogger Logger { get; }
+        //public override string Id { get; }
 
-        public string Id { get; }
+        //public override string Name { get; }
 
-        public string Name { get; }
+        //public override string Description { get; }
 
-        public string Description { get; }
-
-        public virtual void Initialize(IGeneratorMessageBus messageBus){}
-
-        public virtual void SubscribeToEvents(IGeneratorMessageBus messageBus)
+        public override void SubscribeToEvents(IGeneratorMessageBus messageBus)
         {
             messageBus.Subscribe<CreatingSolutionEventArgs>(OnCreatingSolution);
             messageBus.Subscribe<CreatedProjectEventArgs>(OnCreatedProject);
@@ -70,22 +69,26 @@ namespace CodeGenerator.Core.Generators
             return nugetPackages;
         }
 
+        
+
         public virtual string GetProjectName(DomainSchema schema)
         {
-            var solNamespace = schema.CodeGenMetadata?.Namespace;
+            var settings = GetSettings();
+            var rootNamespace = GetRootNamespace();
+            var schemaNamespace = GetSchemaNamespace(schema);
             var projectSettings = schema.CodeGenMetadata?.ProjectSettings;
             switch (Layer)
                 {
                 case ArchitectureLayer.Domain:
-                    return $"{solNamespace}.{projectSettings?.DomainProjectName ?? "Domain"}";
+                    return $"{schemaNamespace}.{projectSettings?.DomainProjectName ?? "Domain"}";
                 case ArchitectureLayer.Application:
-                    return $"{solNamespace}.{projectSettings?.ApplicationProjectName ?? "Application"}";
+                    return $"{schemaNamespace}.{projectSettings?.ApplicationProjectName ?? "Application"}";
                 case ArchitectureLayer.Infrastructure:
-                    return $"{solNamespace}.{projectSettings?.InfrastructureProjectName ?? "Infrastructure"}";
+                    return $"{schemaNamespace}.{projectSettings?.InfrastructureProjectName ?? "Infrastructure"}";
                 case ArchitectureLayer.Shared:
-                    return $"{solNamespace}.{projectSettings?.SharedProjectName ?? "Shared"}";
+                    return $"{rootNamespace}.{projectSettings?.SharedProjectName ?? "Shared"}";
                 case ArchitectureLayer.Presentation:
-                    return $"{solNamespace}.{projectSettings?.PresentationProjectName ?? "Presentation"}";
+                    return $"{schemaNamespace}.{projectSettings?.PresentationProjectName ?? "Presentation"}";
                 default:
                     throw new NotImplementedException($"'GetProjectName' not implemented for generator {Id}");
             }
@@ -121,12 +124,6 @@ namespace CodeGenerator.Core.Generators
             var projectName = GetProjectName(schema);
             return project.Name.Equals(projectName, StringComparison.OrdinalIgnoreCase);
         }
-
-        protected GeneratorSettings GetSettings()
-        {
-            var settingsService = ServiceProviderHolder.GetRequiredService<ISettingsService>();
-            return settingsService.Settings;
-        }
         private void OnCreatedProject(CreatedProjectEventArgs args)
         {
             if (!IsThisProject(args.Project, args.Schema)) return;
@@ -140,9 +137,6 @@ namespace CodeGenerator.Core.Generators
                 Logger.LogInformation("Deleted default Class1.cs file at {FilePath}", class1FilePath);
             }
         }
-
-        public virtual void UnsubscribeFromEvents(IGeneratorMessageBus messageBus) {}
-
         protected async Task<List<FileRegistration>> ProcessFilesInTemplateFolder(string projectName, string templateSubFolder, string filesFilter, Func<string, FileInfo, string, Task<FileRegistration?>> fileHandler)
         {
             var settings = GetSettings();
@@ -170,17 +164,5 @@ namespace CodeGenerator.Core.Generators
             return fileRegistrations;
         }
 
-        //protected virtual async Task<FileRegistration> ProcessFileInTemplate(string projectName, FileInfo csFile, string relativePath)
-        //{
-        //    var fileContent = await File.ReadAllTextAsync(csFile.FullName);
-        //    var fileRegistration = new FileRegistration
-        //    {
-        //        FileName = csFile.Name,
-        //        RelativePath = relativePath,
-        //        Content = fileContent,
-        //        RegisteredBy = Id
-        //    };
-        //    return fileRegistration;
-        //}
     }
 }

@@ -3,6 +3,7 @@ using CodeGenerator.Core.Events;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Models.Schema;
 using CodeGenerator.Core.Services;
+using CodeGenerator.Shared;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -22,8 +23,9 @@ namespace CodeGenerator.Generators.Shared
 
         public override string GetProjectName(DomainSchema schema)
         {
-            var solNamespace = schema.CodeGenMetadata?.Namespace;
-            return $"{solNamespace}.UserControls";
+            var rootNamespace = GetRootNamespace();
+            var projectName = $"{rootNamespace}.UserControls";
+            return projectName;
         }
 
         public override void SubscribeToEvents(IGeneratorMessageBus messageBus)
