@@ -1,4 +1,4 @@
-﻿using CodeGenerator.Domain.Artifacts;
+﻿using CodeGenerator.Core.Artifacts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +31,11 @@ namespace CodeGenerator.Domain.Tests
         {
             get { return FileDecorator.Size; }
             set { FileDecorator.Size = value; }
+        }
+
+        public override Task GenerateSelfAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }

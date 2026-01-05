@@ -11,9 +11,9 @@ public abstract class RibbonItemViewModel
     public string Text { get; set; } = string.Empty;
 
     /// <summary>
-    /// Image as byte array for cross-platform compatibility
+    /// Image as byte array or Image for cross-platform compatibility
     /// </summary>
-    public byte[]? ImageData { get; set; }
+    public object? ImageData { get; set; }
 
     public bool Enabled { get; set; } = true;
     public bool Visible { get; set; } = true;

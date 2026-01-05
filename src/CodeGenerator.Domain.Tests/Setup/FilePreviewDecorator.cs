@@ -1,5 +1,4 @@
 ﻿using CodeGenerator.Core.Artifacts;
-using CodeGenerator.Domain.Artifacts;
 using System;
 using System.Collections.Generic;
 using System.Linq;

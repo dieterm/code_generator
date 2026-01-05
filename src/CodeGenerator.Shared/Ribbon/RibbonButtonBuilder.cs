@@ -1,4 +1,5 @@
 using System.Drawing;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CodeGenerator.Shared.Ribbon;
 
@@ -35,6 +36,15 @@ public class RibbonButtonBuilder
     public RibbonButtonBuilder WithImage(byte[] imageData)
     {
         _viewModel.ImageData = imageData;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the image for the button using byte array
+    /// </summary>
+    public RibbonButtonBuilder WithImage(object image)
+    {
+        _viewModel.ImageData = image;
         return this;
     }
 
