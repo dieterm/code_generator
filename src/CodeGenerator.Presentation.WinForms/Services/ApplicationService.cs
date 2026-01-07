@@ -1,5 +1,6 @@
 ﻿using CodeGenerator.Application.Services;
 using CodeGenerator.Presentation.WinForms.ViewModels;
+using CodeGenerator.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,8 @@ namespace CodeGenerator.Presentation.WinForms.Services
         public void RunApplication(MainViewModel mainViewModel)
         {
             // Start the application with the provided ViewModel
-            var mainView = new MainView();
+            var mainView = ServiceProviderHolder.GetRequiredService<MainView>();
+           
             mainView.BindViewModel(mainViewModel);
             System.Windows.Forms.Application.Run(mainView);
         }

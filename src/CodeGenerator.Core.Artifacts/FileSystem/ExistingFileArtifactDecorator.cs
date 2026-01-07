@@ -13,7 +13,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
             this.FilePath = filePath;
         }
 
-        public string? FilePath { 
+        public string FilePath { 
             get{ return GetProperty<string>(nameof(FilePath)); } 
             set{ SetProperty(nameof(FilePath), value); }
         }

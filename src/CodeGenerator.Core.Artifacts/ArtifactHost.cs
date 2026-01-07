@@ -13,13 +13,13 @@ namespace CodeGenerator.Core.Artifacts
 
         public bool CanPreview { get {return Artifact.CanPreview; } }
 
-        public List<Artifact> Children { get { return Artifact.Children; } }
+        public List<IArtifact> Children { get { return Artifact.Children; } }
 
         public ArtifactDecoratorCollection Decorators { get { return Artifact.Decorators; } }
 
         public string Id { get { return Artifact.Id; } }
 
-        public Artifact? Parent { get { return Artifact.Parent; } }
+        public IArtifact? Parent { get { return Artifact.Parent; } }
 
         public Dictionary<string, object?> Properties { get { return Artifact.Properties; } }
 
@@ -33,7 +33,7 @@ namespace CodeGenerator.Core.Artifacts
             Artifact = artifact;
         }
 
-        public void AddChild(Artifact child)
+        public void AddChild(IArtifact child)
         {
             Artifact.AddChild(child);
         }
@@ -58,7 +58,7 @@ namespace CodeGenerator.Core.Artifacts
             return ((IArtifact)Artifact).FindAncestor<T>();
         }
 
-        Artifact? IArtifact.FindAncestorArtifact<T>()
+        IArtifact? IArtifact.FindAncestorArtifact<T>()
         {
             return ((IArtifact)Artifact).FindAncestorArtifact<T>();
         }
@@ -68,7 +68,7 @@ namespace CodeGenerator.Core.Artifacts
             return ((IArtifact)Artifact).FindDescendantDecorators<T>();
         }
 
-        IEnumerable<Artifact> IArtifact.FindDescendants<T>()
+        IEnumerable<IArtifact> IArtifact.FindDescendants<T>()
         {
             return ((IArtifact)Artifact).FindDescendants<T>();
         }
@@ -83,7 +83,7 @@ namespace CodeGenerator.Core.Artifacts
             return Artifact.GenerateSelfAsync(progress, cancellationToken);
         }
 
-        public IEnumerable<Artifact> GetAllDescendants()
+        public IEnumerable<IArtifact> GetAllDescendants()
         {
             return Artifact.GetAllDescendants();
         }
@@ -118,7 +118,7 @@ namespace CodeGenerator.Core.Artifacts
             return ((IArtifact)Artifact).Is<T>();
         }
 
-        public void RemoveChild(Artifact child)
+        public void RemoveChild(IArtifact child)
         {
             ((IArtifact)Artifact).RemoveChild(child);
         }
@@ -128,12 +128,12 @@ namespace CodeGenerator.Core.Artifacts
             ((IArtifact)Artifact).RemoveDecorator(decorator);
         }
 
-        public Artifact SetProperty(IArtifactDecorator decorator, string name, object? value)
+        public IArtifact SetProperty(IArtifactDecorator decorator, string name, object? value)
         {
             return ((IArtifact)Artifact).SetProperty(decorator, name, value);
         }
 
-        public Artifact SetProperty(string name, object? value)
+        public IArtifact SetProperty(string name, object? value)
         {
             return ((IArtifact)Artifact).SetProperty(name, value);
         }

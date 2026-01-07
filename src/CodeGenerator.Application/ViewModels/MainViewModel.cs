@@ -1,6 +1,7 @@
 ﻿using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -65,6 +66,12 @@ namespace CodeGenerator.Presentation.WinForms.ViewModels
             set => SetProperty(ref _isDirty, value);
         }
         public bool IsClosing { get; internal set; }
+
+        private RibbonViewModel _ribbonViewModel;
+        public RibbonViewModel RibbonViewModel { 
+            get => _ribbonViewModel;
+            set => SetProperty(ref _ribbonViewModel, value);
+        }
 
         // Constructor
         public MainViewModel(IMessageBoxService messageBoxService)

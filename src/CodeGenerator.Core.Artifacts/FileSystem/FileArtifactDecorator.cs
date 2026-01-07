@@ -15,7 +15,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
         /// <summary>
         /// Name of the file with extension (eg. ".gitignore', 'MyClass.cs', ...)
         /// </summary>
-        public string? FileName {
+        public string FileName {
             get { return GetProperty<string>(nameof(FileName)); }
             set { SetProperty(nameof(FileName), value); }
         }

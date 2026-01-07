@@ -7,24 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ApplicationLayer\" />
-    <Folder Include="DomainLayer\" />
-    <Folder Include="InfrastructureLayer\" />
-    <Folder Include="SharedLayer\" />
-    <Folder Include="PresentationLayer\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\CodeGenerator.Core.Artifacts\CodeGenerator.Core.Artifacts.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.DomainSchema\CodeGenerator.Core.DomainSchema.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Generators\CodeGenerator.Core.Generators.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Templates\CodeGenerator.Core.Templates.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core\CodeGenerator.Core.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Domain\CodeGenerator.Domain.csproj" />
     <ProjectReference Include="..\CodeGenerator.Shared\CodeGenerator.Shared.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.TextTemplating" Version="17.10.40170" />
-    <PackageReference Include="System.CodeDom" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Test.tt">

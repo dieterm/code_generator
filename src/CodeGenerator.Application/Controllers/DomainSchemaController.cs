@@ -20,16 +20,18 @@ namespace CodeGenerator.Application.Controllers
         private readonly ApplicationMessageBus _messageBus;
         private readonly DomainSchemaParser _schemaParser;
         private readonly IMessageBoxService _messageService;
+        private readonly IWindowManagerService _windowManagerService;
         private string? _schemaPath;
         private DomainSchema? _domainSchema;
         public DomainSchema? DomainSchema { get { return _domainSchema; } }
-        public DomainSchemaController(DomainSchemaTreeViewModel treeViewModel, IMessageBoxService messageService, DomainSchemaParser schemaParser, ApplicationMessageBus messageBus, ILogger<DomainSchemaController> logger)
+        public DomainSchemaController(IWindowManagerService windowManagerService, DomainSchemaTreeViewModel treeViewModel, IMessageBoxService messageService, DomainSchemaParser schemaParser, ApplicationMessageBus messageBus, ILogger<DomainSchemaController> logger)
         {
             _logger = logger;
             _treeViewModel = treeViewModel;
             _messageBus = messageBus;
             _schemaParser = schemaParser;
             _messageService = messageService;
+            _windowManagerService = windowManagerService;
         }
 
         public async Task<bool> LoadDomainSchemaAsync(string filePath)
@@ -44,7 +46,7 @@ namespace CodeGenerator.Application.Controllers
                 _schemaPath = filePath;
                 _treeViewModel.DomainSchema = _domainSchema;
                 _messageBus.Publish(new DomainSchemaLoadedEvent(filePath, _domainSchema, _treeViewModel));
-
+                _windowManagerService.ShowDomainSchemaTreeView(_treeViewModel);
                 _logger.LogInformation("Domain schema loaded successfully from {FilePath}", filePath);
             }
             catch (Exception ex)

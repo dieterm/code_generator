@@ -5,6 +5,8 @@ using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Core.DomainSchema.Services;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Presentation.WinForms.ViewModels;
+using CodeGenerator.Generators.CodeArchitectureLayers;
+using CodeGenerator.Shared.Ribbon;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -26,10 +28,12 @@ public static class ServiceCollectionExtensions
         // Register ViewModels
         services.AddTransient<MainViewModel>();
         services.AddTransient<DomainSchemaTreeViewModel>();
+        services.AddTransient<GenerationResultTreeViewModel>();
 
         // Register Controllers
         services.AddSingleton<ApplicationController>();
         services.AddSingleton<DomainSchemaController>();
+        services.AddSingleton<GenerationController>();
 
         // Register Message Bus systems
         services.AddSingleton<ApplicationMessageBus>();
@@ -39,6 +43,13 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<DomainSchemaParser>();
         services.AddTransient<GeneratorOrchestrator>();
 
+        // Register Ribbon Builder
+        services.AddSingleton<RibbonBuilder>(RibbonBuilder.Create());
+
+        // Register Generators from other projects
+        services.AddCodeArchitectureLayersServices(configuration);
+        services.AddDotNetGeneratorServices(configuration);
+        
         // Add logging
         services.AddLogging(builder =>
         {

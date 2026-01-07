@@ -24,6 +24,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+    <Folder Include="Resources\dot-net\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeGenerator.Application\CodeGenerator.Application.csproj" />
@@ -31,6 +32,11 @@
     <ProjectReference Include="..\CodeGenerator.UserControls\CodeGenerator.UserControls.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Resources\DotNetIcons.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DotNetIcons.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\LucideIcons_#000000.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -43,6 +49,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Update="Resources\DotNetIcons.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>DotNetIcons.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\LucideIcons_#000000.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>LucideIcons_#000000.Designer.cs</LastGenOutput>

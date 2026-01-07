@@ -1,5 +1,7 @@
 using CodeGenerator.Application.MessageBus;
 using CodeGenerator.Application.Services;
+using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Presentation.WinForms.Resources;
 using CodeGenerator.Presentation.WinForms.Services;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.UserControls.Ribbon;
@@ -25,6 +27,13 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IFileSystemDialogService, FileSystemDialogService>();
         services.AddSingleton<IRibbonRenderer, SyncfusionRibbonRenderer>();
 
+        // Main form
+        var mainView = new MainView();
+        services.AddSingleton<MainView>(mainView);
+        services.AddSingleton<IWindowManagerService>(mainView);
+        // Resources
+        services.AddSingleton<ITreeNodeIconResolver<ResourceManagerTreeNodeIcon>, ResourceManagerTreeNodeIconResolver>();
+        
         return services;
     }
 }

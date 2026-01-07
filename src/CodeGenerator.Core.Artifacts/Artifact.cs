@@ -9,8 +9,8 @@ namespace CodeGenerator.Core.Artifacts;
 public abstract class Artifact : IArtifact
 {
     public abstract string Id { get; }
-    public Artifact? Parent { get; private set; }
-    public List<Artifact> Children { get; } = new();
+    public IArtifact? Parent { get; private set; }
+    public List<IArtifact> Children { get; } = new();
     public ArtifactDecoratorCollection Decorators { get; } = new();
 
     public abstract string TreeNodeText { get; }
@@ -54,17 +54,17 @@ public abstract class Artifact : IArtifact
     }
 
 
-    public void AddChild(Artifact child)
+    public void AddChild(IArtifact child)
     {
-        child.Parent = this;
+        ((Artifact)child).Parent = this;
         Children.Add(child);
     }
 
-    public void RemoveChild(Artifact child)
+    public void RemoveChild(IArtifact child)
     {
         if (Children.Remove(child))
         {
-            child.Parent = null;
+            ((Artifact)child).Parent = null;
         }
     }
 
@@ -135,7 +135,7 @@ public abstract class Artifact : IArtifact
     /// <summary>
     /// Set a property value for this artifact
     /// </summary>
-    public Artifact SetProperty(string name, object? value)
+    public IArtifact SetProperty(string name, object? value)
     {
         Properties[name] = value;
         return this;
@@ -154,7 +154,7 @@ public abstract class Artifact : IArtifact
     /// <summary>
     /// Set a property value for a decorator
     /// </summary>
-    public Artifact SetProperty(IArtifactDecorator decorator, string name, object? value)
+    public IArtifact SetProperty(IArtifactDecorator decorator, string name, object? value)
     {
         Properties[$"{decorator.Key}.{name}"] = value;
         return this;
@@ -173,7 +173,7 @@ public abstract class Artifact : IArtifact
         return null;
     }
 
-    public Artifact? FindAncestorArtifact<T>() where T : class, IArtifactDecorator
+    public IArtifact? FindAncestorArtifact<T>() where T : class, IArtifactDecorator
     {
         var current = Parent;
         while (current != null)
@@ -198,7 +198,7 @@ public abstract class Artifact : IArtifact
         }
     }
 
-    public IEnumerable<Artifact> FindDescendants<T>() where T : class, IArtifactDecorator
+    public IEnumerable<IArtifact> FindDescendants<T>() where T : class, IArtifactDecorator
     {
         foreach (var child in Children)
         {
@@ -210,7 +210,7 @@ public abstract class Artifact : IArtifact
         }
     }
 
-    public IEnumerable<Artifact> GetAllDescendants()
+    public IEnumerable<IArtifact> GetAllDescendants()
     {
         foreach (var child in Children)
         {

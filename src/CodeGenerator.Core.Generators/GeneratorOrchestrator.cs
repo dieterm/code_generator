@@ -70,7 +70,7 @@ public class GeneratorOrchestrator
             });
 
             // publish event to allow generators to contribute
-            MessageBus.Publish(new CreatingRootArtifactEventArgs(result));
+            MessageBus.Publish(new CreatingArtifactEventArgs(result, result.RootArtifact));
             progress?.Report(new GenerationProgress
             {
                 CurrentStep = "Finalizing Root Artifact",
@@ -80,7 +80,7 @@ public class GeneratorOrchestrator
                 IsIndeterminate = true
             });
             // finalize root artifact if needed
-            MessageBus.Publish(new CreatedRootArtifactEventArgs(result));
+            MessageBus.Publish(new CreatedArtifactEventArgs(result, result.RootArtifact));
             
             if (!previewOnly)
             {

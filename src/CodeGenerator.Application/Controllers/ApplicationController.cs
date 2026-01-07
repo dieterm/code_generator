@@ -4,6 +4,8 @@ using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Presentation.WinForms.ViewModels;
+using CodeGenerator.Shared;
+using CodeGenerator.Shared.Ribbon;
 using Microsoft.DotNet.DesignTools.ViewModels;
 using Microsoft.Extensions.Logging;
 
@@ -18,8 +20,8 @@ namespace CodeGenerator.Application.Controllers
         private readonly ILogger<ApplicationController> _logger;
         private readonly ApplicationMessageBus _messageBus;
         private readonly DomainSchemaController _domainSchemaController;
-        private readonly GeneratorOrchestrator _generatorOrchestrator;
-        public ApplicationController(MainViewModel viewModel, DomainSchemaController domainSchemaController, IApplicationService applicationService, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, GeneratorOrchestrator generatorOrchestrator, ILogger<ApplicationController> logger) 
+        private readonly GenerationController _generationController;
+        public ApplicationController(RibbonBuilder ribbonBuilder, MainViewModel viewModel, DomainSchemaController domainSchemaController, GenerationController generationController, IApplicationService applicationService, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<ApplicationController> logger) 
         {
             _mainViewModel = viewModel;
             _applicationService = applicationService;
@@ -27,11 +29,44 @@ namespace CodeGenerator.Application.Controllers
             _messageBoxService = messageboxService;
             _fileSystemDialogService = fileSystemDialogService;
             _domainSchemaController = domainSchemaController;
-            _generatorOrchestrator = generatorOrchestrator;
+            _generationController = generationController;
             _logger = logger;
 
             SubscribeToMessageBusEvents();
+
+            CreateRibbon(ribbonBuilder);
         }
+        private void CreateRibbon(RibbonBuilder ribbonBuilder)
+        {
+            // Build Ribbon Model
+            ribbonBuilder
+                .AddTab("tabDomainModel", "Domain Model")
+                    .AddToolStrip("toolstripDomainModel", "Domain Model")
+                        .AddButton("btnOpen", "Open")
+                            .WithSize(RibbonButtonSize.Large)
+                            .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
+                            .WithImage("folder_open")
+                            .OnClick((e) => OnOpenRequested(null, e)).Build();
+
+            ribbonBuilder.AddTab("tabGeneration", "Generation")
+                    .AddToolStrip("toolstripGeneration", "Generation")
+                        .AddButton("btnGenerate", "Generate")
+                            .WithSize(RibbonButtonSize.Large)
+                            .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
+                            .WithImage("scroll_text")
+                            .OnClick((e) => OnGenerateRequested(null, e))
+                        .AddButton("btnGeneratePreview", "Preview")
+                            .WithSize(RibbonButtonSize.Large)
+                            .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
+                            .WithImage("eye")
+                            .OnClick((e) => OnGeneratePreviewRequested(null, e))
+                        .AddButton("btnCancelGeneration", "Cancel")
+                            .WithSize(RibbonButtonSize.Large)
+                            .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
+                            .WithImage("x")
+                            .OnClick((e) => OnCancelGenerationRequested(null, e)).Build();
+        }
+
 
         private void SubscribeToMessageBusEvents()
         {
@@ -47,7 +82,7 @@ namespace CodeGenerator.Application.Controllers
             _mainViewModel.SaveAsRequested += OnSaveAsRequested;
             _mainViewModel.GenerateRequested += OnGenerateRequested;
             _mainViewModel.ClosingRequested += OnClosingRequested;
-
+            _mainViewModel.RibbonViewModel = ServiceProviderHolder.GetRequiredService<RibbonBuilder>().Build();
             _applicationService.RunApplication(_mainViewModel);
             // we never get here, because RunApplication is blocking in Gui-loop
         }
@@ -57,6 +92,7 @@ namespace CodeGenerator.Application.Controllers
             _fileSystemDialogService.SaveFile("Json Files (*.json)|*.json|All Files (*.*)|*.*", null, "MonkeyBusiness.json");
 
         }
+
 
         private void OnClosingRequested(object? sender, EventArgs e)
         { 
@@ -125,13 +161,38 @@ namespace CodeGenerator.Application.Controllers
             _mainViewModel.IsDirty = false;
         }
 
+        private CancellationTokenSource _generationCancellationTokenSource;
         /// <summary>
         /// Handle code generation logic. <br/>
         /// Triggered when user clicks "Generate" button
         /// </summary>
         private async void OnGenerateRequested(object? sender, EventArgs e)
         {
-            await _generatorOrchestrator.GenerateAsync(_domainSchemaController.DomainSchema, false, _mainViewModel);
+            if(_generationCancellationTokenSource != null)
+            {
+                _messageBoxService.ShowWarning("Generation is already in progress.", "Generation In Progress");
+                return;
+            }
+            _generationCancellationTokenSource = new CancellationTokenSource();
+            await _generationController.GenerateAsync(_mainViewModel, _generationCancellationTokenSource.Token);
+            _generationCancellationTokenSource = null;
+        }
+
+        private async void OnGeneratePreviewRequested(object value, EventArgs e)
+        {
+            if (_generationCancellationTokenSource != null)
+            {
+                _messageBoxService.ShowWarning("Generation is already in progress.", "Generation In Progress");
+                return;
+            }
+            _generationCancellationTokenSource = new CancellationTokenSource();
+            await _generationController.GeneratePreviewAsync(_mainViewModel, _generationCancellationTokenSource.Token);
+            _generationCancellationTokenSource = null;
+        }
+        private void OnCancelGenerationRequested(object value, EventArgs e)
+        {
+            _generationCancellationTokenSource.Cancel();
+            _generationCancellationTokenSource = null;
         }
 
         public void Dispose()
