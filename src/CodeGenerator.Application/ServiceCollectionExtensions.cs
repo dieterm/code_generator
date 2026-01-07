@@ -1,5 +1,9 @@
 using CodeGenerator.Application.Controllers;
+using CodeGenerator.Application.MessageBus;
 using CodeGenerator.Application.Services;
+using CodeGenerator.Application.ViewModels;
+using CodeGenerator.Core.DomainSchema.Services;
+using CodeGenerator.Core.Generators;
 using CodeGenerator.Presentation.WinForms.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,9 +25,19 @@ public static class ServiceCollectionExtensions
     {
         // Register ViewModels
         services.AddTransient<MainViewModel>();
+        services.AddTransient<DomainSchemaTreeViewModel>();
 
         // Register Controllers
-        services.AddTransient<ApplicationController>();
+        services.AddSingleton<ApplicationController>();
+        services.AddSingleton<DomainSchemaController>();
+
+        // Register Message Bus systems
+        services.AddSingleton<ApplicationMessageBus>();
+        services.AddSingleton<GeneratorMessageBus>();
+
+        // Register Services
+        services.AddSingleton<DomainSchemaParser>();
+        services.AddTransient<GeneratorOrchestrator>();
 
         // Add logging
         services.AddLogging(builder =>

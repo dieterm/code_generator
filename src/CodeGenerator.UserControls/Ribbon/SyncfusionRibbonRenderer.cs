@@ -1,7 +1,11 @@
 using CodeGenerator.Shared.Ribbon;
+using Microsoft.DotNet.DesignTools.ViewModels;
 using Syncfusion.Windows.Forms.Tools;
 using System.Drawing;
 using System.IO;
+using System.Resources;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace CodeGenerator.UserControls.Ribbon;
 
@@ -10,6 +14,69 @@ namespace CodeGenerator.UserControls.Ribbon;
 /// </summary>
 public class SyncfusionRibbonRenderer : IRibbonRenderer
 {
+    private global::System.Resources.ResourceManager? _resourceManager;
+
+    public IRibbonRenderer SetResourceManager(global::System.Resources.ResourceManager resourceManager)
+    {
+        _resourceManager = resourceManager;
+        return this;
+    }
+
+    /// <summary>
+    /// try to get Image from ResourceManager.
+    /// if not found, returns null.
+    /// </summary>
+    public Image? GetResourceImage(string resourceKey)
+    {
+        if(_resourceManager==null)
+            throw new InvalidOperationException("ResourceManager is not set. Call SyncfusionRibbonRenderer.SetResourceManager(...) first.");
+        
+        object? obj = _resourceManager.GetObject(resourceKey);
+        if (obj == null)
+            return null;
+
+        return (Image)obj;
+    }
+
+    public void SetImageFromModel(Func<object> imageDataGetter, Action<Image> imageSetter, string modelName)
+    {
+        var imageData = imageDataGetter();
+        if (imageData is byte[] byteData)
+        {
+            using var ms = new MemoryStream(byteData);
+            imageSetter(Image.FromStream(ms));
+        }
+        else if (imageData is Image img)
+        {
+            imageSetter( img);
+        }
+        else if (imageData is string resourceName)
+        {
+            var imgFromResource = GetResourceImage(resourceName);
+            if (imgFromResource != null)
+                imageSetter(imgFromResource);
+            else
+            {
+                if(resourceName.Contains("_"))
+                {
+                    resourceName = resourceName.Replace("_", "-");
+                    imgFromResource = GetResourceImage(resourceName);
+                    if (imgFromResource != null)
+                    {
+                        imageSetter(imgFromResource);
+                        return;
+                    }
+                }
+                throw new InvalidOperationException($"Image resource '{resourceName}' not found for toolstrip {modelName}");
+            }
+
+        }
+        else
+        {
+            throw new InvalidOperationException($"Unsupported image data type for button {modelName}");
+        }
+    }
+
     /// <inheritdoc/>
     public void Render(RibbonViewModel viewModel, object ribbonControl)
     {
@@ -104,20 +171,7 @@ public class SyncfusionRibbonRenderer : IRibbonRenderer
 
         if (viewModel.ImageData != null)
         {
-            if(viewModel.ImageData is byte[] byteData)
-            {
-                using var ms = new MemoryStream(byteData);
-                toolStrip.Image = Image.FromStream(ms);
-            } 
-            else if(viewModel.ImageData is Image img)
-            {
-                toolStrip.Image = img;
-            } else
-            {
-                throw new InvalidOperationException($"Unsupported image data type for toolstrip {viewModel.Name}");
-            }
-            //using var ms = new MemoryStream(viewModel.ImageData);
-            //toolStrip.Image = Image.FromStream(ms);
+            SetImageFromModel(() => viewModel.ImageData, img => toolStrip.Image = img, viewModel.Name);
         }
 
         foreach (var itemViewModel in viewModel.Items)
@@ -156,18 +210,7 @@ public class SyncfusionRibbonRenderer : IRibbonRenderer
 
         if (viewModel.ImageData != null)
         {
-            if(viewModel.ImageData is byte[] byteData)
-            {
-                using var ms = new MemoryStream(byteData);
-                button.Image = Image.FromStream(ms);
-            } 
-            else if(viewModel.ImageData is Image img)
-            {
-                button.Image = img;
-            } else
-            {
-                throw new InvalidOperationException($"Unsupported image data type for button {viewModel.Name}");
-            }
+            SetImageFromModel(() => viewModel.ImageData, img => button.Image = img, viewModel.Name);
         }
 
         if (!string.IsNullOrEmpty(viewModel.ToolTipText))

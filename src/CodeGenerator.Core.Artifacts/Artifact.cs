@@ -1,35 +1,58 @@
+using CodeGenerator.Core.Artifacts.TreeNode;
+
 namespace CodeGenerator.Core.Artifacts;
 
 /// <summary>
 /// Represents any generated artifact in the system.
 /// The type and behavior of the artifact is determined by its decorators.
 /// </summary>
-public abstract class Artifact
+public abstract class Artifact : IArtifact
 {
-    //public string Name { get; set; } = string.Empty;
-    public Guid Id { get; } = Guid.NewGuid();
+    public abstract string Id { get; }
     public Artifact? Parent { get; private set; }
     public List<Artifact> Children { get; } = new();
     public ArtifactDecoratorCollection Decorators { get; } = new();
 
+    public abstract string TreeNodeText { get; }
+    public abstract ITreeNodeIcon TreeNodeIcon { get; }
     /// <summary>
-    /// Arbitrary metadata/properties for the artifact
+    /// Arbitrary metadata/properties for the artifact and it's decorators<br />
+    /// Artifact Property Key: "{PropertyName}"<br />
+    /// Decorator Property Key: "{DecoratorKey}.{PropertyName}"
     /// </summary>
     public Dictionary<string, object?> Properties { get; } = new();
+
+    /// <summary>
+    /// Materialize the artifact and child-artifacts (generate its content, files, etc.)
+    /// </summary>
+    public virtual async Task GenerateAsync(IProgress<ArtifactGenerationProgress> progress, CancellationToken cancellationToken = default)
+    {
+        int totalSteps = 1 + Children.Count;
+        int currentStep = 0;
+
+        progress.Report(new ArtifactGenerationProgress(this, "Generating artifact", currentStep++, totalSteps));
+        await GenerateSelfAsync(progress, cancellationToken);
+
+        foreach (var child in Children)
+        {
+            progress.Report(new ArtifactGenerationProgress(this, "Generating child artifact", currentStep++, totalSteps));
+            await child.GenerateAsync(progress, cancellationToken);
+        }
+
+        progress.Report(new ArtifactGenerationProgress(this, "Generated artifact", currentStep, totalSteps));
+    }
     /// <summary>
     /// Materialize the artifact (generate its content, files, etc.)
     /// </summary>
-    public async Task GenerateAsync(CancellationToken cancellationToken = default)
+    public virtual async Task GenerateSelfAsync(IProgress<ArtifactGenerationProgress> progress, CancellationToken cancellationToken = default)
     {
-        await GenerateSelfAsync(cancellationToken);
-        foreach (var child in Children)
+        foreach (var decorator in Decorators.Where(d => d.CanGenerate()))
         {
-            await child.GenerateAsync(cancellationToken);
+            progress.Report(new ArtifactGenerationProgress(this, $"Generating artifact via decorator '{decorator.Key}'", 0, 1));
+            await decorator.GenerateAsync(progress, cancellationToken);
         }
     }
 
-    public abstract Task GenerateSelfAsync(CancellationToken cancellationToken = default);
-    
 
     public void AddChild(Artifact child)
     {
@@ -45,10 +68,22 @@ public abstract class Artifact
         }
     }
 
-    public void AddDecorator(IArtifactDecorator decorator)
+    public T AddDecorator<T>(T decorator) where T : IArtifactDecorator
     {
         decorator.Attach(this);
         Decorators.Add(decorator);
+        return decorator;
+    }
+
+    public T AddOrGetDecorator<T>(Func<T> decoratorFactory) where T : class, IArtifactDecorator
+    {
+        var decorator = GetDecorator<T>();
+        if (decorator == null)
+        {
+            decorator = decoratorFactory();
+            AddDecorator(decorator);
+        }
+        return decorator;
     }
 
     public void RemoveDecorator(IArtifactDecorator decorator)

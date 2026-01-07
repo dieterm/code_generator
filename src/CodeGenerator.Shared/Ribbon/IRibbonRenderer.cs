@@ -8,6 +8,7 @@ namespace CodeGenerator.Shared.Ribbon;
 /// </summary>
 public interface IRibbonRenderer
 {
+    IRibbonRenderer SetResourceManager(global::System.Resources.ResourceManager resourceManager);
     /// <summary>
     /// Applies the RibbonViewModel configuration to a ribbon control
     /// </summary>

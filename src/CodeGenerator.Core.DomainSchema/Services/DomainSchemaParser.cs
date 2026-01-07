@@ -1,19 +1,19 @@
 using System.Text.Json;
 using CodeGenerator.Core.Interfaces;
-using CodeGenerator.Core.Models.Schema;
+using CodeGenerator.Core.DomainSchema.Schema;
 using Microsoft.Extensions.Logging;
 
-namespace CodeGenerator.Core.Services;
+namespace CodeGenerator.Core.DomainSchema.Services;
 
 /// <summary>
 /// Parses JSON Schema files into domain context
 /// </summary>
-public class SchemaParser
+public class DomainSchemaParser
 {
-    private readonly ILogger<SchemaParser> _logger;
+    private readonly ILogger<DomainSchemaParser> _logger;
     private readonly JsonSerializerOptions _jsonOptions;
 
-    public SchemaParser(ILogger<SchemaParser> logger)
+    public DomainSchemaParser(ILogger<DomainSchemaParser> logger)
     {
         _logger = logger;
         _jsonOptions = new JsonSerializerOptions
@@ -25,20 +25,20 @@ public class SchemaParser
         };
     }
 
-    public async Task SaveSchemaAsync(DomainSchema schema, string filePath, CancellationToken cancellationToken = default)
+    public async Task SaveSchemaAsync(Schema.DomainSchema schema, string filePath, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Saving schema to {FilePath}", filePath);
         var json = JsonSerializer.Serialize(schema, _jsonOptions);
         await File.WriteAllTextAsync(filePath, json, cancellationToken);
     }
 
-    public async Task<DomainSchema> LoadSchemaAsync(string filePath, CancellationToken cancellationToken = default)
+    public async Task<Schema.DomainSchema> LoadSchemaAsync(string filePath, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Loading schema from {FilePath}", filePath);
         if (!File.Exists(filePath))
             throw new FileNotFoundException($"Schema file not found: {filePath}");
         var json = await File.ReadAllTextAsync(filePath, cancellationToken);
-        var schema = JsonSerializer.Deserialize<DomainSchema>(json, _jsonOptions)
+        var schema = JsonSerializer.Deserialize<Schema.DomainSchema>(json, _jsonOptions)
             ?? throw new InvalidOperationException("Failed to parse schema");
         foreach(var (name, definition) in schema.Definitions ?? new Dictionary<string, EntityDefinition>())
         {

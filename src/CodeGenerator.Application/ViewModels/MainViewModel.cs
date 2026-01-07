@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Application.Services;
+using CodeGenerator.Core.Generators;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.ViewModels;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Presentation.WinForms.ViewModels
 {
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : ViewModelBase, IProgress<GenerationProgress>
     {
         private readonly IMessageBoxService _messageBoxService;
         private bool _isDirty;
@@ -34,6 +35,26 @@ namespace CodeGenerator.Presentation.WinForms.ViewModels
         public RelayCommand SaveAsCommand { get; }
         public RelayCommand GenerateCommand { get; }
         public RelayCommand ExitCommand { get; }
+        
+        private string _statusLabel;
+        public string StatusLabel{
+            get => _statusLabel;
+            set => SetProperty(ref _statusLabel, value);
+        }
+
+        private string _progressLabel;
+        public string ProgressLabel
+        {
+            get => _progressLabel;
+            set => SetProperty(ref _progressLabel, value);
+        }
+
+        private int? _progressValue;
+        public int? ProgressValue
+        {
+            get => _progressValue;
+            set => SetProperty(ref _progressValue, value);
+        }
 
         /// <summary>
         /// Indicates if there are unsaved changes
@@ -56,6 +77,16 @@ namespace CodeGenerator.Presentation.WinForms.ViewModels
             SaveAsCommand = new RelayCommand(_ => SaveAsRequested?.Invoke(this, EventArgs.Empty));
             GenerateCommand = new RelayCommand(_ => GenerateRequested?.Invoke(this, EventArgs.Empty));
             ExitCommand = new RelayCommand(_ => ClosingRequested?.Invoke(this, EventArgs.Empty));
+        }
+
+        public void Report(GenerationProgress progress)
+        {
+            if(progress.IsIndeterminate)
+                ProgressValue = null;
+            else
+                ProgressValue = progress.PercentComplete;
+
+            ProgressLabel = progress.Message;
         }
     }
 

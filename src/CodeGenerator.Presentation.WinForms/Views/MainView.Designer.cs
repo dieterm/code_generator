@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            Syncfusion.Windows.Forms.Tools.ToolStripTabGroup toolStripTabGroup1 = new Syncfusion.Windows.Forms.Tools.ToolStripTabGroup();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainView));
             ribbonControl = new Syncfusion.Windows.Forms.Tools.RibbonControlAdv();
             backStageView = new Syncfusion.Windows.Forms.BackStageView(components);
@@ -42,15 +43,12 @@
             btnSave = new Syncfusion.Windows.Forms.BackStageButton();
             backStageSeparator1 = new Syncfusion.Windows.Forms.BackStageSeparator();
             btnExit = new Syncfusion.Windows.Forms.BackStageButton();
-            toolStripTabItem1 = new Syncfusion.Windows.Forms.Tools.ToolStripTabItem();
-            toolStripTabItem2 = new Syncfusion.Windows.Forms.Tools.ToolStripTabItem();
             statusStrip = new Syncfusion.Windows.Forms.Tools.StatusStripEx();
             lblProgress = new ToolStripStatusLabel();
             pbProgress = new ToolStripProgressBar();
             lblStatus = new Syncfusion.Windows.Forms.Tools.StatusStripLabel();
             dockingManager = new Syncfusion.Windows.Forms.Tools.DockingManager(components);
             ((System.ComponentModel.ISupportInitialize)ribbonControl).BeginInit();
-            ribbonControl.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)backStage1).BeginInit();
             backStage1.SuspendLayout();
             back_tab_home.SuspendLayout();
@@ -65,8 +63,6 @@
             ribbonControl.AutoLayoutToolStrip = true;
             ribbonControl.BackStageView = backStageView;
             ribbonControl.Font = new Font("Segoe UI", 8.25F);
-            ribbonControl.Header.AddMainItem(toolStripTabItem1);
-            ribbonControl.Header.AddMainItem(toolStripTabItem2);
             ribbonControl.LauncherStyle = Syncfusion.Windows.Forms.Tools.LauncherStyle.Metro;
             ribbonControl.Location = new Point(1, 0);
             ribbonControl.MenuButtonFont = new Font("Segoe UI", 8.25F);
@@ -85,11 +81,16 @@
             ribbonControl.QuickPanelVisible = false;
             ribbonControl.RibbonHeaderImage = Syncfusion.Windows.Forms.Tools.RibbonHeaderImage.None;
             ribbonControl.RibbonStyle = Syncfusion.Windows.Forms.Tools.RibbonStyle.Office2016;
-            ribbonControl.SelectedTab = toolStripTabItem1;
+            ribbonControl.SelectedTab = null;
             ribbonControl.ShowRibbonDisplayOptionButton = true;
             ribbonControl.Size = new Size(802, 160);
             ribbonControl.SystemText.QuickAccessDialogDropDownName = "Start menu";
             ribbonControl.SystemText.RenameDisplayLabelText = "&Display Name:";
+            toolStripTabGroup1.Color = Color.FromArgb(1, 70, 122);
+            toolStripTabGroup1.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            toolStripTabGroup1.Name = "test";
+            toolStripTabGroup1.Visible = true;
+            ribbonControl.TabGroups.Add(toolStripTabGroup1);
             ribbonControl.TabIndex = 0;
             ribbonControl.Text = "ribbonControl";
             ribbonControl.ThemeName = "Office2016";
@@ -236,38 +237,6 @@
             btnExit.TabIndex = 5;
             btnExit.Text = "Afsluiten";
             // 
-            // toolStripTabItem1
-            // 
-            toolStripTabItem1.Name = "toolStripTabItem1";
-            // 
-            // ribbonControl.ribbonPanel1
-            // 
-            toolStripTabItem1.Panel.Name = "ribbonPanel1";
-            toolStripTabItem1.Panel.ScrollPosition = 0;
-            toolStripTabItem1.Panel.TabIndex = 2;
-            toolStripTabItem1.Panel.Text = "toolStripTabItem1";
-            toolStripTabItem1.Position = 0;
-            toolStripTabItem1.Size = new Size(119, 31);
-            ribbonControl.TabGroups.SetTabGroup(toolStripTabItem1, null);
-            toolStripTabItem1.Tag = "1";
-            toolStripTabItem1.Text = "toolStripTabItem1";
-            // 
-            // toolStripTabItem2
-            // 
-            toolStripTabItem2.Name = "toolStripTabItem2";
-            // 
-            // ribbonControl.ribbonPanel2
-            // 
-            toolStripTabItem2.Panel.Name = "ribbonPanel2";
-            toolStripTabItem2.Panel.ScrollPosition = 0;
-            toolStripTabItem2.Panel.TabIndex = 3;
-            toolStripTabItem2.Panel.Text = "toolStripTabItem2";
-            toolStripTabItem2.Position = 1;
-            toolStripTabItem2.Size = new Size(119, 31);
-            ribbonControl.TabGroups.SetTabGroup(toolStripTabItem2, null);
-            toolStripTabItem2.Tag = "2";
-            toolStripTabItem2.Text = "toolStripTabItem2";
-            // 
             // statusStrip
             // 
             statusStrip.BackColor = Color.FromArgb(241, 241, 241);
@@ -329,8 +298,6 @@
             Padding = new Padding(1, 0, 1, 1);
             Text = "Code Generator";
             ((System.ComponentModel.ISupportInitialize)ribbonControl).EndInit();
-            ribbonControl.ResumeLayout(false);
-            ribbonControl.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)backStage1).EndInit();
             backStage1.ResumeLayout(false);
             back_tab_home.ResumeLayout(false);
@@ -345,14 +312,12 @@
         #endregion
 
         private Syncfusion.Windows.Forms.Tools.RibbonControlAdv ribbonControl;
-        private Syncfusion.Windows.Forms.Tools.ToolStripTabItem toolStripTabItem1;
         private Syncfusion.Windows.Forms.BackStageView backStageView;
         private Syncfusion.Windows.Forms.BackStage backStage1;
         private Syncfusion.Windows.Forms.BackStageTab back_tab_home;
         private Syncfusion.Windows.Forms.BackStageTab back_tab_new;
         private Syncfusion.Windows.Forms.BackStageTab back_tab_open;
         private Syncfusion.Windows.Forms.BackStageButton btnExit;
-        private Syncfusion.Windows.Forms.Tools.ToolStripTabItem toolStripTabItem2;
         private Button btnOpen;
         private Button button1;
         private Button btnNew;

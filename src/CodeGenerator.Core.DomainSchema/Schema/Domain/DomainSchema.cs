@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace CodeGenerator.Core.Models.Schema;
+namespace CodeGenerator.Core.DomainSchema.Schema;
 
 /// <summary>
 /// Root schema definition compliant with JSON Schema 2020-12

@@ -1,6 +1,7 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace CodeGenerator.Core.Models.Schema;
+namespace CodeGenerator.Core.DomainSchema.Schema;
 
 /// <summary>
 /// Root-level code generation metadata
@@ -36,4 +37,9 @@ public class CodeGenMetadata
 
     [JsonPropertyName("projectSettings")]
     public ProjectSettings? ProjectSettings { get; set; }
+    /// <summary>
+    /// Additional/unknown properties that are not explicitly defined
+    /// </summary>
+    [JsonExtensionData]
+    public Dictionary<string, JsonElement>? ExtensionData { get; set; }
 }

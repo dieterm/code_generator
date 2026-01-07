@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace CodeGenerator.Core.Models.Schema;
+namespace CodeGenerator.Core.DomainSchema.Schema;
 
 /// <summary>
 /// Unique constraint definition

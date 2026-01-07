@@ -30,4 +30,7 @@ public interface IArtifactDecorator
     /// Detach this decorator from its artifact
     /// </summary>
     void Detach();
+
+    bool CanGenerate();
+    Task GenerateAsync(IProgress<ArtifactGenerationProgress> progress, CancellationToken cancellationToken = default);
 }

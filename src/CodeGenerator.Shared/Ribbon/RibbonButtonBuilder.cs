@@ -42,9 +42,18 @@ public class RibbonButtonBuilder
     /// <summary>
     /// Sets the image for the button using byte array
     /// </summary>
-    public RibbonButtonBuilder WithImage(object image)
+    public RibbonButtonBuilder WithImage(System.Drawing.Image image)
     {
         _viewModel.ImageData = image;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets an image key of the ResourceFile or ImageList used for this ribbon
+    /// </summary>
+    public RibbonButtonBuilder WithImage(string imageKey)
+    {
+        _viewModel.ImageData = imageKey;
         return this;
     }
 

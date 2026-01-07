@@ -1,4 +1,5 @@
-﻿namespace CodeGenerator.Core.Artifacts
+﻿
+namespace CodeGenerator.Core.Artifacts
 {
     public abstract class ArtifactDecorator : IArtifactDecorator
     {
@@ -12,9 +13,32 @@
         {
             Artifact = artifact;
         }
+
+        
+
         public virtual void Detach()
         {
             Artifact = null;
+        }
+
+        /// <summary>
+        /// Overwite in derived classes to indicate if this decorator can generate content
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool CanGenerate()
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Overwrite in derived classes to implement generation logic
+        /// </summary>
+        /// <param name="progress"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public virtual async Task GenerateAsync(IProgress<ArtifactGenerationProgress> progress, CancellationToken cancellationToken = default)
+        {
+            
         }
 
         /// <summary>

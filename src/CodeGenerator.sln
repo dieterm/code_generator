@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 18
-VisualStudioVersion = 18.1.11312.151
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36804.6 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core", "CodeGenerator.Core\CodeGenerator.Core.csproj", "{A1B2C3D4-E5F6-4A5B-8C9D-0E1F2A3B4C5D}"
 EndProject
@@ -52,6 +52,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Presentation.WinForms", "CodeGenerator.Presentation.WinForms\CodeGenerator.Presentation.WinForms.csproj", "{1161A673-9671-4CB2-8FAF-48DCFEC8EC1F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Application", "CodeGenerator.Application\CodeGenerator.Application.csproj", "{E146C9BF-65A0-45AD-9C15-E21CC768703E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Generators.CodeArchitectureLayers", "CodeGenerator.Generators.CodeArchitectureLayers\CodeGenerator.Generators.CodeArchitectureLayers.csproj", "{74C85979-AC42-41C6-8914-4A495E13F120}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Generators.T4Template", "CodeGenerator.Generators.T4Template\CodeGenerator.Generators.T4Template.csproj", "{164A71B5-5CB0-447A-8AB8-ECB3AA34D0D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -115,6 +119,14 @@ Global
 		{E146C9BF-65A0-45AD-9C15-E21CC768703E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E146C9BF-65A0-45AD-9C15-E21CC768703E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E146C9BF-65A0-45AD-9C15-E21CC768703E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74C85979-AC42-41C6-8914-4A495E13F120}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74C85979-AC42-41C6-8914-4A495E13F120}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74C85979-AC42-41C6-8914-4A495E13F120}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74C85979-AC42-41C6-8914-4A495E13F120}.Release|Any CPU.Build.0 = Release|Any CPU
+		{164A71B5-5CB0-447A-8AB8-ECB3AA34D0D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{164A71B5-5CB0-447A-8AB8-ECB3AA34D0D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{164A71B5-5CB0-447A-8AB8-ECB3AA34D0D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{164A71B5-5CB0-447A-8AB8-ECB3AA34D0D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,7 @@
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.CodeGeneration;
+using CodeGenerator.Core.DomainSchema.Services;
 using CodeGenerator.Core.Generators.MessageBus;
-using CodeGenerator.Core.Services;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Core.Generators;
@@ -13,12 +14,12 @@ public class GeneratorOrchestrator
     private readonly IEnumerable<IMessageBusAwareGenerator> _messageBusAwareGenerators;
     private readonly GeneratorMessageBus _messageBus;
     private readonly ILogger<GeneratorOrchestrator> _logger;
-    private readonly SchemaParser _schemaparser;
+    private readonly DomainSchemaParser _schemaparser;
 
     public GeneratorOrchestrator(
         IEnumerable<IMessageBusAwareGenerator> messageBusAwareGenerators,
         GeneratorMessageBus messageBus,
-        SchemaParser schemaparser,
+        DomainSchemaParser schemaparser,
         ILogger<GeneratorOrchestrator> logger)
     {
         _messageBus = messageBus;
@@ -47,38 +48,19 @@ public class GeneratorOrchestrator
     /// Run all enabled generators
     /// </summary>
     public async Task<GenerationResult> GenerateAsync(
-        string schemaFilePath, 
+        DomainSchema.Schema.DomainSchema? domainSchema, 
         bool previewOnly,
         IProgress<GenerationProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
-        if(string.IsNullOrWhiteSpace(schemaFilePath))
-            throw new ArgumentNullException(nameof(schemaFilePath));
-
         // report starting
         var startTime = DateTime.UtcNow;
         // create root artifact
-        var result = new GenerationResult
-        {
-            RootArtifact = new RootArtifact(),
-            GeneratedAt = DateTime.UtcNow
-        };
-
+        var result = new GenerationResult(new RootArtifact(), domainSchema);
+        
         try
         {
-            // load schema
             progress?.Report(new GenerationProgress
-            {
-                CurrentStep = "Loading Schema",
-                Message = "Loading and parsing schema",
-                PercentComplete = 0,
-                Phase = GenerationPhase.Initializing,
-                IsIndeterminate = true
-            });
-            
-            var schema = await _schemaparser.LoadSchemaAsync(schemaFilePath, cancellationToken);
-
-            progress.Report(new GenerationProgress
             {
                 CurrentStep = "Creating Root Artifact",
                 Message = "Initializing root artifact creation",
@@ -89,7 +71,7 @@ public class GeneratorOrchestrator
 
             // publish event to allow generators to contribute
             MessageBus.Publish(new CreatingRootArtifactEventArgs(result));
-            progress.Report(new GenerationProgress
+            progress?.Report(new GenerationProgress
             {
                 CurrentStep = "Finalizing Root Artifact",
                 Message = "Finalizing root artifact creation",
@@ -102,7 +84,7 @@ public class GeneratorOrchestrator
             
             if (!previewOnly)
             {
-                progress.Report(new GenerationProgress
+                progress?.Report(new GenerationProgress
                 {
                     CurrentStep = "Generating Root Artifact",
                     Message = "Generating root artifact",
@@ -110,7 +92,8 @@ public class GeneratorOrchestrator
                     Phase = GenerationPhase.RunningGenerators,
                     IsIndeterminate = true
                 });
-                await result.RootArtifact.GenerateAsync();
+                var progressHandler = new ArtifactGenerationProgressHandler(progress);
+                await result.RootArtifact.GenerateAsync(progressHandler, cancellationToken);
             }
 
             result.Success = true;

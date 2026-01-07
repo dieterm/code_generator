@@ -1,6 +1,7 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace CodeGenerator.Core.Models.Schema;
+namespace CodeGenerator.Core.DomainSchema.Schema;
 
 /// <summary>
 /// Entity-level Domain-Driven Design metadata
@@ -24,4 +25,10 @@ public class EntityDomainDrivenDesignMetadata
     /// </summary>
     [JsonPropertyName("hierarchical")]
     public bool Hierarchical { get; set; }
+
+    /// <summary>
+    /// Additional/unknown properties that are not explicitly defined
+    /// </summary>
+    [JsonExtensionData]
+    public Dictionary<string, JsonElement>? ExtensionData { get; set; }
 }

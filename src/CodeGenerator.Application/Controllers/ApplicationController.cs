@@ -1,6 +1,11 @@
-﻿using CodeGenerator.Application.Services;
+﻿using CodeGenerator.Application.Events.DomainSchema;
+using CodeGenerator.Application.MessageBus;
+using CodeGenerator.Application.Services;
+using CodeGenerator.Core.Generators;
+using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Presentation.WinForms.ViewModels;
 using Microsoft.DotNet.DesignTools.ViewModels;
+using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers
 {
@@ -10,13 +15,27 @@ namespace CodeGenerator.Application.Controllers
         private readonly IApplicationService _applicationService;
         private readonly IMessageBoxService _messageBoxService;
         private readonly IFileSystemDialogService _fileSystemDialogService;
-
-        public ApplicationController(MainViewModel viewModel, IApplicationService applicationService, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService) 
+        private readonly ILogger<ApplicationController> _logger;
+        private readonly ApplicationMessageBus _messageBus;
+        private readonly DomainSchemaController _domainSchemaController;
+        private readonly GeneratorOrchestrator _generatorOrchestrator;
+        public ApplicationController(MainViewModel viewModel, DomainSchemaController domainSchemaController, IApplicationService applicationService, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, GeneratorOrchestrator generatorOrchestrator, ILogger<ApplicationController> logger) 
         {
             _mainViewModel = viewModel;
             _applicationService = applicationService;
+            _messageBus = messageBus;
             _messageBoxService = messageboxService;
             _fileSystemDialogService = fileSystemDialogService;
+            _domainSchemaController = domainSchemaController;
+            _generatorOrchestrator = generatorOrchestrator;
+            _logger = logger;
+
+            SubscribeToMessageBusEvents();
+        }
+
+        private void SubscribeToMessageBusEvents()
+        {
+            _messageBus.Subscribe<DomainSchemaLoadedEvent>((e) => _mainViewModel.StatusLabel = e.FilePath??"New DomainSchema created");
         }
 
         public void StartApplication()
@@ -84,7 +103,7 @@ namespace CodeGenerator.Application.Controllers
             return true;
         }
 
-        private void OnOpenRequested(object? sender, EventArgs e)
+        private async void OnOpenRequested(object? sender, EventArgs e)
         {
             if (!HandleUnsavedChanges())
                 return;
@@ -93,6 +112,8 @@ namespace CodeGenerator.Application.Controllers
             var filePath = _fileSystemDialogService.OpenFile("Json Files (*.json)|*.json|All Files (*.*)|*.*");
             if(filePath == null)
                 return; // User cancelled
+
+            await _domainSchemaController.LoadDomainSchemaAsync(filePath);
 
             // Open existing document
             _mainViewModel.IsDirty = false;
@@ -104,9 +125,13 @@ namespace CodeGenerator.Application.Controllers
             _mainViewModel.IsDirty = false;
         }
 
-        private void OnGenerateRequested(object? sender, EventArgs e)
+        /// <summary>
+        /// Handle code generation logic. <br/>
+        /// Triggered when user clicks "Generate" button
+        /// </summary>
+        private async void OnGenerateRequested(object? sender, EventArgs e)
         {
-            // Handle code generation logic
+            await _generatorOrchestrator.GenerateAsync(_domainSchemaController.DomainSchema, false, _mainViewModel);
         }
 
         public void Dispose()

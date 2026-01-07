@@ -1,4 +1,4 @@
-using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.CodeGeneration;
 
 namespace CodeGenerator.Core.Generators;
 
@@ -7,30 +7,40 @@ namespace CodeGenerator.Core.Generators;
 /// </summary>
 public class GenerationResult
 {
+    public GenerationResult(RootArtifact RootArtifact, DomainSchema.Schema.DomainSchema? DomainSchema)
+    {
+        this.RootArtifact = RootArtifact;
+        this.DomainSchema = DomainSchema;
+    }
     /// <summary>
     /// Whether the generation was successful
     /// </summary>
-    public bool Success { get; set; }
+    public bool Success { get; set; } = false;
 
     /// <summary>
     /// The Root artifact representing all generated artifacts
     /// </summary>
-    public RootArtifact? RootArtifact { get; set; }
+    public RootArtifact RootArtifact { get; }
+
+    /// <summary>
+    /// If domain schema context is provided, generated code is based on this schema
+    /// </summary>
+    public DomainSchema.Schema.DomainSchema? DomainSchema { get; }
 
     /// <summary>
     /// Error messages if any
     /// </summary>
-    public List<string> Errors { get; set; } = new();
+    public List<string> Errors { get; } = new();
 
     /// <summary>
     /// Warning messages
     /// </summary>
-    public List<string> Warnings { get; set; } = new();
+    public List<string> Warnings { get; } = new();
 
     /// <summary>
     /// Informational messages
     /// </summary>
-    public List<string> Messages { get; set; } = new();
+    public List<string> Messages { get; } = new();
 
     /// <summary>
     /// Duration of the generation
@@ -40,5 +50,5 @@ public class GenerationResult
     /// <summary>
     /// Timestamp of generation
     /// </summary>
-    public DateTime GeneratedAt { get; set; } = DateTime.UtcNow;
+    public DateTime GeneratedAt { get; } = DateTime.UtcNow;
 }

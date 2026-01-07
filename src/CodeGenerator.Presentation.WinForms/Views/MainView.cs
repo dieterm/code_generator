@@ -1,9 +1,14 @@
+using CodeGenerator.Application.Events.DomainSchema;
+using CodeGenerator.Application.MessageBus;
 using CodeGenerator.Presentation.WinForms.Resources;
 using CodeGenerator.Presentation.WinForms.ViewModels;
+using CodeGenerator.Presentation.WinForms.Views;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.Views;
 using Syncfusion.Windows.Forms.Tools;
+using Syncfusion.WinForms.Controls;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace CodeGenerator.Presentation.WinForms
@@ -15,35 +20,53 @@ namespace CodeGenerator.Presentation.WinForms
         public MainView()
         {
             InitializeComponent();
+            
+            if (DesignMode) return;
 
             BuildRibbon();
+
+            SubscribeToMessageBus();
+        }
+
+        private void SubscribeToMessageBus()
+        {
+            var messageBus = ServiceProviderHolder.GetRequiredService<ApplicationMessageBus>();
+            messageBus.Subscribe<DomainSchemaLoadedEvent>(OnDomainSchemaLoaded);
+        }
+
+        private void OnDomainSchemaLoaded(DomainSchemaLoadedEvent e)
+        {
+            var schemaTreeView = new DomainSchemaTreeView();
+            schemaTreeView.BindViewModel(e.TreeViewModel);
+            dockingManager.DockControl(schemaTreeView, this, DockingStyle.Left, 4);
+            dockingManager.SetEnableDocking(schemaTreeView, true);
+            dockingManager.SetControlSize(schemaTreeView, new Size(300, this.Height - 50));
+            dockingManager.SetDockLabel(schemaTreeView, "Domain Schema");
+            lblStatus.Text = e.FilePath;
         }
 
         public void BuildRibbon()
         {
+            // Build Ribbon Model
             var model = RibbonBuilder.Create()
                 .AddTab("tabDomainModel", "Domain Model")
-                    .AddToolStrip("btnNew", "New")
+                    .AddToolStrip("toolstripNew", "New")
                         .AddButton("btnOpen", "Open")
                             .WithSize(RibbonButtonSize.Large)
                             .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
-                            .WithImage(LucideIcons__000000.folder_open)
-                            .OnClick(OnOpenButtonClicked)
-                            .Build();
-            
-            ServiceProviderHolder.GetRequiredService<IRibbonRenderer>().Render(model, ribbonControl);
-        }
-
-        private void OnOpenButtonClicked(EventArgs args)
-        {
-            var myForm = new Form { MdiParent = this, FormBorderStyle = FormBorderStyle.None, Text = "New Child Form", Size = new Size(800, 600) };
-            myForm.Controls.Add(new Label { Text = "This is a docked form.", Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleCenter });
-            
-            dockingManager.DockControl(myForm, this, Syncfusion.Windows.Forms.Tools.DockingStyle.Right, 10);
-            dockingManager.SetEnableDocking(myForm, true);
-            dockingManager.SetControlSize(myForm, new Size(300, this.Height - 50));
-            dockingManager.SetDockLabel(myForm, "Docked Form");
-            //this.dockingManager.SetAsMDIChild(myForm, true);
+                            .WithImage(nameof(LucideIcons__000000.folder_open))
+                            .OnClick((e) => _mainViewModel?.OpenCommand.Execute(null))
+                            
+                        .AddButton("btnGenerate", "Generate")
+                            .WithSize(RibbonButtonSize.Large)
+                            .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
+                            .WithImage(nameof(LucideIcons__000000.scroll_text))
+                            .OnClick((e) => _mainViewModel?.GenerateCommand.Execute(null))
+                .Build();
+            // Render Ribbon
+            ServiceProviderHolder.GetRequiredService<IRibbonRenderer>()
+                .SetResourceManager(LucideIcons__000000.ResourceManager) // Image source
+                .Render(model, ribbonControl);
         }
 
         public void BindViewModel(MainViewModel mainViewModel)
@@ -67,6 +90,35 @@ namespace CodeGenerator.Presentation.WinForms
 
             // Handle FormClosing event
             FormClosing += OnFormClosing;
+
+            // Bind Status Label
+            _mainViewModel.PropertyChanged += OnMainViewModelPropertyChanged;
+            
+        }
+
+        private void OnMainViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if(_mainViewModel == null) throw new InvalidOperationException("MainViewModel is not bound.");
+            
+            if (e.PropertyName == nameof(MainViewModel.StatusLabel))
+            {
+                lblStatus.Text = _mainViewModel.StatusLabel;
+            }
+            if(e.PropertyName == nameof(MainViewModel.ProgressLabel))
+            {
+                lblProgress.Text = _mainViewModel.ProgressLabel;
+            }
+            if(e.PropertyName == nameof(MainViewModel.ProgressValue))
+            {
+                if (_mainViewModel.ProgressValue == null)
+                {
+                    pbProgress.Style = ProgressBarStyle.Marquee;
+                    return;
+                } else { 
+                    pbProgress.Style = ProgressBarStyle.Continuous;
+                    pbProgress.Value = _mainViewModel.ProgressValue.Value;
+                }
+            }
         }
 
         private void OnFormClosing(object? sender, FormClosingEventArgs e)

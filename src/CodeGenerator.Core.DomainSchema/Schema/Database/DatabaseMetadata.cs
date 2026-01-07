@@ -1,6 +1,7 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace CodeGenerator.Core.Models.Schema;
+namespace CodeGenerator.Core.DomainSchema.Schema;
 
 /// <summary>
 /// Root-level database metadata
@@ -27,4 +28,9 @@ public class DatabaseMetadata
 
     [JsonPropertyName("auditSettings")]
     public AuditSettings? AuditSettings { get; set; }
+    /// <summary>
+    /// Additional/unknown properties that are not explicitly defined
+    /// </summary>
+    [JsonExtensionData]
+    public Dictionary<string, JsonElement>? ExtensionData { get; set; }
 }

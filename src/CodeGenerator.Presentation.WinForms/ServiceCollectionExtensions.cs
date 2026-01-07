@@ -1,3 +1,4 @@
+using CodeGenerator.Application.MessageBus;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Presentation.WinForms.Services;
 using CodeGenerator.Shared.Ribbon;
@@ -23,6 +24,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IMessageBoxService, MessageBoxService>();
         services.AddSingleton<IFileSystemDialogService, FileSystemDialogService>();
         services.AddSingleton<IRibbonRenderer, SyncfusionRibbonRenderer>();
+
         return services;
     }
 }

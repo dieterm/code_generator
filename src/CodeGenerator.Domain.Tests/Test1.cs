@@ -45,12 +45,12 @@
             // Arrange
             var file = new FileArtifact();
             // Act
-            file.Name = "example";
+            file.FileName = "example";
             file.Extension = ".txt";
             file.Size = 1024;
             
             // Assert
-            Assert.AreEqual("example", file.Name);
+            Assert.AreEqual("example", file.FileName);
             Assert.AreEqual(".txt", file.Extension);
             Assert.AreEqual(1024, file.Size);
             Assert.IsTrue(file.CanPreview);
