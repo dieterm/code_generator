@@ -59,6 +59,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Generators.T4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Generators.DotNet", "CodeGenerator.Generators.DotNet\CodeGenerator.Generators.DotNet.csproj", "{86F5D696-B17C-431E-861A-A76AB80C0FA8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core.Settings", "CodeGenerator.Core.Settings\CodeGenerator.Core.Settings.csproj", "{2303FDCB-33F1-438F-BEA1-189152BF0FA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core.Settings.Views", "CodeGenerator.Core.Settings.Views\CodeGenerator.Core.Settings.Views.csproj", "{6CA76106-83D0-42C9-AC19-4EBE805C4C60}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Snippets", "Snippets", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\vs_codesnippets\appcontroller.snippet = ..\..\vs_codesnippets\appcontroller.snippet
+		..\..\vs_codesnippets\propviewmodel.snippet = ..\..\vs_codesnippets\propviewmodel.snippet
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.UserControls.Views", "CodeGenerator.UserControls.Views\CodeGenerator.UserControls.Views.csproj", "{0265CBB0-190D-4C54-918E-D2F5A38EEC20}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -133,6 +145,18 @@ Global
 		{86F5D696-B17C-431E-861A-A76AB80C0FA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86F5D696-B17C-431E-861A-A76AB80C0FA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86F5D696-B17C-431E-861A-A76AB80C0FA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2303FDCB-33F1-438F-BEA1-189152BF0FA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2303FDCB-33F1-438F-BEA1-189152BF0FA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2303FDCB-33F1-438F-BEA1-189152BF0FA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2303FDCB-33F1-438F-BEA1-189152BF0FA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CA76106-83D0-42C9-AC19-4EBE805C4C60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CA76106-83D0-42C9-AC19-4EBE805C4C60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CA76106-83D0-42C9-AC19-4EBE805C4C60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CA76106-83D0-42C9-AC19-4EBE805C4C60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0265CBB0-190D-4C54-918E-D2F5A38EEC20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0265CBB0-190D-4C54-918E-D2F5A38EEC20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0265CBB0-190D-4C54-918E-D2F5A38EEC20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0265CBB0-190D-4C54-918E-D2F5A38EEC20}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

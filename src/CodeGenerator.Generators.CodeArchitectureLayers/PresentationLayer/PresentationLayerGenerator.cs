@@ -10,15 +10,13 @@ namespace CodeGenerator.Generators.CodeArchitectureLayers.PresentationLayer
 {
     public class PresentationLayerGenerator : CodeArchitectureLayerGenerator
     {
-        public PresentationLayerGenerator()
+        protected override GeneratorSettingsDescription ConfigureSettingsDescription()
         {
-            var templateRequirements = new List<TemplateRequirement>();
-
-            // FolderProjectTemplateRequirement for Application Layer
-            // templateRequirements.Add(new FolderProjectTemplateRequirement("PresentationLayer"));
-
-            SettingsDescription = new GeneratorSettingsDescription(nameof(PresentationLayerGenerator), "Presentation Layer Generator Settings", "Generates LayerArtifacts for common scopes (shared, application) and domain scopes.", templateRequirements);
-
+            var id = nameof(PresentationLayerGenerator);
+            var name = "Presentation Layer Generator";
+            var description = "Generates LayerArtifacts for common scopes (shared, application) and domain scopes.";
+            
+            return new GeneratorSettingsDescription(id, name, description);
         }
 
         protected override CodeArchitectureLayerArtifact CreateLayerArtifact(string scope)
@@ -27,6 +25,5 @@ namespace CodeGenerator.Generators.CodeArchitectureLayers.PresentationLayer
         }
 
         protected override string LayerName { get { return CodeArchitectureLayerArtifact.PRESENTATION_LAYER; } }
-        public override GeneratorSettingsDescription SettingsDescription { get; }
     }
 }

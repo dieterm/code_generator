@@ -28,7 +28,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeGenerator.Application\CodeGenerator.Application.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Settings.Views\CodeGenerator.Core.Settings.Views.csproj" />
     <ProjectReference Include="..\CodeGenerator.Shared\CodeGenerator.Shared.csproj" />
+    <ProjectReference Include="..\CodeGenerator.UserControls.Views\CodeGenerator.UserControls.Views.csproj" />
     <ProjectReference Include="..\CodeGenerator.UserControls\CodeGenerator.UserControls.csproj" />
   </ItemGroup>
   <ItemGroup>

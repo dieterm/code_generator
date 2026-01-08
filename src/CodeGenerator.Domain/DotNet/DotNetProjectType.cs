@@ -14,5 +14,15 @@ namespace CodeGenerator.Domain.DotNet
         public const string ConsoleApp = "console";
         public const string BlazorWebApp = "blazor";
         public const string MsTestProject = "mstest";
+
+        public static string[] AllTypes = new[]
+        {
+            ClassLib,
+            WinFormsLib,
+            WpfLib,
+            ConsoleApp,
+            BlazorWebApp,
+            MsTestProject
+        };
     }
 }

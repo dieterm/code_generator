@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Shared.ViewModels
 {
-    public class FieldViewModelBase : ViewModelBase, IFieldViewModel
+    public abstract class FieldViewModelBase : ViewModelBase, IFieldViewModel
     {
         private string _name;
         private object _value;

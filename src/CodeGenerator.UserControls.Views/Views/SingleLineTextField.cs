@@ -1,15 +1,18 @@
 using System.ComponentModel;
+using CodeGenerator.Shared.ViewModels;
+using CodeGenerator.Shared.Views;
 using CodeGenerator.UserControls.ViewModels;
 
 namespace CodeGenerator.UserControls.Views
 {
-    public partial class SingleLineTextField : UserControl
+    public partial class SingleLineTextField : UserControl, IView<SingleLineTextFieldModel>
     {
         private SingleLineTextFieldModel _viewModel;
 
         public SingleLineTextField()
         {
             InitializeComponent();
+            lblLabel.EnsureLabelVisible(txtValue, lblErrorMessage);
         }
 
         /// <summary>
@@ -78,6 +81,11 @@ namespace CodeGenerator.UserControls.Views
             lblLabel.DataBindings.Add("Text", viewModel, nameof(viewModel.Label), false, DataSourceUpdateMode.OnPropertyChanged);
             txtValue.DataBindings.Add("Text", viewModel, nameof(viewModel.Value), false, DataSourceUpdateMode.OnPropertyChanged);
             lblErrorMessage.DataBindings.Add("Text", viewModel, nameof(viewModel.ErrorMessage), false, DataSourceUpdateMode.OnPropertyChanged);
+        }
+
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        {
+            BindViewModel((SingleLineTextFieldModel)(object)viewModel);
         }
     }
 }

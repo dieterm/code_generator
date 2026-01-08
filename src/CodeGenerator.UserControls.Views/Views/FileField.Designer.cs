@@ -1,6 +1,6 @@
 namespace CodeGenerator.UserControls.Views
 {
-    partial class FolderField
+    partial class FileField
     {
         private System.ComponentModel.IContainer components = null;
 
@@ -45,22 +45,22 @@ namespace CodeGenerator.UserControls.Views
             // 
             btnBrowse.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnBrowse.BackgroundImageLayout = ImageLayout.Center;
+            btnBrowse.Image = Resources.ButtonIcons.folder_open;
             btnBrowse.Location = new Point(371, 2);
             btnBrowse.Name = "btnBrowse";
             btnBrowse.Size = new Size(30, 25);
             btnBrowse.TabIndex = 2;
-            btnBrowse.Text = "??";
             btnBrowse.UseVisualStyleBackColor = true;
             // 
             // btnOpenFolder
             // 
             btnOpenFolder.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnOpenFolder.BackgroundImageLayout = ImageLayout.Center;
+            btnOpenFolder.Image = Resources.ButtonIcons.square_arrow_out_up_right;
             btnOpenFolder.Location = new Point(407, 2);
             btnOpenFolder.Name = "btnOpenFolder";
             btnOpenFolder.Size = new Size(30, 25);
             btnOpenFolder.TabIndex = 3;
-            btnOpenFolder.Text = "??";
             btnOpenFolder.UseVisualStyleBackColor = true;
             // 
             // lblErrorMessage
@@ -74,7 +74,7 @@ namespace CodeGenerator.UserControls.Views
             lblErrorMessage.Text = "Error message";
             lblErrorMessage.Visible = false;
             // 
-            // FolderField
+            // FileField
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -83,7 +83,7 @@ namespace CodeGenerator.UserControls.Views
             Controls.Add(btnBrowse);
             Controls.Add(txtValue);
             Controls.Add(lblLabel);
-            Name = "FolderField";
+            Name = "FileField";
             Size = new Size(440, 49);
             ResumeLayout(false);
             PerformLayout();

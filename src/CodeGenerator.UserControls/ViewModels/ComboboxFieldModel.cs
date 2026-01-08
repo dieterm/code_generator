@@ -15,6 +15,14 @@ namespace CodeGenerator.UserControls.ViewModels
             set => SetProperty(ref _items, value);
         }
 
+        private string _displayMember = "DisplayName";
+        public string DisplayMember
+        {
+            get { return _displayMember; }
+            set { SetProperty(ref _displayMember, value); }
+        }
+
+
         public virtual bool SetItems(ICollection items)
         {
             return SetProperty(ref _items, items, nameof(Items));

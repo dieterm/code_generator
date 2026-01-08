@@ -13,20 +13,20 @@ using static System.Formats.Asn1.AsnWriter;
 
 namespace CodeGenerator.Generators.CodeArchitectureLayers
 {
-    public abstract class CodeArchitectureLayerGenerator : IMessageBusAwareGenerator
+    public abstract class CodeArchitectureLayerGenerator : GeneratorBase
     {
-        private GeneratorMessageBus? _messageBus;
+        //private GeneratorMessageBus? _messageBus;
         private Action<CreatingArtifactEventArgs>? _unsubscribeHandler;
 
         protected abstract CodeArchitectureLayerArtifact CreateLayerArtifact(string scope);
         protected abstract string LayerName { get; }
 
-        public abstract GeneratorSettingsDescription SettingsDescription { get; }
+        //public abstract GeneratorSettingsDescription SettingsDescription { get; }
 
-        public void Initialize(GeneratorMessageBus messageBus)
-        {
-            _messageBus = messageBus;
-        }
+        //public void Initialize(GeneratorMessageBus messageBus)
+        //{
+        //    _messageBus = messageBus;
+        //}
 
         private void OnCreatingRootArtifact(CreatingArtifactEventArgs args)
         {
@@ -44,22 +44,24 @@ namespace CodeGenerator.Generators.CodeArchitectureLayers
             {
                 var folderName = $"{ns}.{scope}.{LayerName}";
                 var scopeFolderArtifact = new FolderArtifact(folderName);
-                _messageBus?.Publish(new CreatingArtifactEventArgs(args.Result, scopeFolderArtifact));
-                args.Result.RootArtifact.AddChild(scopeFolderArtifact);
-                _messageBus?.Publish(new CreatedArtifactEventArgs(args.Result, scopeFolderArtifact));
+                AddChildArtifactToParent(args.Result.RootArtifact, scopeFolderArtifact, args.Result);
+                //MessageBus?.Publish(new CreatingArtifactEventArgs(args.Result, scopeFolderArtifact));
+                //args.Result.RootArtifact.AddChild(scopeFolderArtifact);
+                //MessageBus?.Publish(new CreatedArtifactEventArgs(args.Result, scopeFolderArtifact));
                 var layerArtifact = CreateLayerArtifact(scope);
-                _messageBus?.Publish(new CreatingArtifactEventArgs(args.Result, layerArtifact));
-                scopeFolderArtifact.AddChild(layerArtifact);
-                _messageBus?.Publish(new CreatedArtifactEventArgs(args.Result, layerArtifact));
+                AddChildArtifactToParent(scopeFolderArtifact, layerArtifact, args.Result);
+                //MessageBus?.Publish(new CreatingArtifactEventArgs(args.Result, layerArtifact));
+                //scopeFolderArtifact.AddChild(layerArtifact);
+                //MessageBus?.Publish(new CreatedArtifactEventArgs(args.Result, layerArtifact));
             }
         }
 
-        public void SubscribeToEvents(GeneratorMessageBus messageBus)
+        public override void SubscribeToEvents(GeneratorMessageBus messageBus)
         {
             _unsubscribeHandler = messageBus.Subscribe<CreatingArtifactEventArgs>(OnCreatingRootArtifact, (e) => e.Artifact is RootArtifact);
         }
 
-        public void UnsubscribeFromEvents(GeneratorMessageBus messageBus)
+        public override void UnsubscribeFromEvents(GeneratorMessageBus messageBus)
         {
             if(_unsubscribeHandler!=null)
                 messageBus.Unsubscribe<CreatingArtifactEventArgs>(_unsubscribeHandler);

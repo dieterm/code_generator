@@ -1,4 +1,5 @@
-﻿using CodeGenerator.Application.Services;
+﻿using CodeGenerator.Application.MessageBus;
+using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.DomainSchema.Schema;
@@ -13,22 +14,22 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Application.Controllers
 {
-    public class GenerationController
+    public class GenerationController : CoreControllerBase
     {
-        private readonly ILogger _logger;
         private readonly GeneratorOrchestrator _generatorOrchestrator;
         private readonly GenerationResultTreeViewModel _treeViewModel;
-        private readonly IWindowManagerService _windowManagerService;
         private readonly DomainSchemaController _domainSchemaController;
 
-        public GenerationController(DomainSchemaController domainSchemaController, IWindowManagerService windowManagerService, GeneratorOrchestrator generatorOrchestrator, GenerationResultTreeViewModel treeViewModel, ILogger<GenerationController> logger)
+        public GenerationController(DomainSchemaController domainSchemaController, GeneratorOrchestrator generatorOrchestrator, GenerationResultTreeViewModel treeViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IMessageBoxService messageService, ApplicationMessageBus messageBus, IFileSystemDialogService fileSystemDialogService, ILogger<GenerationController> logger)
+            : base(windowManagerService, ribbonBuilder,messageBus, messageService, fileSystemDialogService,logger)
         {
             _generatorOrchestrator = generatorOrchestrator ?? throw new ArgumentNullException(nameof(generatorOrchestrator));
             _treeViewModel = treeViewModel ?? throw new ArgumentNullException(nameof(treeViewModel));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _windowManagerService = windowManagerService ?? throw new ArgumentNullException(nameof(windowManagerService));
             _domainSchemaController = domainSchemaController ?? throw new ArgumentNullException(nameof(domainSchemaController));
+        }
 
+        public override void Initialize()
+        {
             _treeViewModel.ArtifactSelected += OnArtifactSelected;
         }
 
@@ -74,5 +75,12 @@ namespace CodeGenerator.Application.Controllers
                 throw;
             }
         }
+
+        public override void Dispose()
+        {
+            // Clean up resources if needed
+        }
+
+
     }
 }

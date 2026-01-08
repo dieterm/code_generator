@@ -12,7 +12,7 @@ namespace CodeGenerator.Core.Generators
     public abstract class GeneratorBase : IMessageBusAwareGenerator
     {
         public GeneratorMessageBus? MessageBus { get; private set; }
-        public GeneratorSettingsDescription SettingsDescription { get; }
+        public GeneratorSettingsDescription SettingsDescription { get; set; }
 
         protected GeneratorBase()
         {

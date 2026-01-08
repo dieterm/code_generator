@@ -1,5 +1,6 @@
 ﻿using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Settings.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,6 @@ namespace CodeGenerator.Application.Services
         void ShowArtifactPreview(IArtifact selectedArtifact);
         void ShowDomainSchemaTreeView(DomainSchemaTreeViewModel treeViewModel);
         void ShowGenerationTreeView(GenerationResultTreeViewModel treeViewModel);
+        void ShowSettingsWindow(SettingsViewModel settingsViewModel);
     }
 }

@@ -9,16 +9,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CodeGenerator.Shared.Views;
+using CodeGenerator.Shared.ViewModels;
 
 namespace CodeGenerator.UserControls.Views
 {
-    public partial class DenominationField : UserControl
+    public partial class DenominationField : UserControl, IView<DenominationFieldModel>
     {
         DenominationFieldModel _viewModel;
         private string _label = "Field Label:"; // fallback label during design time
         public DenominationField()
         {
             InitializeComponent();
+
             txtDutch.TextboxWidth = 0;
             txtFrench.TextboxWidth = 0;
             txtEnglish.TextboxWidth = 0;
@@ -135,6 +138,11 @@ namespace CodeGenerator.UserControls.Views
             {
                 UpdateIsRequired();
             }
+        }
+
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        {
+            BindViewModel((DenominationFieldModel)(object)viewModel);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace CodeGenerator.Generators.DotNet.Generators.DomainLayer.DomainScope
     public class DomainLayerDomainScopeDotNetProjectGenerator : DotNetProjectGenerator<DomainLayerArtifact>
     {
         public DomainLayerDomainScopeDotNetProjectGenerator()
-            : base(CodeArchitectureLayerArtifact.DOMAIN_LAYER, null)
+            : base(CodeArchitectureLayerArtifact.DOMAIN_LAYER, CodeArchitectureLayerArtifact.DOMAIN_SCOPE)
         {
         }
 

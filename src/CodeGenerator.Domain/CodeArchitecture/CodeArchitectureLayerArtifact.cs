@@ -16,7 +16,7 @@ namespace CodeGenerator.Domain.CodeArchitecture
         public const string PRESENTATION_LAYER = "Presentation";
         public const string SHARED_SCOPE = "Shared";
         public const string APPLICATION_SCOPE = "Application";
-
+        public const string DOMAIN_SCOPE = "Domain";
         public CodeArchitectureLayerArtifact(string layer, string scope)
         {
             Scope = scope;

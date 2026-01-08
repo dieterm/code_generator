@@ -4,6 +4,7 @@ using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Presentation.WinForms.Resources;
 using CodeGenerator.Presentation.WinForms.Services;
 using CodeGenerator.Shared.Ribbon;
+using CodeGenerator.UserControls;
 using CodeGenerator.UserControls.Ribbon;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,7 +27,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IMessageBoxService, MessageBoxService>();
         services.AddSingleton<IFileSystemDialogService, FileSystemDialogService>();
         services.AddSingleton<IRibbonRenderer, SyncfusionRibbonRenderer>();
-
+        services.AddSharedUserControlViews();
         // Main form
         var mainView = new MainView();
         services.AddSingleton<MainView>(mainView);

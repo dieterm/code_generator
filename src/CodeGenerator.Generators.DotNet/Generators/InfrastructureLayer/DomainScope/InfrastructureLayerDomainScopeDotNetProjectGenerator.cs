@@ -14,7 +14,7 @@ namespace CodeGenerator.Generators.DotNet.Generators.InfrastructureLayer.DomainS
     public class InfrastructureLayerDomainScopeDotNetProjectGenerator : DotNetProjectGenerator<InfrastructureLayerArtifact>
     {
         public InfrastructureLayerDomainScopeDotNetProjectGenerator()
-            : base(CodeArchitectureLayerArtifact.INFRASTRUCTURE_LAYER, null)
+            : base(CodeArchitectureLayerArtifact.INFRASTRUCTURE_LAYER, CodeArchitectureLayerArtifact.DOMAIN_SCOPE)
         {
         }
 

@@ -1,3 +1,6 @@
+using CodeGenerator.Shared.ViewModels;
+using CodeGenerator.Shared.Views;
+using CodeGenerator.UserControls.ViewModels;
 using Microsoft.DotNet.DesignTools.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -11,9 +14,9 @@ using System.Windows.Forms;
 
 namespace CodeGenerator.UserControls.Views
 {
-    public partial class ComboboxField : UserControl
+    public partial class ComboboxField : UserControl, IView<ComboboxFieldModel>
     {
-        private ViewModels.ComboboxFieldModel? _viewModel;
+        private ComboboxFieldModel? _viewModel;
         public ComboboxField()
         {
             InitializeComponent();
@@ -80,7 +83,7 @@ namespace CodeGenerator.UserControls.Views
             lblErrorMessage.DataBindings.Clear();
         }
 
-        public void BindViewModel(ViewModels.ComboboxFieldModel viewModel)
+        public void BindViewModel(ComboboxFieldModel viewModel)
         {
             if(_viewModel != null)
             {
@@ -100,7 +103,8 @@ namespace CodeGenerator.UserControls.Views
             // For SfComboBox, we need to set DataSource and handle SelectedValue manually
             cbxItems.DataSource = viewModel.Items;
             cbxItems.SelectedItem = viewModel.Value;
-            
+            cbxItems.DisplayMember = viewModel.DisplayMember;
+
             // Subscribe to PropertyChanged to update the control when ViewModel changes
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
             
@@ -109,7 +113,7 @@ namespace CodeGenerator.UserControls.Views
             {
                 if (_viewModel != null)
                 {
-                    _viewModel.Value = cbxItems.SelectedItem;
+                    _viewModel.Value = cbxItems.SelectedValue;
                 }
             };
         }
@@ -126,6 +130,15 @@ namespace CodeGenerator.UserControls.Views
             {
                 cbxItems.SelectedItem = _viewModel.Value;
             }
+            else if(e.PropertyName == nameof(_viewModel.DisplayMember))
+            {
+                cbxItems.DisplayMember = _viewModel.DisplayMember;
+            }
+        }
+
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        {
+            BindViewModel((ComboboxFieldModel)(object)viewModel);
         }
     }
 }

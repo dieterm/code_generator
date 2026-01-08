@@ -16,6 +16,7 @@
     <ProjectReference Include="..\CodeGenerator.Core.Templates\CodeGenerator.Core.Templates.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core\CodeGenerator.Core.csproj" />
     <ProjectReference Include="..\CodeGenerator.Domain\CodeGenerator.Domain.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Generators.CodeArchitectureLayers\CodeGenerator.Generators.CodeArchitectureLayers.csproj" />
   </ItemGroup>
 
 </Project>

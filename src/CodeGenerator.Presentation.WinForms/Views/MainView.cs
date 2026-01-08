@@ -3,11 +3,14 @@ using CodeGenerator.Application.MessageBus;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Settings.ViewModels;
+using CodeGenerator.Core.Settings.Views;
 using CodeGenerator.Presentation.WinForms.Resources;
 using CodeGenerator.Presentation.WinForms.ViewModels;
 using CodeGenerator.Presentation.WinForms.Views;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Ribbon;
+using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
 using Syncfusion.Windows.Forms.Tools;
 using Syncfusion.WinForms.Controls;
@@ -111,7 +114,7 @@ namespace CodeGenerator.Presentation.WinForms
                 e.Cancel = !_mainViewModel.IsClosing;
             }
         }
-
+        #region IView IWindowManagerService
         public void ShowDomainSchemaTreeView(DomainSchemaTreeViewModel treeViewModel)
         {
             var schemaTreeView = new DomainSchemaTreeView();
@@ -135,7 +138,42 @@ namespace CodeGenerator.Presentation.WinForms
 
         public void ShowArtifactPreview(IArtifact selectedArtifact)
         {
-            // throw new NotImplementedException();
+            throw new NotImplementedException();
         }
+
+        public void ShowSettingsWindow(SettingsViewModel settingsViewModel)
+        {
+            var settingsView = new SettingsView();
+            settingsView.BindViewModel(settingsViewModel);
+            // show usercontrol as dialog
+            // add 10px padding around the usercontrol
+            var padding = 10;
+            var settingsForm = new Form()
+            {
+                Text = "Settings",
+                Width = 800,
+                Height = 450,
+                StartPosition = FormStartPosition.CenterParent,
+                MaximizeBox = false,
+                MinimizeBox = false,
+                ShowInTaskbar = false,
+                Icon = Resources.LucideIcons__000000.settings.ToIcon()
+            };
+            //settingsView.Dock = DockStyle.Fill;
+            settingsView.Location = new Point(padding, padding);
+            settingsView.Size = new Size(settingsForm.ClientSize.Width - 2 * padding, settingsForm.ClientSize.Height - 2 * padding);
+            settingsView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            settingsForm.Controls.Add(settingsView);
+            settingsForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region IView Implementation
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        {
+            this.BindViewModel((MainViewModel)(object)viewModel);
+        }
+        #endregion
+
     }
 }

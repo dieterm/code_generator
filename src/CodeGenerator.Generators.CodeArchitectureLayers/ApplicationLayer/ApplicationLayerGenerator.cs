@@ -10,15 +10,13 @@ namespace CodeGenerator.Generators.CodeArchitectureLayers.ApplicationLayer
 {
     public class ApplicationLayerGenerator : CodeArchitectureLayerGenerator
     {
-        public ApplicationLayerGenerator()
+        protected override GeneratorSettingsDescription ConfigureSettingsDescription()
         {
-            var templateRequirements = new List<TemplateRequirement>();
-
-            // FolderProjectTemplateRequirement for Application Layer
-            // templateRequirements.Add(new FolderProjectTemplateRequirement("ApplicationLayer"));
-
-            SettingsDescription = new GeneratorSettingsDescription(nameof(ApplicationLayerGenerator), "Application Layer Generator Settings", "Generates LayerArtifacts for common scopes (shared, application) and domain scopes.", templateRequirements);
-
+            var id = nameof(ApplicationLayerGenerator);
+            var name = "Application Layer Generator";
+            var description = "Generates LayerArtifacts for common scopes (shared, application) and domain scopes.";
+            
+            return new GeneratorSettingsDescription(id, name, description);
         }
 
         protected override CodeArchitectureLayerArtifact CreateLayerArtifact(string scope)
@@ -27,6 +25,5 @@ namespace CodeGenerator.Generators.CodeArchitectureLayers.ApplicationLayer
         }
 
         protected override string LayerName { get { return CodeArchitectureLayerArtifact.APPLICATION_SCOPE; } }
-        public override GeneratorSettingsDescription SettingsDescription { get; }
     }
 }

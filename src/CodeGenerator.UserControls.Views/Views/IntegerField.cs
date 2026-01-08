@@ -1,8 +1,11 @@
+using CodeGenerator.Shared.ViewModels;
+using CodeGenerator.Shared.Views;
+using CodeGenerator.UserControls.ViewModels;
 using System.ComponentModel;
 
 namespace CodeGenerator.UserControls.Views
 {
-    public partial class IntegerField : UserControl
+    public partial class IntegerField : UserControl, IView<ViewModels.IntegerFieldModel>
     {
         private ViewModels.IntegerFieldModel? _viewModel;
         private bool _isUpdatingFromViewModel = false;
@@ -10,7 +13,7 @@ namespace CodeGenerator.UserControls.Views
         public IntegerField()
         {
             InitializeComponent();
-
+            lblLabel.EnsureLabelVisible(nudValue, lblErrorMessage);
             nudValue.ValueChanged += NudValue_ValueChanged;
 
             Disposed += IntegerField_Disposed;
@@ -144,6 +147,11 @@ namespace CodeGenerator.UserControls.Views
             {
                 _isUpdatingFromViewModel = false;
             }
+        }
+
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        {
+            BindViewModel((IntegerFieldModel)(object)viewModel);
         }
     }
 }

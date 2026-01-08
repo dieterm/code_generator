@@ -4,6 +4,7 @@ using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Core.DomainSchema.Schema;
 using CodeGenerator.Core.DomainSchema.Services;
+using CodeGenerator.Shared.Ribbon;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -13,25 +14,24 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Application.Controllers
 {
-    public class DomainSchemaController
+    public class DomainSchemaController : CoreControllerBase
     {
-        private readonly ILogger<DomainSchemaController> _logger;
         private readonly DomainSchemaTreeViewModel _treeViewModel;
-        private readonly ApplicationMessageBus _messageBus;
         private readonly DomainSchemaParser _schemaParser;
         private readonly IMessageBoxService _messageService;
-        private readonly IWindowManagerService _windowManagerService;
         private string? _schemaPath;
         private DomainSchema? _domainSchema;
         public DomainSchema? DomainSchema { get { return _domainSchema; } }
-        public DomainSchemaController(IWindowManagerService windowManagerService, DomainSchemaTreeViewModel treeViewModel, IMessageBoxService messageService, DomainSchemaParser schemaParser, ApplicationMessageBus messageBus, ILogger<DomainSchemaController> logger)
+        public DomainSchemaController(IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, DomainSchemaTreeViewModel treeViewModel,  DomainSchemaParser schemaParser, IMessageBoxService messageService, ApplicationMessageBus messageBus, IFileSystemDialogService fileSystemDialogService, ILogger<DomainSchemaController> logger)
+            : base(windowManagerService, ribbonBuilder, messageBus, messageService, fileSystemDialogService, logger)
         {
-            _logger = logger;
             _treeViewModel = treeViewModel;
-            _messageBus = messageBus;
             _schemaParser = schemaParser;
             _messageService = messageService;
-            _windowManagerService = windowManagerService;
+        }
+        public override void Initialize()
+        {
+            // No initialization needed currently
         }
 
         public async Task<bool> LoadDomainSchemaAsync(string filePath)
@@ -67,5 +67,12 @@ namespace CodeGenerator.Application.Controllers
             _messageBus.Publish(new DomainSchemaUnloadedEvent());
             _logger.LogInformation("Domain schema unloaded successfully");
         }
+
+        public override void Dispose()
+        {
+            UnloadDomainSchema().GetAwaiter().GetResult();
+        }
+
+
     }
 }

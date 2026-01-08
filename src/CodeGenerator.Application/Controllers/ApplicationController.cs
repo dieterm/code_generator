@@ -6,40 +6,44 @@ using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Presentation.WinForms.ViewModels;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Ribbon;
-using Microsoft.DotNet.DesignTools.ViewModels;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers
 {
-    public class ApplicationController : IDisposable
+    public class ApplicationController : CoreControllerBase
     {
         private readonly MainViewModel _mainViewModel;
         private readonly IApplicationService _applicationService;
-        private readonly IMessageBoxService _messageBoxService;
-        private readonly IFileSystemDialogService _fileSystemDialogService;
-        private readonly ILogger<ApplicationController> _logger;
-        private readonly ApplicationMessageBus _messageBus;
         private readonly DomainSchemaController _domainSchemaController;
         private readonly GenerationController _generationController;
-        public ApplicationController(RibbonBuilder ribbonBuilder, MainViewModel viewModel, DomainSchemaController domainSchemaController, GenerationController generationController, IApplicationService applicationService, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<ApplicationController> logger) 
+        private readonly SettingsController _settingsController;
+
+        public ApplicationController( MainViewModel viewModel, SettingsController settingsController, DomainSchemaController domainSchemaController, GenerationController generationController, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IApplicationService applicationService, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<ApplicationController> logger) 
+            : base(windowManagerService, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
         {
             _mainViewModel = viewModel;
+            _settingsController = settingsController;
             _applicationService = applicationService;
-            _messageBus = messageBus;
-            _messageBoxService = messageboxService;
-            _fileSystemDialogService = fileSystemDialogService;
             _domainSchemaController = domainSchemaController;
             _generationController = generationController;
-            _logger = logger;
+        }
 
+        public override void Initialize()
+        {
             SubscribeToMessageBusEvents();
 
-            CreateRibbon(ribbonBuilder);
+            CreateRibbon();
+            _settingsController.CreateRibbon();
+
+            _domainSchemaController.Initialize();
+            _generationController.Initialize();
+            _settingsController.Initialize();
         }
-        private void CreateRibbon(RibbonBuilder ribbonBuilder)
+
+        private void CreateRibbon()
         {
             // Build Ribbon Model
-            ribbonBuilder
+            _ribbonBuilder
                 .AddTab("tabDomainModel", "Domain Model")
                     .AddToolStrip("toolstripDomainModel", "Domain Model")
                         .AddButton("btnOpen", "Open")
@@ -48,7 +52,7 @@ namespace CodeGenerator.Application.Controllers
                             .WithImage("folder_open")
                             .OnClick((e) => OnOpenRequested(null, e)).Build();
 
-            ribbonBuilder.AddTab("tabGeneration", "Generation")
+            _ribbonBuilder.AddTab("tabGeneration", "Generation")
                     .AddToolStrip("toolstripGeneration", "Generation")
                         .AddButton("btnGenerate", "Generate")
                             .WithSize(RibbonButtonSize.Large)
@@ -67,6 +71,10 @@ namespace CodeGenerator.Application.Controllers
                             .OnClick((e) => OnCancelGenerationRequested(null, e)).Build();
         }
 
+        private void OnSettingsRequested(object value, EventArgs e)
+        {
+            _settingsController.ShowSettings();
+        }
 
         private void SubscribeToMessageBusEvents()
         {
@@ -161,7 +169,7 @@ namespace CodeGenerator.Application.Controllers
             _mainViewModel.IsDirty = false;
         }
 
-        private CancellationTokenSource _generationCancellationTokenSource;
+        private CancellationTokenSource? _generationCancellationTokenSource;
         /// <summary>
         /// Handle code generation logic. <br/>
         /// Triggered when user clicks "Generate" button
@@ -195,7 +203,7 @@ namespace CodeGenerator.Application.Controllers
             _generationCancellationTokenSource = null;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             // Unsubscribe from events
             _mainViewModel.NewRequested -= OnNewRequested;
@@ -205,5 +213,7 @@ namespace CodeGenerator.Application.Controllers
             _mainViewModel.GenerateRequested -= OnGenerateRequested;
             _mainViewModel.ClosingRequested -= OnClosingRequested;
         }
+
+
     }
 }

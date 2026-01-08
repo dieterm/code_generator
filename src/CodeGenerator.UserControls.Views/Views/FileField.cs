@@ -1,9 +1,12 @@
+using CodeGenerator.Shared.ViewModels;
+using CodeGenerator.Shared.Views;
+using CodeGenerator.UserControls.ViewModels;
 using System.ComponentModel;
 using System.Diagnostics;
 
 namespace CodeGenerator.UserControls.Views
 {
-    public partial class FileField : UserControl
+    public partial class FileField : UserControl, IView<FileFieldModel>
     {
         private ViewModels.FileFieldModel? _viewModel;
         private bool _isUpdatingFromViewModel = false;
@@ -11,7 +14,7 @@ namespace CodeGenerator.UserControls.Views
         public FileField()
         {
             InitializeComponent();
-
+            lblLabel.EnsureLabelVisible(txtValue, lblErrorMessage);
             btnBrowse.Click += BtnBrowse_Click;
             btnOpenFolder.Click += BtnOpenFolder_Click;
 
@@ -155,17 +158,18 @@ namespace CodeGenerator.UserControls.Views
             if (_viewModel?.SelectionMode == ViewModels.FileSelectionMode.Save)
             {
                 // Load save icon
-                var savePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "save.png");
-                if (File.Exists(savePath))
-                    btnBrowse.BackgroundImage = Image.FromFile(savePath);
+                btnBrowse.Image = Resources.ButtonIcons.save;
             }
             else
             {
                 // Load file icon
-                var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "file.png");
-                if (File.Exists(filePath))
-                    btnBrowse.BackgroundImage = Image.FromFile(filePath);
+                btnBrowse.Image = Resources.ButtonIcons.folder_open;
             }
+        }
+
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        {
+            BindViewModel((FileFieldModel)(object)viewModel);
         }
     }
 }

@@ -1,16 +1,19 @@
+using CodeGenerator.Shared.ViewModels;
+using CodeGenerator.Shared.Views;
+using CodeGenerator.UserControls.ViewModels;
 using System.ComponentModel;
 using System.Diagnostics;
 
 namespace CodeGenerator.UserControls.Views
 {
-    public partial class FolderField : UserControl
+    public partial class FolderField : UserControl, IView<ViewModels.FolderFieldModel>
     {
         private ViewModels.FolderFieldModel? _viewModel;
 
         public FolderField()
         {
             InitializeComponent();
-
+            lblLabel.EnsureLabelVisible(txtValue, lblErrorMessage);
             btnBrowse.Click += BtnBrowse_Click;
             btnOpenFolder.Click += BtnOpenFolder_Click;
 
@@ -31,7 +34,7 @@ namespace CodeGenerator.UserControls.Views
             using var dialog = new FolderBrowserDialog();
             dialog.Description = _viewModel.Description ?? "Select a folder";
             dialog.ShowNewFolderButton = true;
-            
+
             if (!string.IsNullOrEmpty(txtValue.Text) && Directory.Exists(txtValue.Text))
             {
                 dialog.SelectedPath = txtValue.Text;
@@ -105,6 +108,11 @@ namespace CodeGenerator.UserControls.Views
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             // Handle any additional property changes if needed
+        }
+
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        {
+            BindViewModel((FolderFieldModel)(object)viewModel);
         }
     }
 }

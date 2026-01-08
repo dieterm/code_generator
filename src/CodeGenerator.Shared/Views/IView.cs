@@ -7,7 +7,11 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Shared.Views
 {
-    public interface IView<TModel> where TModel : ViewModelBase
+    public interface IView
+    {
+        void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase;
+    }
+    public interface IView<TModel> : IView where TModel : ViewModelBase
     {
         void BindViewModel(TModel viewModel);
     }

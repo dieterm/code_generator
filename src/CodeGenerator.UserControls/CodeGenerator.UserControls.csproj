@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
@@ -14,35 +13,10 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
-    <PackageReference Include="Syncfusion.Core.WinForms" Version="32.1.20" />
-    <PackageReference Include="Syncfusion.SfDataGrid.WinForms" Version="32.1.20" />
-    <PackageReference Include="Syncfusion.SfInput.WinForms" Version="32.1.20" />
-    <PackageReference Include="Syncfusion.SfListView.WinForms" Version="32.1.20" />
-    <PackageReference Include="Syncfusion.Shared.Base" Version="32.1.20" />
-    <PackageReference Include="Syncfusion.Tools.Windows" Version="32.1.20" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CodeGenerator.Shared\CodeGenerator.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Resources\LucideIcons.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>LucideIcons.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Resources\LucideIcons.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>LucideIcons.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Resources\" />
   </ItemGroup>
 
 </Project>

@@ -20,5 +20,16 @@ namespace CodeGenerator.Domain.DotNet
         // .NET Framework
         public const string Net48 = "net48";
         public const string Net472 = "net472";
+
+        public static string[] AllFrameworks = new string[]
+        {
+            Net8,
+            Net7,
+            Net6,
+            NetStandard21,
+            NetStandard20,
+            Net48,
+            Net472
+        };
     }
 }

@@ -33,9 +33,9 @@ namespace CodeGenerator.Presentation.WinForms
             // Configure DI container for all components
             services.AddApplicationServices(configuration);
             services.AddPresentationServices(configuration);
-
+            
             var serviceProvider = services.BuildServiceProvider();
-
+            
             // Store service provider for global access
             ServiceProviderHolder.Initialize(serviceProvider);
 
@@ -43,6 +43,7 @@ namespace CodeGenerator.Presentation.WinForms
             using (var scope = serviceProvider.CreateScope())
             {
                 var applicationController = ServiceProviderHolder.GetRequiredService<ApplicationController>();
+                applicationController.Initialize();
                 applicationController.StartApplication();
             }
 

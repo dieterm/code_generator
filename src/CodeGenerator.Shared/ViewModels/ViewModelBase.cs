@@ -9,19 +9,38 @@ namespace CodeGenerator.Shared.ViewModels;
 public abstract class ViewModelBase : INotifyPropertyChanged, IDisposable
 {
     public event PropertyChangedEventHandler? PropertyChanged;
-
-    public virtual void Dispose()
+    public event EventHandler? Disposed;
+    private bool _isDisposing = false;
+    private bool _isDisposed = false;
+    public void Dispose()
     {
-        
+        if (_isDisposing)
+            return;
+        _isDisposing = true;
+        Disposed?.Invoke(this, EventArgs.Empty);
+        DisposeViewModel();
+        _isDisposing = false;
+        _isDisposed = true;
     }
+
+    /// <summary>
+    /// Override to dispose resources used by the ViewModel
+    /// </summary>
+    public virtual void DisposeViewModel()
+    {
+        // Override in derived classes to dispose resources
+    }
+
 
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
+        ObjectDisposedException.ThrowIf(_isDisposed, this);
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    protected virtual bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
     {
+        ObjectDisposedException.ThrowIf(_isDisposed, this);
         if (EqualityComparer<T>.Default.Equals(field, value))
             return false;
 

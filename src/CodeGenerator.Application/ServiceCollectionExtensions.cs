@@ -10,6 +10,9 @@ using CodeGenerator.Shared.Ribbon;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using CodeGenerator.Core.Settings.ViewModels;
+using CodeGenerator.Core.Settings.Application;
+using CodeGenerator.Core.Settings.Generators;
 
 namespace CodeGenerator.Application;
 
@@ -29,11 +32,13 @@ public static class ServiceCollectionExtensions
         services.AddTransient<MainViewModel>();
         services.AddTransient<DomainSchemaTreeViewModel>();
         services.AddTransient<GenerationResultTreeViewModel>();
+        services.AddTransient<SettingsViewModel>();
 
         // Register Controllers
         services.AddSingleton<ApplicationController>();
         services.AddSingleton<DomainSchemaController>();
         services.AddSingleton<GenerationController>();
+        services.AddSingleton<SettingsController>();
 
         // Register Message Bus systems
         services.AddSingleton<ApplicationMessageBus>();
@@ -43,13 +48,21 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<DomainSchemaParser>();
         services.AddTransient<GeneratorOrchestrator>();
 
+        // Settings Managers
+        services.AddSingleton<ApplicationSettingsManager>();
+        services.AddSingleton<GeneratorSettingsManager>();
+
         // Register Ribbon Builder
         services.AddSingleton<RibbonBuilder>(RibbonBuilder.Create());
 
         // Register Generators from other projects
         services.AddCodeArchitectureLayersServices(configuration);
         services.AddDotNetGeneratorServices(configuration);
+
+        // Register Generator Descriptors
+        // IMPORTANT: Ensure that all generators are registered here
         
+
         // Add logging
         services.AddLogging(builder =>
         {

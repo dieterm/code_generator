@@ -1,51 +1,47 @@
+using CodeGenerator.Shared.ViewModels;
+using CodeGenerator.Shared.Views;
+using CodeGenerator.UserControls.ViewModels;
 using System.ComponentModel;
 
 namespace CodeGenerator.UserControls.Views
 {
-    public partial class DateOnlyField : UserControl
+    public partial class BooleanField : UserControl, IView<ViewModels.BooleanFieldModel>
     {
-        private ViewModels.DateOnlyFieldModel? _viewModel;
+        private ViewModels.BooleanFieldModel? _viewModel;
         private bool _isUpdatingFromViewModel = false;
 
-        public DateOnlyField()
+        public BooleanField()
         {
             InitializeComponent();
+            
+            lblLabel.EnsureLabelVisible(rbYes, lblErrorMessage, (newLeft) => { rbNo.Left = rbYes.Left + 55; });
 
-            chkHasValue.CheckedChanged += ChkHasValue_CheckedChanged;
-            dtpValue.ValueChanged += DtpValue_ValueChanged;
-            dtpValue.Enabled = chkHasValue.Checked;
+            rbYes.CheckedChanged += RbYes_CheckedChanged;
+            rbNo.CheckedChanged += RbNo_CheckedChanged;
 
-            Disposed += DateOnlyField_Disposed;
+            Disposed += BooleanField_Disposed;
         }
 
-        private void DateOnlyField_Disposed(object? sender, EventArgs e)
+        private void BooleanField_Disposed(object? sender, EventArgs e)
         {
             ClearDataBindings();
             if (_viewModel != null)
                 _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
         }
 
-        private void ChkHasValue_CheckedChanged(object? sender, EventArgs e)
+        private void RbYes_CheckedChanged(object? sender, EventArgs e)
         {
-            dtpValue.Enabled = chkHasValue.Checked;
-            if (!_isUpdatingFromViewModel && _viewModel != null)
+            if (!_isUpdatingFromViewModel && _viewModel != null && rbYes.Checked)
             {
-                if (chkHasValue.Checked)
-                {
-                    _viewModel.Value = DateOnly.FromDateTime(dtpValue.Value);
-                }
-                else
-                {
-                    _viewModel.Value = null;
-                }
+                _viewModel.Value = true;
             }
         }
 
-        private void DtpValue_ValueChanged(object? sender, EventArgs e)
+        private void RbNo_CheckedChanged(object? sender, EventArgs e)
         {
-            if (!_isUpdatingFromViewModel && _viewModel != null && chkHasValue.Checked)
+            if (!_isUpdatingFromViewModel && _viewModel != null && rbNo.Checked)
             {
-                _viewModel.Value = DateOnly.FromDateTime(dtpValue.Value);
+                _viewModel.Value = false;
             }
         }
 
@@ -77,7 +73,7 @@ namespace CodeGenerator.UserControls.Views
             lblErrorMessage.DataBindings.Clear();
         }
 
-        public void BindViewModel(ViewModels.DateOnlyFieldModel viewModel)
+        public void BindViewModel(ViewModels.BooleanFieldModel viewModel)
         {
             if (_viewModel != null)
             {
@@ -93,7 +89,7 @@ namespace CodeGenerator.UserControls.Views
             lblLabel.DataBindings.Add("Text", viewModel, nameof(viewModel.Label), false, DataSourceUpdateMode.OnPropertyChanged);
             lblErrorMessage.DataBindings.Add("Text", viewModel, nameof(viewModel.ErrorMessage), false, DataSourceUpdateMode.OnPropertyChanged);
 
-            UpdateDateFromViewModel();
+            UpdateRadioButtonsFromViewModel();
 
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
         }
@@ -104,32 +100,37 @@ namespace CodeGenerator.UserControls.Views
 
             if (e.PropertyName == nameof(_viewModel.Value))
             {
-                UpdateDateFromViewModel();
+                UpdateRadioButtonsFromViewModel();
             }
         }
 
-        private void UpdateDateFromViewModel()
+        private void UpdateRadioButtonsFromViewModel()
         {
             if (_viewModel == null) return;
 
             _isUpdatingFromViewModel = true;
             try
             {
-                if (_viewModel.Value is DateOnly dateValue)
+                if (_viewModel.Value is bool boolValue)
                 {
-                    chkHasValue.Checked = true;
-                    dtpValue.Value = dateValue.ToDateTime(TimeOnly.MinValue);
+                    rbYes.Checked = boolValue;
+                    rbNo.Checked = !boolValue;
                 }
                 else
                 {
-                    chkHasValue.Checked = false;
-                    dtpValue.Value = DateTime.Today;
+                    rbYes.Checked = false;
+                    rbNo.Checked = false;
                 }
             }
             finally
             {
                 _isUpdatingFromViewModel = false;
             }
+        }
+
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        {
+            BindViewModel((BooleanFieldModel)(object)viewModel);
         }
     }
 }

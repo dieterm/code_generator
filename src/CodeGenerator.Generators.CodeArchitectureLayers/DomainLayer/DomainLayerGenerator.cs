@@ -1,5 +1,6 @@
 ﻿using CodeGenerator.Core.Generators.Settings;
 using CodeGenerator.Domain.CodeArchitecture;
+using CodeGenerator.Generators.CodeArchitectureLayers.ApplicationLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +11,13 @@ namespace CodeGenerator.Generators.CodeArchitectureLayers.DomainLayer
 {
     public class DomainLayerGenerator : CodeArchitectureLayerGenerator
     {
-        public DomainLayerGenerator()
+        protected override GeneratorSettingsDescription ConfigureSettingsDescription()
         {
-            var templateRequirements = new List<TemplateRequirement>();
-
-            // FolderProjectTemplateRequirement for Application Layer
-            // templateRequirements.Add(new FolderProjectTemplateRequirement("DomainLayer"));
-
-            SettingsDescription = new GeneratorSettingsDescription(nameof(DomainLayerGenerator), "Domain Layer Generator Settings", "Generates LayerArtifacts for common scopes (shared, application) and domain scopes.", templateRequirements);
-
+            var id = nameof(DomainLayerGenerator);
+            var name = "Domain Layer Generator";
+            var description = "Generates LayerArtifacts for common scopes (shared, application) and domain scopes.";
+            
+            return new GeneratorSettingsDescription(id, name, description);
         }
 
         protected override CodeArchitectureLayerArtifact CreateLayerArtifact(string scope)
@@ -27,6 +26,5 @@ namespace CodeGenerator.Generators.CodeArchitectureLayers.DomainLayer
         }
 
         protected override string LayerName { get { return CodeArchitectureLayerArtifact.DOMAIN_LAYER; } }
-        public override GeneratorSettingsDescription SettingsDescription { get; }
     }
 }
