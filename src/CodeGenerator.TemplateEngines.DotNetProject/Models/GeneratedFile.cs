@@ -1,4 +1,4 @@
-namespace CodeGenerator.Generators.DotNet.Models;
+namespace CodeGenerator.TemplateEngines.DotNetProject.Models;
 
 /// <summary>
 /// Represents a generated file

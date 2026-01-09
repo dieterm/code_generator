@@ -1,5 +1,3 @@
-using CodeGenerator.Application.Events.DomainSchema;
-using CodeGenerator.Application.MessageBus;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Core.Artifacts;
@@ -12,10 +10,10 @@ using CodeGenerator.Shared;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
+using CodeGenerator.Shared.ExtensionMethods;
 using Syncfusion.Windows.Forms.Tools;
-using Syncfusion.WinForms.Controls;
 using System.ComponentModel;
-using System.Windows.Forms;
+
 
 namespace CodeGenerator.Presentation.WinForms
 {

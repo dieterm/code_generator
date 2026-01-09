@@ -1,0 +1,12 @@
+<#@ template language="C#" hostspecific="true" #>
+<#@ parameter name="EntityName" type="System.String" #>
+<#@ parameter name="Namespace" type="System.String" #>
+namespace <#= Namespace #>
+{
+    public class <#= EntityName #>
+    {
+        public int Id { get; set; }
+
+<#@ include file="ChildTemplate.tt" #>
+    }
+}

@@ -1,4 +1,4 @@
-namespace CodeGenerator.Generators.DotNet.Models;
+namespace CodeGenerator.TemplateEngines.DotNetProject.Models;
 
 /// <summary>
 /// Represents a generated project
@@ -19,26 +19,6 @@ public class GeneratedProject
     /// Project directory
     /// </summary>
     public string Directory { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Target framework
-    /// </summary>
-    public string TargetFramework { get; set; } = "net8.0";
-
-    /// <summary>
-    /// Project type
-    /// </summary>
-    public string ProjectType { get; set; } = "classlib";
-
-    /// <summary>
-    /// NuGet packages included
-    /// </summary>
-    public List<string> Packages { get; set; } = new();
-
-    /// <summary>
-    /// Project references
-    /// </summary>
-    public List<string> ProjectReferences { get; set; } = new();
 
     /// <summary>
     /// Files in this project

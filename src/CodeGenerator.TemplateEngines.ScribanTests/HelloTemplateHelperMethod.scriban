@@ -1,0 +1,6 @@
+﻿Hello, {{ name | string.capitalize }}!
+Hello, {{ name | snake_case }}!
+Hello, {{ name | myhelper }}!
+{{- for country in countries}}
+- {{ country }}
+{{- end }}

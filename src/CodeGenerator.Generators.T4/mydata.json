@@ -1,0 +1,17 @@
+{
+  "entities": [
+    {
+      "name": "Country",
+      "properties": [
+        {
+          "name": "id",
+          "type": "integer"
+        },
+        {
+          "name": "iso3code",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}

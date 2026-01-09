@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,8 @@ namespace CodeGenerator.Domain.DotNet
             ProjectType = projectType;
             TargetFramework = targetFramework;
             TreeNodeIcon = new ResourceManagerTreeNodeIcon($"{language.ImageKey}_project");
+            NuGetPackages = new List<NuGetPackage>();
+            ProjectReferences = new List<DotNetProjectReference>();
         }
         public override string Id => $"DotNetProject:{Name}";
         public string ProjectFileName { get { return $"{Name}.{Language.ProjectFileExtension}"; } }
@@ -48,8 +51,30 @@ namespace CodeGenerator.Domain.DotNet
             set { SetProperty(nameof(TargetFramework), value); }
         }
 
+        public List<NuGetPackage> NuGetPackages
+        {
+            get { return GetProperty<List<NuGetPackage>>(nameof(NuGetPackages)); }
+            private set { SetProperty(nameof(NuGetPackages), value); }
+        }
+
+        public List<DotNetProjectReference> ProjectReferences
+        {
+            get { return GetProperty<List<DotNetProjectReference>>(nameof(ProjectReferences)); }
+            private set { SetProperty(nameof(ProjectReferences), value); }
+        }
+
         public override string TreeNodeText { get { return $"{Name} ({Language.DotNetCommandLineArgument}, {ProjectType}, {TargetFramework})"; } }
 
         public override ITreeNodeIcon TreeNodeIcon { get; }
+
+        /// <summary>
+        /// Get the resulting folderpath by traversing ancestors to find the FolderArtifactDecorator
+        /// </summary>
+        public string GetFolderPath()
+        {
+            var folderArtifact = FindAncestorArtifact<FolderArtifactDecorator>() as FolderArtifact;
+            if(folderArtifact==null) throw new InvalidOperationException("Cannot determine relative folder path, no FolderArtifactDecorator ancestor found.");
+            return folderArtifact.FullPath;
+        }
     }
 }

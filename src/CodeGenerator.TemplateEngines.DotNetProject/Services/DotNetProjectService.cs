@@ -1,9 +1,9 @@
 using CodeGenerator.Domain.DotNet;
-using CodeGenerator.Generators.DotNet.Models;
+using CodeGenerator.TemplateEngines.DotNetProject.Models;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
-namespace CodeGenerator.Generators.DotNet.Services;
+namespace CodeGenerator.TemplateEngines.DotNetProject.Services;
 
 /// <summary>
 /// Generates .NET projects using dotnet CLI and MSBuild
@@ -35,8 +35,6 @@ public class DotNetProjectService
         {
             Name = name,
             Directory = directory,
-            ProjectType = projectType,
-            TargetFramework = targetFramework,
             ProjectFilePath = Path.Combine(directory, $"{name}.{fileExtension}")
         };
 

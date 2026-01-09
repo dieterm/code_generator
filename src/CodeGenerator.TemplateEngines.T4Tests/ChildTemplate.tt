@@ -1,0 +1,21 @@
+<#
+// This is a text include file - it just contains text/code that gets included directly
+// It does not contain class feature blocks or template directives
+#>
+        // ===== Properties from ChildTemplate.tt =====
+        public string Name { get; set; } = string.Empty;
+        
+        public string Description { get; set; } = string.Empty;
+        
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        
+        public DateTime? UpdatedAt { get; set; }
+        
+        /// <summary>
+        /// Validates the entity
+        /// </summary>
+        public bool Validate()
+        {
+            return !string.IsNullOrEmpty(Name);
+        }
+        // ===== End of ChildTemplate.tt =====

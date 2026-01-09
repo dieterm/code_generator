@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace CodeGenerator.Presentation.WinForms
+namespace CodeGenerator.Shared.ExtensionMethods
 {
     /// <summary>
     /// Extension methods for Image/Bitmap conversions

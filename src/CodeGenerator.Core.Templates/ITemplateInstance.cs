@@ -6,14 +6,9 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Core.Templates
 {
-    public enum TemplateType
+    public interface ITemplateInstance
     {
-        Scriban,
-        T4,
-        TextFile,
-        BinaryFile,
-        ImageFile,
-        Folder,
-        DotNetProject
+        ITemplate Template { get; }
+
     }
 }

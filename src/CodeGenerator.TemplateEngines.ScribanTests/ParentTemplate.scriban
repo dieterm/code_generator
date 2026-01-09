@@ -1,0 +1,2 @@
+﻿I'm a parent template.
+{{ include "ChildTemplate.scriban" }}
