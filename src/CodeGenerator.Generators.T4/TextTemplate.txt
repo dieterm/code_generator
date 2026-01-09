@@ -1,4 +1,0 @@
-JSON Data Model - Entities:
-- Country
-    -> id: integer
-    -> iso3code: string

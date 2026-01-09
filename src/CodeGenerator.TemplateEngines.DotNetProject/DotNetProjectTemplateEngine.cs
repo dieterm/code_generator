@@ -15,6 +15,10 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
 {
     public class DotNetProjectTemplateEngine : TemplateEngine<DotNetProjectTemplate, DotNetProjectTemplateInstance>
     {
+        private readonly string[] _filesToIgnore = new string[]
+        {
+            "Class1.cs",
+        };
         private readonly DotNetProjectService _dotNetProjectService;
         public DotNetProjectTemplateEngine(DotNetProjectService dotNetProjectService, ILogger<DotNetProjectTemplateEngine> logger)
             : base(logger, "dotnet_project_template_engine", "DotNet Project Template Engine", TemplateType.DotNetProject)
@@ -42,7 +46,12 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
             var artifacts = parentFolder?.Children ?? new List<IArtifact>();
             foreach (var file in Directory.GetFiles(tempDirPath, "*.*", SearchOption.TopDirectoryOnly))
             {
-                var fileArtifact = new FileArtifact(Path.GetFileName(file));
+                var fileName = Path.GetFileName(file);
+                if( _filesToIgnore.Contains(fileName))
+                {
+                    continue;
+                }
+                var fileArtifact = new FileArtifact(fileName);
                 fileArtifact.SetTextContent(File.ReadAllText(file));
                 artifacts.Add(fileArtifact);
             }
