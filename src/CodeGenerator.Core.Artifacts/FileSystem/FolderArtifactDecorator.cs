@@ -21,5 +21,17 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
             get { return GetProperty<string>(nameof(FolderName)); }
             set { SetProperty(nameof(FolderName), value); }
         }
+
+        public override bool CanGenerate()
+        {
+            return !string.IsNullOrWhiteSpace(FolderName);
+        }
+
+        public override Task GenerateAsync(IProgress<ArtifactGenerationProgress> progress, CancellationToken cancellationToken = default)
+        {
+            var newFolderPath = Path.Combine(this.Artifact.GetFullPath());
+            System.IO.Directory.CreateDirectory(newFolderPath);
+            return Task.CompletedTask;
+        }
     }
 }

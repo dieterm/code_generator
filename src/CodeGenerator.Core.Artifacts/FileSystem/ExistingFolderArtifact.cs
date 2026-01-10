@@ -14,8 +14,8 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
         {
             if (!Directory.Exists(existingFolderPath)) throw new ArgumentException("The specified existing folder path does not exist.", nameof(existingFolderPath));
 
-            _existingFolderArtifactDecorator = AddOrGetDecorator(() => new ExistingFolderArtifactDecorator(ExistingFolderArtifact.EXISTING_FOLDER_PROPERTIES_DECORATOR_KEY, existingFolderPath));
-
+            _existingFolderArtifactDecorator = AddOrGetDecorator(() => new ExistingFolderArtifactDecorator(ExistingFolderArtifact.EXISTING_FOLDER_PROPERTIES_DECORATOR_KEY));
+            
             ExistingFolderPath = existingFolderPath;
         }
 

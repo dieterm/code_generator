@@ -94,6 +94,7 @@ namespace CodeGenerator.Presentation.WinForms.ViewModels
                 ProgressValue = progress.PercentComplete;
 
             ProgressLabel = progress.Message;
+            StatusLabel = progress.Phase.ToString();
         }
     }
 

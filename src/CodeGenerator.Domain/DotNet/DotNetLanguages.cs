@@ -20,5 +20,11 @@ namespace CodeGenerator.Domain.DotNet
             VisualBasic,
             Python
         };
+
+        public static DotNetLanguage GetByCommandLineArgument(string language)
+        {
+            if(language==null) throw new ArgumentNullException(nameof(language));
+            return AllLanguages.Single(l => l.DotNetCommandLineArgument.Equals(language, StringComparison.OrdinalIgnoreCase));
+        }
     }
 }

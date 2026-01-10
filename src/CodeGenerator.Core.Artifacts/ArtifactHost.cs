@@ -13,7 +13,7 @@ namespace CodeGenerator.Core.Artifacts
 
         public bool CanPreview { get {return Artifact.CanPreview; } }
 
-        public List<IArtifact> Children { get { return Artifact.Children; } }
+        public IEnumerable<IArtifact> Children { get { return Artifact.Children; } }
 
         public ArtifactDecoratorCollection Decorators { get { return Artifact.Decorators; } }
 

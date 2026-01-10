@@ -4,15 +4,19 @@ using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Core.DomainSchema.Services;
 using CodeGenerator.Core.Generators;
-using CodeGenerator.Presentation.WinForms.ViewModels;
+using CodeGenerator.Core.Interfaces;
+using CodeGenerator.Core.Settings.Application;
+using CodeGenerator.Core.Settings.Generators;
+using CodeGenerator.Core.Settings.ViewModels;
+using CodeGenerator.Core.Workspaces.Settings;
+using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Generators.CodeArchitectureLayers;
+using CodeGenerator.Presentation.WinForms.ViewModels;
 using CodeGenerator.Shared.Ribbon;
+using CodeGenerator.TemplateEngines.DotNetProject;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using CodeGenerator.Core.Settings.ViewModels;
-using CodeGenerator.Core.Settings.Application;
-using CodeGenerator.Core.Settings.Generators;
 
 namespace CodeGenerator.Application;
 
@@ -47,9 +51,10 @@ public static class ServiceCollectionExtensions
         // Register Services
         services.AddSingleton<DomainSchemaParser>();
         services.AddTransient<GeneratorOrchestrator>();
-
+        services.AddSingleton<CodeArchitectureManager>();
         // Settings Managers
         services.AddSingleton<ApplicationSettingsManager>();
+        services.AddSingleton<WorkspaceSettingsManager>();
         services.AddSingleton<GeneratorSettingsManager>();
 
         // Register Ribbon Builder
@@ -61,7 +66,15 @@ public static class ServiceCollectionExtensions
 
         // Register Generator Descriptors
         // IMPORTANT: Ensure that all generators are registered here
+
+
+        // Register Template Engines
+        services.AddSingleton<DotNetProjectTemplateEngine>();
+        services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.DotNetProject.DotNetProjectTemplateEngine>((q) => q.GetRequiredService<DotNetProjectTemplateEngine>());
         
+        services.AddSingleton<CodeGenerator.TemplateEngines.DotNetProject.Services.DotNetProjectService>();
+        services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.Scriban.ScribanTemplateEngine>();
+        services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.T4.T4TemplateEngine>();
 
         // Add logging
         services.AddLogging(builder =>

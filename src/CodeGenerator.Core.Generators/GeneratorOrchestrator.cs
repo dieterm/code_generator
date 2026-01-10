@@ -2,6 +2,9 @@ using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.CodeGeneration;
 using CodeGenerator.Core.DomainSchema.Services;
 using CodeGenerator.Core.Generators.MessageBus;
+using CodeGenerator.Core.Settings.Generators;
+using CodeGenerator.Core.Workspaces.Settings;
+using CodeGenerator.Shared;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Core.Generators;
@@ -36,10 +39,15 @@ public class GeneratorOrchestrator
 
     private void InitializeGenerators()
     {
+        var settingsManager = ServiceProviderHolder.GetRequiredService<GeneratorSettingsManager>();
         foreach (var generator in _messageBusAwareGenerators)
         {
+            var settings = settingsManager.GetGeneratorSettings(generator.SettingsDescription.Id);
+            if (settings == null || !settings.Enabled) continue;
+
             generator.Initialize(_messageBus);
             generator.SubscribeToEvents(_messageBus);
+
             _logger.LogDebug("Initialized message bus aware generator: {GeneratorName}", generator.SettingsDescription.Name);
         }
     }
@@ -56,7 +64,8 @@ public class GeneratorOrchestrator
         // report starting
         var startTime = DateTime.UtcNow;
         // create root artifact
-        var result = new GenerationResult(new RootArtifact(), domainSchema);
+        var rootArtifact = new RootArtifact(WorkspaceSettings.Instance.DefaultOutputDirectory);
+        var result = new GenerationResult(rootArtifact, domainSchema);
         
         try
         {

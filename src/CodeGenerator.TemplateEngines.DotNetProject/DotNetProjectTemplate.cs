@@ -5,6 +5,14 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
 {
     public class DotNetProjectTemplate : ITemplate
     {
+        public DotNetProjectTemplate(string projectType, DotNetLanguage language, string targetFramework)
+        {
+            DotNetProjectType = projectType ?? throw new ArgumentNullException(nameof(projectType));
+            DotNetLanguage = language;
+            DotNetTargetFramework = targetFramework ?? throw new ArgumentNullException(nameof(targetFramework));
+            TemplateId = $"DotNetProject-{projectType}-{language.DotNetCommandLineArgument}-{targetFramework}";
+        }
+
         public DotNetProjectTemplate(string id, string projectType, DotNetLanguage language, string targetFramework)
         {
             TemplateId = id ?? throw new ArgumentNullException(nameof(id));

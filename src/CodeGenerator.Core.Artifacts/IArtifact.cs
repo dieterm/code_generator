@@ -6,7 +6,7 @@ namespace CodeGenerator.Core.Artifacts
     public interface IArtifact
     {
         bool CanPreview { get; }
-        List<IArtifact> Children { get; }
+        IEnumerable<IArtifact> Children { get; }
         ArtifactDecoratorCollection Decorators { get; }
         string Id { get; }
         IArtifact? Parent { get; }

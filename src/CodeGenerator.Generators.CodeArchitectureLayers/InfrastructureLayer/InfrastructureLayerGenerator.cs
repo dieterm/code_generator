@@ -18,7 +18,7 @@ namespace CodeGenerator.Generators.CodeArchitectureLayers.InfrastructureLayer
             var name = "Infrastructure Layer Generator";
             var description = "Generates LayerArtifacts for common scopes (shared, application) and domain scopes.";
             
-            return new GeneratorSettingsDescription(id, name, description);
+            return CodeArchitectureLayerGeneratorSettings.CreateDescription(id, name, description, LayerName);
         }
 
         protected override CodeArchitectureLayerArtifact CreateLayerArtifact(string scope)

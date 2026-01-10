@@ -1,5 +1,9 @@
-using System.Configuration;
+using CodeGenerator.Core.Settings.Models;
+using CodeGenerator.UserControls.ViewModels;
 using System.Collections.Specialized;
+using System.Configuration;
+using System.Runtime;
+using System.Runtime.CompilerServices;
 
 namespace CodeGenerator.Core.Settings.Application
 {
@@ -228,5 +232,6 @@ namespace CodeGenerator.Core.Settings.Application
         }
 
         #endregion
+
     }
 }

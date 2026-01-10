@@ -3,6 +3,9 @@ using CodeGenerator.Core.Generators.MessageBus;
 using CodeGenerator.Core.Generators.Settings;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.DotNet;
+using CodeGenerator.Generators.DotNet.Generators.ApplicationLayer.ApplicationScope;
+using CodeGenerator.TemplateEngines.DotNetProject;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,15 +17,15 @@ namespace CodeGenerator.Generators.DotNet.Generators.ApplicationLayer.SharedScop
     public class ApplicationLayerSharedScopeDotNetProjectGenerator : DotNetProjectGenerator<ApplicationLayerArtifact>
     {
         
-        public ApplicationLayerSharedScopeDotNetProjectGenerator() 
-            : base(CodeArchitectureLayerArtifact.APPLICATION_LAYER, CodeArchitectureLayerArtifact.SHARED_SCOPE)
+        public ApplicationLayerSharedScopeDotNetProjectGenerator(ILogger<ApplicationLayerSharedScopeDotNetProjectGenerator> logger, DotNetProjectTemplateEngine dotNetProjectTemplateEngine) 
+            : base(CodeArchitectureLayerArtifact.APPLICATION_LAYER, CodeArchitectureLayerArtifact.SHARED_SCOPE, dotNetProjectTemplateEngine, logger)
         {
         }
 
 
-        protected override DotNetProjectArtifact OnLayerScopeCreated(CreatedArtifactEventArgs args)
+        protected override async Task<DotNetProjectArtifact> OnLayerScopeCreatedAsync(CreatedArtifactEventArgs args)
         {
-            var dotNetProjectArtifact = base.OnLayerScopeCreated(args);
+            var dotNetProjectArtifact = await base.OnLayerScopeCreatedAsync(args);
 
             // Additional configuration for Shared Scope projects can be added here
             return dotNetProjectArtifact;

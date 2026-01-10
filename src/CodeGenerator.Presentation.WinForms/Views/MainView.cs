@@ -13,6 +13,8 @@ using CodeGenerator.Shared.Views;
 using CodeGenerator.Shared.ExtensionMethods;
 using Syncfusion.Windows.Forms.Tools;
 using System.ComponentModel;
+using CodeGenerator.Core.Artifacts.FileSystem;
+using System.Diagnostics;
 
 
 namespace CodeGenerator.Presentation.WinForms
@@ -136,7 +138,28 @@ namespace CodeGenerator.Presentation.WinForms
 
         public void ShowArtifactPreview(IArtifact selectedArtifact)
         {
-            throw new NotImplementedException();
+            if (selectedArtifact == null) return;
+            // for now, only show text files in a textbox
+            var textContentDecorator = selectedArtifact.GetDecorator<TextContentDecorator>();
+            if (textContentDecorator != null)
+            {
+                var textBox = new TextBox()
+                {
+                    Multiline = true,
+                    ReadOnly = true,
+                    ScrollBars = ScrollBars.Both,
+                    Dock = DockStyle.Fill,
+                    Font = new System.Drawing.Font("Consolas", 10),
+                    Text = textContentDecorator.Content ?? string.Empty
+                };
+                dockingManager.DockControl(textBox, this, DockingStyle.Right, 4);
+                dockingManager.SetEnableDocking(textBox, true);
+                dockingManager.SetControlSize(textBox, new Size(300, this.Height - 50));
+                dockingManager.SetDockLabel(textBox, "Generation Result");
+            } else
+            {
+                Debug.WriteLine("WARNING: No preview implemented yet for the selected artifact.");
+            }
         }
 
         public void ShowSettingsWindow(SettingsViewModel settingsViewModel)

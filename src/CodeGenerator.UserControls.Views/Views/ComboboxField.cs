@@ -21,6 +21,7 @@ namespace CodeGenerator.UserControls.Views
         {
             InitializeComponent();
 
+            lblLabel.EnsureLabelVisible(cbxItems, lblErrorMessage);
             cbxItems.DisplayMember = "DisplayName";
             cbxItems.ValueMember = "Id";
 

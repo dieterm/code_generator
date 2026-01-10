@@ -53,7 +53,7 @@ public class DotNetProjectService
 
         // Create project using dotnet CLI with language parameter
         var languageParam = language.ToUpper() != DotNetLanguages.CSharp.DotNetCommandLineArgument ? $" -lang {language}" : "";
-        var command = $"new {projectType} -n {name} -f {targetFramework}{languageParam} -o \"{directory}\"";
+        var command = $"new {projectType} -n \"{name}\" -f {targetFramework}{languageParam} -o \"{directory}\"";
         var result = await RunDotNetCommandAsync(command, cancellationToken);
 
         if (!result.Success)
@@ -180,12 +180,44 @@ public class DotNetProjectService
             };
 
             using var process = new Process { StartInfo = startInfo };
+            
+            // Start reading output/error asynchronously BEFORE starting the process
+            var outputTask = Task.CompletedTask;
+            var errorTask = Task.CompletedTask;
+            var outputBuilder = new System.Text.StringBuilder();
+            var errorBuilder = new System.Text.StringBuilder();
+
+            process.OutputDataReceived += (sender, e) =>
+            {
+                if (e.Data != null)
+                {
+                    outputBuilder.AppendLine(e.Data);
+                }
+            };
+
+            process.ErrorDataReceived += (sender, e) =>
+            {
+                if (e.Data != null)
+                {
+                    errorBuilder.AppendLine(e.Data);
+                }
+            };
+
             process.Start();
+            
+            // Begin async reading
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
 
-            var output = await process.StandardOutput.ReadToEndAsync(cancellationToken);
-            var error = await process.StandardError.ReadToEndAsync(cancellationToken);
+            // Wait for process to exit
+            process.WaitForExit();
+            //await process.WaitForExitAsync(cancellationToken);
 
-            await process.WaitForExitAsync(cancellationToken);
+            // Get the collected output
+            var output = outputBuilder.ToString();
+            var error = errorBuilder.ToString();
+
+            _logger.LogDebug("dotnet {Arguments} exited with code {ExitCode}", arguments, process.ExitCode);
 
             return (process.ExitCode == 0, output, error);
         }

@@ -23,7 +23,9 @@ namespace CodeGenerator.Templates.Tests
         private ScribanTemplateEngine GetEngine()
         {
             var logger = GetLogger();
-            return new ScribanTemplateEngine(logger, @"D:\Cloud\GitHub\code_generator\src\CodeGenerator.TemplateEngines.ScribanTests\");
+            // @"D:\Cloud\GitHub\code_generator\src\CodeGenerator.TemplateEngines.ScribanTests\"
+            return new ScribanTemplateEngine(logger);
+
         }
         [TestMethod()]
         public void RenderAsyncTest()

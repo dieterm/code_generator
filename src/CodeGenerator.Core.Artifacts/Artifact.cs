@@ -10,7 +10,8 @@ public abstract class Artifact : IArtifact
 {
     public abstract string Id { get; }
     public IArtifact? Parent { get; private set; }
-    public List<IArtifact> Children { get; } = new();
+    private readonly List<IArtifact> _children = new();
+    public IEnumerable<IArtifact> Children { get { return _children; } } 
     public ArtifactDecoratorCollection Decorators { get; } = new();
 
     public abstract string TreeNodeText { get; }
@@ -27,13 +28,13 @@ public abstract class Artifact : IArtifact
     /// </summary>
     public virtual async Task GenerateAsync(IProgress<ArtifactGenerationProgress> progress, CancellationToken cancellationToken = default)
     {
-        int totalSteps = 1 + Children.Count;
+        int totalSteps = 1 + _children.Count;
         int currentStep = 0;
 
         progress.Report(new ArtifactGenerationProgress(this, "Generating artifact", currentStep++, totalSteps));
         await GenerateSelfAsync(progress, cancellationToken);
 
-        foreach (var child in Children)
+        foreach (var child in _children)
         {
             progress.Report(new ArtifactGenerationProgress(this, "Generating child artifact", currentStep++, totalSteps));
             await child.GenerateAsync(progress, cancellationToken);
@@ -57,12 +58,12 @@ public abstract class Artifact : IArtifact
     public void AddChild(IArtifact child)
     {
         ((Artifact)child).Parent = this;
-        Children.Add(child);
+        _children.Add(child);
     }
 
     public void RemoveChild(IArtifact child)
     {
-        if (Children.Remove(child))
+        if (_children.Remove(child))
         {
             ((Artifact)child).Parent = null;
         }

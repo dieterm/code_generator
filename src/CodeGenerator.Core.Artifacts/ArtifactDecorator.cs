@@ -36,9 +36,9 @@ namespace CodeGenerator.Core.Artifacts
         /// <param name="progress"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public virtual async Task GenerateAsync(IProgress<ArtifactGenerationProgress> progress, CancellationToken cancellationToken = default)
+        public virtual Task GenerateAsync(IProgress<ArtifactGenerationProgress> progress, CancellationToken cancellationToken = default)
         {
-            
+            return Task.CompletedTask;
         }
 
         /// <summary>

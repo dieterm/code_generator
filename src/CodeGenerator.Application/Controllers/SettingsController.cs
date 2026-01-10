@@ -3,6 +3,7 @@ using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Settings.Application;
 using CodeGenerator.Core.Settings.Generators;
 using CodeGenerator.Core.Settings.ViewModels;
+using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Shared.Ribbon;
 using Microsoft.Extensions.Logging;
 using System;
@@ -14,13 +15,15 @@ namespace CodeGenerator.Application.Controllers
 	{
         private readonly SettingsViewModel _settingsViewModel;
         private readonly ApplicationSettingsManager _applicationSettingsManager;
+		private readonly WorkspaceSettingsManager _workspaceSettingsManager;
         private readonly GeneratorSettingsManager _generatorSettingsManager;
 
-		public SettingsController(ApplicationSettingsManager applicationSettingsManager, GeneratorSettingsManager generatorSettingsManager, SettingsViewModel settingsViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IMessageBoxService messageBoxService, IFileSystemDialogService fileSystemDialogService, ApplicationMessageBus messageBus, ILogger<SettingsController> logger)
+		public SettingsController(ApplicationSettingsManager applicationSettingsManager, WorkspaceSettingsManager workspaceSettingsManager, GeneratorSettingsManager generatorSettingsManager, SettingsViewModel settingsViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IMessageBoxService messageBoxService, IFileSystemDialogService fileSystemDialogService, ApplicationMessageBus messageBus, ILogger<SettingsController> logger)
 			: base(windowManagerService, ribbonBuilder, messageBus, messageBoxService, fileSystemDialogService, logger)
 		{
 			_settingsViewModel = settingsViewModel;
 			_applicationSettingsManager = applicationSettingsManager;
+			_workspaceSettingsManager = workspaceSettingsManager;
 			_generatorSettingsManager = generatorSettingsManager;
         }
 
@@ -31,6 +34,7 @@ namespace CodeGenerator.Application.Controllers
 		{
 			_logger.LogInformation("SettingsController starting...");
 			_applicationSettingsManager.LoadSettings();
+            _workspaceSettingsManager.LoadSettings();
             _generatorSettingsManager.LoadSettings();
             _generatorSettingsManager.DiscoverAndRegisterGenerators();
 			_settingsViewModel.OkRequested += OnSaveSettings;
@@ -60,6 +64,7 @@ namespace CodeGenerator.Application.Controllers
 			_logger.LogInformation("Loading settings...");
 			_settingsViewModel.SettingsSections.Clear();
             _settingsViewModel.SettingsSections.Add(_applicationSettingsManager.GetSettingsViewModelSection());
+            _settingsViewModel.SettingsSections.Add(_workspaceSettingsManager.GetSettingsViewModelSection());
 			_settingsViewModel.SettingsSections.Add(_generatorSettingsManager.GetSettingsViewModelSection());
             _logger.LogInformation("Settings loaded.");
         }
@@ -67,7 +72,8 @@ namespace CodeGenerator.Application.Controllers
 		public void SaveSettings()
 		{
             _applicationSettingsManager.SaveSettings();
-			_generatorSettingsManager.SaveSettings();
+			_workspaceSettingsManager.SaveSettings();
+            _generatorSettingsManager.SaveSettings();
         }
 
         public void CreateRibbon()

@@ -81,6 +81,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.TemplateEngin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.TemplateEngines.DotNetProjectTests", "CodeGenerator.TemplateEngines.DotNetProjectTests\CodeGenerator.TemplateEngines.DotNetProjectTests.csproj", "{3DC89A60-6488-458F-AB78-47FCCFA1B84F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core.Workspaces", "CodeGenerator.Core.Workspaces\CodeGenerator.Core.Workspaces.csproj", "{CC5A58F2-E15E-47B3-AAB2-613F6A87E409}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -187,6 +189,10 @@ Global
 		{3DC89A60-6488-458F-AB78-47FCCFA1B84F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DC89A60-6488-458F-AB78-47FCCFA1B84F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DC89A60-6488-458F-AB78-47FCCFA1B84F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC5A58F2-E15E-47B3-AAB2-613F6A87E409}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC5A58F2-E15E-47B3-AAB2-613F6A87E409}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC5A58F2-E15E-47B3-AAB2-613F6A87E409}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC5A58F2-E15E-47B3-AAB2-613F6A87E409}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

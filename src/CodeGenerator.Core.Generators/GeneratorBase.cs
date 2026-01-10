@@ -1,6 +1,8 @@
 ﻿using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Generators.MessageBus;
 using CodeGenerator.Core.Generators.Settings;
+using CodeGenerator.Core.Settings.Generators;
+using CodeGenerator.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +23,13 @@ namespace CodeGenerator.Core.Generators
 
         protected abstract GeneratorSettingsDescription ConfigureSettingsDescription();
 
+        protected virtual GeneratorSettings GetSettings()
+        {
+            var settingsManager = ServiceProviderHolder.GetRequiredService<GeneratorSettingsManager>();
+            var settings = settingsManager.GetGeneratorSettings(this.SettingsDescription.Id);
+            return settings;
+        }
+
         public virtual void Initialize(GeneratorMessageBus messageBus)
         {
             MessageBus = messageBus;
@@ -38,6 +47,36 @@ namespace CodeGenerator.Core.Generators
             MessageBus.Publish(new CreatingArtifactEventArgs(result, child));
             parent.AddChild(child);
             MessageBus.Publish(new CreatedArtifactEventArgs(result, child));
+            VisitArtifactChildrenAndPublishCreatingEvents(child, result);
+            VisitArtifactChildrenAndPublishCreatedEvents(child, result);
+        }
+
+        protected void VisitArtifactChildrenAndPublishCreatingEvents(IArtifact artifact, GenerationResult result)
+        {
+            foreach (var child in artifact.Children)
+            {
+                NotifyArtifactCreating(child, result);
+                VisitArtifactChildrenAndPublishCreatingEvents(child, result);
+            }
+        }
+
+        protected void VisitArtifactChildrenAndPublishCreatedEvents(IArtifact artifact, GenerationResult result)
+        {
+            foreach (var child in artifact.Children)
+            {
+                NotifyArtifactCreated(child, result);
+                VisitArtifactChildrenAndPublishCreatedEvents(child, result);
+            }
+        }
+
+        protected void NotifyArtifactCreated(IArtifact artifact, GenerationResult result)
+        {
+            MessageBus.Publish(new CreatedArtifactEventArgs(result, artifact));
+        }
+
+        protected void NotifyArtifactCreating(IArtifact artifact, GenerationResult result)
+        {
+            MessageBus.Publish(new CreatingArtifactEventArgs(result, artifact));
         }
     }
 }

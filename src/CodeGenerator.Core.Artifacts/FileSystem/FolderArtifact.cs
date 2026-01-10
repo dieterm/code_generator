@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CodeGenerator.Core.Artifacts.FileSystem;
+using CodeGenerator.Core.Artifacts.CodeGeneration;
 namespace CodeGenerator.Core.Artifacts.FileSystem
 {
     public class FolderArtifact : Artifact
@@ -30,9 +31,16 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
         {
             get
             {
-                var parentFolder = this.GetParentFolderArtifact();
-                if (parentFolder == null) return FolderName;
-                return $"{parentFolder.FullPath}{System.IO.Path.DirectorySeparatorChar}{FolderName}";
+                return this.GetFullPath();
+                //if (Parent is RootArtifact rootArtifact) 
+                //{ 
+                //    return Path.Combine(rootArtifact.FolderPath, FolderName);
+                //}
+                //var parentFolder = this.GetParentFolderArtifact();
+                //if (parentFolder == null) 
+                //    return FolderName;
+
+                //return $"{parentFolder.FullPath}{System.IO.Path.DirectorySeparatorChar}{FolderName}";
             }
         }
         public override string Id => FullPath;

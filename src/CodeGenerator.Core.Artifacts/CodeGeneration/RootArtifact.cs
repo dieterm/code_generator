@@ -1,4 +1,5 @@
-﻿using CodeGenerator.Core.Artifacts.TreeNode;
+﻿using CodeGenerator.Core.Artifacts.FileSystem;
+using CodeGenerator.Core.Artifacts.TreeNode;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,16 @@ namespace CodeGenerator.Core.Artifacts.CodeGeneration
 
         public override ITreeNodeIcon TreeNodeIcon { get; } = new ResourceManagerTreeNodeIcon("box");
 
+        public RootArtifact(string outputDirectory)
+        {
+            AddDecorator(new ExistingFolderArtifactDecorator(ExistingFolderArtifact.EXISTING_FOLDER_PROPERTIES_DECORATOR_KEY));
+            FolderPath = outputDirectory;
+        }
 
+        public string? FolderPath
+        {
+            get { return GetDecorator<ExistingFolderArtifactDecorator>().FolderPath; }
+            set { GetDecorator<ExistingFolderArtifactDecorator>().FolderPath = value; }
+        }
     }
 }

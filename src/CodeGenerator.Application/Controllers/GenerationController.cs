@@ -4,6 +4,7 @@ using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.DomainSchema.Schema;
 using CodeGenerator.Core.Generators;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.Ribbon;
 using Microsoft.Extensions.Logging;
 using System;
@@ -16,14 +17,12 @@ namespace CodeGenerator.Application.Controllers
 {
     public class GenerationController : CoreControllerBase
     {
-        private readonly GeneratorOrchestrator _generatorOrchestrator;
         private readonly GenerationResultTreeViewModel _treeViewModel;
         private readonly DomainSchemaController _domainSchemaController;
 
-        public GenerationController(DomainSchemaController domainSchemaController, GeneratorOrchestrator generatorOrchestrator, GenerationResultTreeViewModel treeViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IMessageBoxService messageService, ApplicationMessageBus messageBus, IFileSystemDialogService fileSystemDialogService, ILogger<GenerationController> logger)
+        public GenerationController(DomainSchemaController domainSchemaController, GenerationResultTreeViewModel treeViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IMessageBoxService messageService, ApplicationMessageBus messageBus, IFileSystemDialogService fileSystemDialogService, ILogger<GenerationController> logger)
             : base(windowManagerService, ribbonBuilder,messageBus, messageService, fileSystemDialogService,logger)
         {
-            _generatorOrchestrator = generatorOrchestrator ?? throw new ArgumentNullException(nameof(generatorOrchestrator));
             _treeViewModel = treeViewModel ?? throw new ArgumentNullException(nameof(treeViewModel));
             _domainSchemaController = domainSchemaController ?? throw new ArgumentNullException(nameof(domainSchemaController));
         }
@@ -44,9 +43,10 @@ namespace CodeGenerator.Application.Controllers
         {
             try
             {
+                var generatorOrchestrator = ServiceProviderHolder.GetRequiredService<GeneratorOrchestrator>();
                 _logger.LogInformation("Starting code generation process...");
                 var domainSchema = _domainSchemaController.DomainSchema;
-                var generationResult = await _generatorOrchestrator.GenerateAsync(domainSchema, false, progress, cancellationToken);
+                var generationResult = await generatorOrchestrator.GenerateAsync(domainSchema, false, progress, cancellationToken);
                 _treeViewModel.GenerationResult = generationResult;
                 _windowManagerService.ShowGenerationTreeView(_treeViewModel);
                 _logger.LogInformation("Code generation process completed successfully.");
@@ -62,9 +62,10 @@ namespace CodeGenerator.Application.Controllers
         {
             try
             {
+                var generatorOrchestrator = ServiceProviderHolder.GetRequiredService<GeneratorOrchestrator>();
                 _logger.LogInformation("Starting code generation preview process...");
                 var domainSchema = _domainSchemaController.DomainSchema;
-                var generationResult = await _generatorOrchestrator.GenerateAsync(domainSchema, true, progress, cancellationToken);
+                var generationResult = await generatorOrchestrator.GenerateAsync(domainSchema, true, progress, cancellationToken);
                 _treeViewModel.GenerationResult = generationResult;
                 _windowManagerService.ShowGenerationTreeView(_treeViewModel);
                 _logger.LogInformation("Code generation preview process completed successfully.");

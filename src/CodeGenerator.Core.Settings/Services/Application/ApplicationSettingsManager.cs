@@ -1,4 +1,6 @@
+using CodeGenerator.Core.Settings.Interfaces;
 using CodeGenerator.Core.Settings.Models;
+using CodeGenerator.Core.Settings.Services.Application;
 using CodeGenerator.UserControls.ViewModels;
 using System.ComponentModel;
 using System.Configuration;
@@ -9,13 +11,18 @@ namespace CodeGenerator.Core.Settings.Application
     /// Service for managing application settings
     /// Provides easy access to load, save, and manage settings
     /// </summary>
-    public class ApplicationSettingsManager
+    public class ApplicationSettingsManager : ISettingsManager
     {
         private readonly ApplicationSettings _settings;
-
+        private readonly ApplicationSettingsViewModelGenerator _viewModelGenerator;
         public ApplicationSettingsManager()
         {
             _settings = ApplicationSettings.Instance;
+            _viewModelGenerator = new ApplicationSettingsViewModelGenerator(_settings);
+        }
+        public SettingSection GetSettingsViewModelSection()
+        {
+            return _viewModelGenerator.GetSection();
         }
 
         #region Load & Save
@@ -61,7 +68,7 @@ namespace CodeGenerator.Core.Settings.Application
                 _settings.Save();
             }
         }
-
+        
         /// <summary>
         /// Get available languages
         /// </summary>
@@ -243,59 +250,7 @@ namespace CodeGenerator.Core.Settings.Application
             return result;
         }
 
-        public SettingSection GetSettingsViewModelSection()
-        {
-            var applicationSection = new SettingSection("application", "Application Settings") { IconKey = "settings" };
 
-            var interfaceLanguageField = new ComboboxFieldModel {
-                Items = GetAvailableLanguages().Select(language => new { Id = language, DisplayName = language }).ToArray(),
-                Label = "Interface Language",
-                Name = "interfaceLanguage",
-                IsRequired = true,
-                Value = _settings.InterfaceLanguage
-            };
-            interfaceLanguageField.PropertyChanged += InterfaceLanguageField_PropertyChanged;
-            interfaceLanguageField.Disposed += InterfaceLanguageField_Disposed;
-            var interfaceLanguageSetting = new SettingsItem<ComboboxFieldModel>(interfaceLanguageField, "interfaceLanguage", "Interface Language", _settings.InterfaceLanguage);
-            applicationSection.Items.Add(interfaceLanguageSetting);
-
-            var themeField = new ComboboxFieldModel { 
-                Items = GetAvailableThemes().Select(theme => new { Id=theme, DisplayName=theme }).ToArray() ,
-                Label = "Theme",
-                Name = "theme",
-                IsRequired = true,
-                Value = _settings.Theme
-            };
-            themeField.PropertyChanged += ThemeField_PropertyChanged;
-            themeField.Disposed += ThemeField_Disposed;
-            var themeSetting = new SettingsItem<ComboboxFieldModel>(themeField, "theme", "Theme", _settings.Theme);
-            
-            applicationSection.Items.Add(themeSetting);
-
-            return applicationSection;
-        }
-
-        private void InterfaceLanguageField_Disposed(object? sender, EventArgs e)
-        {
-            ((ComboboxFieldModel)sender!).PropertyChanged -= InterfaceLanguageField_PropertyChanged;
-            ((ComboboxFieldModel)sender!).Disposed -= InterfaceLanguageField_Disposed;
-        }
-
-        private void InterfaceLanguageField_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            _settings.InterfaceLanguage = ((ComboboxFieldModel)sender!).Value as string;
-        }
-
-        private void ThemeField_Disposed(object? sender, EventArgs e)
-        {
-            ((ComboboxFieldModel)sender!).PropertyChanged -= ThemeField_PropertyChanged;
-            ((ComboboxFieldModel)sender!).Disposed -= ThemeField_Disposed;
-        }
-
-        private void ThemeField_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            _settings.Theme = ((ComboboxFieldModel)sender!).Value as string;
-        }
 
         #endregion
     }

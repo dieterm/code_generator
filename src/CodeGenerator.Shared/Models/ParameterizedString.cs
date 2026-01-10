@@ -40,23 +40,18 @@ namespace CodeGenerator.Shared.Models
             if(string.IsNullOrWhiteSpace(ParameterFormat))
                 throw new InvalidOperationException("ParameterFormat cannot be null or whitespace.");
         }
-
+        /// <summary>
+        /// eg. $"{Layer}.{Scope}" -> "Application.Shared"
+        /// </summary>
         public string GetOutput(Dictionary<string, string> parameterValues)
         {
             AssertParameterFormatRequired();
             if (Template == null) return null;
             var output = Template;
-            foreach (var parameter in Parameters)
+            foreach (var (key, value) in parameterValues)
             {
-                var parmeterPattern = ParameterFormat.Replace(ParameterTemplatePlaceholder, parameter.Parameter);
-                if (parameterValues != null && parameterValues.ContainsKey(parameter.Parameter))
-                {
-                    output = output.Replace(parmeterPattern, parameterValues[parameter.Parameter]);
-                }
-                else
-                {
-                    output = output.Replace(parmeterPattern, string.Empty);
-                }
+                var parmeterPattern = ParameterFormat.Replace(ParameterTemplatePlaceholder, key);
+                output = output.Replace(parmeterPattern, parameterValues[key]);
             }
             return output;
         }

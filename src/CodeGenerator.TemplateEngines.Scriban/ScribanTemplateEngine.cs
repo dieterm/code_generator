@@ -1,6 +1,8 @@
 using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.Workspaces.Settings;
+using CodeGenerator.Shared;
 using CodeGenerator.TemplateEngines.Scriban;
 using Microsoft.Extensions.Logging;
 using Scriban;
@@ -18,12 +20,11 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
     private readonly ScriptObject _globalFunctions = new ScriptObject();
     private readonly ConcurrentDictionary<string, Template> _compiledTemplates = new ConcurrentDictionary<string, Template>();
 
-    public string TemplateRootFolder { get; }
+    public string TemplateRootFolder { get { return WorkspaceSettings.Instance.DefaultTemplateFolder; } }
 
-    public ScribanTemplateEngine(ILogger<ScribanTemplateEngine> logger, string templateRootFolder)
+    public ScribanTemplateEngine(ILogger<ScribanTemplateEngine> logger)
         : base(logger, "scriban_template_engine", "Scriban Template Engine", TemplateType.Scriban, new[] { "scriban" })
     {
-        TemplateRootFolder = templateRootFolder;
         RegisterBuiltInFunctions();
     }
 

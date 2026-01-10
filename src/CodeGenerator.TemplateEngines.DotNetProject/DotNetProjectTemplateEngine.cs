@@ -41,10 +41,18 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
             return new TemplateOutput(fileAndFolderArtifacts);
         }
 
-        private List<IArtifact> BuildFilesAndFoldersArtifact(string tempDirPath, FolderArtifact? parentFolder = null)
+        private IEnumerable<IArtifact> BuildFilesAndFoldersArtifact(string tempDirPath, FolderArtifact? parentFolder = null)
         {
-            var artifacts = parentFolder?.Children ?? new List<IArtifact>();
-            foreach (var file in Directory.GetFiles(tempDirPath, "*.*", SearchOption.TopDirectoryOnly))
+            var artifacts = new List<IArtifact>();
+            foreach (var folder in Directory.GetDirectories(tempDirPath, "*", SearchOption.TopDirectoryOnly).OrderBy(k => k))
+            {
+                var folderName = Path.GetFileName(folder);
+                var folderArtifact = new FolderArtifact(folderName);
+                BuildFilesAndFoldersArtifact(folder, folderArtifact);
+                parentFolder?.AddChild(folderArtifact);
+                artifacts.Add(folderArtifact);
+            }
+            foreach (var file in Directory.GetFiles(tempDirPath, "*.*", SearchOption.TopDirectoryOnly).OrderBy(k => k))
             {
                 var fileName = Path.GetFileName(file);
                 if( _filesToIgnore.Contains(fileName))
@@ -53,16 +61,11 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
                 }
                 var fileArtifact = new FileArtifact(fileName);
                 fileArtifact.SetTextContent(File.ReadAllText(file));
+                parentFolder?.AddChild(fileArtifact);
                 artifacts.Add(fileArtifact);
             }
-            foreach(var folder in Directory.GetDirectories(tempDirPath, "*", SearchOption.TopDirectoryOnly))
-            {
-                var folderName = Path.GetFileName(folder);
-                var folderArtifact = new FolderArtifact(folderName);
-                BuildFilesAndFoldersArtifact(folder, folderArtifact);
-                artifacts.Add(folderArtifact);
-            }
-            return artifacts;
+
+            return parentFolder?.Children ?? artifacts;
         }
     }
 }
