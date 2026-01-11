@@ -1,5 +1,5 @@
 ﻿using CodeGenerator.Application.Events.DomainSchema;
-using CodeGenerator.Application.MessageBus;
+using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Core.DomainSchema.Schema;

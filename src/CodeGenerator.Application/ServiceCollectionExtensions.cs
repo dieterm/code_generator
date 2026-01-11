@@ -1,5 +1,5 @@
 using CodeGenerator.Application.Controllers;
-using CodeGenerator.Application.MessageBus;
+using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Core.DomainSchema.Services;
@@ -36,6 +36,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<MainViewModel>();
         services.AddTransient<DomainSchemaTreeViewModel>();
         services.AddTransient<GenerationResultTreeViewModel>();
+        services.AddTransient<ArtifactPreviewViewModel>();
         services.AddTransient<SettingsViewModel>();
 
         // Register Controllers

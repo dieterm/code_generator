@@ -1,4 +1,4 @@
-﻿using CodeGenerator.Application.MessageBus;
+﻿using CodeGenerator.Core.MessageBus;
 using System;
 using System.Collections.Generic;
 using System.Linq;

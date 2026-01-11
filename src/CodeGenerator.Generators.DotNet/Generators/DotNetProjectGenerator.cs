@@ -1,4 +1,6 @@
-﻿using CodeGenerator.Core.Artifacts.FileSystem;
+﻿using CodeGenerator.Core.MessageBus;
+using CodeGenerator.Core.Artifacts.FileSystem;
+using CodeGenerator.Core.Events.Application;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Generators.MessageBus;
 using CodeGenerator.Core.Generators.Settings;
@@ -10,6 +12,7 @@ using CodeGenerator.Generators.CodeArchitectureLayers.ApplicationLayer;
 using CodeGenerator.Generators.CodeArchitectureLayers.DomainLayer;
 using CodeGenerator.Generators.CodeArchitectureLayers.InfrastructureLayer;
 using CodeGenerator.Generators.CodeArchitectureLayers.PresentationLayer;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.Models;
 using CodeGenerator.TemplateEngines.DotNetProject;
 using Microsoft.Extensions.Logging;
@@ -77,11 +80,16 @@ namespace CodeGenerator.Generators.DotNet.Generators
 
             var dotNetProjectTemplate = new DotNetProjectTemplate(projectType, language, targetFramework);
             var dotNetProjectTemplateInstance = new DotNetProjectTemplateInstance(dotNetProjectTemplate, projectName);
-            
+
+            var messageBus = ServiceProviderHolder.GetRequiredService<ApplicationMessageBus>();
+
+            messageBus.Publish(new ReportTaskProgressEvent($"Generating {projectName} .NET project...", null));
+
             // Use await for proper async handling - no deadlock risk
             var result = await DotNetProjectTemplateEngine.RenderAsync(dotNetProjectTemplateInstance, CancellationToken.None);
 
-            if(result.Succeeded)
+            messageBus.Publish(new ReportTaskProgressEvent($"Finished generating {projectName} .NET project.", null));
+            if (result.Succeeded)
             {
                 foreach(var artifact in result.Artifacts)
                 {

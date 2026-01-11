@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CodeGenerator.Application.MessageBus
+namespace CodeGenerator.Core.MessageBus
 {
-    public class ApplicationEventArg : EventArgs
+    public class ApplicationMessageBus : MessageBus<ApplicationEventArg>
     {
+        
     }
 }

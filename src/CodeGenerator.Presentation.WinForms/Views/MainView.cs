@@ -81,7 +81,12 @@ namespace CodeGenerator.Presentation.WinForms
 
         private void OnMainViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if(_mainViewModel == null) throw new InvalidOperationException("MainViewModel is not bound.");
+            if(InvokeRequired)
+            {
+                Invoke(new System.Action(() => OnMainViewModelPropertyChanged(sender, e)));
+                return;
+            }
+            if (_mainViewModel == null) throw new InvalidOperationException("MainViewModel is not bound.");
             
             if (e.PropertyName == nameof(MainViewModel.StatusLabel))
             {
@@ -102,6 +107,7 @@ namespace CodeGenerator.Presentation.WinForms
                     pbProgress.Value = _mainViewModel.ProgressValue.Value;
                 }
             }
+            System.Windows.Forms.Application.DoEvents();
         }
 
         private void OnFormClosing(object? sender, FormClosingEventArgs e)
@@ -115,51 +121,69 @@ namespace CodeGenerator.Presentation.WinForms
             }
         }
         #region IView IWindowManagerService
+        private DomainSchemaTreeView? _domainSchemaTreeView;
         public void ShowDomainSchemaTreeView(DomainSchemaTreeViewModel treeViewModel)
         {
-            var schemaTreeView = new DomainSchemaTreeView();
-            schemaTreeView.BindViewModel(treeViewModel);
-            dockingManager.DockControl(schemaTreeView, this, DockingStyle.Left, 4);
-            dockingManager.SetEnableDocking(schemaTreeView, true);
-            dockingManager.SetControlSize(schemaTreeView, new Size(300, this.Height - 50));
-            dockingManager.SetDockLabel(schemaTreeView, "Domain Schema");
+            if (_domainSchemaTreeView == null || _domainSchemaTreeView.IsDisposed)
+            {
+                _domainSchemaTreeView = new DomainSchemaTreeView();
+                
+                dockingManager.DockControl(_domainSchemaTreeView, this, DockingStyle.Left, 4);
+                dockingManager.SetEnableDocking(_domainSchemaTreeView, true);
+                dockingManager.SetControlSize(_domainSchemaTreeView, new Size(300, this.Height - 50));
+                dockingManager.SetDockLabel(_domainSchemaTreeView, "Domain Schema");
+            }
+            else
+            {
+                if (!_domainSchemaTreeView.Visible)
+                {
+                    dockingManager.DockControl(_domainSchemaTreeView, this, DockingStyle.Left, 4);
+                }
+            }
+            _domainSchemaTreeView.BindViewModel(treeViewModel);
         }
 
+        private GenerationResultTreeView? _generationResultTreeView;
         public void ShowGenerationTreeView(GenerationResultTreeViewModel treeViewModel)
         {
-            var generationResultTreeView = new GenerationResultTreeView();
-            generationResultTreeView.BindViewModel(treeViewModel);
-            dockingManager.DockControl(generationResultTreeView, this, DockingStyle.Right, 4);
-            dockingManager.SetEnableDocking(generationResultTreeView, true);
-            dockingManager.SetControlSize(generationResultTreeView, new Size(300, this.Height - 50));
-            dockingManager.SetDockLabel(generationResultTreeView, "Generation Result");
-
-        }
-
-        public void ShowArtifactPreview(IArtifact selectedArtifact)
-        {
-            if (selectedArtifact == null) return;
-            // for now, only show text files in a textbox
-            var textContentDecorator = selectedArtifact.GetDecorator<TextContentDecorator>();
-            if (textContentDecorator != null)
+            if(_generationResultTreeView == null || _generationResultTreeView.IsDisposed)
             {
-                var textBox = new TextBox()
-                {
-                    Multiline = true,
-                    ReadOnly = true,
-                    ScrollBars = ScrollBars.Both,
-                    Dock = DockStyle.Fill,
-                    Font = new System.Drawing.Font("Consolas", 10),
-                    Text = textContentDecorator.Content ?? string.Empty
-                };
-                dockingManager.DockControl(textBox, this, DockingStyle.Right, 4);
-                dockingManager.SetEnableDocking(textBox, true);
-                dockingManager.SetControlSize(textBox, new Size(300, this.Height - 50));
-                dockingManager.SetDockLabel(textBox, "Generation Result");
+                _generationResultTreeView = new GenerationResultTreeView();
+               
+                dockingManager.DockControl(_generationResultTreeView, this, DockingStyle.Right, 4);
+                dockingManager.SetEnableDocking(_generationResultTreeView, true);
+                dockingManager.SetControlSize(_generationResultTreeView, new Size(300, this.Height - 50));
+                dockingManager.SetDockLabel(_generationResultTreeView, "Generation Result");
             } else
             {
-                Debug.WriteLine("WARNING: No preview implemented yet for the selected artifact.");
+                if (!_generationResultTreeView.Visible)
+                {
+                    dockingManager.DockControl(_generationResultTreeView, this, DockingStyle.Right, 4);
+                }
             }
+
+            _generationResultTreeView.BindViewModel(treeViewModel);
+        }
+
+        private ArtifactPreviewView _artifactPreviewView;
+        public void ShowArtifactPreview(ArtifactPreviewViewModel viewModel)
+        {
+            if(_artifactPreviewView == null || _artifactPreviewView.IsDisposed)
+            {
+                _artifactPreviewView = new ArtifactPreviewView();
+                dockingManager.DockControl(_artifactPreviewView, this, DockingStyle.Right, 4);
+                dockingManager.SetEnableDocking(_artifactPreviewView, true);
+                dockingManager.SetControlSize(_artifactPreviewView, new Size(300, this.Height - 50));
+                dockingManager.SetDockLabel(_artifactPreviewView, "Artifact Preview");
+            }
+            else
+            {
+                if (!_artifactPreviewView.Visible)
+                {
+                    dockingManager.DockControl(_artifactPreviewView, this, DockingStyle.Right, 4);
+                }
+            }
+            _artifactPreviewView.BindViewModel(viewModel);
         }
 
         public void ShowSettingsWindow(SettingsViewModel settingsViewModel)

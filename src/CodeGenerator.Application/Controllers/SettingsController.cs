@@ -1,4 +1,4 @@
-﻿using CodeGenerator.Application.MessageBus;
+﻿using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Settings.Application;
 using CodeGenerator.Core.Settings.Generators;

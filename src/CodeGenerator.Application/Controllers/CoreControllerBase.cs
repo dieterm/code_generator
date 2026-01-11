@@ -1,4 +1,4 @@
-﻿using CodeGenerator.Application.MessageBus;
+﻿using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Presentation.WinForms.ViewModels;
 using CodeGenerator.Shared.Controllers;

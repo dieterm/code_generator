@@ -11,7 +11,7 @@ namespace CodeGenerator.Application.Services
 {
     public interface IWindowManagerService
     {
-        void ShowArtifactPreview(IArtifact selectedArtifact);
+        void ShowArtifactPreview(ArtifactPreviewViewModel viewModel);
         void ShowDomainSchemaTreeView(DomainSchemaTreeViewModel treeViewModel);
         void ShowGenerationTreeView(GenerationResultTreeViewModel treeViewModel);
         void ShowSettingsWindow(SettingsViewModel settingsViewModel);

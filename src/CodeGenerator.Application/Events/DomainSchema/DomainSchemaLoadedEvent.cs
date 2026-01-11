@@ -1,4 +1,4 @@
-﻿using CodeGenerator.Application.MessageBus;
+﻿using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Application.ViewModels;
 
 namespace CodeGenerator.Application.Events.DomainSchema

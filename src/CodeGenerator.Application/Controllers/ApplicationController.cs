@@ -1,6 +1,6 @@
 ﻿using CodeGenerator.Application.Events.DomainSchema;
-using CodeGenerator.Application.MessageBus;
 using CodeGenerator.Application.Services;
+using CodeGenerator.Core.Events.Application;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Presentation.WinForms.ViewModels;
@@ -78,7 +78,26 @@ namespace CodeGenerator.Application.Controllers
 
         private void SubscribeToMessageBusEvents()
         {
-            _messageBus.Subscribe<DomainSchemaLoadedEvent>((e) => _mainViewModel.StatusLabel = e.FilePath??"New DomainSchema created");
+            _messageBus.Subscribe<DomainSchemaLoadedEvent>((e) => { _mainViewModel.StatusLabel = e.FilePath ?? "New DomainSchema created"; });
+            _messageBus.Subscribe<ReportApplicationStatusEvent>((e) => { _mainViewModel.StatusLabel = e.StatusMessage; });
+            _messageBus.Subscribe<ReportTaskProgressEvent>((e) =>
+            {
+                _mainViewModel.ProgressValue = e.PercentComplete;
+                if (!string.IsNullOrEmpty(e.TaskName)) { 
+                    _mainViewModel.StatusLabel = e.TaskName;
+                } else {
+                    if (e.PercentComplete.HasValue) { 
+                        if(e.PercentComplete.Value >= 100) 
+                        { 
+                            _mainViewModel.ProgressLabel = "Completed";
+                        }
+                        else 
+                        { 
+                            _mainViewModel.ProgressLabel = "Working...";
+                        }
+                    }
+                }
+            });
         }
 
         public void StartApplication()

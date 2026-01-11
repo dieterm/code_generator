@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Core.Artifacts.FileSystem
 {
-    public class TextContentDecorator : ArtifactDecorator
+    public class TextContentDecorator : ArtifactDecorator, IPreviewableDecorator
     {
         public TextContentDecorator(string key) 
             : base(key)
@@ -20,10 +20,18 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
             set { SetProperty(nameof(Content), value); }
         }
 
+        public bool CanPreview { get { return !string.IsNullOrWhiteSpace(Content); } }
+
         override public bool CanGenerate()
         {
             return !string.IsNullOrWhiteSpace(Artifact.GetDecorator<FileArtifactDecorator>()?.FileName);
         }
+
+        public object? CreatePreview()
+        {
+            return Content ?? string.Empty;
+        }
+
         override public async Task GenerateAsync(IProgress<ArtifactGenerationProgress> progress, CancellationToken cancellationToken = default)
         {
             var fileArtifact = Artifact.GetDecorator<FileArtifactDecorator>() ?? throw new InvalidOperationException("Artifact does not have a FileArtifactDecorator");
