@@ -18,8 +18,8 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
         /// </summary>
         public string? FolderName
         {
-            get { return GetProperty<string>(nameof(FolderName)); }
-            set { SetProperty(nameof(FolderName), value); }
+            get { return GetValue<string>(nameof(FolderName)); }
+            set { SetValue<string>(nameof(FolderName), value); }
         }
 
         public override bool CanGenerate()

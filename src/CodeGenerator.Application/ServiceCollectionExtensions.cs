@@ -1,13 +1,15 @@
 using CodeGenerator.Application.Controllers;
-using CodeGenerator.Core.MessageBus;
+using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Core.DomainSchema.Services;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Interfaces;
+using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Settings.Application;
 using CodeGenerator.Core.Settings.Generators;
 using CodeGenerator.Core.Settings.ViewModels;
+using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Generators.CodeArchitectureLayers;
@@ -44,7 +46,16 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<DomainSchemaController>();
         services.AddSingleton<GenerationController>();
         services.AddSingleton<SettingsController>();
-
+        
+        // Register Workspace Controllers
+        services.AddSingleton<WorkspaceController>();
+        services.AddSingleton<IDatasourceFactory, DatasourceFactory>();
+        services.AddSingleton<WorkspaceFileService>();
+        
+        // Register Artifact Controllers for Workspace
+        services.AddSingleton<IArtifactController, WorkspaceArtifactController>();
+        services.AddSingleton<IArtifactController, DatasourcesContainerController>();
+        
         // Register Message Bus systems
         services.AddSingleton<ApplicationMessageBus>();
         services.AddSingleton<GeneratorMessageBus>();

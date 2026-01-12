@@ -15,5 +15,7 @@ namespace CodeGenerator.Application.Services
         void ShowDomainSchemaTreeView(DomainSchemaTreeViewModel treeViewModel);
         void ShowGenerationTreeView(GenerationResultTreeViewModel treeViewModel);
         void ShowSettingsWindow(SettingsViewModel settingsViewModel);
+        void ShowWorkspaceTreeView(WorkspaceTreeViewModel treeViewModel);
+        void ShowWorkspaceDetailsView(WorkspaceDetailsViewModel viewModel);
     }
 }

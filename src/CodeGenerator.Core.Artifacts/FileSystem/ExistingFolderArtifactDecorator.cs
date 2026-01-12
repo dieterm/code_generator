@@ -15,8 +15,8 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
 
         public string FolderPath
         {
-            get { return GetProperty<string>(nameof(FolderPath)); }
-            set { SetProperty(nameof(FolderPath), value); }
+            get { return GetValue<string>(nameof(FolderPath)); }
+            set { SetValue<string>(nameof(FolderPath), value); }
         }
 
     }

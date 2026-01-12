@@ -42,7 +42,7 @@ namespace CodeGenerator.TemplateEngines.DotNetProject.Tests
                 Console.WriteLine($"Artifact: {a.TreeNodeText} ({a.TreeNodeIcon.IconKey})");
                 if (a is CodeGenerator.Core.Artifacts.FileSystem.FileArtifact fileArtifact)
                 {
-                    Console.WriteLine(fileArtifact.GetTextContext());
+                    Console.WriteLine(fileArtifact.GetTextContent());
                 }
             });
 
@@ -63,7 +63,7 @@ namespace CodeGenerator.TemplateEngines.DotNetProject.Tests
                 Console.WriteLine($"Artifact: {a.TreeNodeText} ({a.TreeNodeIcon.IconKey})");
                 if (a is CodeGenerator.Core.Artifacts.FileSystem.FileArtifact fileArtifact)
                 {
-                    Console.WriteLine(fileArtifact.GetTextContext());
+                    Console.WriteLine(fileArtifact.GetTextContent());
                 }
             });
             var class1CsArtifact = result.Artifacts.FirstOrDefault(a => a.TreeNodeText.Equals("Class1.cs", StringComparison.OrdinalIgnoreCase));

@@ -135,10 +135,11 @@ namespace CodeGenerator.Presentation.WinForms
             }
             else
             {
-                if (!_domainSchemaTreeView.Visible)
-                {
-                    dockingManager.DockControl(_domainSchemaTreeView, this, DockingStyle.Left, 4);
-                }
+                dockingManager.SetDockVisibility(_domainSchemaTreeView, true);
+                //if (!_domainSchemaTreeView.Visible)
+                //{
+                //    dockingManager.DockControl(_domainSchemaTreeView, this, DockingStyle.Left, 4);
+                //}
             }
             _domainSchemaTreeView.BindViewModel(treeViewModel);
         }
@@ -156,10 +157,11 @@ namespace CodeGenerator.Presentation.WinForms
                 dockingManager.SetDockLabel(_generationResultTreeView, "Generation Result");
             } else
             {
-                if (!_generationResultTreeView.Visible)
-                {
-                    dockingManager.DockControl(_generationResultTreeView, this, DockingStyle.Right, 4);
-                }
+                dockingManager.SetDockVisibility(_generationResultTreeView, true);
+                //if (!_generationResultTreeView.Visible)
+                //{
+                //    dockingManager.DockControl(_generationResultTreeView, this, DockingStyle.Right, 4);
+                //}
             }
 
             _generationResultTreeView.BindViewModel(treeViewModel);
@@ -178,13 +180,63 @@ namespace CodeGenerator.Presentation.WinForms
             }
             else
             {
-                if (!_artifactPreviewView.Visible)
-                {
-                    dockingManager.DockControl(_artifactPreviewView, this, DockingStyle.Right, 4);
-                }
+                dockingManager.SetDockVisibility(_artifactPreviewView, true);
+                //if (!_artifactPreviewView.Visible)
+                //{
+                //    dockingManager.DockControl(_artifactPreviewView, this, DockingStyle.Right, 4);
+                //}
             }
             _artifactPreviewView.BindViewModel(viewModel);
         }
+        private WorkspaceTreeView? _workspaceTreeView;
+        public void ShowWorkspaceTreeView(WorkspaceTreeViewModel treeViewModel)
+        {
+            if(_workspaceTreeView==null || _workspaceTreeView.IsDisposed)
+            {
+                _workspaceTreeView = new WorkspaceTreeView();
+                
+                dockingManager.DockControl(_workspaceTreeView, this, DockingStyle.Left, 4);
+                dockingManager.SetEnableDocking(_workspaceTreeView, true);
+                dockingManager.SetControlSize(_workspaceTreeView, new Size(300, this.Height - 50));
+                dockingManager.SetDockLabel(_workspaceTreeView, "Workspace");
+            } else
+            {
+                dockingManager.SetDockVisibility(_workspaceTreeView, true);
+                //if (!_workspaceTreeView.Visible)
+                //{
+                //    dockingManager.SetDockVisibility(_workspaceTreeView, true);
+                //    //dockingManager.DockControl(_workspaceTreeView, this, DockingStyle.Left, 4);
+                //}
+            }
+
+            _workspaceTreeView.ViewModel = treeViewModel;
+        }
+
+        private WorkspaceDetailsView? _workspaceDetailsView;
+        public void ShowWorkspaceDetailsView(WorkspaceDetailsViewModel viewModel)
+        {
+            if(_workspaceDetailsView == null || _workspaceDetailsView.IsDisposed)
+            {
+                _workspaceDetailsView = new WorkspaceDetailsView();
+                
+                dockingManager.DockControl(_workspaceDetailsView, this, DockingStyle.Left, 4);
+                dockingManager.SetEnableDocking(_workspaceDetailsView, true);
+                dockingManager.SetControlSize(_workspaceDetailsView, new Size(300, this.Height - 50));
+                dockingManager.SetDockLabel(_workspaceDetailsView, "Workspace Details");
+            } else
+            {
+                dockingManager.SetDockVisibility(_workspaceDetailsView, true);
+                //if (!_workspaceDetailsView.Visible)
+                //{
+                //    _workspaceDetailsView.Visible = true;
+                //    dockingManager.SetDockVisibility(_workspaceDetailsView, true);
+                //    //dockingManager.DockControl(_workspaceDetailsView, this, DockingStyle.Left, 4);
+                //}
+            }
+
+            _workspaceDetailsView.BindViewModel(viewModel);
+        }
+        
 
         public void ShowSettingsWindow(SettingsViewModel settingsViewModel)
         {
@@ -218,6 +270,9 @@ namespace CodeGenerator.Presentation.WinForms
         {
             this.BindViewModel((MainViewModel)(object)viewModel);
         }
+
+
+
         #endregion
 
     }

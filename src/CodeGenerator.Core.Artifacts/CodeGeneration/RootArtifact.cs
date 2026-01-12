@@ -14,22 +14,23 @@ namespace CodeGenerator.Core.Artifacts.CodeGeneration
     public sealed class RootArtifact : Artifact
     {
         public const string ROOT_ARTIFACT_ID = "ROOT_ARTIFACT";
-        public override string Id { get { return ROOT_ARTIFACT_ID; } }
 
         public override string TreeNodeText { get { return "Output"; } }
 
         public override ITreeNodeIcon TreeNodeIcon { get; } = new ResourceManagerTreeNodeIcon("box");
 
+        public RootArtifact(ArtifactState state) : base(state) { }
         public RootArtifact(string outputDirectory)
         {
+            Id = ROOT_ARTIFACT_ID;
             AddDecorator(new ExistingFolderArtifactDecorator(ExistingFolderArtifact.EXISTING_FOLDER_PROPERTIES_DECORATOR_KEY));
             FolderPath = outputDirectory;
         }
 
-        public string? FolderPath
+        public string FolderPath
         {
-            get { return GetDecorator<ExistingFolderArtifactDecorator>().FolderPath; }
-            set { GetDecorator<ExistingFolderArtifactDecorator>().FolderPath = value; }
+            get { return GetDecorator<ExistingFolderArtifactDecorator>()!.FolderPath; }
+            set { GetDecorator<ExistingFolderArtifactDecorator>()!.FolderPath = value; }
         }
     }
 }

@@ -1,6 +1,9 @@
-﻿using CodeGenerator.Core.Artifacts.TreeNode;
+﻿using CodeGenerator.Core.Artifacts.Events;
+using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Shared.Memento;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,22 +18,116 @@ namespace CodeGenerator.Core.Artifacts
 
         public IEnumerable<IArtifact> Children { get { return Artifact.Children; } }
 
-        public ArtifactDecoratorCollection Decorators { get { return Artifact.Decorators; } }
+        public IEnumerable<IArtifactDecorator> Decorators { get { return Artifact.Decorators; } }
 
         public string Id { get { return Artifact.Id; } }
 
         public IArtifact? Parent { get { return Artifact.Parent; } }
 
-        public Dictionary<string, object?> Properties { get { return Artifact.Properties; } }
-
         public virtual ITreeNodeIcon TreeNodeIcon { get { return Artifact.TreeNodeIcon; } }
 
         public virtual string TreeNodeText { get { return Artifact.TreeNodeText; } }
+
+        public bool IsStateChanged => ((IMementoObject)Artifact).IsStateChanged;
+
+        public Dictionary<string, object?> Properties => ((IMementoObject)Artifact).Properties;
+
         public ArtifactHost(Artifact artifact)
         {
             if(artifact == null) throw new ArgumentNullException(nameof(artifact));
 
             Artifact = artifact;
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged
+        {
+            add
+            {
+                ((IMementoObject)Artifact).PropertyChanged += value;
+            }
+
+            remove
+            {
+                ((IMementoObject)Artifact).PropertyChanged -= value;
+            }
+        }
+
+        public event PropertyChangingEventHandler? PropertyChanging
+        {
+            add
+            {
+                ((IMementoObject)Artifact).PropertyChanging += value;
+            }
+
+            remove
+            {
+                ((IMementoObject)Artifact).PropertyChanging -= value;
+            }
+        }
+
+        public event EventHandler<ParentChangedEventArgs>? ParentChanged
+        {
+            add
+            {
+                ((IArtifact)Artifact).ParentChanged += value;
+            }
+
+            remove
+            {
+                ((IArtifact)Artifact).ParentChanged -= value;
+            }
+        }
+
+        public event EventHandler<ChildAddedEventArgs>? ChildAdded
+        {
+            add
+            {
+                ((IArtifact)Artifact).ChildAdded += value;
+            }
+
+            remove
+            {
+                ((IArtifact)Artifact).ChildAdded -= value;
+            }
+        }
+
+        public event EventHandler<ChildRemovedEventArgs>? ChildRemoved
+        {
+            add
+            {
+                ((IArtifact)Artifact).ChildRemoved += value;
+            }
+
+            remove
+            {
+                ((IArtifact)Artifact).ChildRemoved -= value;
+            }
+        }
+
+        public event EventHandler<DecoratorAddedEventArgs>? DecoratorAdded
+        {
+            add
+            {
+                ((IArtifact)Artifact).DecoratorAdded += value;
+            }
+
+            remove
+            {
+                ((IArtifact)Artifact).DecoratorAdded -= value;
+            }
+        }
+
+        public event EventHandler<DecoratorRemovedEventArgs>? DecoratorRemoved
+        {
+            add
+            {
+                ((IArtifact)Artifact).DecoratorRemoved += value;
+            }
+
+            remove
+            {
+                ((IArtifact)Artifact).DecoratorRemoved -= value;
+            }
         }
 
         public void AddChild(IArtifact child)
@@ -98,16 +195,6 @@ namespace CodeGenerator.Core.Artifacts
             return ((IArtifact)Artifact).GetDecorators<T>();
         }
 
-        public T? GetProperty<T>(IArtifactDecorator decorator, string name)
-        {
-            return Artifact.GetProperty<T>(decorator, name);
-        }
-
-        public T? GetProperty<T>(string name)
-        {
-            return Artifact.GetProperty<T>(name);
-        }
-
         bool IArtifact.HasDecorator<T>()
         {
             return ((IArtifact)Artifact).HasDecorator<T>();
@@ -128,14 +215,24 @@ namespace CodeGenerator.Core.Artifacts
             ((IArtifact)Artifact).RemoveDecorator(decorator);
         }
 
-        public IArtifact SetProperty(IArtifactDecorator decorator, string name, object? value)
+        public T? GetValue<T>(string name, T? defaultValue = default)
         {
-            return ((IArtifact)Artifact).SetProperty(decorator, name, value);
+            return ((IMementoObject)Artifact).GetValue(name, defaultValue);
         }
 
-        public IArtifact SetProperty(string name, object? value)
+        public bool SetValue<T>(string name, T? value)
         {
-            return ((IArtifact)Artifact).SetProperty(name, value);
+            return ((IMementoObject)Artifact).SetValue(name, value);
+        }
+
+        public void RestoreState(IMementoState state)
+        {
+            ((IMementoObject)Artifact).RestoreState(state);
+        }
+
+        public IMementoState CaptureState()
+        {
+            return ((IMementoObject)Artifact).CaptureState();
         }
     }
 }

@@ -16,8 +16,8 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
 
         public string? Content
         {
-            get { return GetProperty<string>(nameof(Content)); }
-            set { SetProperty(nameof(Content), value); }
+            get { return GetValue<string>(nameof(Content)); }
+            set { SetValue<string>(nameof(Content), value); }
         }
 
         public bool CanPreview { get { return !string.IsNullOrWhiteSpace(Content); } }

@@ -1,20 +1,34 @@
 ﻿
+using CodeGenerator.Shared.Memento;
+using System.ComponentModel;
+
 namespace CodeGenerator.Core.Artifacts
 {
-    public abstract class ArtifactDecorator : IArtifactDecorator
+    public abstract class ArtifactDecorator : MementoObjectBase<ArtifactDecoratorState>, IArtifactDecorator
     {
+        /// <summary>
+        /// Constructor for restoring state from memento
+        /// </summary>
+        public ArtifactDecorator(ArtifactDecoratorState state) 
+            : base(state)
+        {
+            
+        }
         protected ArtifactDecorator(string key)
         {
             Key = key;
         }
-        public string Key { get; }
+
+        public string Key { 
+            get { return base.GetValue<string>(nameof(Key)); } 
+            set { SetValue(nameof(Key), value); }
+        }
         public Artifact? Artifact { get; private set; }
-        public virtual void Attach(Artifact artifact)
+
+         public virtual void Attach(Artifact artifact)
         {
             Artifact = artifact;
         }
-
-        
 
         public virtual void Detach()
         {
@@ -41,20 +55,5 @@ namespace CodeGenerator.Core.Artifacts
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Get a property value
-        /// </summary>
-        public T? GetProperty<T>(string name)
-        {
-            return Artifact.GetProperty<T>(this, name);
-        }
-
-        /// <summary>
-        /// Set a property value
-        /// </summary>
-        public void SetProperty<T>(string name, T? value)
-        {
-            Artifact.SetProperty(this, name, value);
-        }
     }
 }

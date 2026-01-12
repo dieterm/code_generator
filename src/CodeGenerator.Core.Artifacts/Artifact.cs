@@ -1,4 +1,7 @@
+using CodeGenerator.Core.Artifacts.Events;
 using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Shared.Memento;
+using System.ComponentModel;
 
 namespace CodeGenerator.Core.Artifacts;
 
@@ -6,22 +9,86 @@ namespace CodeGenerator.Core.Artifacts;
 /// Represents any generated artifact in the system.
 /// The type and behavior of the artifact is determined by its decorators.
 /// </summary>
-public abstract class Artifact : IArtifact
+public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
 {
-    public abstract string Id { get; }
-    public IArtifact? Parent { get; private set; }
+    public event EventHandler<ParentChangedEventArgs>? ParentChanged;
+    public event EventHandler<ChildAddedEventArgs>? ChildAdded;
+    public event EventHandler<ChildRemovedEventArgs>? ChildRemoved;
+    public event EventHandler<DecoratorAddedEventArgs>? DecoratorAdded;
+    public event EventHandler<DecoratorRemovedEventArgs>? DecoratorRemoved;
+
+    protected void OnChildAdded(IArtifact child)
+    {
+        ChildAdded?.Invoke(this, new ChildAddedEventArgs(child));
+    }
+    
+    protected void OnChildRemoved(IArtifact child)
+    {
+        ChildRemoved?.Invoke(this, new ChildRemovedEventArgs(child));
+    }
+
+    protected void OnDecoratorAdded(IArtifactDecorator decorator)
+    {
+        DecoratorAdded?.Invoke(this, new DecoratorAddedEventArgs(decorator));
+    }
+
+    protected void OnDecoratorRemoved(IArtifactDecorator decorator)
+    {
+        DecoratorRemoved?.Invoke(this, new DecoratorRemovedEventArgs(decorator));
+    }
+
+    protected void OnParentChanged(IArtifact? oldParent, IArtifact? newParent)
+    {
+        ParentChanged?.Invoke(this, new ParentChangedEventArgs(oldParent, newParent));
+    }
+
+    public string Id { 
+        get { return GetValue<string>(nameof(Id)); } 
+        protected set { SetValue(nameof(Id), value); }
+    }
+    private IArtifact? _parent;
+    public IArtifact? Parent {
+        get { return _parent; }
+        private set { 
+            if (_parent != value)
+            {
+                var oldParent = _parent;
+                _parent = value;
+                OnParentChanged(oldParent, _parent);
+            }
+        }
+    }
     private readonly List<IArtifact> _children = new();
+
+    protected Artifact(ArtifactState state) 
+        : base(state) // will call RestoreState, which is overridden in this class below
+    {
+
+    }
+
+    public override void RestoreState(IMementoState state)
+    {
+        base.RestoreState(state);
+        var artifactState = (ArtifactState)state;
+        // Initialize decorators
+        foreach (var decoratorState in artifactState.Decorators)
+        {
+            var decorator = ArtifactDecoratorFactory.CreateArtifactDecorator(decoratorState);
+            AddDecorator(decorator);
+        }
+    }
+
+    protected Artifact()
+    {
+        Id = Guid.NewGuid().ToString();
+    }
+
     public IEnumerable<IArtifact> Children { get { return _children; } } 
-    public ArtifactDecoratorCollection Decorators { get; } = new();
+    private readonly ArtifactDecoratorCollection _decorators = new ArtifactDecoratorCollection();
+    public IEnumerable<IArtifactDecorator> Decorators { get { return _decorators; } }
 
     public abstract string TreeNodeText { get; }
     public abstract ITreeNodeIcon TreeNodeIcon { get; }
-    /// <summary>
-    /// Arbitrary metadata/properties for the artifact and it's decorators<br />
-    /// Artifact Property Key: "{PropertyName}"<br />
-    /// Decorator Property Key: "{DecoratorKey}.{PropertyName}"
-    /// </summary>
-    public Dictionary<string, object?> Properties { get; } = new();
 
     /// <summary>
     /// Materialize the artifact and child-artifacts (generate its content, files, etc.)
@@ -42,6 +109,7 @@ public abstract class Artifact : IArtifact
 
         progress.Report(new ArtifactGenerationProgress(this, "Generated artifact", currentStep, totalSteps));
     }
+
     /// <summary>
     /// Materialize the artifact (generate its content, files, etc.)
     /// </summary>
@@ -54,25 +122,31 @@ public abstract class Artifact : IArtifact
         }
     }
 
-
-    public void AddChild(IArtifact child)
+    public virtual void AddChild(IArtifact child)
     {
         ((Artifact)child).Parent = this;
         _children.Add(child);
+        OnChildAdded(child);
     }
 
-    public void RemoveChild(IArtifact child)
+    public virtual void RemoveChild(IArtifact child)
     {
         if (_children.Remove(child))
         {
             ((Artifact)child).Parent = null;
+            OnChildRemoved(child);
         }
     }
 
-    public T AddDecorator<T>(T decorator) where T : IArtifactDecorator
+    public virtual T AddDecorator<T>(T decorator) where T : IArtifactDecorator
     {
+        if(decorator.Artifact!=null && decorator.Artifact != this)
+        {
+            throw new InvalidOperationException("Decorator is already attached to another artifact.");
+        }
         decorator.Attach(this);
-        Decorators.Add(decorator);
+        _decorators.Add(decorator);
+        OnDecoratorAdded(decorator);
         return decorator;
     }
 
@@ -87,11 +161,20 @@ public abstract class Artifact : IArtifact
         return decorator;
     }
 
-    public void RemoveDecorator(IArtifactDecorator decorator)
+    public virtual void RemoveDecorator(IArtifactDecorator decorator)
     {
-        if (Decorators.Remove(decorator))
+        if (_decorators.Remove(decorator))
         {
             decorator.Detach();
+            OnDecoratorRemoved(decorator);
+        } 
+        else if(decorator.Artifact == this)
+        {
+            throw new InvalidOperationException("Decorator was attached to this artifact but not found in the decorators collection.");
+        }
+        else
+        {
+            throw new InvalidOperationException("Decorator is not attached to this artifact.");
         }
     }
 
@@ -123,43 +206,6 @@ public abstract class Artifact : IArtifact
     /// Check if this artifact represents a specific type (has the decorator)
     /// </summary>
     public bool Is<T>() where T : class, IArtifactDecorator => HasDecorator<T>();
-
-    /// <summary>
-    /// Get a property value for this artifact
-    /// </summary>
-    public T? GetProperty<T>(string name)
-    {
-        if (Properties.TryGetValue(name, out var value) && value is T typed)
-            return typed;
-        return default;
-    }
-    /// <summary>
-    /// Set a property value for this artifact
-    /// </summary>
-    public IArtifact SetProperty(string name, object? value)
-    {
-        Properties[name] = value;
-        return this;
-    }
-
-    /// <summary>
-    /// Get a property value for a decorator
-    /// </summary>
-    public T? GetProperty<T>(IArtifactDecorator decorator, string name)
-    {
-        if (Properties.TryGetValue($"{decorator.Key}.{name}", out var value) && value is T typed)
-            return typed;
-        return default;
-    }
-
-    /// <summary>
-    /// Set a property value for a decorator
-    /// </summary>
-    public IArtifact SetProperty(IArtifactDecorator decorator, string name, object? value)
-    {
-        Properties[$"{decorator.Key}.{name}"] = value;
-        return this;
-    }
 
     public T? FindAncestor<T>() where T : class, IArtifactDecorator
     {
@@ -239,4 +285,18 @@ public abstract class Artifact : IArtifact
     /// Check if this artifact can be previewed
     /// </summary>
     public bool CanPreview => Decorators.OfType<IPreviewableDecorator>().Any(d => d.CanPreview);
+
+    public override IMementoState CaptureState()
+    {
+        var state = (ArtifactState)base.CaptureState();
+        // Capture decorators' states
+        foreach (var decorator in Decorators)
+        {
+            var decoratorState = decorator.CaptureState();
+            state.Decorators.Add((ArtifactDecoratorState)decoratorState);
+        }
+        // capture children IDs
+        state.ChildrenIds.AddRange(Children.Select(c => c.Id));
+        return state;
+    }
 }

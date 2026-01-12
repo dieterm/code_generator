@@ -17,28 +17,39 @@ namespace CodeGenerator.Domain.CodeArchitecture
         public const string SHARED_SCOPE = "Shared";
         public const string APPLICATION_SCOPE = "Application";
         public const string DOMAIN_SCOPE = "Domain";
+
         public CodeArchitectureLayerArtifact(string layer, string scope)
         {
             Scope = scope;
             Layer = layer;
         }
+        public CodeArchitectureLayerArtifact(ArtifactState state)
+            : base(state)
+        {
+        }
+        //public override string Id { get { return $"{Layer}Layer:{Scope}"; } }
 
-        public override string Id { get { return $"{Layer}Layer:{Scope}"; } }
         /// <summary>
         /// Name of the layer (e.g., "Application", "Domain", "Infrastructure")
         /// </summary>
         public string Layer
         {
-            get { return GetProperty<string>(nameof(Layer)); }
-            private set { SetProperty(nameof(Layer), value); }
+            get { return GetValue<string>(nameof(Layer)); }
+            private set { 
+                SetValue<string>(nameof(Layer), value);
+                RaisePropertyChangedEvent(nameof(TreeNodeText));
+            }
         }
         /// <summary>
         /// Scope of the layer (e.g., "Shared", "Application", "ProjectA", "ModuleB")
         /// </summary>
         public string Scope
         {
-            get { return GetProperty<string>(nameof(Scope)); }
-            private set { SetProperty(nameof(Scope), value); }
+            get { return GetValue<string>(nameof(Scope)); }
+            private set { 
+                SetValue<string>(nameof(Scope), value);
+                RaisePropertyChangedEvent(nameof(TreeNodeText));
+            }
         }
 
         public override string TreeNodeText {  get { return $"{Layer} Layer ({Scope})"; } }

@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CodeGenerator.Core.Artifacts.Events
+{
+    public class DecoratorRemovedEventArgs : EventArgs
+    {
+        public IArtifactDecorator Decorator { get; }
+        public DecoratorRemovedEventArgs(IArtifactDecorator decorator)
+        {
+            Decorator = decorator;
+        }
+    }
+}

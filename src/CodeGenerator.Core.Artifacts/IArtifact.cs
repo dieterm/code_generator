@@ -1,16 +1,23 @@
 ﻿
+using CodeGenerator.Core.Artifacts.Events;
 using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Shared.Memento;
+using System.ComponentModel;
 
 namespace CodeGenerator.Core.Artifacts
 {
-    public interface IArtifact
+    public interface IArtifact : IMementoObject
     {
+        event EventHandler<ParentChangedEventArgs>? ParentChanged;
+        event EventHandler<ChildAddedEventArgs>? ChildAdded;
+        event EventHandler<ChildRemovedEventArgs>? ChildRemoved;
+        event EventHandler<DecoratorAddedEventArgs>? DecoratorAdded;
+        event EventHandler<DecoratorRemovedEventArgs>? DecoratorRemoved;
         bool CanPreview { get; }
         IEnumerable<IArtifact> Children { get; }
-        ArtifactDecoratorCollection Decorators { get; }
+        IEnumerable<IArtifactDecorator> Decorators { get; }
         string Id { get; }
         IArtifact? Parent { get; }
-        Dictionary<string, object?> Properties { get; }
         ITreeNodeIcon TreeNodeIcon { get; }
         string TreeNodeText { get; }
 
@@ -27,13 +34,9 @@ namespace CodeGenerator.Core.Artifacts
         IEnumerable<IArtifact> GetAllDescendants();
         T? GetDecorator<T>() where T : class, IArtifactDecorator;
         IEnumerable<T> GetDecorators<T>() where T : class, IArtifactDecorator;
-        T? GetProperty<T>(IArtifactDecorator decorator, string name);
-        T? GetProperty<T>(string name);
         bool HasDecorator<T>() where T : class, IArtifactDecorator;
         bool Is<T>() where T : class, IArtifactDecorator;
         void RemoveChild(IArtifact child);
         void RemoveDecorator(IArtifactDecorator decorator);
-        IArtifact SetProperty(IArtifactDecorator decorator, string name, object? value);
-        IArtifact SetProperty(string name, object? value);
     }
 }

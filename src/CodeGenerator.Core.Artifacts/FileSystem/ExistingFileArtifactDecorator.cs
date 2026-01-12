@@ -14,8 +14,8 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
         }
 
         public string FilePath { 
-            get{ return GetProperty<string>(nameof(FilePath)); } 
-            set{ SetProperty(nameof(FilePath), value); }
+            get{ return GetValue<string>(nameof(FilePath)); } 
+            set{ SetValue<string>(nameof(FilePath), value); }
         }
 
         public override bool CanGenerate()

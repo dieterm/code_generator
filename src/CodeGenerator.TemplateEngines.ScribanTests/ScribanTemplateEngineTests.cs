@@ -82,7 +82,7 @@ namespace CodeGenerator.Templates.Tests
             var templateInstance = new ScribanTemplateInstance(stringTemplate);
             templateInstance.Parameters["name"] = "Tester";
             var result = await engine.RenderAsync(templateInstance, CancellationToken.None);
-            Assert.AreEqual("Hello, Tester!", ((FileArtifact)result.Artifacts.Single()).GetTextContext());
+            Assert.AreEqual("Hello, Tester!", ((FileArtifact)result.Artifacts.Single()).GetTextContent());
         }
 
         [TestMethod()]
@@ -93,7 +93,7 @@ namespace CodeGenerator.Templates.Tests
             var templateInstance = new ScribanTemplateInstance(fileTemplate);
             templateInstance.Parameters["name"] = "FileTester";
             var result = await engine.RenderAsync(templateInstance, CancellationToken.None);
-            Assert.AreEqual("Hello, FileTester!", ((FileArtifact)result.Artifacts.Single()).GetTextContext());
+            Assert.AreEqual("Hello, FileTester!", ((FileArtifact)result.Artifacts.Single()).GetTextContent());
         }
 
         [TestMethod()]
@@ -106,7 +106,7 @@ namespace CodeGenerator.Templates.Tests
             templateInstance.Parameters["countries"] = new List<string> { "Belgium", "France" };
             templateInstance.Functions["myhelper"] = new Func<string, string>(s => s.ToUpper());
             var result = await engine.RenderAsync(templateInstance, CancellationToken.None);
-            var actualOutput = ((FileArtifact)result.Artifacts.Single()).GetTextContext();
+            var actualOutput = ((FileArtifact)result.Artifacts.Single()).GetTextContent();
             var expectedOutput = "Hello, FileTester!\r\nHello, file_tester!\r\nHello, FILETESTER!\r\n- Belgium\r\n- France";
             Assert.AreEqual(expectedOutput, actualOutput);
         }
@@ -118,7 +118,7 @@ namespace CodeGenerator.Templates.Tests
             var fileTemplate = new ScribanFileTemplate("template2", @"D:\Cloud\GitHub\code_generator\src\CodeGenerator.TemplateEngines.ScribanTests\ParentTemplate.scriban");
             var templateInstance = new ScribanTemplateInstance(fileTemplate);
             var result = await engine.RenderAsync(templateInstance, CancellationToken.None);
-            var output = ((FileArtifact)result.Artifacts.Single()).GetTextContext();
+            var output = ((FileArtifact)result.Artifacts.Single()).GetTextContent();
             Assert.AreEqual("Hello, TESTER!", output);
         }
     }

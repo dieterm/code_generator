@@ -1,4 +1,5 @@
-﻿using CodeGenerator.Application.Events.DomainSchema;
+﻿using CodeGenerator.Application.Controllers.Workspace;
+using CodeGenerator.Application.Events.DomainSchema;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Events.Application;
 using CodeGenerator.Core.Generators;
@@ -14,17 +15,17 @@ namespace CodeGenerator.Application.Controllers
     {
         private readonly MainViewModel _mainViewModel;
         private readonly IApplicationService _applicationService;
-        private readonly DomainSchemaController _domainSchemaController;
+        private readonly WorkspaceController _workspaceController;
         private readonly GenerationController _generationController;
         private readonly SettingsController _settingsController;
 
-        public ApplicationController( MainViewModel viewModel, SettingsController settingsController, DomainSchemaController domainSchemaController, GenerationController generationController, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IApplicationService applicationService, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<ApplicationController> logger) 
+        public ApplicationController( MainViewModel viewModel, SettingsController settingsController, WorkspaceController workspaceController, GenerationController generationController, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IApplicationService applicationService, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<ApplicationController> logger) 
             : base(windowManagerService, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
         {
             _mainViewModel = viewModel;
             _settingsController = settingsController;
             _applicationService = applicationService;
-            _domainSchemaController = domainSchemaController;
+            _workspaceController = workspaceController;
             _generationController = generationController;
         }
 
@@ -35,7 +36,6 @@ namespace CodeGenerator.Application.Controllers
             CreateRibbon();
             _settingsController.CreateRibbon();
 
-            _domainSchemaController.Initialize();
             _generationController.Initialize();
             _settingsController.Initialize();
         }
@@ -44,13 +44,23 @@ namespace CodeGenerator.Application.Controllers
         {
             // Build Ribbon Model
             _ribbonBuilder
-                .AddTab("tabDomainModel", "Domain Model")
-                    .AddToolStrip("toolstripDomainModel", "Domain Model")
+                .AddTab("tabWorkspace", "Workspace")
+                    .AddToolStrip("toolstripWorkspace", "Workspace")
+                        .AddButton("btnNew", "New")
+                            .WithSize(RibbonButtonSize.Large)
+                            .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
+                            .WithImage("file_plus")
+                            .OnClick((e) => OnNewRequested(null, e))
                         .AddButton("btnOpen", "Open")
                             .WithSize(RibbonButtonSize.Large)
                             .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
                             .WithImage("folder_open")
-                            .OnClick((e) => OnOpenRequested(null, e)).Build();
+                            .OnClick((e) => OnOpenRequested(null, e))
+                        .AddButton("btnSave", "Save")
+                            .WithSize(RibbonButtonSize.Large)
+                            .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
+                            .WithImage("save")
+                            .OnClick((e) => OnSaveRequested(null, e)).Build();
 
             _ribbonBuilder.AddTab("tabGeneration", "Generation")
                     .AddToolStrip("toolstripGeneration", "Generation")
@@ -114,12 +124,21 @@ namespace CodeGenerator.Application.Controllers
             // we never get here, because RunApplication is blocking in Gui-loop
         }
 
+        public const string CodeGeneratorFileDialogFilter = "CodeGenerator Workspace Files (*.codegenerator)|*.codegenerator|All Files (*.*)|*.*";
+        
         private void OnSaveAsRequested(object? sender, EventArgs e)
         {
-            _fileSystemDialogService.SaveFile("Json Files (*.json)|*.json|All Files (*.*)|*.*", null, "MonkeyBusiness.json");
-
+            var filePath = _fileSystemDialogService.SaveFile(CodeGeneratorFileDialogFilter, null, "myworkspace.codegenerator");
+            if (filePath == null)
+                return; // User cancelled
+                
+            // Update workspace file path and save
+            if (_workspaceController.CurrentWorkspace != null)
+            {
+                _workspaceController.CurrentWorkspace.WorkspaceFilePath = filePath;
+                OnSaveRequested(sender, e);
+            }
         }
-
 
         private void OnClosingRequested(object? sender, EventArgs e)
         { 
@@ -132,21 +151,36 @@ namespace CodeGenerator.Application.Controllers
                 if(result == MessageBoxResult.Yes)
                     OnSaveRequested(this, EventArgs.Empty);
 
-                if (result != MessageBoxResult.No) 
-                    return; // if user clicks yes or cancel, don't close the application
+                if (result == MessageBoxResult.Cancel) 
+                    return; // User cancelled, don't close
             }
 
             _mainViewModel.IsClosing = true;
+            _workspaceController.CloseWorkspace();
             _applicationService.ExitApplication();
         }
 
-        private void OnNewRequested(object? sender, EventArgs e)
+        private async void OnNewRequested(object? sender, EventArgs e)
         {
             if(!HandleUnsavedChanges())
                 return;
-
-            // Create new document
+                
+            var filePath = _fileSystemDialogService.SaveFile(CodeGeneratorFileDialogFilter, null, "myworkspace.codegenerator");
+            if (filePath == null)
+                return; // User cancelled
+                
+            var directory = System.IO.Path.GetDirectoryName(filePath);
+            var fileName = System.IO.Path.GetFileNameWithoutExtension(filePath);
+            
+            if (string.IsNullOrEmpty(directory))
+            {
+                _messageBoxService.ShowError("Invalid directory path.", "Error");
+                return;
+            }
+            
+            await _workspaceController.CreateWorkspaceAsync(directory, fileName);
             _mainViewModel.IsDirty = false;
+            _mainViewModel.StatusLabel = $"Created new workspace: {fileName}";
         }
 
         private bool HandleUnsavedChanges()
@@ -171,24 +205,53 @@ namespace CodeGenerator.Application.Controllers
             if (!HandleUnsavedChanges())
                 return;
 
-            // Handle open document logic
-            var filePath = _fileSystemDialogService.OpenFile("Json Files (*.json)|*.json|All Files (*.*)|*.*");
+            var filePath = _fileSystemDialogService.OpenFile(CodeGeneratorFileDialogFilter);
             if(filePath == null)
                 return; // User cancelled
 
-            await _domainSchemaController.LoadDomainSchemaAsync(filePath);
-
-            // Open existing document
-            _mainViewModel.IsDirty = false;
+            try
+            {
+                await _workspaceController.LoadWorkspaceAsync(filePath);
+                _mainViewModel.IsDirty = false;
+                _mainViewModel.StatusLabel = $"Loaded workspace: {System.IO.Path.GetFileNameWithoutExtension(filePath)}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to load workspace from {FilePath}", filePath);
+                _messageBoxService.ShowError($"Failed to load workspace: {ex.Message}", "Error");
+            }
         }
 
-        private void OnSaveRequested(object? sender, EventArgs e)
+        private async void OnSaveRequested(object? sender, EventArgs e)
         {
-            // Handle save document logic
-            _mainViewModel.IsDirty = false;
+            if (_workspaceController.CurrentWorkspace == null)
+            {
+                _messageBoxService.ShowWarning("No workspace is open to save.", "No Workspace");
+                return;
+            }
+            
+            // If workspace has no file path, prompt for save location
+            if (string.IsNullOrEmpty(_workspaceController.CurrentWorkspace.WorkspaceFilePath))
+            {
+                OnSaveAsRequested(sender, e);
+                return;
+            }
+
+            try
+            {
+                await _workspaceController.SaveWorkspaceAsync();
+                _mainViewModel.IsDirty = false;
+                _mainViewModel.StatusLabel = $"Saved workspace: {_workspaceController.CurrentWorkspace.Name}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to save workspace");
+                _messageBoxService.ShowError($"Failed to save workspace: {ex.Message}", "Error");
+            }
         }
 
         private CancellationTokenSource? _generationCancellationTokenSource;
+        
         /// <summary>
         /// Handle code generation logic. <br/>
         /// Triggered when user clicks "Generate" button
@@ -205,7 +268,7 @@ namespace CodeGenerator.Application.Controllers
             _generationCancellationTokenSource = null;
         }
 
-        private async void OnGeneratePreviewRequested(object value, EventArgs e)
+        private async void OnGeneratePreviewRequested(object? sender, EventArgs e)
         {
             if (_generationCancellationTokenSource != null)
             {
@@ -216,10 +279,15 @@ namespace CodeGenerator.Application.Controllers
             await _generationController.GeneratePreviewAsync(_mainViewModel, _generationCancellationTokenSource.Token);
             _generationCancellationTokenSource = null;
         }
-        private void OnCancelGenerationRequested(object value, EventArgs e)
+        
+        private void OnCancelGenerationRequested(object? sender, EventArgs e)
         {
-            _generationCancellationTokenSource.Cancel();
-            _generationCancellationTokenSource = null;
+            if (_generationCancellationTokenSource != null)
+            {
+                _generationCancellationTokenSource.Cancel();
+                _generationCancellationTokenSource = null;
+                _mainViewModel.StatusLabel = "Generation cancelled";
+            }
         }
 
         public override void Dispose()
@@ -232,7 +300,5 @@ namespace CodeGenerator.Application.Controllers
             _mainViewModel.GenerateRequested -= OnGenerateRequested;
             _mainViewModel.ClosingRequested -= OnClosingRequested;
         }
-
-
     }
 }

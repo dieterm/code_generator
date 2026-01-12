@@ -46,7 +46,7 @@ namespace CodeGenerator.TemplateEngines.T4.Tests
             if (result.Succeeded)
             {
                 // result.Artifacts bevat de gegenereerde bestanden
-                var output = ((FileArtifact)result.Artifacts.Single()).GetTextContext();
+                var output = ((FileArtifact)result.Artifacts.Single()).GetTextContent();
                 Assert.IsTrue(output!.Contains("namespace MyApp.Domain"), "Output should contain namespace");
                 Assert.IsTrue(output!.Contains("public class Customer"), "Output should contain class name");
                 Assert.IsTrue(output!.Contains("public string Name"), "Output should contain Name property from class feature");
@@ -77,7 +77,7 @@ namespace CodeGenerator.TemplateEngines.T4.Tests
             if (result.Succeeded)
             {
                 // result.Artifacts bevat de gegenereerde bestanden
-                var output = ((FileArtifact)result.Artifacts.Single()).GetTextContext();
+                var output = ((FileArtifact)result.Artifacts.Single()).GetTextContent();
                 Assert.IsTrue(output!.Contains("namespace MyApp.Sales"), "Output should contain namespace");
                 Assert.IsTrue(output!.Contains("public class Order"), "Output should contain class name");
                 Assert.IsTrue(output!.Contains("Properties from ChildTemplate.tt"), "Output should contain content from included child template");

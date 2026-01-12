@@ -6,44 +6,56 @@ using System.Text;
 using System.Threading.Tasks;
 using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Artifacts.CodeGeneration;
+using System.ComponentModel;
 namespace CodeGenerator.Core.Artifacts.FileSystem
 {
     public class FolderArtifact : Artifact
     {
         public const string FOLDER_PROPERTIES_DECORATOR_KEY = "FolderProperties";
+        private readonly FolderArtifactDecorator _folderArtifactDecorator;
         public FolderArtifact(string folderName)
         {
             if(string.IsNullOrWhiteSpace(folderName)) throw new ArgumentNullException(nameof(folderName));
-            AddOrGetDecorator(() => new FolderArtifactDecorator(FolderArtifact.FOLDER_PROPERTIES_DECORATOR_KEY));
+            _folderArtifactDecorator = AddOrGetDecorator(() => new FolderArtifactDecorator(FolderArtifact.FOLDER_PROPERTIES_DECORATOR_KEY));
             FolderName = folderName;
         }
 
-        override public string TreeNodeText
+        public FolderArtifact(ArtifactState state)
+            : base(state)
         {
-            get { return FolderName; }
+            _folderArtifactDecorator = GetDecorator<FolderArtifactDecorator>()
+                ?? throw new InvalidOperationException($"FolderArtifact must have a {nameof(FolderArtifactDecorator)} with key '{FOLDER_PROPERTIES_DECORATOR_KEY}'");
         }
+
+        override public string TreeNodeText { get { return FolderName; } }
         override public ITreeNodeIcon TreeNodeIcon { get; } = new ResourceManagerTreeNodeIcon("folder");
         public string FolderName {
             get { return GetDecorator<FolderArtifactDecorator>().FolderName; }
             set { GetDecorator<FolderArtifactDecorator>().FolderName = value; }
         }
-        public string FullPath
-        {
-            get
-            {
-                return this.GetFullPath();
-                //if (Parent is RootArtifact rootArtifact) 
-                //{ 
-                //    return Path.Combine(rootArtifact.FolderPath, FolderName);
-                //}
-                //var parentFolder = this.GetParentFolderArtifact();
-                //if (parentFolder == null) 
-                //    return FolderName;
+        public string FullPath { get { return this.GetFullPath(); } }
 
-                //return $"{parentFolder.FullPath}{System.IO.Path.DirectorySeparatorChar}{FolderName}";
+        public override T AddDecorator<T>(T decorator)
+        {
+            if(decorator is FolderArtifactDecorator folderDecorator)
+            {
+                if (_folderArtifactDecorator != null && _folderArtifactDecorator != folderDecorator)
+                {
+                    throw new InvalidOperationException("FolderArtifact can only have one FolderArtifactDecorator.");
+                }
+                _folderArtifactDecorator.PropertyChanged += FolderArtifactDecorator_PropertyChanged;
+            }
+            return base.AddDecorator(decorator);
+        }
+
+        private void FolderArtifactDecorator_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(FolderArtifactDecorator.FolderName))
+            {
+                RaisePropertyChangedEvent(nameof(FolderName));
+                RaisePropertyChangedEvent(nameof(TreeNodeText));
+                RaisePropertyChangedEvent(nameof(FullPath));
             }
         }
-        public override string Id => FullPath;
-
     }
 }
