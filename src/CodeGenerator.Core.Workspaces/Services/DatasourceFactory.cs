@@ -65,5 +65,16 @@ namespace CodeGenerator.Core.Workspaces.Services
         {
             return _providers.Values.Select(p => p.GetTypeInfo());
         }
+
+        public IDatasourceProvider GetProvider(string typeId)
+        {
+            if(_providers.TryGetValue(typeId, out var provider))
+                            {
+                return provider;
+            } else
+            {
+                return null;
+            }
+        }
     }
 }

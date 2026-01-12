@@ -6,6 +6,7 @@ using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Shared.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 namespace CodeGenerator.Application.Controllers.Workspace
 {
@@ -83,6 +84,16 @@ namespace CodeGenerator.Application.Controllers.Workspace
         /// Event raised when an artifact property changes (e.g., from edit view)
         /// </summary>
         public event EventHandler<ArtifactPropertyChangedEventArgs>? ArtifactPropertyChanged;
+
+        /// <summary>
+        /// Event raised when a child artifact is added
+        /// </summary>
+        public event EventHandler<ArtifactChildChangedEventArgs>? ArtifactAdded;
+
+        /// <summary>
+        /// Event raised when a child artifact is removed
+        /// </summary>
+        public event EventHandler<ArtifactChildChangedEventArgs>? ArtifactRemoved;
 
         /// <summary>
         /// Register an artifact controller
@@ -210,13 +221,13 @@ namespace CodeGenerator.Application.Controllers.Workspace
             if (_datasourceFactory is DatasourceFactory factory)
             {
                 // TODO: Get provider from factory and create datasource
-                // var provider = factory.GetProvider(typeId);
-                // var datasource = provider?.CreateNew(name);
-                // if (datasource != null)
-                // {
-                //     CurrentWorkspace.Datasources.AddDatasource(datasource);
-                //     return datasource;
-                // }
+                var provider = factory.GetProvider(typeId);
+                var datasource = provider?.CreateNew(name);
+                if (datasource != null)
+                {
+                    CurrentWorkspace.Datasources.AddDatasource(datasource);
+                    return datasource;
+                }
             }
 
             return null;
@@ -255,6 +266,24 @@ namespace CodeGenerator.Application.Controllers.Workspace
         }
 
         /// <summary>
+        /// Notify that a child artifact was added
+        /// </summary>
+        public void OnArtifactAdded(IArtifact parent, IArtifact child)
+        {
+            _logger.LogDebug("Artifact added: {ChildId} to parent {ParentId}", child.Id, parent.Id);
+            ArtifactAdded?.Invoke(this, new ArtifactChildChangedEventArgs(parent, child));
+        }
+
+        /// <summary>
+        /// Notify that a child artifact was removed
+        /// </summary>
+        public void OnArtifactRemoved(IArtifact parent, IArtifact child)
+        {
+            _logger.LogDebug("Artifact removed: {ChildId} from parent {ParentId}", child.Id, parent.Id);
+            ArtifactRemoved?.Invoke(this, new ArtifactChildChangedEventArgs(parent, child));
+        }
+
+        /// <summary>
         /// Request the UI to begin rename editing for an artifact
         /// </summary>
         public void RequestBeginRename(IArtifact artifact)
@@ -285,7 +314,10 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 if (_workspaceTreeViewModel?.SelectedArtifact != null)
                 {
                     var artifactController = GetController(_workspaceTreeViewModel.SelectedArtifact);
-                    await artifactController!.OnSelectedAsync(_workspaceTreeViewModel.SelectedArtifact);
+                    if(artifactController!=null)
+                        await artifactController.OnSelectedAsync(_workspaceTreeViewModel.SelectedArtifact);
+                    else
+                        Debug.WriteLine("No controller found for selected artifact {0}", _workspaceTreeViewModel.SelectedArtifact.TreeNodeText);
                 } 
                 else
                 {
@@ -337,6 +369,21 @@ namespace CodeGenerator.Application.Controllers.Workspace
             Artifact = artifact;
             PropertyName = propertyName;
             NewValue = newValue;
+        }
+    }
+
+    /// <summary>
+    /// Event args for artifact child added/removed events
+    /// </summary>
+    public class ArtifactChildChangedEventArgs : EventArgs
+    {
+        public IArtifact Parent { get; }
+        public IArtifact Child { get; }
+
+        public ArtifactChildChangedEventArgs(IArtifact parent, IArtifact child)
+        {
+            Parent = parent;
+            Child = child;
         }
     }
 }
