@@ -151,7 +151,7 @@ namespace CodeGenerator.Core.Workspaces.Services
         /// </summary>
         public bool IsWorkspaceDirectory(string directory)
         {
-            var workspaceFile = Path.Combine(directory, WorkspaceFileExtension);
+            var workspaceFile = GetWorkspaceFilePath(directory);
             return File.Exists(workspaceFile);
         }
 

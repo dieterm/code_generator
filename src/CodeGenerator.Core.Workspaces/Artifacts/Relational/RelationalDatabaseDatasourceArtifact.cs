@@ -1,3 +1,4 @@
+using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Shared.Views;
 
@@ -8,11 +9,17 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
     /// </summary>
     public abstract class RelationalDatabaseDatasourceArtifact : DatasourceArtifact, IEditableTreeNode
     {
-        private string _connectionString;
+        //private string _connectionString;
 
-        protected RelationalDatabaseDatasourceArtifact(string name) : base(name)
+        protected RelationalDatabaseDatasourceArtifact(string name) 
+            : base(name)
         {
-            _connectionString = string.Empty;
+            ConnectionString = string.Empty;
+        }
+
+        protected RelationalDatabaseDatasourceArtifact(ArtifactState state)
+            : base(state)
+        {
         }
 
         public override string DatasourceCategory => "Relational Database";
@@ -24,8 +31,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         /// </summary>
         public string ConnectionString
         {
-            get => _connectionString;
-            set => _connectionString = value;
+            get => GetValue<string>(nameof(ConnectionString));
+            set => SetValue(nameof(ConnectionString), value);
         }
 
         /// <summary>

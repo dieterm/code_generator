@@ -19,7 +19,10 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             Name = name;
             Schema = schema;
         }
-
+        public TableArtifact(ArtifactState state)
+            : base(state)
+        {
+        }
         //public override string Id => $"table_{Schema}_{Name}".ToLowerInvariant();
 
         public override string TreeNodeText => string.IsNullOrEmpty(Schema) || Schema == DEFAULT_SCHEMA
