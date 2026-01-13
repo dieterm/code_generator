@@ -4,6 +4,8 @@ using CodeGenerator.Core.Workspaces.Models;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace CodeGenerator.Application.ViewModels
 {
@@ -27,37 +29,7 @@ namespace CodeGenerator.Application.ViewModels
             IsAutoIncrementField = new BooleanFieldModel { Label = "Auto Increment", Name = "IsAutoIncrement" };
             DefaultValueField = new SingleLineTextFieldModel { Label = "Default Value", Name = "DefaultValue" };
 
-            // Common data types
-            DataTypeField.Items = new List<DataTypeComboboxItem>
-            {
-                new DataTypeComboboxItem { DisplayName = "int", Value = "int" },
-                new DataTypeComboboxItem { DisplayName = "bigint", Value = "bigint" },
-                new DataTypeComboboxItem { DisplayName = "smallint", Value = "smallint" },
-                new DataTypeComboboxItem { DisplayName = "tinyint", Value = "tinyint" },
-                new DataTypeComboboxItem { DisplayName = "bit", Value = "bit" },
-                new DataTypeComboboxItem { DisplayName = "decimal", Value = "decimal" },
-                new DataTypeComboboxItem { DisplayName = "numeric", Value = "numeric" },
-                new DataTypeComboboxItem { DisplayName = "float", Value = "float" },
-                new DataTypeComboboxItem { DisplayName = "real", Value = "real" },
-                new DataTypeComboboxItem { DisplayName = "money", Value = "money" },
-                new DataTypeComboboxItem { DisplayName = "char", Value = "char" },
-                new DataTypeComboboxItem { DisplayName = "varchar", Value = "varchar", UseMaxLength= true },
-                new DataTypeComboboxItem { DisplayName = "nchar", Value = "nchar" },
-                new DataTypeComboboxItem { DisplayName = "nvarchar", Value = "nvarchar", UseMaxLength= true },
-                new DataTypeComboboxItem { DisplayName = "text", Value = "text" },
-                new DataTypeComboboxItem { DisplayName = "ntext", Value = "ntext" },
-                new DataTypeComboboxItem { DisplayName = "date", Value = "date" },
-                new DataTypeComboboxItem { DisplayName = "time", Value = "time" },
-                new DataTypeComboboxItem { DisplayName = "datetime", Value = "datetime" },
-                new DataTypeComboboxItem { DisplayName = "datetime2", Value = "datetime2" },
-                new DataTypeComboboxItem { DisplayName = "timestamp", Value = "timestamp" },
-                new DataTypeComboboxItem { DisplayName = "binary", Value = "binary" },
-                new DataTypeComboboxItem { DisplayName = "varbinary", Value = "varbinary" },
-                new DataTypeComboboxItem { DisplayName = "image", Value = "image" },
-                new DataTypeComboboxItem { DisplayName = "uniqueidentifier", Value = "uniqueidentifier" },
-                new DataTypeComboboxItem { DisplayName = "xml", Value = "xml" },
-                new DataTypeComboboxItem { DisplayName = "json", Value = "json" },
-            };
+            DataTypeField.PropertyChanged += DataTypeField_PropertyChanged;
 
             // Subscribe to field changes
             NameField.PropertyChanged += OnFieldChanged;
@@ -69,6 +41,19 @@ namespace CodeGenerator.Application.ViewModels
             IsPrimaryKeyField.PropertyChanged += OnFieldChanged;
             IsAutoIncrementField.PropertyChanged += OnFieldChanged;
             DefaultValueField.PropertyChanged += OnFieldChanged;
+        }
+
+        private void DataTypeField_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == nameof(ComboboxFieldModel.SelectedItem))
+            {
+                var dataType = DataTypeField.SelectedItem as DataTypeComboboxItem;
+                if (dataType != null)
+                {
+                    DataTypeField.ErrorMessage = dataType.TypeNotes;
+                    DataTypeField.Tooltip = dataType.TypeDescription;
+                }
+            }
         }
 
         /// <summary>
@@ -96,6 +81,24 @@ namespace CodeGenerator.Application.ViewModels
         public BooleanFieldModel IsPrimaryKeyField { get; }
         public BooleanFieldModel IsAutoIncrementField { get; }
         public SingleLineTextFieldModel DefaultValueField { get; }
+
+        public void SetAvailableDataTypes(IEnumerable<DataTypeComboboxItem> dataTypes)
+        {
+            DataTypeField.Items = dataTypes.ToList<ComboboxItem>();
+            
+            // If we have a current value, try to reselect it to ensure properties like UseMaxLength are respected
+            if (Column != null && DataTypeField.Value != null)
+            {
+                var selectedItem = dataTypes.FirstOrDefault(i => string.Equals(i.Value?.ToString() ,DataTypeField.Value?.ToString(), StringComparison.OrdinalIgnoreCase));
+                if (selectedItem != null)
+                {
+                    DataTypeField.SelectedItem = selectedItem;
+                }
+                 // This logic might be handled by the view binding, but if we need to update visibility of fields based on the new item properties:
+                 // OnFieldChanged handles saving, but what about UI state?
+                 // The view usually binds to the Item properties if the Combobox supports it, or we rely on the `BuildFullDataType` logic.
+            }
+        }
 
         /// <summary>
         /// Event raised when a property value changes

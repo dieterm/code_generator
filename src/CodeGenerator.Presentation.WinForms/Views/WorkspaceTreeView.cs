@@ -164,6 +164,21 @@ namespace CodeGenerator.Presentation.WinForms.Views
                 {
                     node.Text = artifact.TreeNodeText;
                 }
+                else if (e.PropertyName == nameof(artifact.TreeNodeIcon))
+                {
+                    try
+                    {
+                        var icon = artifact.TreeNodeIcon?.GetIcon();
+                        if (icon != null)
+                        {
+                            node.LeftImageIndices = new int[] { GetOrAddImageIndex(artifact.TreeNodeIcon.IconKey, icon) };
+                        }
+                    }
+                    catch
+                    {
+                        // Ignore icon errors
+                    }
+                }
             };
             artifact.ChildAdded += (object? s, ChildAddedEventArgs e) =>
             {

@@ -1,3 +1,4 @@
+using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using Microsoft.Extensions.Logging;
@@ -9,6 +10,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// </summary>
     public class TableArtifactController : ArtifactControllerBase<TableArtifact>
     {
+        private TableEditViewModel? _editViewModel;
+
         public TableArtifactController(
             WorkspaceController workspaceController,
             ILogger<TableArtifactController> logger)
@@ -106,9 +109,25 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
         protected override Task OnSelectedInternalAsync(TableArtifact artifact, CancellationToken cancellationToken)
         {
-            // Tables don't have a specific edit view, just show in tree
-            WorkspaceController.ShowWorkspaceDetailsView(null);
+            EnsureEditViewModel(artifact);
+            WorkspaceController.ShowWorkspaceDetailsView(_editViewModel!);
             return Task.CompletedTask;
+        }
+
+        private void EnsureEditViewModel(TableArtifact artifact)
+        {
+            if (_editViewModel == null)
+            {
+                _editViewModel = new TableEditViewModel();
+                _editViewModel.ValueChanged += OnEditViewModelValueChanged;
+            }
+
+            _editViewModel.Table = artifact;
+        }
+
+        private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
+        {
+            WorkspaceController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
         }
 
         private async Task ConvertToViewAsync(TableArtifact table)

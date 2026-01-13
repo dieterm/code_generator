@@ -1,5 +1,6 @@
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql.Decorators;
+using CodeGenerator.Domain.Databases.RelationalDatabases;
 using MySqlConnector;
 
 namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
@@ -165,12 +166,21 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
             while (await reader.ReadAsync(cancellationToken))
             {
                 var columnName = reader.GetString("COLUMN_NAME");
-                var dataType = reader.GetString("COLUMN_TYPE"); // Use COLUMN_TYPE for full type info
+                // Use COLUMN_TYPE for full type info
+                // eg. varchar(255), int(11) unsigned, enum('a','b','c')
+                var columnType = reader.GetString("COLUMN_TYPE");
+                var dataType = reader.GetString("DATA_TYPE");
+                // try to map datatype to generic type
+                var typeMapping = MysqlDatabase.Instance.DataTypeMappings.AllMappings.FirstOrDefault(m => string.Equals(m.NativeTypeName, dataType, StringComparison.OrdinalIgnoreCase));
+                if(typeMapping != null)
+                {
+                    columnType = typeMapping.GenericType.Id;
+                }
                 var isNullable = reader.GetString("IS_NULLABLE") == "YES";
                 var columnKey = reader.GetString("COLUMN_KEY");
                 var extra = reader.GetString("EXTRA");
 
-                var column = new ColumnArtifact(columnName, dataType, isNullable)
+                var column = new ColumnArtifact(columnName, columnType, isNullable)
                 {
                     IsPrimaryKey = columnKey == "PRI",
                     IsAutoIncrement = extra.Contains("auto_increment", StringComparison.OrdinalIgnoreCase),
@@ -192,7 +202,7 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
                 column.AddDecorator(new ExistingMysqlColumnDecorator
                 {
                     OriginalColumnName = columnName,
-                    OriginalDataType = reader.GetString("DATA_TYPE"),
+                    OriginalDataType = dataType,// use DATA_TYPE for base type, eg. varchar, int, enum
                     OriginalOrdinalPosition = reader.GetInt32("ORDINAL_POSITION")
                 });
 

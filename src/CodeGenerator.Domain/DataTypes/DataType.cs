@@ -6,48 +6,67 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Domain.DataTypes
 {
-    public class DataType
+    /// <summary>
+    /// Represents an abstract/generic data type that can be mapped to specific implementations
+    /// in different databases and programming languages.
+    /// </summary>
+    public class GenericDataType
     {
         /// <summary>
-        /// eg. "SmallInt", "String", etc.
+        /// Unique identifier for this data type
         /// </summary>
-        public string Name { get; set; }
+        public string Id { get; }
+
         /// <summary>
-        /// eg. "Range -32768 to 32767"
+        /// Display name (e.g., "Integer", "String", "Decimal")
         /// </summary>
-        public string Description { get; set; }
+        public string Name { get; }
+
         /// <summary>
-        /// eg. "smallint"
+        /// Description of the data type
         /// </summary>
-        public string Code { get; set; }
+        public string Description { get; set; } = string.Empty;
+
         /// <summary>
-        /// eg. "System.Int32", "System.String", etc.
+        /// Category of the data type
         /// </summary>
-        //public Type DotNetType { get; set; }
+        public DataTypeCategory Category { get; }
+
         /// <summary>
-        /// Indicate if the UI should show max length input
-        /// eg. true if the data type supports max length (string)
+        /// Indicates if this type supports a max length parameter
         /// </summary>
-        public bool UseMaxLength { get; set; }
+        public bool SupportsMaxLength { get; set; }
+
         /// <summary>
-        /// Indiciate if the UI should show precision input
-        /// eg. true if the data type supports precision (decimal)
+        /// Indicates if this type supports precision parameter
         /// </summary>
-        public bool UsePrecision { get; set; }
+        public bool SupportsPrecision { get; set; }
+
         /// <summary>
-        /// Indicate if the UI should show scale input
-        /// eg. true if the data type supports scale (decimal)
+        /// Indicates if this type supports scale parameter
         /// </summary>
-        public bool UseScale { get; set; }
+        public bool SupportsScale { get; set; }
+
         /// <summary>
-        /// minimum value for the data type
-        /// eg. -32768 for SmallInt
+        /// Default max length (if applicable)
         /// </summary>
-        public object? MinValue { get; set; }
+        public int? DefaultMaxLength { get; set; }
+
         /// <summary>
-        /// maximum value for the data type
-        /// eg. 32767 for SmallInt
+        /// Default precision (if applicable)
         /// </summary>
-        public object? MaxValue { get; set; }
+        public int? DefaultPrecision { get; set; }
+
+        /// <summary>
+        /// Default scale (if applicable)
+        /// </summary>
+        public int? DefaultScale { get; set; }
+
+        public GenericDataType(string id, string name, DataTypeCategory category)
+        {
+            Id = id;
+            Name = name;
+            Category = category;
+        }
     }
 }

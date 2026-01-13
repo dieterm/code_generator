@@ -23,6 +23,11 @@ namespace CodeGenerator.Core.Workspaces.Services
         /// Get all registered datasource types
         /// </summary>
         IEnumerable<DatasourceTypeInfo> GetAvailableTypes();
+
+        /// <summary>
+        /// Get a specific provider by type identifier
+        /// </summary>
+        IDatasourceProvider? GetProvider(string typeId);
     }
 
     /// <summary>

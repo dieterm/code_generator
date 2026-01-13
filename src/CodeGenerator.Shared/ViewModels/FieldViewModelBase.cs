@@ -18,7 +18,7 @@ namespace CodeGenerator.Shared.ViewModels
             get => _name; 
             set => SetProperty(ref _name, value);
         }
-        public object Value { 
+        public virtual object Value { 
             get => GetValue<object>();
             set => SetValue(value);
         }

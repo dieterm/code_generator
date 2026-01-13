@@ -22,8 +22,8 @@ namespace CodeGenerator.UserControls.Views
             InitializeComponent();
 
             lblLabel.EnsureLabelVisible(cbxItems, lblErrorMessage);
-            cbxItems.DisplayMember = "DisplayName";
-            cbxItems.ValueMember = "Id";
+            cbxItems.DisplayMember = nameof(ComboboxItem.DisplayName);
+            cbxItems.ValueMember = nameof(ComboboxItem.Value);
 
             Disposed += ComboboxField_Disposed;
         }
@@ -68,7 +68,7 @@ namespace CodeGenerator.UserControls.Views
         /// </summary>
         [Category("Appearance")]
         [Description("Show or hide the error message for this field")]
-        [DefaultValue("DisplayName")]
+        [DefaultValue(nameof(ComboboxItem.DisplayName))]
         [Browsable(true)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public string ItemsDisplayMember
@@ -103,7 +103,7 @@ namespace CodeGenerator.UserControls.Views
             
             // For SfComboBox, we need to set DataSource and handle SelectedValue manually
             cbxItems.DataSource = viewModel.Items;
-            cbxItems.SelectedItem = viewModel.Value;
+            cbxItems.SelectedValue = viewModel.Value;
             cbxItems.DisplayMember = viewModel.DisplayMember;
             toolTip.SetToolTip(cbxItems, viewModel.Tooltip);
             // Subscribe to PropertyChanged to update the control when ViewModel changes
@@ -115,7 +115,7 @@ namespace CodeGenerator.UserControls.Views
                 if (_viewModel != null)
                 {
                     _viewModel.Value = cbxItems.SelectedValue;
-                    _viewModel.SelectedItem = cbxItems.SelectedItem;
+                    //_viewModel.SelectedItem = (ComboboxItem?)cbxItems.SelectedItem;
                 }
             };
         }

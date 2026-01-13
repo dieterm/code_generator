@@ -1,5 +1,6 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Domain.DataTypes;
 using CodeGenerator.Shared.Views;
 
 namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
@@ -22,20 +23,43 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             
         }
 
-        //public override string Id => $"column_{Name}".ToLowerInvariant();
-
-        public override string TreeNodeText { get { return $"{Name} ({GetDisplayType()})"; } }
+        public override string TreeNodeText { get { return Name;} }
 
         public override ITreeNodeIcon TreeNodeIcon
         { 
             get { 
-                return IsPrimaryKey 
-                    ? new ResourceManagerTreeNodeIcon("key") 
-                    : IsForeignKey
-                        ? new ResourceManagerTreeNodeIcon("link")
-                        : new ResourceManagerTreeNodeIcon("columns");
+                return GetTreeNodeIcon();
             }
         }
+
+        private ResourceManagerTreeNodeIcon GetTreeNodeIcon()
+        {
+            if (IsPrimaryKey)
+                return new ResourceManagerTreeNodeIcon("key-round");
+            else if (IsForeignKey)
+                return new ResourceManagerTreeNodeIcon("link");
+            else if (DataType == GenericDataTypes.Guid.Id)
+                return new ResourceManagerTreeNodeIcon("square-asterisk");
+            else if (DataType == GenericDataTypes.Xml.Id)
+                return new ResourceManagerTreeNodeIcon("code-xml");
+            else if (DataType == GenericDataTypes.Json.Id)
+                return new ResourceManagerTreeNodeIcon("braces");
+            else if (DataType == GenericDataTypes.Money.Id)
+                return new ResourceManagerTreeNodeIcon("dollar-sign");
+            else if (GenericDataTypes.IsTextBasedType(DataType))
+                return new ResourceManagerTreeNodeIcon("case-sensitive");
+            else if (GenericDataTypes.IsNumericType(DataType))
+                return new ResourceManagerTreeNodeIcon("hash");
+            else if (GenericDataTypes.IsDateType(DataType))
+                return new ResourceManagerTreeNodeIcon("calendar");
+            else if (GenericDataTypes.IsBinaryType(DataType))
+                return new ResourceManagerTreeNodeIcon("binary");
+            else if (GenericDataTypes.IsBooleanType(DataType))
+                return new ResourceManagerTreeNodeIcon("toggle-left");
+            else
+                return new ResourceManagerTreeNodeIcon("circle-question-mark");
+        }
+
         /// <summary>
         /// Column name
         /// </summary>
@@ -56,7 +80,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             get { return GetValue<string>(nameof(DataType)); }
             set { 
                 SetValue<string>(nameof(DataType), value);
-                RaisePropertyChangedEvent(nameof(TreeNodeText));
+                RaisePropertyChangedEvent(nameof(TreeNodeIcon));
             }
         }
 
@@ -68,7 +92,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             get { return GetValue<bool>(nameof(IsNullable)); }
             set { 
                 SetValue<bool>(nameof(IsNullable), value);
-                RaisePropertyChangedEvent(nameof(TreeNodeText));
+                //RaisePropertyChangedEvent(nameof(TreeNodeText));
             }
         }
 
@@ -80,7 +104,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             get { return GetValue<bool>(nameof(IsPrimaryKey)); }
             set { 
                 SetValue<bool>(nameof(IsPrimaryKey), value);
-                RaisePropertyChangedEvent(nameof(TreeNodeText));
+                //RaisePropertyChangedEvent(nameof(TreeNodeText));
                 RaisePropertyChangedEvent(nameof(TreeNodeIcon));
             }
         }
@@ -93,7 +117,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             get { return GetValue<bool>(nameof(IsAutoIncrement)); }
             set { 
                 SetValue<bool>(nameof(IsAutoIncrement), value);
-                RaisePropertyChangedEvent(nameof(TreeNodeText));
+                //RaisePropertyChangedEvent(nameof(TreeNodeText));
             }
         }
 
@@ -105,7 +129,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             get { return GetValue<int?>(nameof(MaxLength)); }
             set { 
                 SetValue<int?>(nameof(MaxLength), value);
-                RaisePropertyChangedEvent(nameof(TreeNodeText));
+                //RaisePropertyChangedEvent(nameof(TreeNodeText));
             }
         }
 
@@ -117,7 +141,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             get { return GetValue<int?>(nameof(Precision)); }
             set { 
                 SetValue<int?>(nameof(Precision), value);
-                RaisePropertyChangedEvent(nameof(TreeNodeText));
+                //RaisePropertyChangedEvent(nameof(TreeNodeText));
             }
         }
 
@@ -129,7 +153,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             get { return GetValue<int?>(nameof(Scale)); }
             set { 
                 SetValue<int?>(nameof(Scale), value);
-                RaisePropertyChangedEvent(nameof(TreeNodeText));
+                //RaisePropertyChangedEvent(nameof(TreeNodeText));
             }
         }
 
@@ -141,7 +165,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             get { return GetValue<string?>(nameof(DefaultValue)); }
             set { 
                 SetValue<string?>(nameof(DefaultValue), value);
-                RaisePropertyChangedEvent(nameof(TreeNodeText));
+                //RaisePropertyChangedEvent(nameof(TreeNodeText));
             }
         }
 
@@ -153,7 +177,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             get { return GetValue<string?>(nameof(ForeignKeyTable)); }
             set { 
                 SetValue<string?>(nameof(ForeignKeyTable), value);
-                RaisePropertyChangedEvent(nameof(TreeNodeText));
+                //RaisePropertyChangedEvent(nameof(TreeNodeText));
                 RaisePropertyChangedEvent(nameof(IsForeignKey));
                 RaisePropertyChangedEvent(nameof(TreeNodeIcon));
             }
@@ -167,7 +191,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             get { return GetValue<string?>(nameof(ForeignKeyColumn)); }
             set { 
                 SetValue<string?>(nameof(ForeignKeyColumn), value);
-                RaisePropertyChangedEvent(nameof(TreeNodeText));
+                //RaisePropertyChangedEvent(nameof(TreeNodeText));
             }
         }
 
@@ -176,28 +200,6 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         /// </summary>
         public bool IsForeignKey => !string.IsNullOrEmpty(ForeignKeyTable);
 
-        /// <summary>
-        /// Get display type string (e.g., "varchar(50)", "decimal(18,2)")
-        /// </summary>
-        public string GetDisplayType()
-        {
-            var type = DataType;
-            
-            if (MaxLength.HasValue)
-            {
-                type += MaxLength.Value == -1 ? "(max)" : $"({MaxLength.Value})";
-            }
-            else if (Precision.HasValue)
-            {
-                type += Scale.HasValue ? $"({Precision.Value},{Scale.Value})" : $"({Precision.Value})";
-            }
-
-            if (!IsNullable)
-            {
-                type += " NOT NULL";
-            }
-
-            return type;
-        }
+        
     }
 }

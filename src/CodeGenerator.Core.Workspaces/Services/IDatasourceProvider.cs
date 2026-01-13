@@ -1,5 +1,6 @@
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Models;
+using CodeGenerator.Domain.DataTypes;
 //using CodeGenerator.Core.Workspaces.Models;
 
 namespace CodeGenerator.Core.Workspaces.Services
@@ -39,5 +40,7 @@ namespace CodeGenerator.Core.Workspaces.Services
         /// Get the controller type for this datasource (for handling context menus, etc.)
         /// </summary>
         Type? GetControllerType();
+
+        IEnumerable<GenericDataType> GetSupportedColumnDataTypes();
     }
 }

@@ -26,7 +26,7 @@ namespace CodeGenerator.Core.Settings.Services.Application
 
             var interfaceLanguageField = new ComboboxFieldModel
             {
-                Items = ApplicationSettingsManager.GetAvailableLanguages().Select(language => new { Id = language, DisplayName = language }).ToArray(),
+                Items = ApplicationSettingsManager.GetAvailableLanguages().Select(language => new ComboboxItem { Value = language, DisplayName = language }).ToArray(),
                 Label = "Interface Language",
                 Name = nameof(_settings.InterfaceLanguage),
                 IsRequired = true,
@@ -39,7 +39,7 @@ namespace CodeGenerator.Core.Settings.Services.Application
 
             var themeField = new ComboboxFieldModel
             {
-                Items = ApplicationSettingsManager.GetAvailableThemes().Select(theme => new { Id = theme, DisplayName = theme }).ToArray(),
+                Items = ApplicationSettingsManager.GetAvailableThemes().Select(theme => new ComboboxItem { Value = theme, DisplayName = theme }).ToArray(),
                 Label = "Theme",
                 Name = nameof(_settings.Theme),
                 IsRequired = true,

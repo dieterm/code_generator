@@ -11,8 +11,4 @@
     <ProjectReference Include="..\CodeGenerator.Core\CodeGenerator.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ProgrammingLanguages\" />
-  </ItemGroup>
-
 </Project>

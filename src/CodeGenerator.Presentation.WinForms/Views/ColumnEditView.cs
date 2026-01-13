@@ -43,23 +43,30 @@ namespace CodeGenerator.Presentation.WinForms.Views
             chkPrimaryKey.BindViewModel(_viewModel.IsPrimaryKeyField);
             chkAutoIncrement.BindViewModel(_viewModel.IsAutoIncrementField);
             txtDefaultValue.BindViewModel(_viewModel.DefaultValueField);
-
+            UpdateVisibilityFields();
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
+        }
+
+        /// <summary>
+        /// Update visibility of length, precision, and scale fields based on selected data type
+        /// </summary>
+        private void UpdateVisibilityFields()
+        {
+            if (_viewModel == null) return;
+            var dataType = _viewModel.DataTypeField.SelectedItem as DataTypeComboboxItem;
+            if (dataType != null)
+            {
+                txtMaxLength.Visible = dataType.UseMaxLength;
+                txtPrecision.Visible = dataType.UsePrecision;
+                txtScale.Visible = dataType.UseScale;
+            }
         }
 
         private void DataTypeField_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(ComboboxFieldModel.Value))
+            if (e.PropertyName == nameof(ComboboxFieldModel.SelectedItem))
             {
-                // Update visibility of length, precision, and scale fields based on selected data type
-                var dataType = _viewModel?.DataTypeField.Value as DataTypeComboboxItem;
-                if (dataType != null)
-                {
-                    // Example logic for visibility; adjust according to actual data types
-                    txtMaxLength.Visible = dataType.UseMaxLength;
-                    txtPrecision.Visible = dataType.UsePrecision;
-                    txtScale.Visible = dataType.UseScale;
-                }
+                UpdateVisibilityFields();
             }
         }
 

@@ -1,6 +1,9 @@
 using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
+using CodeGenerator.Core.Workspaces.Models;
+using CodeGenerator.Core.Workspaces.Services;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace
@@ -10,13 +13,16 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// </summary>
     public class ColumnArtifactController : ArtifactControllerBase<ColumnArtifact>
     {
+        private readonly IDatasourceFactory _datasourceFactory;
         private ColumnEditViewModel? _editViewModel;
 
         public ColumnArtifactController(
             WorkspaceController workspaceController,
+            IDatasourceFactory datasourceFactory,
             ILogger<ColumnArtifactController> logger)
             : base(workspaceController, logger)
         {
+            _datasourceFactory = datasourceFactory;
         }
 
         protected override IEnumerable<WorkspaceCommand> GetCommands(ColumnArtifact artifact)
@@ -78,6 +84,10 @@ namespace CodeGenerator.Application.Controllers.Workspace
         protected override Task OnSelectedInternalAsync(ColumnArtifact artifact, CancellationToken cancellationToken)
         {
             EnsureEditViewModel(artifact);
+            
+            // Populate data types from datasource
+            PopulateDataTypes(artifact);
+
             WorkspaceController.ShowWorkspaceDetailsView(_editViewModel!);
             return Task.CompletedTask;
         }
@@ -91,6 +101,38 @@ namespace CodeGenerator.Application.Controllers.Workspace
             }
 
             _editViewModel.Column = artifact;
+        }
+        
+        private void PopulateDataTypes(ColumnArtifact column)
+        {
+            if (_editViewModel == null) return;
+
+            // Find parent datasource
+            IArtifact? current = column.Parent;
+            while (current != null && !(current is DatasourceArtifact))
+            {
+                current = current.Parent;
+            }
+
+            if (current is DatasourceArtifact datasourceArtifact)
+            {
+                var provider = _datasourceFactory.GetProvider(datasourceArtifact.DatasourceType);
+                if (provider != null)
+                {
+                    var mappings = provider.GetSupportedColumnDataTypes();
+                    var items = mappings.Select(m => new DataTypeComboboxItem
+                    {
+                        DisplayName = m.Name,
+                        Value = m.Id,
+                        TypeDescription = m.Description,
+                        UseMaxLength = m.SupportsMaxLength,
+                        UsePrecision = m.SupportsPrecision,
+                        UseScale = m.SupportsScale
+                    }).ToList();
+
+                    _editViewModel.SetAvailableDataTypes(items);
+                }
+            }
         }
 
         private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)

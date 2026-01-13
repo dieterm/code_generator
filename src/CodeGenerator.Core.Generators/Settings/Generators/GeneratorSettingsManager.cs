@@ -380,11 +380,11 @@ namespace CodeGenerator.Core.Settings.Generators
                 {
                     var possibleValues = parameterDefinition.PossibleValues;
                     var isStringList = possibleValues.All(v => v is string);
-                    List<object> items;// = new List<object>();
+                    List<ComboboxItem> items;// = new List<object>();
                     if (isStringList)
-                        items = parameterDefinition.PossibleValues.Select(stringValue => (object)new { Id = stringValue, DisplayName = stringValue }).ToList();
+                        items = parameterDefinition.PossibleValues.Select(stringValue => new ComboboxItem { Value = stringValue, DisplayName = (string)stringValue }).ToList();
                     else
-                        items = parameterDefinition.PossibleValues;
+                        items = parameterDefinition.PossibleValues.Select(objV => new ComboboxItem { Value = objV, DisplayName = objV.ToString() }).ToList();
                     var comboBoxField = new ComboboxFieldModel
                     {
                         Label = parameterDefinition.Name,

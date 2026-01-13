@@ -55,7 +55,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             grpGeneral.Controls.Add(tableLayoutGeneral);
             grpGeneral.Location = new Point(10, 44);
             grpGeneral.Name = "grpGeneral";
-            grpGeneral.Size = new Size(380, 260);
+            grpGeneral.Size = new Size(480, 330);
             grpGeneral.TabIndex = 1;
             grpGeneral.TabStop = false;
             grpGeneral.Text = "General";
@@ -75,13 +75,13 @@ namespace CodeGenerator.Presentation.WinForms.Views
             tableLayoutGeneral.Location = new Point(6, 22);
             tableLayoutGeneral.Name = "tableLayoutGeneral";
             tableLayoutGeneral.RowCount = 6;
-            tableLayoutGeneral.RowStyles.Add(new RowStyle());
-            tableLayoutGeneral.RowStyles.Add(new RowStyle());
-            tableLayoutGeneral.RowStyles.Add(new RowStyle());
-            tableLayoutGeneral.RowStyles.Add(new RowStyle());
-            tableLayoutGeneral.RowStyles.Add(new RowStyle());
-            tableLayoutGeneral.RowStyles.Add(new RowStyle());
-            tableLayoutGeneral.Size = new Size(368, 252);
+            tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+            tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+            tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+            tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+            tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+            tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+            tableLayoutGeneral.Size = new Size(468, 300);
             tableLayoutGeneral.TabIndex = 0;
             // 
             // txtName
@@ -91,7 +91,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             txtName.Label = "Column Name:";
             txtName.Location = new Point(3, 3);
             txtName.Name = "txtName";
-            txtName.Size = new Size(362, 36);
+            txtName.Size = new Size(462, 44);
             txtName.TabIndex = 0;
             // 
             // cbxDataType
@@ -99,36 +99,36 @@ namespace CodeGenerator.Presentation.WinForms.Views
             cbxDataType.Dock = DockStyle.Top;
             cbxDataType.ErrorMessageVisible = true;
             cbxDataType.Label = "Data Type:";
-            cbxDataType.Location = new Point(3, 45);
+            cbxDataType.Location = new Point(3, 53);
             cbxDataType.Name = "cbxDataType";
-            cbxDataType.Size = new Size(362, 36);
+            cbxDataType.Size = new Size(462, 44);
             cbxDataType.TabIndex = 1;
             // 
             // txtMaxLength
             // 
             txtMaxLength.Dock = DockStyle.Top;
             txtMaxLength.Label = "Max Length:";
-            txtMaxLength.Location = new Point(3, 87);
+            txtMaxLength.Location = new Point(3, 103);
             txtMaxLength.Name = "txtMaxLength";
-            txtMaxLength.Size = new Size(362, 36);
+            txtMaxLength.Size = new Size(462, 44);
             txtMaxLength.TabIndex = 2;
             // 
             // txtPrecision
             // 
             txtPrecision.Dock = DockStyle.Top;
             txtPrecision.Label = "Precision:";
-            txtPrecision.Location = new Point(3, 129);
+            txtPrecision.Location = new Point(3, 153);
             txtPrecision.Name = "txtPrecision";
-            txtPrecision.Size = new Size(362, 36);
+            txtPrecision.Size = new Size(462, 44);
             txtPrecision.TabIndex = 3;
             // 
             // txtScale
             // 
             txtScale.Dock = DockStyle.Top;
             txtScale.Label = "Scale:";
-            txtScale.Location = new Point(3, 171);
+            txtScale.Location = new Point(3, 203);
             txtScale.Name = "txtScale";
-            txtScale.Size = new Size(362, 36);
+            txtScale.Size = new Size(462, 44);
             txtScale.TabIndex = 4;
             // 
             // txtDefaultValue
@@ -136,18 +136,18 @@ namespace CodeGenerator.Presentation.WinForms.Views
             txtDefaultValue.Dock = DockStyle.Top;
             txtDefaultValue.ErrorMessageVisible = true;
             txtDefaultValue.Label = "Default Value:";
-            txtDefaultValue.Location = new Point(3, 213);
+            txtDefaultValue.Location = new Point(3, 253);
             txtDefaultValue.Name = "txtDefaultValue";
-            txtDefaultValue.Size = new Size(362, 36);
+            txtDefaultValue.Size = new Size(462, 44);
             txtDefaultValue.TabIndex = 5;
             // 
             // grpOptions
             // 
             grpOptions.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             grpOptions.Controls.Add(flowLayoutOptions);
-            grpOptions.Location = new Point(10, 310);
+            grpOptions.Location = new Point(10, 380);
             grpOptions.Name = "grpOptions";
-            grpOptions.Size = new Size(380, 100);
+            grpOptions.Size = new Size(480, 135);
             grpOptions.TabIndex = 2;
             grpOptions.TabStop = false;
             grpOptions.Text = "Options";
@@ -161,31 +161,33 @@ namespace CodeGenerator.Presentation.WinForms.Views
             flowLayoutOptions.FlowDirection = FlowDirection.TopDown;
             flowLayoutOptions.Location = new Point(3, 19);
             flowLayoutOptions.Name = "flowLayoutOptions";
-            flowLayoutOptions.Size = new Size(374, 78);
+            flowLayoutOptions.Size = new Size(474, 113);
             flowLayoutOptions.TabIndex = 0;
             // 
             // chkNullable
             // 
+            chkNullable.Dock = DockStyle.Top;
             chkNullable.Label = "Nullable";
             chkNullable.Location = new Point(3, 3);
             chkNullable.Name = "chkNullable";
-            chkNullable.Size = new Size(180, 20);
+            chkNullable.Size = new Size(318, 31);
             chkNullable.TabIndex = 0;
             // 
             // chkPrimaryKey
             // 
+            chkPrimaryKey.Dock = DockStyle.Top;
             chkPrimaryKey.Label = "Primary Key";
-            chkPrimaryKey.Location = new Point(3, 29);
+            chkPrimaryKey.Location = new Point(3, 40);
             chkPrimaryKey.Name = "chkPrimaryKey";
-            chkPrimaryKey.Size = new Size(180, 20);
+            chkPrimaryKey.Size = new Size(318, 28);
             chkPrimaryKey.TabIndex = 1;
             // 
             // chkAutoIncrement
             // 
             chkAutoIncrement.Label = "Auto Increment";
-            chkAutoIncrement.Location = new Point(3, 55);
+            chkAutoIncrement.Location = new Point(3, 74);
             chkAutoIncrement.Name = "chkAutoIncrement";
-            chkAutoIncrement.Size = new Size(180, 20);
+            chkAutoIncrement.Size = new Size(318, 28);
             chkAutoIncrement.TabIndex = 2;
             // 
             // ColumnEditView
@@ -198,7 +200,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             Controls.Add(lblTitle);
             Name = "ColumnEditView";
             Padding = new Padding(10);
-            Size = new Size(400, 420);
+            Size = new Size(500, 526);
             grpGeneral.ResumeLayout(false);
             grpGeneral.PerformLayout();
             tableLayoutGeneral.ResumeLayout(false);

@@ -58,7 +58,7 @@ namespace CodeGenerator.Core.Workspaces.Settings
                 Label = "Default Target Framework",
                 Name = nameof(_settings.DefaultTargetFramework),
                 IsRequired = true,
-                Items = TargetFrameworks.AllFrameworks.Select(f => new { Id = f, DisplayName = f }).ToList(),
+                Items = TargetFrameworks.AllFrameworks.Select(f => new ComboboxItem { Value = f, DisplayName = f }).ToList(),
                 Value = _settings.DefaultTargetFramework
             };
             targetFrameworkField.PropertyChanged += TargetFrameworkField_PropertyChanged;
@@ -72,7 +72,7 @@ namespace CodeGenerator.Core.Workspaces.Settings
                 Label = "Default Language",
                 Name = nameof(_settings.DefaultLanguage),
                 IsRequired = true,
-                Items = DotNetLanguages.AllLanguages.Select(language => new { Id = language.DotNetCommandLineArgument, DisplayName = $"{language.DotNetCommandLineArgument} (*.{language.ProjectFileExtension})" }).ToList(),
+                Items = DotNetLanguages.AllLanguages.Select(language => new ComboboxItem { Value = language.DotNetCommandLineArgument, DisplayName = $"{language.DotNetCommandLineArgument} (*.{language.ProjectFileExtension})" }).ToList(),
                 Value = _settings.DefaultLanguage
             };
             defaultLanguageField.PropertyChanged += DefaultLanguageField_PropertyChanged;
@@ -100,7 +100,7 @@ namespace CodeGenerator.Core.Workspaces.Settings
                 Label = "Default Code Architecture",
                 Name = nameof(_settings.DefaultCodeArchitectureId),
                 IsRequired = true,
-                Items = architectureManager.GetAllArchitectures().Select(def => new { Id = def.Id, DisplayName = def.Name }).ToList(),
+                Items = architectureManager.GetAllArchitectures().Select(def => new ComboboxItem { Value = def.Id, DisplayName = def.Name }).ToList(),
                 Value = _settings.DefaultCodeArchitectureId
             };
             defaultCodeArchitectureField.PropertyChanged += DefaultCodeArchitectureField_PropertyChanged;

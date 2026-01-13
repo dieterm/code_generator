@@ -2,6 +2,8 @@ using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts;
 using CodeGenerator.Core.Workspaces.Models;
 using CodeGenerator.Core.Workspaces.Services;
+using CodeGenerator.Domain.DataTypes;
+using System.ComponentModel.DataAnnotations;
 
 namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
 {
@@ -85,6 +87,11 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
         {
             // Controller will be registered separately
             return null;
+        }
+
+        public IEnumerable<GenericDataType> GetSupportedColumnDataTypes()
+        {
+            return Domain.Databases.RelationalDatabases.MysqlDatabase.Instance.DataTypeMappings.Select(m => m.GenericType).Distinct();
         }
     }
 }

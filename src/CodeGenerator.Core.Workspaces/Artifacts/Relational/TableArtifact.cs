@@ -10,9 +10,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
     /// </summary>
     public class TableArtifact : Artifact, IEditableTreeNode
     {
-        public const string DEFAULT_SCHEMA = "dbo";
-        //private string _name;
-        //private string _schema;
+        public const string DEFAULT_SCHEMA = "";
 
         public TableArtifact(string name, string schema = DEFAULT_SCHEMA)
         {
@@ -23,11 +21,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             : base(state)
         {
         }
-        //public override string Id => $"table_{Schema}_{Name}".ToLowerInvariant();
 
-        public override string TreeNodeText => string.IsNullOrEmpty(Schema) || Schema == DEFAULT_SCHEMA
-            ? Name 
-            : $"{Schema}.{Name}";
+        public override string TreeNodeText => Name;
 
         public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("table");
 
@@ -49,9 +44,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         public string Schema
         {
             get => GetValue<string>(nameof(Schema));
-            set { 
-                if(SetValue(nameof(Schema), value))
-                    RaisePropertyChangedEvent(nameof(TreeNodeText));
+            set {
+                SetValue(nameof(Schema), value);
             }
         }
 

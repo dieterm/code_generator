@@ -255,45 +255,4 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.ViewModels
             }
         }
     }
-
-    /// <summary>
-    /// ViewModel for a database object in the list
-    /// </summary>
-    public class DatabaseObjectViewModel : ViewModelBase
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Schema { get; set; } = string.Empty;
-        public DatabaseObjectType ObjectType { get; set; }
-        public string DisplayName { get; set; } = string.Empty;
-
-        public string TypeIcon => ObjectType == DatabaseObjectType.Table ? "table" : "eye";
-    }
-
-    /// <summary>
-    /// Event args for adding a database object
-    /// </summary>
-    public class AddDatabaseObjectEventArgs : EventArgs
-    {
-        public object DatabaseObject { get; }
-
-        public AddDatabaseObjectEventArgs(object databaseObject)
-        {
-            DatabaseObject = databaseObject;
-        }
-    }
-
-    /// <summary>
-    /// Event args for property value changes
-    /// </summary>
-    public class PropertyValueChangedEventArgs : EventArgs
-    {
-        public string PropertyName { get; }
-        public object? Value { get; }
-
-        public PropertyValueChangedEventArgs(string propertyName, object? value)
-        {
-            PropertyName = propertyName;
-            Value = value;
-        }
-    }
 }

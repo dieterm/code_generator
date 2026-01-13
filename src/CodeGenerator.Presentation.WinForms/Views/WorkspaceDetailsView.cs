@@ -73,6 +73,11 @@ namespace CodeGenerator.Presentation.WinForms.Views
                 detailsControl = new IndexEditView();
                 ((IndexEditView)detailsControl).BindViewModel(indexViewModel);
             }
+            else if (_viewModel?.DetailsViewModel is TableEditViewModel tableViewModel)
+            {
+                detailsControl = new TableEditView();
+                ((TableEditView)detailsControl).BindViewModel(tableViewModel);
+            }
             
             if (detailsControl != null)
             {
