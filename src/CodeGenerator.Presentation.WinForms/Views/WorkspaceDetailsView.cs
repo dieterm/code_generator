@@ -63,6 +63,16 @@ namespace CodeGenerator.Presentation.WinForms.Views
                 detailsControl = new MysqlDatasourceEditView();
                 ((MysqlDatasourceEditView)detailsControl).BindViewModel(mysqlViewModel);
             }
+            else if (_viewModel?.DetailsViewModel is ColumnEditViewModel columnViewModel)
+            {
+                detailsControl = new ColumnEditView();
+                ((ColumnEditView)detailsControl).BindViewModel(columnViewModel);
+            }
+            else if (_viewModel?.DetailsViewModel is IndexEditViewModel indexViewModel)
+            {
+                detailsControl = new IndexEditView();
+                ((IndexEditView)detailsControl).BindViewModel(indexViewModel);
+            }
             
             if (detailsControl != null)
             {

@@ -27,13 +27,13 @@ namespace CodeGenerator.Presentation.WinForms.Views
             txtUsername = new SingleLineTextField();
             txtPassword = new SingleLineTextField();
             grpObjects = new GroupBox();
-            panelObjectsButtons = new Panel();
-            btnLoadObjects = new Button();
-            btnAddObject = new Button();
             lstObjects = new ListView();
             colName = new ColumnHeader();
             colSchema = new ColumnHeader();
             colType = new ColumnHeader();
+            panelObjectsButtons = new Panel();
+            btnLoadObjects = new Button();
+            btnAddObject = new Button();
             lblStatus = new Label();
             lblError = new Label();
             grpConnection.SuspendLayout();
@@ -46,11 +46,11 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // 
             lblTitle.AutoSize = true;
             lblTitle.Dock = DockStyle.Top;
-            lblTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            lblTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             lblTitle.Location = new Point(10, 10);
             lblTitle.Name = "lblTitle";
             lblTitle.Padding = new Padding(0, 0, 0, 10);
-            lblTitle.Size = new Size(181, 31);
+            lblTitle.Size = new Size(144, 31);
             lblTitle.TabIndex = 0;
             lblTitle.Text = "MySQL / MariaDB";
             // 
@@ -80,18 +80,19 @@ namespace CodeGenerator.Presentation.WinForms.Views
             tableLayoutConnection.Location = new Point(6, 22);
             tableLayoutConnection.Name = "tableLayoutConnection";
             tableLayoutConnection.RowCount = 6;
-            tableLayoutConnection.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutConnection.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutConnection.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutConnection.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutConnection.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutConnection.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tableLayoutConnection.RowStyles.Add(new RowStyle());
+            tableLayoutConnection.RowStyles.Add(new RowStyle());
+            tableLayoutConnection.RowStyles.Add(new RowStyle());
+            tableLayoutConnection.RowStyles.Add(new RowStyle());
+            tableLayoutConnection.RowStyles.Add(new RowStyle());
+            tableLayoutConnection.RowStyles.Add(new RowStyle());
             tableLayoutConnection.Size = new Size(368, 252);
             tableLayoutConnection.TabIndex = 0;
             // 
             // txtName
             // 
             txtName.Dock = DockStyle.Top;
+            txtName.ErrorMessageVisible = true;
             txtName.Label = "Datasource Name:";
             txtName.Location = new Point(3, 3);
             txtName.Name = "txtName";
@@ -101,6 +102,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // txtServer
             // 
             txtServer.Dock = DockStyle.Top;
+            txtServer.ErrorMessageVisible = true;
             txtServer.Label = "Server:";
             txtServer.Location = new Point(3, 45);
             txtServer.Name = "txtServer";
@@ -119,6 +121,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // txtDatabase
             // 
             txtDatabase.Dock = DockStyle.Top;
+            txtDatabase.ErrorMessageVisible = true;
             txtDatabase.Label = "Database:";
             txtDatabase.Location = new Point(3, 129);
             txtDatabase.Name = "txtDatabase";
@@ -128,6 +131,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // txtUsername
             // 
             txtUsername.Dock = DockStyle.Top;
+            txtUsername.ErrorMessageVisible = true;
             txtUsername.Label = "Username:";
             txtUsername.Location = new Point(3, 171);
             txtUsername.Name = "txtUsername";
@@ -137,6 +141,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // txtPassword
             // 
             txtPassword.Dock = DockStyle.Top;
+            txtPassword.ErrorMessageVisible = true;
             txtPassword.Label = "Password:";
             txtPassword.Location = new Point(3, 213);
             txtPassword.Name = "txtPassword";
@@ -156,35 +161,6 @@ namespace CodeGenerator.Presentation.WinForms.Views
             grpObjects.TabIndex = 2;
             grpObjects.TabStop = false;
             grpObjects.Text = "Available Tables and Views";
-            // 
-            // panelObjectsButtons
-            // 
-            panelObjectsButtons.Controls.Add(btnLoadObjects);
-            panelObjectsButtons.Controls.Add(btnAddObject);
-            panelObjectsButtons.Dock = DockStyle.Top;
-            panelObjectsButtons.Location = new Point(3, 19);
-            panelObjectsButtons.Name = "panelObjectsButtons";
-            panelObjectsButtons.Size = new Size(374, 35);
-            panelObjectsButtons.TabIndex = 0;
-            // 
-            // btnLoadObjects
-            // 
-            btnLoadObjects.Location = new Point(3, 6);
-            btnLoadObjects.Name = "btnLoadObjects";
-            btnLoadObjects.Size = new Size(120, 26);
-            btnLoadObjects.TabIndex = 0;
-            btnLoadObjects.Text = "Load Tables/Views";
-            btnLoadObjects.UseVisualStyleBackColor = true;
-            // 
-            // btnAddObject
-            // 
-            btnAddObject.Enabled = false;
-            btnAddObject.Location = new Point(129, 6);
-            btnAddObject.Name = "btnAddObject";
-            btnAddObject.Size = new Size(100, 26);
-            btnAddObject.TabIndex = 1;
-            btnAddObject.Text = "Add Selected";
-            btnAddObject.UseVisualStyleBackColor = true;
             // 
             // lstObjects
             // 
@@ -214,6 +190,35 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // 
             colType.Text = "Type";
             colType.Width = 80;
+            // 
+            // panelObjectsButtons
+            // 
+            panelObjectsButtons.Controls.Add(btnLoadObjects);
+            panelObjectsButtons.Controls.Add(btnAddObject);
+            panelObjectsButtons.Dock = DockStyle.Top;
+            panelObjectsButtons.Location = new Point(3, 19);
+            panelObjectsButtons.Name = "panelObjectsButtons";
+            panelObjectsButtons.Size = new Size(374, 35);
+            panelObjectsButtons.TabIndex = 0;
+            // 
+            // btnLoadObjects
+            // 
+            btnLoadObjects.Location = new Point(3, 6);
+            btnLoadObjects.Name = "btnLoadObjects";
+            btnLoadObjects.Size = new Size(120, 26);
+            btnLoadObjects.TabIndex = 0;
+            btnLoadObjects.Text = "Load Tables/Views";
+            btnLoadObjects.UseVisualStyleBackColor = true;
+            // 
+            // btnAddObject
+            // 
+            btnAddObject.Enabled = false;
+            btnAddObject.Location = new Point(129, 6);
+            btnAddObject.Name = "btnAddObject";
+            btnAddObject.Size = new Size(100, 26);
+            btnAddObject.TabIndex = 1;
+            btnAddObject.Text = "Add Selected";
+            btnAddObject.UseVisualStyleBackColor = true;
             // 
             // lblStatus
             // 

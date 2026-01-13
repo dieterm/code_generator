@@ -57,6 +57,10 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IArtifactController, WorkspaceArtifactController>();
         services.AddSingleton<IArtifactController, DatasourcesContainerController>();
         services.AddSingleton<IArtifactController, MysqlDatasourceController>();
+        services.AddSingleton<IArtifactController, TableArtifactController>();
+        services.AddSingleton<IArtifactController, ViewArtifactController>();
+        services.AddSingleton<IArtifactController, ColumnArtifactController>();
+        services.AddSingleton<IArtifactController, IndexArtifactController>();
         
         // Register Datasource Providers
         services.AddMysqlDatasourceServices(configuration);
