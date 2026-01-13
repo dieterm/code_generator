@@ -15,10 +15,12 @@ namespace CodeGenerator.UserControls.Views
 
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             lblLabel = new Label();
             rbYes = new RadioButton();
             rbNo = new RadioButton();
             lblErrorMessage = new Label();
+            toolTip = new ToolTip(components);
             SuspendLayout();
             // 
             // lblLabel
@@ -36,7 +38,7 @@ namespace CodeGenerator.UserControls.Views
             rbYes.AutoSize = true;
             rbYes.Location = new Point(115, 5);
             rbYes.Name = "rbYes";
-            rbYes.Size = new Size(37, 19);
+            rbYes.Size = new Size(35, 19);
             rbYes.TabIndex = 1;
             rbYes.TabStop = true;
             rbYes.Text = "Ja";
@@ -47,7 +49,7 @@ namespace CodeGenerator.UserControls.Views
             rbNo.AutoSize = true;
             rbNo.Location = new Point(170, 5);
             rbNo.Name = "rbNo";
-            rbNo.Size = new Size(45, 19);
+            rbNo.Size = new Size(46, 19);
             rbNo.TabIndex = 2;
             rbNo.TabStop = true;
             rbNo.Text = "Nee";
@@ -84,5 +86,6 @@ namespace CodeGenerator.UserControls.Views
         private RadioButton rbYes;
         private RadioButton rbNo;
         private Label lblErrorMessage;
+        private ToolTip toolTip;
     }
 }

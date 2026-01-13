@@ -39,6 +39,7 @@ namespace CodeGenerator.UserControls.Views
             btnShowParameters = new Button();
             ctxMenuParameters = new ContextMenuStrip(components);
             lblErrorMessage = new Label();
+            toolTip = new ToolTip(components);
             ((ISupportInitialize)txtValue).BeginInit();
             SuspendLayout();
             // 
@@ -124,5 +125,6 @@ namespace CodeGenerator.UserControls.Views
         private Button btnShowParameters;
         private ContextMenuStrip ctxMenuParameters;
         private Label lblErrorMessage;
+        private ToolTip toolTip;
     }
 }

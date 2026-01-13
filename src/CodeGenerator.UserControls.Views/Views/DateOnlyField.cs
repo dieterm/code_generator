@@ -100,7 +100,7 @@ namespace CodeGenerator.UserControls.Views
 
             lblLabel.DataBindings.Add("Text", viewModel, nameof(viewModel.Label), false, DataSourceUpdateMode.OnPropertyChanged);
             lblErrorMessage.DataBindings.Add("Text", viewModel, nameof(viewModel.ErrorMessage), false, DataSourceUpdateMode.OnPropertyChanged);
-
+            toolTip.SetToolTip(dtpValue, _viewModel.Tooltip);
             UpdateDateFromViewModel();
 
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -113,6 +113,10 @@ namespace CodeGenerator.UserControls.Views
             if (e.PropertyName == nameof(_viewModel.Value))
             {
                 UpdateDateFromViewModel();
+            }
+            else if (e.PropertyName == nameof(_viewModel.Tooltip))
+            {
+                toolTip.SetToolTip(dtpValue, _viewModel.Tooltip);
             }
         }
 

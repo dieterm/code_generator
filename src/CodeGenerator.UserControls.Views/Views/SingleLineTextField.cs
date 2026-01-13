@@ -1,7 +1,8 @@
-using System.ComponentModel;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
 using CodeGenerator.UserControls.ViewModels;
+using Microsoft.DotNet.DesignTools.ViewModels;
+using System.ComponentModel;
 
 namespace CodeGenerator.UserControls.Views
 {
@@ -13,6 +14,14 @@ namespace CodeGenerator.UserControls.Views
         {
             InitializeComponent();
             lblLabel.EnsureLabelVisible(txtValue, lblErrorMessage);
+            Disposed += SingleLineTextField_Disposed;
+        }
+
+        private void SingleLineTextField_Disposed(object? sender, EventArgs e)
+        {
+            ClearBindings();
+            if (_viewModel != null)
+                _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
         }
 
         /// <summary>
@@ -68,19 +77,41 @@ namespace CodeGenerator.UserControls.Views
             }
         }
 
+        private void ClearBindings()
+        {
+            lblLabel.DataBindings.Clear();
+            txtValue.DataBindings.Clear();
+            lblErrorMessage.DataBindings.Clear();
+        }
+
         public void BindViewModel(ViewModels.SingleLineTextFieldModel viewModel)
         {
+            if(viewModel == null)
+                throw new ArgumentNullException(nameof(viewModel));
+
             if (_viewModel != null)
             {
-                lblLabel.DataBindings.Clear();
-                txtValue.DataBindings.Clear();
-                lblErrorMessage.DataBindings.Clear();
+                ClearBindings();
+                _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
             }
+
             _viewModel = viewModel;
+            
+            _viewModel.PropertyChanged += ViewModel_PropertyChanged;
+
             // Bind the ViewModel properties to the control's UI elements
             lblLabel.DataBindings.Add("Text", viewModel, nameof(viewModel.Label), false, DataSourceUpdateMode.OnPropertyChanged);
             txtValue.DataBindings.Add("Text", viewModel, nameof(viewModel.Value), false, DataSourceUpdateMode.OnPropertyChanged);
             lblErrorMessage.DataBindings.Add("Text", viewModel, nameof(viewModel.ErrorMessage), false, DataSourceUpdateMode.OnPropertyChanged);
+            toolTip.SetToolTip(txtValue, viewModel.Tooltip);
+        }
+
+        private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(_viewModel.Tooltip))
+            {
+                toolTip.SetToolTip(txtValue, _viewModel.Tooltip);
+            }
         }
 
         public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase

@@ -105,7 +105,7 @@ namespace CodeGenerator.UserControls.Views
             cbxItems.DataSource = viewModel.Items;
             cbxItems.SelectedItem = viewModel.Value;
             cbxItems.DisplayMember = viewModel.DisplayMember;
-
+            toolTip.SetToolTip(cbxItems, viewModel.Tooltip);
             // Subscribe to PropertyChanged to update the control when ViewModel changes
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
             
@@ -115,6 +115,7 @@ namespace CodeGenerator.UserControls.Views
                 if (_viewModel != null)
                 {
                     _viewModel.Value = cbxItems.SelectedValue;
+                    _viewModel.SelectedItem = cbxItems.SelectedItem;
                 }
             };
         }
@@ -131,9 +132,17 @@ namespace CodeGenerator.UserControls.Views
             {
                 cbxItems.SelectedItem = _viewModel.Value;
             }
-            else if(e.PropertyName == nameof(_viewModel.DisplayMember))
+            else if(e.PropertyName == nameof(_viewModel.SelectedItem))
+            {
+                cbxItems.SelectedItem = _viewModel.SelectedItem;
+            }
+            else if (e.PropertyName == nameof(_viewModel.DisplayMember))
             {
                 cbxItems.DisplayMember = _viewModel.DisplayMember;
+            }
+            else if (e.PropertyName == nameof(_viewModel.Tooltip))
+            {
+                toolTip.SetToolTip(cbxItems, _viewModel.Tooltip);
             }
         }
 

@@ -78,6 +78,7 @@ namespace CodeGenerator.UserControls.Views
             // unsubscribe from old model
             if(_viewModel!=null)
             {
+
                 _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
             }
             _viewModel = viewModel;
@@ -88,7 +89,11 @@ namespace CodeGenerator.UserControls.Views
             if (_viewModel != null) {
                 UpdateLabels(_viewModel.Label);
             }
-            
+            toolTip.SetToolTip(txtDutch, _viewModel.Tooltip);
+            toolTip.SetToolTip(txtFrench, _viewModel.Tooltip);
+            toolTip.SetToolTip(txtEnglish, _viewModel.Tooltip);
+            toolTip.SetToolTip(txtGerman, _viewModel.Tooltip);
+
             UpdateIsRequired();
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
         }
@@ -137,6 +142,13 @@ namespace CodeGenerator.UserControls.Views
             else if(e.PropertyName == nameof(DenominationFieldModel.IsRequired))
             {
                 UpdateIsRequired();
+            }
+            else if(e.PropertyName == nameof(DenominationFieldModel.Tooltip))
+            {
+                toolTip.SetToolTip(txtDutch, _viewModel.Tooltip);
+                toolTip.SetToolTip(txtFrench, _viewModel.Tooltip);
+                toolTip.SetToolTip(txtEnglish, _viewModel.Tooltip);
+                toolTip.SetToolTip(txtGerman, _viewModel.Tooltip);
             }
         }
 

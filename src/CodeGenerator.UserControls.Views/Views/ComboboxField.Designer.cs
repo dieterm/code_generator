@@ -28,9 +28,11 @@ namespace CodeGenerator.UserControls.Views
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             lblErrorMessage = new Label();
             lblLabel = new Label();
             cbxItems = new Syncfusion.WinForms.ListView.SfComboBox();
+            toolTip = new ToolTip(components);
             ((System.ComponentModel.ISupportInitialize)cbxItems).BeginInit();
             SuspendLayout();
             // 
@@ -84,5 +86,6 @@ namespace CodeGenerator.UserControls.Views
         private Label lblErrorMessage;
         private Label lblLabel;
         private Syncfusion.WinForms.ListView.SfComboBox cbxItems;
+        private ToolTip toolTip;
     }
 }

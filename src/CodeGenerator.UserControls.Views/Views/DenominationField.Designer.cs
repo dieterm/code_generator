@@ -28,10 +28,12 @@ namespace CodeGenerator.UserControls.Views
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             txtDutch = new SingleLineTextField();
             txtFrench = new SingleLineTextField();
             txtEnglish = new SingleLineTextField();
             txtGerman = new SingleLineTextField();
+            toolTip = new ToolTip(components);
             SuspendLayout();
             // 
             // txtDutch
@@ -93,5 +95,6 @@ namespace CodeGenerator.UserControls.Views
         private SingleLineTextField txtFrench;
         private SingleLineTextField txtEnglish;
         private SingleLineTextField txtGerman;
+        private ToolTip toolTip;
     }
 }

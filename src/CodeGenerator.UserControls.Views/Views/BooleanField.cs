@@ -88,7 +88,8 @@ namespace CodeGenerator.UserControls.Views
 
             lblLabel.DataBindings.Add("Text", viewModel, nameof(viewModel.Label), false, DataSourceUpdateMode.OnPropertyChanged);
             lblErrorMessage.DataBindings.Add("Text", viewModel, nameof(viewModel.ErrorMessage), false, DataSourceUpdateMode.OnPropertyChanged);
-
+            toolTip.SetToolTip(rbYes, _viewModel.Tooltip);
+            toolTip.SetToolTip(rbNo, _viewModel.Tooltip);
             UpdateRadioButtonsFromViewModel();
 
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -101,6 +102,11 @@ namespace CodeGenerator.UserControls.Views
             if (e.PropertyName == nameof(_viewModel.Value))
             {
                 UpdateRadioButtonsFromViewModel();
+            }
+            else if(e.PropertyName == nameof(_viewModel.Tooltip))
+            {
+                toolTip.SetToolTip(rbYes, _viewModel.Tooltip);
+                toolTip.SetToolTip(rbNo, _viewModel.Tooltip);
             }
         }
 

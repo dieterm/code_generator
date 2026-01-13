@@ -137,7 +137,7 @@ namespace CodeGenerator.UserControls.Views
             lblLabel.DataBindings.Add("Text", viewModel, nameof(viewModel.Label), false, DataSourceUpdateMode.OnPropertyChanged);
             txtValue.DataBindings.Add("Text", viewModel, nameof(viewModel.Value), false, DataSourceUpdateMode.OnPropertyChanged);
             lblErrorMessage.DataBindings.Add("Text", viewModel, nameof(viewModel.ErrorMessage), false, DataSourceUpdateMode.OnPropertyChanged);
-
+            toolTip.SetToolTip(txtValue, viewModel.Tooltip);
             UpdateBrowseButtonIcon();
 
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -150,6 +150,10 @@ namespace CodeGenerator.UserControls.Views
             if (e.PropertyName == nameof(_viewModel.SelectionMode))
             {
                 UpdateBrowseButtonIcon();
+            }
+            else if (e.PropertyName == nameof(_viewModel.Tooltip))
+            {
+                toolTip.SetToolTip(txtValue, _viewModel.Tooltip);
             }
         }
 

@@ -15,9 +15,11 @@ namespace CodeGenerator.UserControls.Views
 
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             lblLabel = new Label();
             nudValue = new NumericUpDown();
             lblErrorMessage = new Label();
+            toolTip = new ToolTip(components);
             ((System.ComponentModel.ISupportInitialize)nudValue).BeginInit();
             SuspendLayout();
             // 
@@ -69,5 +71,6 @@ namespace CodeGenerator.UserControls.Views
         private Label lblLabel;
         private NumericUpDown nudValue;
         private Label lblErrorMessage;
+        private ToolTip toolTip;
     }
 }

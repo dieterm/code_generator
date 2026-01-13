@@ -101,13 +101,16 @@ namespace CodeGenerator.UserControls.Views
             lblLabel.DataBindings.Add("Text", viewModel, nameof(viewModel.Label), false, DataSourceUpdateMode.OnPropertyChanged);
             txtValue.DataBindings.Add("Text", viewModel, nameof(viewModel.Value), false, DataSourceUpdateMode.OnPropertyChanged);
             lblErrorMessage.DataBindings.Add("Text", viewModel, nameof(viewModel.ErrorMessage), false, DataSourceUpdateMode.OnPropertyChanged);
-
+            toolTip.SetToolTip(txtValue, viewModel.Tooltip);
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
         }
 
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            // Handle any additional property changes if needed
+            if(e.PropertyName == nameof(FolderFieldModel.Tooltip))
+            {
+                toolTip.SetToolTip(txtValue, _viewModel.Tooltip);
+            }
         }
 
         public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase

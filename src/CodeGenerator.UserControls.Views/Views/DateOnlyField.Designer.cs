@@ -15,10 +15,12 @@ namespace CodeGenerator.UserControls.Views
 
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             lblLabel = new Label();
             dtpValue = new DateTimePicker();
             chkHasValue = new CheckBox();
             lblErrorMessage = new Label();
+            toolTip = new ToolTip(components);
             SuspendLayout();
             // 
             // lblLabel
@@ -82,5 +84,6 @@ namespace CodeGenerator.UserControls.Views
         private DateTimePicker dtpValue;
         private CheckBox chkHasValue;
         private Label lblErrorMessage;
+        private ToolTip toolTip;
     }
 }

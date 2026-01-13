@@ -103,7 +103,9 @@ namespace CodeGenerator.UserControls.Views
                 nudValue.Minimum = viewModel.Minimum.Value;
             if (viewModel.Maximum.HasValue)
                 nudValue.Maximum = viewModel.Maximum.Value;
-
+            
+            toolTip.SetToolTip(nudValue, viewModel.Tooltip);
+            
             UpdateValueFromViewModel();
 
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -124,7 +126,11 @@ namespace CodeGenerator.UserControls.Views
             else if (e.PropertyName == nameof(_viewModel.Maximum) && _viewModel.Maximum.HasValue)
             {
                 nudValue.Maximum = _viewModel.Maximum.Value;
+            } else if(e.PropertyName == nameof(_viewModel.Tooltip))
+            {
+                toolTip.SetToolTip(nudValue, _viewModel.Tooltip);
             }
+
         }
 
         private void UpdateValueFromViewModel()

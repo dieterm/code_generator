@@ -32,20 +32,37 @@ namespace CodeGenerator.UserControls.Views
         private void ParameterizedStringField_Disposed(object? sender, EventArgs e)
         {
             ClearDataBindings();
+            if (ViewModel != null)
+                ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
         }
 
         public void BindViewModel(ParameterizedStringFieldModel viewModel)
         {
+            if(viewModel == null)
+                throw new ArgumentNullException(nameof(viewModel));
+
             if (ViewModel != null)
             {
                 ClearDataBindings();
+                ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
             }
+
             ViewModel = viewModel;
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             // Bind the ViewModel properties to the control's UI elements
             lblLabel.DataBindings.Add("Text", viewModel, nameof(viewModel.Label), false, DataSourceUpdateMode.OnPropertyChanged);
             txtValue.DataBindings.Add("Text", viewModel, nameof(viewModel.Value), false, DataSourceUpdateMode.OnPropertyChanged);
             lblErrorMessage.DataBindings.Add("Text", viewModel, nameof(viewModel.ErrorMessage), false, DataSourceUpdateMode.OnPropertyChanged);
             lblPreview.DataBindings.Add("Text", viewModel, nameof(viewModel.Preview), false, DataSourceUpdateMode.OnPropertyChanged);
+            toolTip.SetToolTip(txtValue, viewModel.Tooltip);
+        }
+
+        private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ViewModel.Tooltip))
+            {
+                toolTip.SetToolTip(txtValue, ViewModel.Tooltip);
+            }
         }
 
         private void ClearDataBindings()

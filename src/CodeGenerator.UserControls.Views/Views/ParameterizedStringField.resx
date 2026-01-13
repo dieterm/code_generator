@@ -124,10 +124,13 @@
   <data name="btnShowParameters.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wQAADsEBuJFr7QAAAL5JREFUOE+tk10KQVEURlcRj+RvEAyDYfiXDIeUmIEMgWEwBIYgUh701abd7srD
+        wAAADsABataJCQAAAL5JREFUOE+tk10KQVEURlcRj+RvEAyDYfiXDIeUmIEMgWEwBIYgUh701abd7srD
         sR73+tqdc+934M+0gS2wBopuXgBW5pTJpAlcgROwzFiwMKdMy7kPQ+AJNKJw1C0zjkKMgBtQjsJRsswk
         CtED7kAtCkfVMoMoxBR4WOgbFcvMougCZ+AA5KN0yO2Bi534gxZo+GtBzi3oR5l0BZH8EZN/Y3KR3lU+
         Wm1jlefmvlZZ6KHsgE3GAj0wuY6bp/MCQ/AvCVwUVdkAAAAASUVORK5CYII=
 </value>
   </data>
+  <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>176, 17</value>
+  </metadata>
 </root>

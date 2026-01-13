@@ -15,11 +15,13 @@ namespace CodeGenerator.UserControls.Views
 
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             lblLabel = new Label();
             txtValue = new TextBox();
             btnBrowse = new Button();
             btnOpenFolder = new Button();
             lblErrorMessage = new Label();
+            toolTip = new ToolTip(components);
             SuspendLayout();
             // 
             // lblLabel
@@ -96,5 +98,6 @@ namespace CodeGenerator.UserControls.Views
         private Button btnBrowse;
         private Button btnOpenFolder;
         private Label lblErrorMessage;
+        private ToolTip toolTip;
     }
 }
