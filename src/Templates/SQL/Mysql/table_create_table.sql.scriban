@@ -1,0 +1,3 @@
+{{ Table.schema }} # String
+# Table.TreeNodeIcon (ITreeNodeIcon) properties:
+{{ Table.tree_node_icon.icon_key }} # String

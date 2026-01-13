@@ -9,6 +9,7 @@ using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Settings.Application;
 using CodeGenerator.Core.Settings.Generators;
 using CodeGenerator.Core.Settings.ViewModels;
+using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Core.Workspaces.Settings;
@@ -88,7 +89,7 @@ public static class ServiceCollectionExtensions
         // Register Generator Descriptors
         // IMPORTANT: Ensure that all generators are registered here
 
-
+        services.AddSingleton<TemplateEngineManager>();
         // Register Template Engines
         services.AddSingleton<DotNetProjectTemplateEngine>();
         services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.DotNetProject.DotNetProjectTemplateEngine>((q) => q.GetRequiredService<DotNetProjectTemplateEngine>());

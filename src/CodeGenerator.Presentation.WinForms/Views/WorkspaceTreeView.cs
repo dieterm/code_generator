@@ -433,8 +433,12 @@ namespace CodeGenerator.Presentation.WinForms.Views
             }
         }
 
-        private ToolStripMenuItem CreateMenuItem(WorkspaceCommand command, IArtifact artifact)
+        private ToolStripItem CreateMenuItem(WorkspaceCommand command, IArtifact artifact)
         {
+            if (command.IsSeparator)
+            {
+                return new ToolStripSeparator();
+            }
             var menuItem = new ToolStripMenuItem(command.Text);
 
             if (command.CanExecute != null)
@@ -445,6 +449,15 @@ namespace CodeGenerator.Presentation.WinForms.Views
             if (command.Execute != null)
             {
                 menuItem.Click += async (s, args) => await command.Execute(artifact);
+            }
+
+            if(command.SubCommands != null && command.SubCommands.Any())
+            {
+                foreach (var subCommand in command.SubCommands)
+                {
+                    var subItem = CreateMenuItem(subCommand, artifact);
+                    menuItem.DropDownItems.Add(subItem);
+                }
             }
 
             return menuItem;
@@ -502,7 +515,8 @@ namespace CodeGenerator.Presentation.WinForms.Views
             ctxArtifactMenu.Items.Clear();
             foreach (var command in commands)
             {
-                if (command.IsSeparator)
+                ctxArtifactMenu.Items.Add(CreateMenuItem(command, _viewModel.SelectedArtifact));
+                /*if (command.IsSeparator)
                 {
                     ctxArtifactMenu.Items.Add(new ToolStripSeparator());
                 }
@@ -520,7 +534,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
                 {
                     var menuItem = CreateMenuItem(command, _viewModel.SelectedArtifact);
                     ctxArtifactMenu.Items.Add(menuItem);
-                }
+                }*/
 
             }
             if (ctxArtifactMenu.Items.Count == 0)

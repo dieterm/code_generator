@@ -14,7 +14,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
     {
         public const string FILE_PROPERTIES_DECORATOR_KEY = "FileProperties";
         public const string TEXT_CONTENT_DECORATOR_KEY = "TextContent";
-        private readonly FileArtifactDecorator _fileArtifactDecorator;
+        private FileArtifactDecorator _fileArtifactDecorator;
         public FileArtifact(string fileName)
         {
             if(string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException(nameof(fileName));
@@ -71,6 +71,8 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
                 {
                     throw new InvalidOperationException("FileArtifact can only have one FileArtifactDecorator.");
                 }
+                if(_fileArtifactDecorator == null)
+                    _fileArtifactDecorator = fileDecorator;
                 _fileArtifactDecorator.PropertyChanged += FileArtifactDecorator_PropertyChanged;
             }
             return base.AddDecorator(decorator);

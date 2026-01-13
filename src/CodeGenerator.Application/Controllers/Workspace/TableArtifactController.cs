@@ -1,7 +1,13 @@
+using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.FileSystem;
+using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
+using CodeGenerator.Domain.Databases.RelationalDatabases;
+using CodeGenerator.TemplateEngines.Scriban;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Serialization;
 
 namespace CodeGenerator.Application.Controllers.Workspace
 {
@@ -11,17 +17,56 @@ namespace CodeGenerator.Application.Controllers.Workspace
     public class TableArtifactController : ArtifactControllerBase<TableArtifact>
     {
         private TableEditViewModel? _editViewModel;
+        private readonly TemplateEngineManager _templateEngineManager;
+        private readonly IWindowManagerService _windowManagerService;
 
         public TableArtifactController(
             WorkspaceController workspaceController,
+            TemplateEngineManager templateEngineManager,
+            IWindowManagerService windowManagerService,
             ILogger<TableArtifactController> logger)
             : base(workspaceController, logger)
         {
+            _templateEngineManager = templateEngineManager;
+            _windowManagerService = windowManagerService;
         }
 
         protected override IEnumerable<WorkspaceCommand> GetCommands(TableArtifact artifact)
         {
             var commands = new List<WorkspaceCommand>();
+            
+            // Generate Script command
+            var generateScriptCommand = new WorkspaceCommand
+            {
+                Id = "generate_script",
+                Text = "Generate script",
+                IconKey = "script",
+                SubCommands = new List<WorkspaceCommand>()
+            };
+
+            foreach (var db in RelationalDatabases.All)
+            {
+                var dbCommand = new WorkspaceCommand
+                {
+                    Id = $"generate_script_{db.Id}",
+                    Text = db.Name,
+                    IconKey = "database",
+                    SubCommands = new List<WorkspaceCommand>
+                    {
+                        CreateScriptCommand(db, artifact, "Create Table", "create_table"),
+                        CreateScriptCommand(db, artifact, "Drop Table", "drop_table"),
+                        WorkspaceCommand.Separator,
+                        CreateScriptCommand(db, artifact, "Select row", "select_row"),
+                        CreateScriptCommand(db, artifact, "Insert row", "insert_row"),
+                        CreateScriptCommand(db, artifact, "Update row", "update_row"),
+                        CreateScriptCommand(db, artifact, "Delete row", "delete_row")
+                    }
+                };
+                generateScriptCommand.SubCommands.Add(dbCommand);
+            }
+            commands.Add(generateScriptCommand);
+
+            commands.Add(WorkspaceCommand.Separator);
 
             // Add Column command
             commands.Add(new WorkspaceCommand
@@ -154,6 +199,106 @@ namespace CodeGenerator.Application.Controllers.Workspace
             WorkspaceController.OnArtifactAdded(parent, view);
 
             await Task.CompletedTask;
+        }
+
+        private WorkspaceCommand CreateScriptCommand(RelationalDatabase db, TableArtifact artifact, string text, string action)
+        {
+            return new WorkspaceCommand
+            {
+                Id = $"generate_script_{db.Id}_{action}",
+                Text = text,
+                IconKey = "script",
+                Execute = async (a) =>
+                {
+                    await GenerateScriptAsync(db, artifact, action);
+                }
+            };
+        }
+
+        private async Task GenerateScriptAsync(RelationalDatabase db, TableArtifact artifact, string action)
+        {
+            try
+            {
+                // Capitalize first letter of id for folder name (e.g. mysql -> Mysql)
+                var folderName = char.ToUpper(db.Id[0]) + db.Id.Substring(1);
+
+                var templatePath = Path.Combine(
+                    @"D:\Cloud\GitHub\code_generator\src\Templates\SQL",
+                    folderName,
+                    $"table_{action}.sql.scriban");
+
+                //if (!File.Exists(templatePath))
+                //{
+                //    var errorContent = $"-- Template not found: {templatePath}";
+                //    await AddGeneratedFileAsync(artifact, $"{artifact.Name}_{action}.sql", errorContent);
+                //    return;
+                //}
+                var scribanTemplate = new ScribanFileTemplate($"table_{action}.sql.scriban", templatePath);
+                scribanTemplate.CreateTemplateFileIfMissing = true;
+                var templateInstance = new ScribanTemplateInstance(scribanTemplate);
+
+                // Create a context model that includes the table and the target database
+                templateInstance.Parameters["Table"] = artifact;
+                templateInstance.Parameters["Database"] = db;
+                var columns = artifact.GetColumns()
+                    .Select(c => (name: c.Name, type: db.GetMapping(c.DataType)?.GenerateTypeDef(c.MaxLength, c.Precision, c.Scale)?? c.DataType, isNullable: c.IsNullable, isPrimaryKey: c.IsPrimaryKey))
+                    .ToList();
+                var createScript = db.GenerateCreateTableStatement(artifact.Name, artifact.Schema, columns);
+                _windowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel()
+                {
+                    TextContent = createScript,
+                    TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.SQL
+                });
+                return;
+                var content = await _templateEngineManager.RenderTemplateAsync(templateInstance);
+                if(content.Succeeded == false)
+                {
+                    var errorContent = $"-- Errors generating script:\n-- {string.Join("\n-- ", content.Errors)}";
+                    _windowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel()
+                    {
+                        TextContent = errorContent,
+                        TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.Text
+                    });
+                    return;
+                }
+                if (artifact.Parent != null)
+                {
+                    IArtifact lastGenArtifact = null;
+                    foreach (var genArtifact in content.Artifacts)
+                    {
+                        artifact.Parent.AddChild(genArtifact);
+                        lastGenArtifact = genArtifact;
+                    }
+                    if(lastGenArtifact is FileArtifact fileArtifact)
+                    {
+                        _windowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel() { 
+                            TextContent = fileArtifact.GetTextContent(), 
+                            TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.SQL
+                        });
+                    }
+                    if (lastGenArtifact!= null)
+                    await WorkspaceController.SelectArtifactAsync(lastGenArtifact);
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorContent = $"-- Error generating script: {ex.Message}\n/*\n{ex.StackTrace}\n*/";
+                await AddGeneratedFileAsync(artifact, $"{artifact.Name}_{action}_Error.sql", errorContent);
+            }
+        }
+
+        private async Task AddGeneratedFileAsync(TableArtifact artifact, string fileName, string content)
+        {
+            var fileArtifact = new FileArtifact(fileName);
+            fileArtifact.SetTextContent(content);
+            
+            // Add to parent (Datasource) to keep it organized
+            if (artifact.Parent != null)
+            {
+                artifact.Parent.AddChild(fileArtifact);
+                WorkspaceController.OnArtifactAdded(artifact.Parent, fileArtifact);
+                await WorkspaceController.SelectArtifactAsync(fileArtifact);
+            }
         }
     }
 }

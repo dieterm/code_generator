@@ -48,7 +48,7 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
         /// <summary>
         /// Generate a CREATE TABLE statement for MySQL
         /// </summary>
-        public string GenerateCreateTableStatement(
+        public override string GenerateCreateTableStatement(
             string tableName,
             string schema,
             IEnumerable<(string name, string type, bool isNullable, bool isPrimaryKey)> columns,
@@ -114,7 +114,7 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
         /// <summary>
         /// Generate a CREATE INDEX statement for MySQL
         /// </summary>
-        public string GenerateCreateIndexStatement(
+        public override string GenerateCreateIndexStatement(
             string tableName,
             string indexName,
             IEnumerable<string> columnNames,

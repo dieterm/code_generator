@@ -9,6 +9,7 @@ using Scriban;
 using Scriban.Runtime;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace CodeGenerator.TemplateEngines.Scriban;
 
@@ -239,8 +240,10 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
     {
         try
         {
+            await CreateTemplateFileIfMissing(templateInstance);
+
             // First compile the template if not already compiled
-            if(!string.IsNullOrEmpty(templateInstance.Template.TemplateId) && !_compiledTemplates.ContainsKey(templateInstance.Template.TemplateId))
+            if (!string.IsNullOrEmpty(templateInstance.Template.TemplateId) && !_compiledTemplates.ContainsKey(templateInstance.Template.TemplateId))
             {
                 CompileTemplate(templateInstance.Template.TemplateId, ((ScribanTemplate)templateInstance.Template).Content);
             }
@@ -264,19 +267,19 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
                 }
                 foreach (var func in templateInstance.Functions)
                 {
-                    extraParams.Import(func.Key, func.Value );
+                    extraParams.Import(func.Key, func.Value);
                 }
                 context.PushGlobal(extraParams);
                 var result = compiledTemplate.Render(context);
-                if(result!= null)
+                if (result != null)
                 {
                     var fileArtifact = new FileArtifact(templateInstance.OutputFileName ?? "output.txt");
                     fileArtifact.SetTextContent(result);
                     return new TemplateOutput(fileArtifact);
-                } 
+                }
                 else
                 {
-                    if(compiledTemplate.HasErrors)
+                    if (compiledTemplate.HasErrors)
                     {
                         var errors = compiledTemplate.Messages.Select(m => m.ToString());
                         Logger.LogError("Template rendering errors: {Errors}", string.Join(Environment.NewLine, errors));
@@ -301,5 +304,208 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
             Logger.LogError(ex, "An error occurred while rendering the template.");
             return new TemplateOutput(ex.Message);
         }
+    }
+
+    private async Task CreateTemplateFileIfMissing(ScribanTemplateInstance templateInstance)
+    {
+        if (templateInstance.Template is ScribanFileTemplate fileTemplate)
+        {
+            if (!File.Exists(fileTemplate.FilePath))
+            {
+                var errorMsg = $"Template file not found: {fileTemplate.FilePath}.";
+                if (fileTemplate.CreateTemplateFileIfMissing)
+                {
+                    // Ensure directory exists
+                    var dir = Path.GetDirectoryName(fileTemplate.FilePath);
+                    if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+                    {
+                        Directory.CreateDirectory(dir);
+                    }
+
+                    using (var emptyFile = File.CreateText(fileTemplate.FilePath))
+                    {
+                        await emptyFile.WriteLineAsync($"# Template parameters:");
+                        foreach (var parameter in templateInstance.Parameters)
+                        {
+                            var visitedTypes = new HashSet<Type>();
+                            // Start recursion
+                            await GenerateTemplateReflectionAsync(emptyFile, parameter.Key, parameter.Value?.GetType(), parameter.Value, 0, visitedTypes);
+                            await emptyFile.WriteLineAsync();
+                        }
+
+                        foreach(var helperMethod in templateInstance.Functions)
+                        {
+                            await emptyFile.WriteLineAsync($"# Function: {helperMethod.Key}()");
+                        }
+
+                        foreach(var globalHelperMethod in _globalFunctions)
+                        {
+                            await emptyFile.WriteLineAsync($"# Global Function: {globalHelperMethod.Key}()");
+                        }
+                    }
+                    errorMsg += $" An empty template file has been created at this location.";
+                }
+
+                Logger.LogError(errorMsg);
+               
+            }
+        }
+    }
+
+    private async Task GenerateTemplateReflectionAsync(TextWriter writer, string prefix, Type? type, object? value, int depth, HashSet<Type> visitedTypes)
+    {
+        var indent = new string(' ', depth * 4);
+        
+        if (depth > 5)
+        {
+             await writer.WriteLineAsync($"{indent}# ... (max depth reached)");
+             return;
+        }
+
+        if (type == null)
+        {
+            await writer.WriteLineAsync($"{indent}{{{{ {prefix} }}}} # null");
+            return;
+        }
+
+        // Skip System types usually except primitives
+        if (IsSimpleType(type))
+        {
+            await writer.WriteLineAsync($"{indent}{{{{ {prefix} }}}} # {type.Name}");
+            return;
+        }
+
+        // Delegate/Function
+         if (typeof(Delegate).IsAssignableFrom(type))
+        {
+            await writer.WriteLineAsync($"{indent}# {prefix} (Function)");
+            return;
+        }
+
+        // Check for recursion
+        if (visitedTypes.Contains(type))
+        {
+            await writer.WriteLineAsync($"{indent}# {prefix} (Recursive: {type.Name})");
+            return;
+        }
+        visitedTypes.Add(type);
+        object? collectionItemValue = null;
+        // Handle collection
+        if (typeof(System.Collections.IEnumerable).IsAssignableFrom(type) && type != typeof(string))
+        {
+            var itemPrefix = "item";
+            await writer.WriteLineAsync($"{indent}# Collection: {type.Name}");
+            await writer.WriteLineAsync($"{indent}{{{{- for {itemPrefix} in {prefix} }}}}");
+            await writer.WriteLineAsync($"{indent}\tIndex: {{{{ for.index }}}} (0-based)");
+            Type? itemType = null;
+            if (type.IsArray)
+            {
+                itemType = type.GetElementType();
+                try
+                {
+                    collectionItemValue = (value as Array)?.GetValue(0);
+                }
+                catch (Exception)
+                {
+
+                   // throw;
+                }
+                
+            }
+            else if (type.IsGenericType)
+            {
+                // Typically IEnumerable<T>
+                var ienum = type.GetInterface("IEnumerable`1");
+                if (ienum != null)
+                    itemType = ienum.GetGenericArguments()[0];
+                else
+                    itemType = type.GetGenericArguments().FirstOrDefault();
+                if (value is System.Collections.IEnumerable enumerable)
+                {
+                    var enumerator = enumerable.GetEnumerator();
+                    if (enumerator.MoveNext())
+                    {
+                        collectionItemValue = enumerator.Current;
+                    }
+                }
+            }
+            else if(value is System.Collections.IDictionary dictionary)
+            {
+                var enumerator = dictionary.GetEnumerator();
+                if (enumerator.MoveNext() && enumerator.Current != null)
+                {
+                    itemType = enumerator.Current.GetType();
+                    collectionItemValue = enumerator.Current;
+                }
+                itemPrefix = $"{prefix}.value";
+            }
+            else if (value is System.Collections.IEnumerable enumerable)
+            {
+                var enumerator = enumerable.GetEnumerator();
+                if (enumerator.MoveNext() && enumerator.Current != null)
+                {
+                    itemType = enumerator.Current.GetType();
+                    collectionItemValue = enumerator.Current;
+                }
+            }
+
+            if(collectionItemValue!=null)
+                itemType = collectionItemValue.GetType();
+
+            if (itemType != null)
+            {
+                await GenerateTemplateReflectionAsync(writer, itemPrefix, itemType, collectionItemValue, depth + 1, new HashSet<Type>(visitedTypes));
+            }
+            else
+            {
+                await writer.WriteLineAsync($"{indent}    {{{{ {itemPrefix} }}}}");
+            }
+
+            await writer.WriteLineAsync($"{indent}{{{{- end }}}}");
+            return;
+        }
+
+        // Complex object properties
+        await writer.WriteLineAsync($"{indent}# {prefix} ({type.Name}) properties:");
+        
+        var properties = type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
+                             .Where(p => p.CanRead)
+                             .OrderBy(p => p.Name);
+
+        foreach (var prop in properties)
+        {
+            // Skip indexers
+            if (prop.GetIndexParameters().Length > 0) continue;
+            object? propValue = null;
+            try
+            {
+                if(value!=null)
+                    propValue = prop.GetValue(value);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(IsSimpleType(prop.PropertyType) ?
+                    $"Error accessing property {prefix}.{prop.Name}: {ex.Message}" :
+                    $"Error accessing complex property {prefix}.{prop.Name}: {ex.Message}");
+                //throw;
+            }
+            
+            // Recurse
+            await GenerateTemplateReflectionAsync(writer, $"{prefix}.{prop.Name}", prop.PropertyType, propValue, depth, new HashSet<Type>(visitedTypes));
+        }
+    }
+
+    private bool IsSimpleType(Type type)
+    {
+        return type.IsPrimitive || 
+               type.IsEnum ||
+               type == typeof(string) || 
+               type == typeof(decimal) || 
+               type == typeof(DateTime) || 
+               type == typeof(DateOnly) || 
+               type == typeof(TimeOnly) || 
+               type == typeof(DateTimeOffset) || 
+               type == typeof(TimeSpan) || 
+               type == typeof(Guid);
     }
 }

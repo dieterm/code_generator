@@ -10,6 +10,7 @@ namespace CodeGenerator.TemplateEngines.Scriban
     {
         private readonly Lazy<string> _content;
         public string FilePath { get; }
+        public bool CreateTemplateFileIfMissing { get; set; }
         public ScribanFileTemplate(string templateId, string filePath) 
             : base(templateId)
         {
