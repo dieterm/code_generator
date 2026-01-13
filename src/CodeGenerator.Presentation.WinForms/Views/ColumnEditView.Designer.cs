@@ -41,11 +41,11 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // 
             lblTitle.AutoSize = true;
             lblTitle.Dock = DockStyle.Top;
-            lblTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            lblTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             lblTitle.Location = new Point(10, 10);
             lblTitle.Name = "lblTitle";
             lblTitle.Padding = new Padding(0, 0, 0, 10);
-            lblTitle.Size = new Size(136, 31);
+            lblTitle.Size = new Size(127, 31);
             lblTitle.TabIndex = 0;
             lblTitle.Text = "Column Details";
             // 
@@ -75,18 +75,19 @@ namespace CodeGenerator.Presentation.WinForms.Views
             tableLayoutGeneral.Location = new Point(6, 22);
             tableLayoutGeneral.Name = "tableLayoutGeneral";
             tableLayoutGeneral.RowCount = 6;
-            tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutGeneral.Size = new Size(368, 230);
+            tableLayoutGeneral.RowStyles.Add(new RowStyle());
+            tableLayoutGeneral.RowStyles.Add(new RowStyle());
+            tableLayoutGeneral.RowStyles.Add(new RowStyle());
+            tableLayoutGeneral.RowStyles.Add(new RowStyle());
+            tableLayoutGeneral.RowStyles.Add(new RowStyle());
+            tableLayoutGeneral.RowStyles.Add(new RowStyle());
+            tableLayoutGeneral.Size = new Size(368, 252);
             tableLayoutGeneral.TabIndex = 0;
             // 
             // txtName
             // 
             txtName.Dock = DockStyle.Top;
+            txtName.ErrorMessageVisible = true;
             txtName.Label = "Column Name:";
             txtName.Location = new Point(3, 3);
             txtName.Name = "txtName";
@@ -96,6 +97,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // cbxDataType
             // 
             cbxDataType.Dock = DockStyle.Top;
+            cbxDataType.ErrorMessageVisible = true;
             cbxDataType.Label = "Data Type:";
             cbxDataType.Location = new Point(3, 45);
             cbxDataType.Name = "cbxDataType";
@@ -132,6 +134,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // txtDefaultValue
             // 
             txtDefaultValue.Dock = DockStyle.Top;
+            txtDefaultValue.ErrorMessageVisible = true;
             txtDefaultValue.Label = "Default Value:";
             txtDefaultValue.Location = new Point(3, 213);
             txtDefaultValue.Name = "txtDefaultValue";

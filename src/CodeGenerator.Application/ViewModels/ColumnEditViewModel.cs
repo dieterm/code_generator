@@ -1,5 +1,6 @@
 using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
+using CodeGenerator.Core.Workspaces.Models;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
 using System.Collections.Generic;
@@ -27,35 +28,35 @@ namespace CodeGenerator.Application.ViewModels
             DefaultValueField = new SingleLineTextFieldModel { Label = "Default Value", Name = "DefaultValue" };
 
             // Common data types
-            DataTypeField.Items = new List<ComboboxItem>
+            DataTypeField.Items = new List<DataTypeComboboxItem>
             {
-                new ComboboxItem { DisplayName = "int", Value = "int" },
-                new ComboboxItem { DisplayName = "bigint", Value = "bigint" },
-                new ComboboxItem { DisplayName = "smallint", Value = "smallint" },
-                new ComboboxItem { DisplayName = "tinyint", Value = "tinyint" },
-                new ComboboxItem { DisplayName = "bit", Value = "bit" },
-                new ComboboxItem { DisplayName = "decimal", Value = "decimal" },
-                new ComboboxItem { DisplayName = "numeric", Value = "numeric" },
-                new ComboboxItem { DisplayName = "float", Value = "float" },
-                new ComboboxItem { DisplayName = "real", Value = "real" },
-                new ComboboxItem { DisplayName = "money", Value = "money" },
-                new ComboboxItem { DisplayName = "char", Value = "char" },
-                new ComboboxItem { DisplayName = "varchar", Value = "varchar" },
-                new ComboboxItem { DisplayName = "nchar", Value = "nchar" },
-                new ComboboxItem { DisplayName = "nvarchar", Value = "nvarchar" },
-                new ComboboxItem { DisplayName = "text", Value = "text" },
-                new ComboboxItem { DisplayName = "ntext", Value = "ntext" },
-                new ComboboxItem { DisplayName = "date", Value = "date" },
-                new ComboboxItem { DisplayName = "time", Value = "time" },
-                new ComboboxItem { DisplayName = "datetime", Value = "datetime" },
-                new ComboboxItem { DisplayName = "datetime2", Value = "datetime2" },
-                new ComboboxItem { DisplayName = "timestamp", Value = "timestamp" },
-                new ComboboxItem { DisplayName = "binary", Value = "binary" },
-                new ComboboxItem { DisplayName = "varbinary", Value = "varbinary" },
-                new ComboboxItem { DisplayName = "image", Value = "image" },
-                new ComboboxItem { DisplayName = "uniqueidentifier", Value = "uniqueidentifier" },
-                new ComboboxItem { DisplayName = "xml", Value = "xml" },
-                new ComboboxItem { DisplayName = "json", Value = "json" },
+                new DataTypeComboboxItem { DisplayName = "int", Value = "int" },
+                new DataTypeComboboxItem { DisplayName = "bigint", Value = "bigint" },
+                new DataTypeComboboxItem { DisplayName = "smallint", Value = "smallint" },
+                new DataTypeComboboxItem { DisplayName = "tinyint", Value = "tinyint" },
+                new DataTypeComboboxItem { DisplayName = "bit", Value = "bit" },
+                new DataTypeComboboxItem { DisplayName = "decimal", Value = "decimal" },
+                new DataTypeComboboxItem { DisplayName = "numeric", Value = "numeric" },
+                new DataTypeComboboxItem { DisplayName = "float", Value = "float" },
+                new DataTypeComboboxItem { DisplayName = "real", Value = "real" },
+                new DataTypeComboboxItem { DisplayName = "money", Value = "money" },
+                new DataTypeComboboxItem { DisplayName = "char", Value = "char" },
+                new DataTypeComboboxItem { DisplayName = "varchar", Value = "varchar", UseMaxLength= true },
+                new DataTypeComboboxItem { DisplayName = "nchar", Value = "nchar" },
+                new DataTypeComboboxItem { DisplayName = "nvarchar", Value = "nvarchar", UseMaxLength= true },
+                new DataTypeComboboxItem { DisplayName = "text", Value = "text" },
+                new DataTypeComboboxItem { DisplayName = "ntext", Value = "ntext" },
+                new DataTypeComboboxItem { DisplayName = "date", Value = "date" },
+                new DataTypeComboboxItem { DisplayName = "time", Value = "time" },
+                new DataTypeComboboxItem { DisplayName = "datetime", Value = "datetime" },
+                new DataTypeComboboxItem { DisplayName = "datetime2", Value = "datetime2" },
+                new DataTypeComboboxItem { DisplayName = "timestamp", Value = "timestamp" },
+                new DataTypeComboboxItem { DisplayName = "binary", Value = "binary" },
+                new DataTypeComboboxItem { DisplayName = "varbinary", Value = "varbinary" },
+                new DataTypeComboboxItem { DisplayName = "image", Value = "image" },
+                new DataTypeComboboxItem { DisplayName = "uniqueidentifier", Value = "uniqueidentifier" },
+                new DataTypeComboboxItem { DisplayName = "xml", Value = "xml" },
+                new DataTypeComboboxItem { DisplayName = "json", Value = "json" },
             };
 
             // Subscribe to field changes

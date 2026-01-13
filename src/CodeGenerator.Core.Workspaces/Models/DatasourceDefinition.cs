@@ -59,5 +59,17 @@ namespace CodeGenerator.Core.Workspaces.Models
         /// </summary>
         [JsonPropertyName("settings")]
         public Dictionary<string, object>? Settings { get; set; }
+
+        ///// <summary>
+        ///// List of tables in the datasource
+        ///// </summary>
+        //[JsonPropertyName("tables")]
+        //public List<TableDefinition> Tables { get; set; } = new();
+
+        ///// <summary>
+        ///// List of views in the datasource
+        ///// </summary>
+        //[JsonPropertyName("views")]
+        //public List<ViewDefinition> Views { get; set; } = new();
     }
 }

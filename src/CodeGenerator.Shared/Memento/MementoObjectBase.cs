@@ -52,6 +52,34 @@ namespace CodeGenerator.Shared.Memento
 
         public Dictionary<string, object?> Properties { get; } = new();
 
+        protected void FixListOfObject<T>(string name)
+        {
+            if (Properties.ContainsKey(name))
+            {
+                if (Properties[name] is not List<T>)
+                {
+                    var oldValue = Properties[name];
+                    var isCorrectType = oldValue is IEnumerable<T>;
+                    if (!isCorrectType)
+                    {
+                        var isObjectType = oldValue is IEnumerable<object>;
+                        if (isObjectType)
+                        {
+                            Properties[name] = ((IEnumerable<object>)oldValue).Cast<T>().ToList();
+                        }
+                        else
+                        {
+                            throw new ArgumentException($"Property '{name}' is not a list of the expected type.");
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Properties[name] = new List<T>();
+            }
+        }
+
         public bool IsStateChanged { get; private set; } = false;
 
         public virtual void RestoreState(IMementoState state)
@@ -67,10 +95,12 @@ namespace CodeGenerator.Shared.Memento
         public virtual IMementoState CaptureState()
         {
             TState state = new TState();
+            state.TypeName = this.GetType().AssemblyQualifiedName!;
             foreach (var kvp in Properties)
             {
                 state.Properties[kvp.Key] = kvp.Value;
             }
+            
             return state;
         }
 

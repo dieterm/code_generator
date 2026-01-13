@@ -1,5 +1,6 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Shared.Memento;
 using CodeGenerator.Shared.Views;
 
 namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
@@ -9,11 +10,6 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
     /// </summary>
     public class IndexArtifact : Artifact, IEditableTreeNode
     {
-        /*private string _name;
-        private bool _isUnique;
-        private bool _isClustered;
-        private List<string> _columnNames;*/
-
         public IndexArtifact(string name, bool isUnique = false)
         {
             Name = name;
@@ -90,6 +86,30 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         public void RemoveColumn(string columnName)
         {
             ColumnNames.Remove(columnName);
+        }
+
+        public override void RestoreState(IMementoState state)
+        {
+            base.RestoreState(state);
+
+            // JSON-fix: convert ColumnNames from List<object> to List<string>
+            FixListOfObject<string>(nameof(ColumnNames));
+            //
+            //if (!Properties.ContainsKey(nameof(ColumnNames)))
+            //{
+            //    ColumnNames = new List<string>();
+            //    return;
+            //}    
+            //var columnNames = Properties[nameof(ColumnNames)];
+            //if (columnNames is List<object> objList)
+            //{
+            //    var stringListColumnNames = objList.Select(cn => (string)cn).ToList();
+            //    ColumnNames = stringListColumnNames;
+            //}
+            //else if (!(columnNames is List<string>))
+            //{
+            //    throw new ArgumentException("ColumnNames must be a List<string> or List<object>.");
+            //}
         }
     }
 }

@@ -56,11 +56,11 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // 
             lblTitle.AutoSize = true;
             lblTitle.Dock = DockStyle.Top;
-            lblTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            lblTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             lblTitle.Location = new Point(10, 10);
             lblTitle.Name = "lblTitle";
             lblTitle.Padding = new Padding(0, 0, 0, 10);
-            lblTitle.Size = new Size(113, 31);
+            lblTitle.Size = new Size(110, 31);
             lblTitle.TabIndex = 0;
             lblTitle.Text = "Index Details";
             // 
@@ -70,7 +70,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             grpGeneral.Controls.Add(tableLayoutGeneral);
             grpGeneral.Location = new Point(10, 44);
             grpGeneral.Name = "grpGeneral";
-            grpGeneral.Size = new Size(380, 120);
+            grpGeneral.Size = new Size(598, 120);
             grpGeneral.TabIndex = 1;
             grpGeneral.TabStop = false;
             grpGeneral.Text = "General";
@@ -87,19 +87,20 @@ namespace CodeGenerator.Presentation.WinForms.Views
             tableLayoutGeneral.Location = new Point(6, 22);
             tableLayoutGeneral.Name = "tableLayoutGeneral";
             tableLayoutGeneral.RowCount = 3;
-            tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutGeneral.Size = new Size(368, 92);
+            tableLayoutGeneral.RowStyles.Add(new RowStyle());
+            tableLayoutGeneral.RowStyles.Add(new RowStyle());
+            tableLayoutGeneral.RowStyles.Add(new RowStyle());
+            tableLayoutGeneral.Size = new Size(586, 94);
             tableLayoutGeneral.TabIndex = 0;
             // 
             // txtName
             // 
             txtName.Dock = DockStyle.Top;
+            txtName.ErrorMessageVisible = true;
             txtName.Label = "Index Name:";
             txtName.Location = new Point(3, 3);
             txtName.Name = "txtName";
-            txtName.Size = new Size(362, 36);
+            txtName.Size = new Size(580, 36);
             txtName.TabIndex = 0;
             // 
             // chkUnique
@@ -124,7 +125,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             grpColumns.Controls.Add(splitContainerColumns);
             grpColumns.Location = new Point(10, 170);
             grpColumns.Name = "grpColumns";
-            grpColumns.Size = new Size(380, 280);
+            grpColumns.Size = new Size(598, 280);
             grpColumns.TabIndex = 2;
             grpColumns.TabStop = false;
             grpColumns.Text = "Index Columns";
@@ -141,10 +142,10 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // 
             // splitContainerColumns.Panel2
             // 
-            splitContainerColumns.Panel2.Controls.Add(panelButtons);
             splitContainerColumns.Panel2.Controls.Add(panelSelected);
-            splitContainerColumns.Size = new Size(374, 258);
-            splitContainerColumns.SplitterDistance = 160;
+            splitContainerColumns.Panel2.Controls.Add(panelButtons);
+            splitContainerColumns.Size = new Size(592, 258);
+            splitContainerColumns.SplitterDistance = 253;
             splitContainerColumns.TabIndex = 0;
             // 
             // panelAvailable
@@ -154,7 +155,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             panelAvailable.Dock = DockStyle.Fill;
             panelAvailable.Location = new Point(0, 0);
             panelAvailable.Name = "panelAvailable";
-            panelAvailable.Size = new Size(160, 258);
+            panelAvailable.Size = new Size(253, 258);
             panelAvailable.TabIndex = 0;
             // 
             // lstAvailableColumns
@@ -165,7 +166,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             lstAvailableColumns.Location = new Point(0, 20);
             lstAvailableColumns.MultiSelect = false;
             lstAvailableColumns.Name = "lstAvailableColumns";
-            lstAvailableColumns.Size = new Size(160, 238);
+            lstAvailableColumns.Size = new Size(253, 238);
             lstAvailableColumns.TabIndex = 1;
             lstAvailableColumns.UseCompatibleStateImageBehavior = false;
             lstAvailableColumns.View = View.Details;
@@ -185,7 +186,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             lblAvailable.Dock = DockStyle.Top;
             lblAvailable.Location = new Point(0, 0);
             lblAvailable.Name = "lblAvailable";
-            lblAvailable.Size = new Size(160, 20);
+            lblAvailable.Size = new Size(253, 20);
             lblAvailable.TabIndex = 0;
             lblAvailable.Text = "Available Columns:";
             // 
@@ -245,21 +246,21 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // 
             panelSelected.Controls.Add(lstSelectedColumns);
             panelSelected.Controls.Add(lblSelected);
-            panelSelected.Dock = DockStyle.Right;
-            panelSelected.Location = new Point(40, 0);
+            panelSelected.Dock = DockStyle.Fill;
+            panelSelected.Location = new Point(35, 0);
             panelSelected.Name = "panelSelected";
-            panelSelected.Size = new Size(170, 258);
+            panelSelected.Size = new Size(300, 258);
             panelSelected.TabIndex = 1;
             // 
             // lstSelectedColumns
             // 
             lstSelectedColumns.Columns.AddRange(new ColumnHeader[] { colSelectedName, colSelectedType });
-            lstSelectedColumns.Dock = DockStyle.Fill;
+            lstSelectedColumns.Dock = DockStyle.Top;
             lstSelectedColumns.FullRowSelect = true;
             lstSelectedColumns.Location = new Point(0, 20);
             lstSelectedColumns.MultiSelect = false;
             lstSelectedColumns.Name = "lstSelectedColumns";
-            lstSelectedColumns.Size = new Size(170, 238);
+            lstSelectedColumns.Size = new Size(300, 238);
             lstSelectedColumns.TabIndex = 1;
             lstSelectedColumns.UseCompatibleStateImageBehavior = false;
             lstSelectedColumns.View = View.Details;
@@ -279,7 +280,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             lblSelected.Dock = DockStyle.Top;
             lblSelected.Location = new Point(0, 0);
             lblSelected.Name = "lblSelected";
-            lblSelected.Size = new Size(170, 20);
+            lblSelected.Size = new Size(300, 20);
             lblSelected.TabIndex = 0;
             lblSelected.Text = "Index Columns:";
             // 
@@ -293,7 +294,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             Controls.Add(lblTitle);
             Name = "IndexEditView";
             Padding = new Padding(10);
-            Size = new Size(400, 460);
+            Size = new Size(618, 460);
             grpGeneral.ResumeLayout(false);
             grpGeneral.PerformLayout();
             tableLayoutGeneral.ResumeLayout(false);

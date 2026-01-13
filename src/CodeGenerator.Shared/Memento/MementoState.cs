@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace CodeGenerator.Shared.Memento
@@ -12,10 +13,16 @@ namespace CodeGenerator.Shared.Memento
     /// </summary>
     public abstract class MementoState<T> : IMementoState where T : IMementoObject
     {
-        public virtual string TypeName
-        {
-            get { return typeof(T).FullName ?? typeof(T).Name; }
-            set { throw new InvalidOperationException("TypeName is read-only. Implement different behavior in derived class"); }
+        private string? _typeName = null;
+        public string TypeName {
+            get { 
+                if (string.IsNullOrWhiteSpace(_typeName)) 
+                    throw new InvalidOperationException($"The TypeName of this '{this.GetType().FullName}'-instance is not set"); 
+                return _typeName; 
+            }
+            set { 
+                _typeName = value;
+            }
         }
 
         public Dictionary<string, object?> Properties { get; set; } = new Dictionary<string, object?>();

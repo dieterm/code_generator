@@ -1,7 +1,10 @@
 using CodeGenerator.Application.ViewModels;
+using CodeGenerator.Core.Workspaces.Models;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
+using CodeGenerator.UserControls.ViewModels;
 using CodeGenerator.UserControls.Views;
+using Microsoft.DotNet.DesignTools.ViewModels;
 using System.ComponentModel;
 
 namespace CodeGenerator.Presentation.WinForms.Views
@@ -32,6 +35,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // Bind fields
             txtName.BindViewModel(_viewModel.NameField);
             cbxDataType.BindViewModel(_viewModel.DataTypeField);
+            _viewModel.DataTypeField.PropertyChanged += DataTypeField_PropertyChanged;
             txtMaxLength.BindViewModel(_viewModel.MaxLengthField);
             txtPrecision.BindViewModel(_viewModel.PrecisionField);
             txtScale.BindViewModel(_viewModel.ScaleField);
@@ -41,6 +45,22 @@ namespace CodeGenerator.Presentation.WinForms.Views
             txtDefaultValue.BindViewModel(_viewModel.DefaultValueField);
 
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
+        }
+
+        private void DataTypeField_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ComboboxFieldModel.Value))
+            {
+                // Update visibility of length, precision, and scale fields based on selected data type
+                var dataType = _viewModel?.DataTypeField.Value as DataTypeComboboxItem;
+                if (dataType != null)
+                {
+                    // Example logic for visibility; adjust according to actual data types
+                    txtMaxLength.Visible = dataType.UseMaxLength;
+                    txtPrecision.Visible = dataType.UsePrecision;
+                    txtScale.Visible = dataType.UseScale;
+                }
+            }
         }
 
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)

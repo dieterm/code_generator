@@ -9,13 +9,6 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
     /// </summary>
     public class WorkspaceArtifact : Artifact, IEditableTreeNode
     {
-        //private string _name;
-        //private string _rootNamespace;
-        //private string _defaultOutputDirectory;
-        //private string _defaultTargetFramework;
-        //private string _defaultLanguage;
-        //private string _workspaceFilePath;
-
         public WorkspaceArtifact(string name = "Workspace")
         {
             Name = name;
@@ -24,17 +17,12 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             DefaultTargetFramework = "net8.0";
             DefaultLanguage = "C#";
             WorkspaceFilePath = string.Empty;
-
-            // Add the datasources container as a child
-            AddChild(new DatasourcesContainerArtifact());
         }
 
         public WorkspaceArtifact(ArtifactState state)
             : base(state)
         {
         }
-
-        //public override string Id => $"workspace_{Name.ToLowerInvariant().Replace(" ", "_")}";
 
         public override string TreeNodeText => Name;
 
@@ -110,7 +98,10 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         /// <summary>
         /// Gets the datasources container
         /// </summary>
-        public DatasourcesContainerArtifact Datasources => 
-            Children.OfType<DatasourcesContainerArtifact>().First();
+        public DatasourcesContainerArtifact Datasources { 
+            get { 
+                return Children.OfType<DatasourcesContainerArtifact>().First();
+            } 
+        }
     }
 }

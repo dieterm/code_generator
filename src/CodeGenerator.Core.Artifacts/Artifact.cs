@@ -76,6 +76,12 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
             var decorator = ArtifactDecoratorFactory.CreateArtifactDecorator(decoratorState);
             AddDecorator(decorator);
         }
+        // Initialize children
+        foreach (var childState in artifactState.Children)
+        {
+            var childArtifact = ArtifactFactory.CreateArtifact(childState);
+            AddChild(childArtifact);
+        }
     }
 
     protected Artifact()
@@ -295,8 +301,8 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
             var decoratorState = decorator.CaptureState();
             state.Decorators.Add((ArtifactDecoratorState)decoratorState);
         }
-        // capture children IDs
-        state.ChildrenIds.AddRange(Children.Select(c => c.Id));
+        // capture children states
+        state.Children.AddRange(Children.Select(c => (ArtifactState)c.CaptureState()));
         return state;
     }
 }

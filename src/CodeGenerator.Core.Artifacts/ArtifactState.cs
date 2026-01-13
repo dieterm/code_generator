@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace CodeGenerator.Core.Artifacts
@@ -12,9 +13,17 @@ namespace CodeGenerator.Core.Artifacts
     /// </summary>
     public sealed class ArtifactState : MementoState<IArtifact>
     {
-        public string Id { get { return GetValue<string>(nameof(Id)); } }
+        public ArtifactState() : base()
+        {
+        }
 
-        public List<ArtifactDecoratorState> Decorators { get; } = new List<ArtifactDecoratorState>();
-        public List<string> ChildrenIds { get; } = new List<string>();
+        [JsonIgnore]
+        public string Id { get { return GetValue<string>(nameof(Id)); } }
+        
+        [JsonPropertyName("decorators")]
+        public List<ArtifactDecoratorState> Decorators { get; set; } = new List<ArtifactDecoratorState>();
+        
+        [JsonPropertyName("children")]
+        public List<ArtifactState> Children { get; set; } = new List<ArtifactState>();
     }
 }
