@@ -516,4 +516,19 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
                type == typeof(TimeSpan) || 
                type == typeof(Guid);
     }
+
+    public override ITemplate CreateTemplateFromFile(string filePath)
+    {
+        // TODO: try to detect a .scriban.def file alongside and load id and other settings from there
+        return new ScribanFileTemplate(filePath, filePath);
+    }
+
+    public override ITemplateInstance CreateTemplateInstance(ITemplate template)
+    {
+        if(template is not ScribanTemplate)
+        {
+            throw new InvalidOperationException($"Template must be of type {nameof(ScribanTemplate)}");
+        }
+        return new ScribanTemplateInstance((ScribanFileTemplate)template);
+    }
 }

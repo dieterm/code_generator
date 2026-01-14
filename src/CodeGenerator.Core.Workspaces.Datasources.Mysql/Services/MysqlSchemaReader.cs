@@ -1,5 +1,4 @@
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
-using CodeGenerator.Core.Workspaces.Datasources.Mysql.Decorators;
 using CodeGenerator.Domain.Databases.RelationalDatabases;
 using MySqlConnector;
 

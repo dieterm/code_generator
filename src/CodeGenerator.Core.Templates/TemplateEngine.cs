@@ -76,5 +76,8 @@ namespace CodeGenerator.Core.Templates
         {
             return RenderAsync((TTemplateInstance)templateInstance, cancellationToken);
         }
+
+        public abstract ITemplate CreateTemplateFromFile(string filePath);
+        public abstract ITemplateInstance CreateTemplateInstance(ITemplate template);
     }
 }

@@ -315,5 +315,16 @@ namespace CodeGenerator.TemplateEngines.T4
 
             return _templateRootFolder;
         }
+
+        public override ITemplate CreateTemplateFromFile(string filePath)
+        {
+            // Todo: detect .tt.def file and get id+parameters from there
+            return new T4FileTemplate(filePath, filePath);
+        }
+
+        public override ITemplateInstance CreateTemplateInstance(ITemplate template)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

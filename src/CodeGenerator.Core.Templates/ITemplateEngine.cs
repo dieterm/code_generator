@@ -25,6 +25,8 @@ public interface ITemplateEngine
     bool SupportsTemplateFileExtension(string fileExtension);
     bool SupportsTemplate(ITemplate template);
     bool SupportsTemplateType(TemplateType templateType);
+    ITemplate CreateTemplateFromFile(string filePath);
+    ITemplateInstance CreateTemplateInstance(ITemplate template);
     /// <summary>
     /// Render a template with the given model
     /// </summary>

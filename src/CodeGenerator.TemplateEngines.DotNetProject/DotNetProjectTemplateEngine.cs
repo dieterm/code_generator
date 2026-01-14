@@ -26,6 +26,16 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
             _dotNetProjectService = dotNetProjectService;
         }
 
+        public override ITemplate CreateTemplateFromFile(string filePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override ITemplateInstance CreateTemplateInstance(ITemplate template)
+        {
+            throw new NotImplementedException();
+        }
+
         public override async Task<TemplateOutput> RenderAsync(DotNetProjectTemplateInstance templateInstance, CancellationToken cancellationToken)
         {
             using var tempDir = new TemporaryDirectory();
