@@ -13,6 +13,11 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
             this.FilePath = filePath;
         }
 
+        public ExistingFileArtifactDecorator(ArtifactDecoratorState state) : base(state)
+        {
+
+        }
+
         public string FilePath { 
             get{ return GetValue<string>(nameof(FilePath)); } 
             set{ SetValue<string>(nameof(FilePath), value); }

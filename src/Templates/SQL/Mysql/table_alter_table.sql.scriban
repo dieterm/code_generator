@@ -1,0 +1,70 @@
+-- ALTER TABLE script for {{ if Table.schema }}{{ Table.schema }}.{{ end }}{{ Table.name }}
+-- Generated on: {{ now }}
+
+{{- if !CanAlterTable }}
+-- WARNING: No changes detected. Table has not been imported from a datasource or has no modifications.
+{{- else }}
+{{- if IsTableRenamed }}
+-- Rename table
+RENAME TABLE {{ if TableOriginalSchema }}{{ GetIdentifier TableOriginalSchema }}.{{ end }}{{ GetIdentifier TableOriginalName }}
+	TO {{ if Table.schema }}{{ GetIdentifier Table.schema }}.{{ end }}{{ GetIdentifier Table.name }};
+
+{{- end }}
+{{- if DeletedIndexes.size > 0 }}
+-- Drop deleted indexes
+{{- for index_name in DeletedIndexes }}
+ALTER TABLE {{ if Table.schema }}{{ GetIdentifier Table.schema }}.{{ end }}{{ GetIdentifier Table.name }}
+	DROP INDEX {{ GetIdentifier index_name }};
+{{- end }}
+
+{{- end }}
+{{- if DeletedColumns.size > 0 }}
+-- Drop deleted columns
+{{- for column_name in DeletedColumns }}
+ALTER TABLE {{ if Table.schema }}{{ GetIdentifier Table.schema }}.{{ end }}{{ GetIdentifier Table.name }}
+	DROP COLUMN {{ GetIdentifier column_name }};
+{{- end }}
+
+{{- end }}
+{{- if NewColumns.size > 0 }}
+-- Add new columns
+{{- for column in NewColumns }}
+ALTER TABLE {{ if Table.schema }}{{ GetIdentifier Table.schema }}.{{ end }}{{ GetIdentifier Table.name }}
+	ADD COLUMN {{ GetIdentifier column.name }} {{ GetTypeDef column }}{{ if !column.is_nullable }} NOT NULL{{ end }}{{ if column.default_value }} DEFAULT {{ column.default_value }}{{ end }}{{ if column.is_auto_increment }} AUTO_INCREMENT{{ end }};
+{{- end }}
+
+{{- end }}
+{{- if ModifiedExistingColumns.size > 0 }}
+-- Modify existing columns
+{{- for column in ModifiedExistingColumns }}
+{{- decorator = column.decorators[0] }}
+{{- if decorator }}
+{{- changes = "" }}
+{{- if decorator.original_name != column.name }}
+{{- changes = changes + " (renamed from " + decorator.original_name + ")" }}
+{{- end }}
+{{- if decorator.original_data_type != column.data_type }}
+{{- changes = changes + " (type changed from " + decorator.original_data_type + ")" }}
+{{- end }}
+{{- if decorator.original_is_nullable != column.is_nullable }}
+{{- changes = changes + " (nullable changed)" }}
+{{- end }}
+{{- if decorator.original_ordinal_position != column.ordinal_position }}
+{{- changes = changes + " (position changed)" }}
+{{- end }}
+-- Modified: {{ column.name }}{{ changes }}
+{{- if decorator.original_name != column.name }}
+ALTER TABLE {{ if Table.schema }}{{ GetIdentifier Table.schema }}.{{ end }}{{ GetIdentifier Table.name }}
+	CHANGE COLUMN {{ GetIdentifier decorator.original_name }} {{ GetIdentifier column.name }} {{ GetTypeDef column }}{{ if !column.is_nullable }} NOT NULL{{ end }}{{ if column.default_value }} DEFAULT {{ column.default_value }}{{ end }}{{ if column.is_auto_increment }} AUTO_INCREMENT{{ end }};
+{{- else }}
+ALTER TABLE {{ if Table.schema }}{{ GetIdentifier Table.schema }}.{{ end }}{{ GetIdentifier Table.name }}
+	MODIFY COLUMN {{ GetIdentifier column.name }} {{ GetTypeDef column }}{{ if !column.is_nullable }} NOT NULL{{ end }}{{ if column.default_value }} DEFAULT {{ column.default_value }}{{ end }}{{ if column.is_auto_increment }} AUTO_INCREMENT{{ end }};
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- end }}
+{{- if !IsTableRenamed && DeletedIndexes.size == 0 && NewColumns.size == 0 && ModifiedExistingColumns.size == 0 && DeletedColumns.size == 0 }}
+-- No changes detected
+{{- end }}
+{{- end }}

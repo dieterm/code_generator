@@ -12,5 +12,7 @@ namespace CodeGenerator.TemplateEngines.T4
         public TemplateType TemplateType { get { return TemplateType.T4; } }
 
         public abstract string Content { get; }
+
+        public bool UseCaching { get; set; } = false;
     }
 }

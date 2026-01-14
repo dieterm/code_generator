@@ -4,9 +4,10 @@ namespace CodeGenerator.TemplateEngines.Scriban
 {
     public abstract class ScribanTemplate : ITemplate
     {
-        public ScribanTemplate(string templateId)
+        public ScribanTemplate(string templateId, bool useCaching = false)
         {
             TemplateId = templateId;
+            UseCaching = useCaching;
         }
 
         public abstract string Content { get; }
@@ -14,5 +15,7 @@ namespace CodeGenerator.TemplateEngines.Scriban
         public TemplateType TemplateType { get { return TemplateType.Scriban; } }
 
         public string TemplateId { get; }
+
+        public bool UseCaching { get; set; } = false;
     }
 }

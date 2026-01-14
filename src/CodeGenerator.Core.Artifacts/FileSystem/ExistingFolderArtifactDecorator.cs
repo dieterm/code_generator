@@ -12,6 +12,10 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
         {
 
         }
+        public ExistingFolderArtifactDecorator(ArtifactDecoratorState state) : base(state)
+        {
+
+        }
 
         public string FolderPath
         {

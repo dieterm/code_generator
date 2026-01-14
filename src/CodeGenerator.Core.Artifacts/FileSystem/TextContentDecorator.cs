@@ -14,6 +14,8 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
 
         }
 
+        public TextContentDecorator(ArtifactDecoratorState state) : base(state) { }
+
         public string? Content
         {
             get { return GetValue<string>(nameof(Content)); }

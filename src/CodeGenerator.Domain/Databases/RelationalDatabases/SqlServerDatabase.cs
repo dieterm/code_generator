@@ -13,7 +13,7 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
         public override string Id => "sqlserver";
         public override string Name => "SQL Server";
         public override string Vendor => "Microsoft";
-
+        public override string IdentifierFormat => "[{0}]";
         private readonly List<DatabaseVersion> _versions;
         public override IReadOnlyList<DatabaseVersion> Versions => _versions;
 

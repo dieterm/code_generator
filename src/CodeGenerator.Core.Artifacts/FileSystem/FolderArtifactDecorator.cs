@@ -12,6 +12,10 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
         {
 
         }
+        public FolderArtifactDecorator(ArtifactDecoratorState state) : base(state)
+        {
+
+        }
 
         /// <summary>
         /// Name of the folder (eg. "src", "bin", ...)

@@ -11,8 +11,8 @@ namespace CodeGenerator.TemplateEngines.Scriban
         private readonly Lazy<string> _content;
         public string FilePath { get; }
         public bool CreateTemplateFileIfMissing { get; set; }
-        public ScribanFileTemplate(string templateId, string filePath) 
-            : base(templateId)
+        public ScribanFileTemplate(string templateId, string filePath, bool useCaching = false) 
+            : base(templateId, useCaching)
         {
             FilePath = filePath;
             _content = new Lazy<string>(() => System.IO.File.ReadAllText(filePath));

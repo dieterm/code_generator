@@ -85,6 +85,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core.Workspac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core.Workspaces.Datasources.Mysql", "CodeGenerator.Core.Workspaces.Datasources.Mysql\CodeGenerator.Core.Workspaces.Datasources.Mysql.csproj", "{4A46EB30-E072-49DF-ABAF-2ED032E10132}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQL", "SQL", "{B6ED9962-EAF0-40A5-B53B-55F0EB14C377}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mysql", "Mysql", "{99D3A0D9-7504-4DF3-B18B-C6AE7EDEABDA}"
+	ProjectSection(SolutionItems) = preProject
+		Templates\SQL\Mysql\table_alter_table.sql.scriban = Templates\SQL\Mysql\table_alter_table.sql.scriban
+		Templates\SQL\Mysql\table_create_table.sql.scriban = Templates\SQL\Mysql\table_create_table.sql.scriban
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sqlserver", "Sqlserver", "{5A03ABF0-085B-4AB6-8056-015FF6869436}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -206,6 +216,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{59510905-8349-43B5-8695-853FB5380436} = {4F3F356B-7C5C-41D5-83E3-7C53E22D6A43}
 		{84A86A53-628C-4E18-A322-6B192F47585B} = {59510905-8349-43B5-8695-853FB5380436}
+		{B6ED9962-EAF0-40A5-B53B-55F0EB14C377} = {4F3F356B-7C5C-41D5-83E3-7C53E22D6A43}
+		{99D3A0D9-7504-4DF3-B18B-C6AE7EDEABDA} = {B6ED9962-EAF0-40A5-B53B-55F0EB14C377}
+		{5A03ABF0-085B-4AB6-8056-015FF6869436} = {B6ED9962-EAF0-40A5-B53B-55F0EB14C377}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF76BCB8-B816-4DA2-B1B6-D1F900E7DD06}

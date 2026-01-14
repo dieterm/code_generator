@@ -247,6 +247,7 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
             {
                 CompileTemplate(templateInstance.Template.TemplateId, ((ScribanTemplate)templateInstance.Template).Content);
             }
+
             // Then render the compiled template
             if (!string.IsNullOrEmpty(templateInstance.Template.TemplateId) && _compiledTemplates.TryGetValue(templateInstance.Template.TemplateId, out var compiledTemplate))
             {
@@ -303,6 +304,13 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
         {
             Logger.LogError(ex, "An error occurred while rendering the template.");
             return new TemplateOutput(ex.Message);
+        }
+        finally
+        {
+            if (!templateInstance.Template.UseCaching)
+            { 
+                _compiledTemplates.Remove(templateInstance.Template.TemplateId, out _);
+            }
         }
     }
 

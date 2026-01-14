@@ -28,6 +28,12 @@ namespace CodeGenerator.Domain.Databases
         public abstract string Vendor { get; }
 
         /// <summary>
+        /// Format string for identifiers (e.g., table names, column names)
+        /// Example: "[{0}]" for SQL Server, "`{0}`" for MySQL
+        /// </summary>
+        public abstract string IdentifierFormat { get; }
+
+        /// <summary>
         /// Available versions of this database
         /// </summary>
         public abstract IReadOnlyList<DatabaseVersion> Versions { get; }
@@ -100,6 +106,18 @@ namespace CodeGenerator.Domain.Databases
         {
             var mapping = FindMappingByNativeType(nativeTypeName);
             return mapping?.GenerateTypeDef(maxLength, precision, scale) ?? nativeTypeName;
+        }
+
+        /// <summary>
+        /// Escapes the specified identifier using the configured format string.
+        /// eg. If the IdentifierFormat is "[{0}]", and the identifier is "TableName",
+        /// the result would be "[TableName]".
+        /// </summary>
+        /// <param name="identifier">The identifier to escape. Cannot be <c>null</c>.</param>
+        /// <returns>A string containing the escaped identifier formatted according to <c>IdentifierFormat</c>.</returns>
+        public string EscapeIdentifier(string identifier)
+        {
+            return string.Format(IdentifierFormat, identifier);
         }
     }
 }

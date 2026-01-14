@@ -16,10 +16,18 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         {
             Name = name;
             Schema = schema;
+            RemovedExistingColumns = new List<string>();
+            RemovedExistingIndexes = new List<string>();
         }
         public TableArtifact(ArtifactState state)
             : base(state)
         {
+            FixListOfObject<string>(nameof(RemovedExistingColumns));
+            FixListOfObject<string>(nameof(RemovedExistingIndexes));
+            if (RemovedExistingColumns == null)
+                RemovedExistingColumns = new List<string>();
+            if(RemovedExistingIndexes == null)
+                RemovedExistingIndexes = new List<string>();
         }
 
         public override string TreeNodeText => Name;
@@ -47,6 +55,18 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             set {
                 SetValue(nameof(Schema), value);
             }
+        }
+
+        public List<string> RemovedExistingColumns
+        {
+            get => GetValue<List<string>>(nameof(RemovedExistingColumns));
+            set => SetValue(nameof(RemovedExistingColumns), value);
+        }
+
+        public List<string> RemovedExistingIndexes
+        {
+            get => GetValue<List<string>>(nameof(RemovedExistingIndexes));
+            set => SetValue(nameof(RemovedExistingIndexes), value);
         }
 
         /// <summary>
@@ -86,7 +106,20 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             AddChild(index);
             return index;
         }
-
+        public override void RemoveChild(IArtifact child)
+        {
+            base.RemoveChild(child);
+            if(child is ColumnArtifact column)
+            {
+                if(column.HasDecorator<ExistingColumnDecorator>())
+                    RemovedExistingColumns.Add(column.Name);
+            }
+            else if(child is IndexArtifact index)
+            {
+                if(index.HasDecorator<ExistingIndexDecorator>())
+                    RemovedExistingIndexes.Add(index.Name);
+            }
+        }
         /// <summary>
         /// Remove a column from the table
         /// </summary>
@@ -102,5 +135,43 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         {
             RemoveChild(index);
         }
+
+        public IEnumerable<ColumnArtifact> GetForeignKeyColumns()
+        {
+            return GetColumns().Where(c => c.IsForeignKey);
+        }
+
+        /// <summary>
+        /// Return the columns that don't have an ExistingColumnDecorator
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<ColumnArtifact> GetNewColumns()
+        {
+            return GetColumns().Where(c => !c.HasDecorator<ExistingColumnDecorator>());
+        }
+
+        public IEnumerable<ColumnArtifact> GetExistingColumns()
+        {
+            return GetColumns().Where(c => c.HasDecorator<ExistingColumnDecorator>());
+        }
+
+        public IEnumerable<ColumnArtifact> GetModifiedExistingColumns()
+        {
+            return GetExistingColumns().Where(c => c.HasExistingChanges());
+        }
+
+        public bool CanAlterTable()
+        {
+            return HasDecorator<ExistingTableDecorator>() &&(RemovedExistingColumns.Count>0 || RemovedExistingIndexes.Count>0 ||  HasExistingNameChanged() || (GetNewColumns().Any() || GetModifiedExistingColumns().Any()));
+        }
+
+        public bool HasExistingNameChanged()
+        {
+            var existingTableDecorator = GetDecorator<ExistingTableDecorator>();
+            if (existingTableDecorator == null)
+                return false;
+            return !string.Equals(existingTableDecorator.OriginalTableName, Name, StringComparison.OrdinalIgnoreCase);
+        }
+
     }
 }

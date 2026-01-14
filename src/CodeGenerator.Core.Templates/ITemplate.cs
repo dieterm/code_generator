@@ -10,5 +10,6 @@ namespace CodeGenerator.Core.Templates
     {
         string TemplateId { get; }
         TemplateType TemplateType { get; }
+        bool UseCaching { get; }
     }
 }

@@ -240,12 +240,12 @@
             // statusStrip
             // 
             statusStrip.BackColor = Color.FromArgb(241, 241, 241);
-            statusStrip.BeforeTouchSize = new Size(798, 22);
+            statusStrip.BeforeTouchSize = new Size(800, 22);
             statusStrip.Items.AddRange(new ToolStripItem[] { lblProgress, pbProgress, lblStatus });
-            statusStrip.Location = new Point(2, 427);
+            statusStrip.Location = new Point(1, 427);
             statusStrip.MetroColor = Color.FromArgb(135, 206, 255);
             statusStrip.Name = "statusStrip";
-            statusStrip.Size = new Size(798, 22);
+            statusStrip.Size = new Size(800, 22);
             statusStrip.TabIndex = 2;
             statusStrip.Text = "statusStripEx1";
             statusStrip.ThemeName = "Office2016Colorful";
@@ -273,6 +273,8 @@
             dockingManager.AnimateAutoHiddenWindow = true;
             dockingManager.AutoHideTabForeColor = Color.Empty;
             dockingManager.CloseTabOnMiddleClick = false;
+            dockingManager.DockBehavior = Syncfusion.Windows.Forms.Tools.DockBehavior.VS2010;
+            dockingManager.EnableDocumentMode = true;
             dockingManager.HostControl = this;
             dockingManager.MetroButtonColor = Color.FromArgb(255, 255, 255);
             dockingManager.MetroColor = Color.FromArgb(17, 158, 218);

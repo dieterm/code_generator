@@ -85,6 +85,16 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         }
 
         /// <summary>
+        /// Ordinal position of the column within the table
+        public int OrdinalPosition
+        {
+            get { return GetValue<int>(nameof(OrdinalPosition)); }
+            set { 
+                SetValue<int>(nameof(OrdinalPosition), value);
+            }
+        }
+
+        /// <summary>
         /// Is the column nullable
         /// </summary>
         public bool IsNullable
@@ -200,6 +210,32 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         /// </summary>
         public bool IsForeignKey => !string.IsNullOrEmpty(ForeignKeyTable);
 
-        
+        public bool HasExistingChanges()
+        {
+            var decorator = GetDecorator<ExistingColumnDecorator>();
+            if(decorator == null)
+                return false;
+
+            return 
+                IsPropertyDirty(decorator,nameof(Name)) ||
+                IsPropertyDirty(decorator,nameof(DataType)) ||
+                IsPropertyDirty(decorator,nameof(OrdinalPosition)) ||
+                IsPropertyDirty(decorator,nameof(IsNullable)) ||
+                IsPropertyDirty(decorator,nameof(IsPrimaryKey)) ||
+                IsPropertyDirty(decorator,nameof(IsAutoIncrement)) ||
+                IsPropertyDirty(decorator,nameof(MaxLength)) ||
+                IsPropertyDirty(decorator,nameof(Precision)) ||
+                IsPropertyDirty(decorator,nameof(Scale)) ||
+                IsPropertyDirty(decorator,nameof(DefaultValue)) ||
+                IsPropertyDirty(decorator,nameof(ForeignKeyTable)) ||
+                IsPropertyDirty(decorator,nameof(ForeignKeyColumn));
+        }
+
+        private bool IsPropertyDirty(ExistingColumnDecorator decorator, string propertyName)
+        {
+            var orignalValue = decorator.GetType().GetProperty("Original" + propertyName)?.GetValue(decorator);
+            var currentValue = this.GetType().GetProperty(propertyName)?.GetValue(this);
+            return !Equals(orignalValue, currentValue);
+        }
     }
 }

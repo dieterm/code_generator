@@ -18,7 +18,7 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
         public override string Id => "mysql";
         public override string Name => "MySQL / MariaDB";
         public override string Vendor => "MySQL / MariaDB Foundation";
-
+        public override string IdentifierFormat => "`{0}`";
         private readonly List<DatabaseVersion> _versions;
         public override IReadOnlyList<DatabaseVersion> Versions => _versions;
 

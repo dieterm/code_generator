@@ -1,20 +1,20 @@
 using CodeGenerator.Core.Artifacts;
 
-namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Decorators
+namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
 {
     /// <summary>
     /// Decorator that marks a view as imported from an existing MySQL database.
     /// </summary>
-    public class ExistingMysqlViewDecorator : ArtifactDecorator
+    public class ExistingViewDecorator : ArtifactDecorator
     {
         public const string DECORATOR_KEY = "ExistingMysqlView";
 
-        public ExistingMysqlViewDecorator() 
+        public ExistingViewDecorator() 
             : base(DECORATOR_KEY)
         {
         }
 
-        public ExistingMysqlViewDecorator(ArtifactDecoratorState state)
+        public ExistingViewDecorator(ArtifactDecoratorState state)
             : base(state)
         {
         }

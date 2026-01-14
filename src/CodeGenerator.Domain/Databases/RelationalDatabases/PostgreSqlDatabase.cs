@@ -14,7 +14,7 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
         public override string Id => "postgresql";
         public override string Name => "PostgreSQL";
         public override string Vendor => "PostgreSQL Global Development Group";
-
+        public override string IdentifierFormat => "\"{0}\"";
         private readonly List<DatabaseVersion> _versions;
         public override IReadOnlyList<DatabaseVersion> Versions => _versions;
 

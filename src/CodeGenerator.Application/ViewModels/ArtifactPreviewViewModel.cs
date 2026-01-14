@@ -9,6 +9,13 @@ namespace CodeGenerator.Application.ViewModels
 {
     public class ArtifactPreviewViewModel : ViewModelBase
     {
+        private string? _tabLabel;
+        public string TabLabel
+        {
+            get { return _tabLabel; }
+            set { SetProperty(ref _tabLabel, value); }
+        }
+
         private string? _textContent;
         public string? TextContent
         {

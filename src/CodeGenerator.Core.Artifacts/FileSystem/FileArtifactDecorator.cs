@@ -12,6 +12,11 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
         {
         }
 
+        public FileArtifactDecorator(ArtifactDecoratorState state) : base(state)
+        {
+            
+        }
+
         /// <summary>
         /// Name of the file with extension (eg. ".gitignore', 'MyClass.cs', ...)
         /// </summary>

@@ -167,17 +167,24 @@ namespace CodeGenerator.Presentation.WinForms
             _generationResultTreeView.BindViewModel(treeViewModel);
         }
 
-        private ArtifactPreviewView _artifactPreviewView;
+        private readonly List<ArtifactPreviewView> _artifactPreviewViews = new List<ArtifactPreviewView>();
         public void ShowArtifactPreview(ArtifactPreviewViewModel viewModel)
         {
-            if(_artifactPreviewView == null || _artifactPreviewView.IsDisposed)
-            {
+            var artifactPreviewView = new ArtifactPreviewView();
+            _artifactPreviewViews.Add(artifactPreviewView);
+            artifactPreviewView.BindViewModel(viewModel);
+            dockingManager.DockAsDocument(artifactPreviewView);
+            dockingManager.SetDockLabel(artifactPreviewView, viewModel.TabLabel ?? "Artifact Preview");
+            /*
+            //if(_artifactPreviewView == null || _artifactPreviewView.IsDisposed)
+            //{
                 _artifactPreviewView = new ArtifactPreviewView();
-                dockingManager.DockControl(_artifactPreviewView, this, DockingStyle.Right, 4);
-                dockingManager.SetEnableDocking(_artifactPreviewView, true);
-                dockingManager.SetControlSize(_artifactPreviewView, new Size(300, this.Height - 50));
-                dockingManager.SetDockLabel(_artifactPreviewView, "Artifact Preview");
-            }
+                //dockingManager.DockControl(_artifactPreviewView, this, DockingStyle.Tabbed, 4);
+                dockingManager.DockAsDocument(_artifactPreviewView);
+                //dockingManager.SetEnableDocking(_artifactPreviewView, true);
+                //dockingManager.SetControlSize(_artifactPreviewView, new Size(300, this.Height - 50));
+                dockingManager.SetDockLabel(_artifactPreviewView, viewModel.TabLabel?? "Artifact Preview");
+           // }
             else
             {
                 dockingManager.SetDockVisibility(_artifactPreviewView, true);
@@ -186,7 +193,7 @@ namespace CodeGenerator.Presentation.WinForms
                 //    dockingManager.DockControl(_artifactPreviewView, this, DockingStyle.Right, 4);
                 //}
             }
-            _artifactPreviewView.BindViewModel(viewModel);
+            _artifactPreviewView.BindViewModel(viewModel);*/
         }
         private WorkspaceTreeView? _workspaceTreeView;
         public void ShowWorkspaceTreeView(WorkspaceTreeViewModel treeViewModel)

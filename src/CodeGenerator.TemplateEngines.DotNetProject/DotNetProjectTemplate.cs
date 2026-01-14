@@ -39,5 +39,6 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
         public string DotNetTargetFramework { get; set; }
 
         public TemplateType TemplateType { get { return TemplateType.DotNetProject; } }
+        public bool UseCaching { get; set; } = false;
     }
 }

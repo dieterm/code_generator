@@ -1,22 +1,22 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Shared.Memento;
 
-namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Decorators
+namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
 {
     /// <summary>
     /// Decorator that marks a table as imported from an existing MySQL database.
     /// Stores the original table name and schema for tracking purposes.
     /// </summary>
-    public class ExistingMysqlTableDecorator : ArtifactDecorator
+    public class ExistingTableDecorator : ArtifactDecorator
     {
-        public const string DECORATOR_KEY = "ExistingMysqlTable";
+        public const string DECORATOR_KEY = "ExistingTable";
 
-        public ExistingMysqlTableDecorator() 
+        public ExistingTableDecorator() 
             : base(DECORATOR_KEY)
         {
         }
 
-        public ExistingMysqlTableDecorator(ArtifactDecoratorState state)
+        public ExistingTableDecorator(ArtifactDecoratorState state)
             : base(state)
         {
         }

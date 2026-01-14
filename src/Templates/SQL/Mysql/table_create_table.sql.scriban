@@ -1,3 +1,13 @@
-{{ Table.schema }} # String
-# Table.TreeNodeIcon (ITreeNodeIcon) properties:
-{{ Table.tree_node_icon.icon_key }} # String
+CREATE TABLE {{ if Table.schema }}{{ Table.schema }}.{{ end }}{{ GetIdentifier Table.name }} (
+{{- for column in Columns }}
+	{{ GetIdentifier column.name }} {{ GetTypeDef column }}{{ if column.is_nullable == false }} NOT NULL{{ end }}{{ if column.default_value != null }} DEFAULT {{ column.default_value }}{{ end }}{{ if !for.last || PrimaryKeyColumns.size > 0 || Indexes.size > 0 }},{{ end }}
+{{- end }}
+{{- if PrimaryKeyColumns.size > 0 }}
+	PRIMARY KEY pk_{{ if Table.schema }}{{ Table.schema }}_{{ end }}{{ Table.name }} ({{ for pk_column in PrimaryKeyColumns }}{{ GetIdentifier pk_column.name }}{{ if !for.last }}, {{ end }}{{ end }}){{ if Indexes.size > 0 }},{{ end }}
+{{- end }}
+{{- for index in Indexes }}
+{{- if Indexes.size > 0 }}
+	{{ if index.is_unique }}UNIQUE {{ end }}KEY idx_{{ if Table.schema }}{{ Table.schema }}_{{ end }}{{ Table.name }}_{{ index.name }} ({{ for index_column in index.column_names }}{{ GetIdentifier index_column }}{{ if for.last == false }}, {{ end }}{{ end }}){{ if for.last == false }},{{ end }}
+{{- end }}
+{{- end }}
+);

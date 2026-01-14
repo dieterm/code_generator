@@ -1,20 +1,20 @@
 using CodeGenerator.Core.Artifacts;
 
-namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Decorators
+namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
 {
     /// <summary>
     /// Decorator that marks an index as imported from an existing MySQL database.
     /// </summary>
-    public class ExistingMysqlIndexDecorator : ArtifactDecorator
+    public class ExistingIndexDecorator : ArtifactDecorator
     {
         public const string DECORATOR_KEY = "ExistingMysqlIndex";
 
-        public ExistingMysqlIndexDecorator() 
+        public ExistingIndexDecorator() 
             : base(DECORATOR_KEY)
         {
         }
 
-        public ExistingMysqlIndexDecorator(ArtifactDecoratorState state)
+        public ExistingIndexDecorator(ArtifactDecoratorState state)
             : base(state)
         {
         }

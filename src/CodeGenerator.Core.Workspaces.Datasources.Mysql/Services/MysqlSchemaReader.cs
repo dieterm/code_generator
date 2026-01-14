@@ -84,7 +84,7 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
             var table = new TableArtifact(tableName, schema);
             
             // Add decorator to mark as existing
-            var decorator = table.AddDecorator(new ExistingMysqlTableDecorator
+            var decorator = table.AddDecorator(new ExistingTableDecorator
             {
                 OriginalTableName = tableName,
                 OriginalSchema = schema,
@@ -117,7 +117,7 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
             var view = new ViewArtifact(viewName, schema);
             
             // Add decorator to mark as existing
-            view.AddDecorator(new ExistingMysqlViewDecorator
+            view.AddDecorator(new ExistingViewDecorator
             {
                 OriginalViewName = viewName,
                 OriginalSchema = schema,
@@ -195,15 +195,23 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
                         : (int?)reader.GetInt32("NUMERIC_SCALE"),
                     DefaultValue = reader.IsDBNull(reader.GetOrdinal("COLUMN_DEFAULT")) 
                         ? null 
-                        : reader.GetString("COLUMN_DEFAULT")
+                        : reader.GetString("COLUMN_DEFAULT"),
+                    OrdinalPosition = reader.GetInt32("ORDINAL_POSITION")
                 };
 
                 // Add decorator to mark as existing
-                column.AddDecorator(new ExistingMysqlColumnDecorator
+                column.AddDecorator(new ExistingColumnDecorator
                 {
-                    OriginalColumnName = columnName,
+                    OriginalName = columnName,
                     OriginalDataType = dataType,// use DATA_TYPE for base type, eg. varchar, int, enum
-                    OriginalOrdinalPosition = reader.GetInt32("ORDINAL_POSITION")
+                    OriginalOrdinalPosition = column.OrdinalPosition,
+                    OriginalIsNullable = isNullable,
+                    OriginalIsPrimaryKey = column.IsPrimaryKey,
+                    OriginalIsAutoIncrement = column.IsAutoIncrement,
+                    OriginalMaxLength = column.MaxLength,
+                    OriginalPrecision = column.Precision,
+                    OriginalScale = column.Scale,
+                    OriginalDefaultValue = column.DefaultValue
                 });
 
                 table.AddChild(column);
@@ -252,15 +260,20 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
                         : (int?)reader.GetInt32("NUMERIC_PRECISION"),
                     Scale = reader.IsDBNull(reader.GetOrdinal("NUMERIC_SCALE")) 
                         ? null 
-                        : (int?)reader.GetInt32("NUMERIC_SCALE")
+                        : (int?)reader.GetInt32("NUMERIC_SCALE"),
+                    OrdinalPosition = reader.GetInt32("ORDINAL_POSITION")
                 };
 
                 // Add decorator to mark as existing
-                column.AddDecorator(new ExistingMysqlColumnDecorator
+                column.AddDecorator(new ExistingColumnDecorator
                 {
-                    OriginalColumnName = columnName,
+                    OriginalName = columnName,
                     OriginalDataType = reader.GetString("DATA_TYPE"),
-                    OriginalOrdinalPosition = reader.GetInt32("ORDINAL_POSITION")
+                    OriginalOrdinalPosition = column.OrdinalPosition,
+                    OriginalIsNullable = isNullable,
+                    OriginalMaxLength= column.MaxLength,
+                    OriginalPrecision = column.Precision,
+                    OriginalScale = column.Scale
                 });
 
                 view.AddChild(column);
@@ -311,7 +324,7 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
                 }
 
                 // Add decorator to mark as existing
-                index.AddDecorator(new ExistingMysqlIndexDecorator
+                index.AddDecorator(new ExistingIndexDecorator
                 {
                     OriginalIndexName = indexName,
                     OriginalIndexType = indexType

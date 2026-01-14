@@ -4,6 +4,7 @@ using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
+using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.Databases.RelationalDatabases;
 using CodeGenerator.TemplateEngines.Scriban;
 using Microsoft.Extensions.Logging;
@@ -62,6 +63,10 @@ namespace CodeGenerator.Application.Controllers.Workspace
                         CreateScriptCommand(db, artifact, "Delete row", "delete_row")
                     }
                 };
+                if(artifact.CanAlterTable())
+                {
+                    dbCommand.SubCommands.Insert(1,CreateScriptCommand(db, artifact, "Alter Table", "alter_table"));
+                }
                 generateScriptCommand.SubCommands.Add(dbCommand);
             }
             commands.Add(generateScriptCommand);
@@ -221,12 +226,16 @@ namespace CodeGenerator.Application.Controllers.Workspace
             {
                 // Capitalize first letter of id for folder name (e.g. mysql -> Mysql)
                 var folderName = char.ToUpper(db.Id[0]) + db.Id.Substring(1);
-
-                var templatePath = Path.Combine(
-                    @"D:\Cloud\GitHub\code_generator\src\Templates\SQL",
+                var templateFolder = WorkspaceSettings.Instance.DefaultTemplateFolder;
+                if(!Directory.Exists(templateFolder))
+                {
+                    throw new DirectoryNotFoundException($"Template folder not found: {templateFolder}");
+                }
+                var templatePath = Path.Combine(templateFolder,
+                    "SQL",
                     folderName,
                     $"table_{action}.sql.scriban");
-
+                var tabLabel = $"{artifact.Name} - {action} [{db.Id}]";
                 //if (!File.Exists(templatePath))
                 //{
                 //    var errorContent = $"-- Template not found: {templatePath}";
@@ -240,45 +249,66 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 // Create a context model that includes the table and the target database
                 templateInstance.Parameters["Table"] = artifact;
                 templateInstance.Parameters["Database"] = db;
-                var columns = artifact.GetColumns()
-                    .Select(c => (name: c.Name, type: db.GetMapping(c.DataType)?.GenerateTypeDef(c.MaxLength, c.Precision, c.Scale)?? c.DataType, isNullable: c.IsNullable, isPrimaryKey: c.IsPrimaryKey))
-                    .ToList();
-                var createScript = db.GenerateCreateTableStatement(artifact.Name, artifact.Schema, columns);
-                _windowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel()
+                templateInstance.Parameters["Columns"] = artifact.GetColumns().ToList();
+                templateInstance.Parameters["Indexes"] = artifact.GetIndexes().ToList();
+                templateInstance.Parameters["PrimaryKeyColumns"] = artifact.GetPrimaryKeyColumns().ToList();
+                templateInstance.Parameters["NewColumns"] = artifact.GetNewColumns().ToList();
+                templateInstance.Parameters["ExistingColumns"] = artifact.GetExistingColumns().ToList();
+                templateInstance.Parameters["DeletedColumns"] = artifact.RemovedExistingColumns.ToList();
+                templateInstance.Parameters["DeletedIndexes"] = artifact.RemovedExistingIndexes.ToList();
+                templateInstance.Parameters["ModifiedExistingColumns"] = artifact.GetModifiedExistingColumns().ToList();
+                templateInstance.Parameters["CanAlterTable"] = artifact.CanAlterTable();
+                var existingTableDecorator = artifact.GetDecorator<ExistingTableDecorator>();
+                templateInstance.Parameters["IsTableRenamed"] = existingTableDecorator!=null && ! string.Equals(artifact.Name, existingTableDecorator?.OriginalTableName);
+                templateInstance.Parameters["TableOriginalName"] = existingTableDecorator?.OriginalTableName ?? artifact.Name;
+                templateInstance.Functions.Add("GetTypeDef", new Func<ColumnArtifact, string>((c) =>
                 {
-                    TextContent = createScript,
-                    TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.SQL
-                });
-                return;
+                    return db.GetMapping(c.DataType)?.GenerateTypeDef(c.MaxLength, c.Precision, c.Scale) ?? c.DataType;
+                }));
+                templateInstance.Functions.Add("GetIdentifier", new Func<string, string>((identifier) =>
+                {
+                    return db.EscapeIdentifier(identifier);
+                }));
+
+                if (false)
+                {
+                    var columns = artifact.GetColumns()
+                    .Select(c => (name: c.Name, type: db.GetMapping(c.DataType)?.GenerateTypeDef(c.MaxLength, c.Precision, c.Scale) ?? c.DataType, isNullable: c.IsNullable, isPrimaryKey: c.IsPrimaryKey))
+                    .ToList();
+                    var createScript = db.GenerateCreateTableStatement(artifact.Name, artifact.Schema, columns);
+                    _windowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel()
+                    {
+                        TabLabel = $"{artifact.Name} - {action} [{db.Id}]",
+                        TextContent = createScript,
+                        TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.SQL
+                    });
+                    return;
+                }
+                
                 var content = await _templateEngineManager.RenderTemplateAsync(templateInstance);
                 if(content.Succeeded == false)
                 {
                     var errorContent = $"-- Errors generating script:\n-- {string.Join("\n-- ", content.Errors)}";
                     _windowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel()
                     {
+                        TabLabel = tabLabel,
                         TextContent = errorContent,
                         TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.Text
                     });
                     return;
                 }
-                if (artifact.Parent != null)
+                
+                IArtifact? lastGenArtifact = content.Artifacts?.FirstOrDefault();
+                    
+                if(lastGenArtifact is FileArtifact fileArtifact)
                 {
-                    IArtifact lastGenArtifact = null;
-                    foreach (var genArtifact in content.Artifacts)
-                    {
-                        artifact.Parent.AddChild(genArtifact);
-                        lastGenArtifact = genArtifact;
-                    }
-                    if(lastGenArtifact is FileArtifact fileArtifact)
-                    {
-                        _windowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel() { 
-                            TextContent = fileArtifact.GetTextContent(), 
-                            TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.SQL
-                        });
-                    }
-                    if (lastGenArtifact!= null)
-                    await WorkspaceController.SelectArtifactAsync(lastGenArtifact);
+                    _windowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel() { 
+                        TabLabel = tabLabel,
+                        TextContent = fileArtifact.GetTextContent(), 
+                        TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.SQL
+                    });
                 }
+                
             }
             catch (Exception ex)
             {
