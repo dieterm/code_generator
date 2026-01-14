@@ -17,5 +17,7 @@ namespace CodeGenerator.Application.Services
         void ShowSettingsWindow(SettingsViewModel settingsViewModel);
         void ShowWorkspaceTreeView(WorkspaceTreeViewModel treeViewModel);
         void ShowWorkspaceDetailsView(WorkspaceDetailsViewModel viewModel);
+        void ShowTemplateTreeView(TemplateTreeViewModel treeViewModel);
+        void ShowTemplateParametersView(TemplateParametersViewModel viewModel);
     }
 }

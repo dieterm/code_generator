@@ -18,8 +18,9 @@ namespace CodeGenerator.Application.Controllers
         private readonly WorkspaceController _workspaceController;
         private readonly GenerationController _generationController;
         private readonly SettingsController _settingsController;
+        private readonly TemplateController _templateController;
 
-        public ApplicationController( MainViewModel viewModel, SettingsController settingsController, WorkspaceController workspaceController, GenerationController generationController, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IApplicationService applicationService, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<ApplicationController> logger) 
+        public ApplicationController( MainViewModel viewModel, SettingsController settingsController, WorkspaceController workspaceController, GenerationController generationController, TemplateController templateController, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IApplicationService applicationService, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<ApplicationController> logger) 
             : base(windowManagerService, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
         {
             _mainViewModel = viewModel;
@@ -27,6 +28,7 @@ namespace CodeGenerator.Application.Controllers
             _applicationService = applicationService;
             _workspaceController = workspaceController;
             _generationController = generationController;
+            _templateController = templateController;
         }
 
         public override void Initialize()
@@ -35,6 +37,7 @@ namespace CodeGenerator.Application.Controllers
 
             CreateRibbon();
             _settingsController.CreateRibbon();
+            _templateController.Initialize();
 
             _generationController.Initialize();
             _settingsController.Initialize();

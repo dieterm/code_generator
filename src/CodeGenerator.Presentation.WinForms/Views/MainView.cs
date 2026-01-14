@@ -270,6 +270,46 @@ namespace CodeGenerator.Presentation.WinForms
             settingsForm.Controls.Add(settingsView);
             settingsForm.ShowDialog(this);
         }
+
+        private TemplateTreeView? _templateTreeView;
+        public void ShowTemplateTreeView(TemplateTreeViewModel treeViewModel)
+        {
+            if (_templateTreeView == null || _templateTreeView.IsDisposed)
+            {
+                _templateTreeView = new TemplateTreeView();
+                
+                dockingManager.DockControl(_templateTreeView, this, DockingStyle.Left, 4);
+                dockingManager.SetEnableDocking(_templateTreeView, true);
+                dockingManager.SetControlSize(_templateTreeView, new Size(300, this.Height - 50));
+                dockingManager.SetDockLabel(_templateTreeView, "Templates");
+            }
+            else
+            {
+                dockingManager.SetDockVisibility(_templateTreeView, true);
+            }
+
+            _templateTreeView.ViewModel = treeViewModel;
+        }
+
+        private TemplateParametersView? _templateParametersView;
+        public void ShowTemplateParametersView(TemplateParametersViewModel viewModel)
+        {
+            if (_templateParametersView == null || _templateParametersView.IsDisposed)
+            {
+                _templateParametersView = new TemplateParametersView();
+                
+                dockingManager.DockControl(_templateParametersView, this, DockingStyle.Left, 4);
+                dockingManager.SetEnableDocking(_templateParametersView, true);
+                dockingManager.SetControlSize(_templateParametersView, new Size(300, this.Height - 50));
+                dockingManager.SetDockLabel(_templateParametersView, "Template Parameters");
+            }
+            else
+            {
+                dockingManager.SetDockVisibility(_templateParametersView, true);
+            }
+
+            _templateParametersView.BindViewModel(viewModel);
+        }
         #endregion
 
         #region IView Implementation

@@ -35,9 +35,25 @@ namespace CodeGenerator.Core.Templates
             Succeeded = false;
         }
 
+        /// <summary>
+        /// Creates a TemplateOutput with text content (useful for simple template rendering)
+        /// </summary>
+        public TemplateOutput(string textContent, bool succeeded)
+        {
+            TextContent = textContent;
+            Artifacts = new List<IArtifact>();
+            Errors = new List<string>();
+            Succeeded = succeeded;
+        }
+
         public IEnumerable<IArtifact> Artifacts { get; }
         public bool Succeeded { get; set; }
 
-        public IEnumerable<string> Errors { get; } 
+        public IEnumerable<string> Errors { get; }
+
+        /// <summary>
+        /// Raw text content output from template rendering (when not creating file artifacts)
+        /// </summary>
+        public string? TextContent { get; set; }
     }
 }

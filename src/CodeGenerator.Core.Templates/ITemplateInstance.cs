@@ -10,5 +10,6 @@ namespace CodeGenerator.Core.Templates
     {
         ITemplate Template { get; }
 
+        void SetParameter(string key, object? value);
     }
 }

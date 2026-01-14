@@ -16,7 +16,7 @@ namespace CodeGenerator.TemplateEngines.T4
         /// <summary>
         /// Parameters to pass to the T4 template (accessible via Host.ResolveParameterValue)
         /// </summary>
-        public Dictionary<string, object> Parameters { get; } = new Dictionary<string, object>();
+        public Dictionary<string, object?> Parameters { get; } = new Dictionary<string, object?>();
 
         /// <summary>
         /// Output file name for the generated content
@@ -37,5 +37,10 @@ namespace CodeGenerator.TemplateEngines.T4
         /// Additional include directories for template resolution
         /// </summary>
         public List<string> IncludeDirectories { get; } = new List<string>();
+
+        public void SetParameter(string key, object? value)
+        {
+            Parameters[key] = value;// ?? throw new ArgumentNullException(nameof(value), $"Parameter '{key}' cannot be set to null.");
+        }
     }
 }

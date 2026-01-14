@@ -42,12 +42,15 @@ public static class ServiceCollectionExtensions
         services.AddTransient<GenerationResultTreeViewModel>();
         services.AddTransient<ArtifactPreviewViewModel>();
         services.AddTransient<SettingsViewModel>();
+        services.AddTransient<TemplateTreeViewModel>();
+        services.AddTransient<TemplateParametersViewModel>();
 
         // Register Controllers
         services.AddSingleton<ApplicationController>();
         services.AddSingleton<DomainSchemaController>();
         services.AddSingleton<GenerationController>();
         services.AddSingleton<SettingsController>();
+        services.AddSingleton<TemplateController>();
         
         // Register Workspace Controllers
         services.AddSingleton<WorkspaceController>();

@@ -10,7 +10,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
     public class ExistingFolderArtifact : FolderArtifact
     {
         public const string EXISTING_FOLDER_PROPERTIES_DECORATOR_KEY = "ExistingFolderProperties";
-        private readonly ExistingFolderArtifactDecorator _existingFolderArtifactDecorator;
+        private ExistingFolderArtifactDecorator _existingFolderArtifactDecorator;
         public ExistingFolderArtifact(string existingFolderPath, string? folderName = null) 
             : base(folderName ?? System.IO.Path.GetDirectoryName(existingFolderPath))
         {
@@ -40,6 +40,8 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
                 {
                     throw new InvalidOperationException("ExistingFolderArtifact can only have one ExistingFolderArtifactDecorator.");
                 }
+                if (_existingFolderArtifactDecorator == null)
+                    _existingFolderArtifactDecorator = existingFolderDecorator;
                 _existingFolderArtifactDecorator.PropertyChanged += ExistingFolderArtifactDecorator_PropertyChanged;
             }
             return base.AddDecorator(decorator);

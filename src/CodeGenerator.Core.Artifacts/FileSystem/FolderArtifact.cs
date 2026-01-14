@@ -12,7 +12,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
     public class FolderArtifact : Artifact
     {
         public const string FOLDER_PROPERTIES_DECORATOR_KEY = "FolderProperties";
-        private readonly FolderArtifactDecorator _folderArtifactDecorator;
+        private FolderArtifactDecorator _folderArtifactDecorator;
         public FolderArtifact(string folderName)
         {
             if(string.IsNullOrWhiteSpace(folderName)) throw new ArgumentNullException(nameof(folderName));
@@ -43,6 +43,8 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
                 {
                     throw new InvalidOperationException("FolderArtifact can only have one FolderArtifactDecorator.");
                 }
+                if (_folderArtifactDecorator == null)
+                    _folderArtifactDecorator = folderDecorator;
                 _folderArtifactDecorator.PropertyChanged += FolderArtifactDecorator_PropertyChanged;
             }
             return base.AddDecorator(decorator);

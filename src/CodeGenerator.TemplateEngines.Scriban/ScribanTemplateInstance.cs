@@ -15,8 +15,25 @@ namespace CodeGenerator.TemplateEngines.Scriban
         /// If null, the default naming strategy will be used (=template name without .scriban extension)
         /// </summary>
         public string? OutputFileName { get; set; }
-        public Dictionary<string, object> Parameters { get; } = new Dictionary<string, object>();
+        public Dictionary<string, object?> Parameters { get; } = new Dictionary<string, object?>();
         public Dictionary<string, Delegate> Functions { get; } = new Dictionary<string, Delegate>();
         public List<string> ExtraTemplateLocations { get; } = new List<string>();
+
+        public void SetParameter(string key, object? value)
+        {
+            if(key == nameof(OutputFileName))
+            {
+                if(value is string outputFileName)
+                {
+                    OutputFileName = outputFileName;
+                    return;
+                }
+                else
+                {
+                    throw new ArgumentException($"Value for parameter '{key}' must be of type string or null.", nameof(value));
+                }
+            }
+            Parameters[key] = value;
+        }
     }
 }
