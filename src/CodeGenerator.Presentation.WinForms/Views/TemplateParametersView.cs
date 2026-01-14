@@ -14,6 +14,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
     {
         private TemplateParametersViewModel? _viewModel;
         private bool _isBindingParameterDetails;
+        private bool _isBindingTemplateMetadata;
 
         public TemplateParametersView()
         {
@@ -33,6 +34,14 @@ namespace CodeGenerator.Presentation.WinForms.Views
             btnMoveDown.Click += BtnMoveDown_Click;
             lstParameters.SelectedIndexChanged += LstParameters_SelectedIndexChanged;
 
+            // Handle resize to update control widths
+            pnlParameters.Resize += PnlParameters_Resize;
+
+            // Template metadata change handlers
+            txtEditTemplateId.TextChanged += TemplateMetadataChanged;
+            txtEditDisplayName.TextChanged += TemplateMetadataChanged;
+            txtEditDescription.TextChanged += TemplateMetadataChanged;
+
             // Parameter detail field change handlers
             txtParameterName.TextChanged += ParameterDetailChanged;
             txtDescription.TextChanged += ParameterDetailChanged;
@@ -44,13 +53,32 @@ namespace CodeGenerator.Presentation.WinForms.Views
             cboType.SelectedIndexChanged += ParameterDetailChanged;
         }
 
+        private void PnlParameters_Resize(object? sender, EventArgs e)
+        {
+            UpdateParameterControlWidths();
+        }
+
+        private void UpdateParameterControlWidths()
+        {
+            var availableWidth = pnlParameters.ClientSize.Width - SystemInformation.VerticalScrollBarWidth - 10;
+            foreach (Control control in pnlParameters.Controls)
+            {
+                control.Width = availableWidth;
+            }
+        }
+
         private void SetupTypeCombobox()
         {
             cboType.Items.Clear();
             foreach (var type in TemplateParameterEditModel.AvailableTypes)
             {
-                cboType.Items.Add(type);
+                // Show friendly names for special types
+                var displayName = type == "CodeGenerator.TableArtifactData" 
+                    ? "Table Data (from Workspace)" 
+                    : type;
+                cboType.Items.Add(new TypeComboItem { DisplayName = displayName, TypeName = type });
             }
+            cboType.DisplayMember = nameof(TypeComboItem.DisplayName);
             cboType.SelectedIndex = 0;
         }
 
@@ -98,6 +126,11 @@ namespace CodeGenerator.Presentation.WinForms.Views
                 case nameof(TemplateParametersViewModel.TemplateDescription):
                     lblTemplateDescription.Text = _viewModel?.TemplateDescription ?? string.Empty;
                     break;
+                case nameof(TemplateParametersViewModel.EditableTemplateId):
+                case nameof(TemplateParametersViewModel.EditableDisplayName):
+                case nameof(TemplateParametersViewModel.EditableDescription):
+                    BindTemplateMetadata();
+                    break;
                 case nameof(TemplateParametersViewModel.ParameterFields):
                     RebuildParameterControls();
                     break;
@@ -130,11 +163,36 @@ namespace CodeGenerator.Presentation.WinForms.Views
             lblTemplateDescription.Text = _viewModel.TemplateDescription ?? string.Empty;
             btnExecute.Enabled = _viewModel.CanExecute;
             
+            BindTemplateMetadata();
             RefreshParameterList();
             RebuildParameterControls();
             UpdateEditModeDisplay();
             UpdateExecutingState();
             UpdateSaveButtonState();
+        }
+
+        private void BindTemplateMetadata()
+        {
+            _isBindingTemplateMetadata = true;
+            try
+            {
+                txtEditTemplateId.Text = _viewModel?.EditableTemplateId ?? string.Empty;
+                txtEditDisplayName.Text = _viewModel?.EditableDisplayName ?? string.Empty;
+                txtEditDescription.Text = _viewModel?.EditableDescription ?? string.Empty;
+            }
+            finally
+            {
+                _isBindingTemplateMetadata = false;
+            }
+        }
+
+        private void TemplateMetadataChanged(object? sender, EventArgs e)
+        {
+            if (_isBindingTemplateMetadata || _viewModel == null) return;
+
+            _viewModel.EditableTemplateId = txtEditTemplateId.Text;
+            _viewModel.EditableDisplayName = txtEditDisplayName.Text;
+            _viewModel.EditableDescription = txtEditDescription.Text;
         }
 
         private void UpdateEditModeDisplay()
@@ -199,8 +257,15 @@ namespace CodeGenerator.Presentation.WinForms.Views
                     txtAllowedValues.Text = param.AllowedValuesText ?? string.Empty;
                     chkRequired.Checked = param.Required;
 
-                    var typeIndex = cboType.Items.IndexOf(param.TypeName);
-                    cboType.SelectedIndex = typeIndex >= 0 ? typeIndex : 0;
+                    // Find the type in the combobox
+                    for (int i = 0; i < cboType.Items.Count; i++)
+                    {
+                        if (cboType.Items[i] is TypeComboItem item && item.TypeName == param.TypeName)
+                        {
+                            cboType.SelectedIndex = i;
+                            break;
+                        }
+                    }
                 }
                 else
                 {
@@ -232,7 +297,12 @@ namespace CodeGenerator.Presentation.WinForms.Views
             param.DefaultValue = string.IsNullOrWhiteSpace(txtDefaultValue.Text) ? null : txtDefaultValue.Text;
             param.AllowedValuesText = string.IsNullOrWhiteSpace(txtAllowedValues.Text) ? null : txtAllowedValues.Text;
             param.Required = chkRequired.Checked;
-            param.TypeName = cboType.SelectedItem?.ToString() ?? "System.String";
+            
+            // Get type name from combo item
+            if (cboType.SelectedItem is TypeComboItem typeItem)
+            {
+                param.TypeName = typeItem.TypeName;
+            }
 
             // Refresh list to show updated name
             var selectedIndex = lstParameters.SelectedIndex;
@@ -250,6 +320,10 @@ namespace CodeGenerator.Presentation.WinForms.Views
             {
                 pnlParameters.Controls.Clear();
 
+                var availableWidth = pnlParameters.ClientSize.Width - SystemInformation.VerticalScrollBarWidth - 10;
+                var currentTop = 5;
+                var controlSpacing = 5;
+
                 if (_viewModel?.ParameterFields == null || _viewModel.ParameterFields.Count == 0) 
                 {
                     // Show a message when there are no parameters
@@ -257,8 +331,9 @@ namespace CodeGenerator.Presentation.WinForms.Views
                     {
                         Text = "No parameters defined for this template.\nClick 'Edit' to add parameters.",
                         AutoSize = false,
-                        Width = pnlParameters.ClientSize.Width - 10,
+                        Width = availableWidth,
                         Height = 50,
+                        Location = new Point(5, currentTop),
                         TextAlign = ContentAlignment.MiddleCenter
                     };
                     pnlParameters.Controls.Add(noParamsLabel);
@@ -270,10 +345,10 @@ namespace CodeGenerator.Presentation.WinForms.Views
                     var control = CreateControlForField(field);
                     if (control != null)
                     {
-                        // Set width to fit the FlowLayoutPanel (minus padding and scrollbar)
-                        control.Width = pnlParameters.ClientSize.Width - 30;
-                        control.Margin = new Padding(3);
+                        control.Location = new Point(5, currentTop);
+                        control.Width = availableWidth;
                         pnlParameters.Controls.Add(control);
+                        currentTop += control.Height + controlSpacing;
                     }
                 }
             }
@@ -287,6 +362,10 @@ namespace CodeGenerator.Presentation.WinForms.Views
         {
             switch (field)
             {
+                case TableArtifactFieldModel tableField:
+                    // Create a ComboBox for selecting TableArtifact
+                    return CreateTableArtifactControl(tableField);
+
                 case BooleanFieldModel boolField:
                     var boolControl = new BooleanField();
                     boolControl.BindViewModel(boolField);
@@ -329,6 +408,78 @@ namespace CodeGenerator.Presentation.WinForms.Views
                     }
                     return null;
             }
+        }
+
+        private Control CreateTableArtifactControl(TableArtifactFieldModel tableField)
+        {
+            var availableWidth = pnlParameters.ClientSize.Width - SystemInformation.VerticalScrollBarWidth - 10;
+            
+            var panel = new Panel
+            {
+                Height = 55,
+                Width = availableWidth
+            };
+
+            var label = new Label
+            {
+                Text = tableField.Label ?? tableField.Name,
+                Font = new Font(Font, FontStyle.Bold),
+                AutoSize = true,
+                Location = new Point(3, 4)
+            };
+
+            var comboBox = new ComboBox
+            {
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Location = new Point(115, 0),
+                Width = panel.Width - 120,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            };
+
+            // Add items
+            comboBox.Items.Clear();
+            foreach (var table in tableField.AvailableTables)
+            {
+                comboBox.Items.Add(table);
+            }
+            comboBox.DisplayMember = nameof(TableArtifactItem.DisplayName);
+
+            // Set selected item
+            if (tableField.SelectedTable != null)
+            {
+                comboBox.SelectedItem = tableField.SelectedTable;
+            }
+
+            // Handle selection changed
+            comboBox.SelectedIndexChanged += (s, e) =>
+            {
+                if (comboBox.SelectedItem is TableArtifactItem selected)
+                {
+                    tableField.SelectedTable = selected;
+                }
+            };
+
+            // Tooltip
+            if (!string.IsNullOrEmpty(tableField.Tooltip))
+            {
+                var toolTip = new ToolTip();
+                toolTip.SetToolTip(comboBox, tableField.Tooltip);
+            }
+
+            // Required indicator
+            var requiredLabel = new Label
+            {
+                Text = tableField.IsRequired ? "*" : "",
+                ForeColor = Color.Red,
+                AutoSize = true,
+                Location = new Point(comboBox.Right + 2, 4)
+            };
+
+            panel.Controls.Add(label);
+            panel.Controls.Add(comboBox);
+            panel.Controls.Add(requiredLabel);
+
+            return panel;
         }
 
         private void UpdateExecutingState()
@@ -401,6 +552,16 @@ namespace CodeGenerator.Presentation.WinForms.Views
             {
                 _viewModel.SelectedParameterDefinition = param;
             }
+        }
+
+        /// <summary>
+        /// Helper class for type combo box items
+        /// </summary>
+        private class TypeComboItem
+        {
+            public string DisplayName { get; set; } = string.Empty;
+            public string TypeName { get; set; } = string.Empty;
+            public override string ToString() => DisplayName;
         }
     }
 }

@@ -30,13 +30,20 @@ namespace CodeGenerator.Presentation.WinForms.Views
         {
             lblTemplateName = new Label();
             lblTemplateDescription = new Label();
-            pnlParameters = new FlowLayoutPanel();
+            pnlParameters = new Panel();
             btnExecute = new Button();
             pnlHeader = new Panel();
             btnToggleEditMode = new Button();
             pnlFooter = new Panel();
             btnSave = new Button();
             pnlEditMode = new Panel();
+            pnlTemplateMetadata = new Panel();
+            txtEditDescription = new TextBox();
+            lblEditDescription = new Label();
+            txtEditDisplayName = new TextBox();
+            lblEditDisplayName = new Label();
+            txtEditTemplateId = new TextBox();
+            lblEditTemplateId = new Label();
             splitContainer = new SplitContainer();
             lstParameters = new ListBox();
             pnlParameterButtons = new Panel();
@@ -63,6 +70,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             pnlHeader.SuspendLayout();
             pnlFooter.SuspendLayout();
             pnlEditMode.SuspendLayout();
+            pnlTemplateMetadata.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer).BeginInit();
             splitContainer.Panel1.SuspendLayout();
             splitContainer.Panel2.SuspendLayout();
@@ -94,13 +102,11 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // 
             pnlParameters.AutoScroll = true;
             pnlParameters.Dock = DockStyle.Fill;
-            pnlParameters.FlowDirection = FlowDirection.TopDown;
             pnlParameters.Location = new Point(0, 70);
             pnlParameters.Name = "pnlParameters";
             pnlParameters.Padding = new Padding(3);
             pnlParameters.Size = new Size(300, 230);
             pnlParameters.TabIndex = 2;
-            pnlParameters.WrapContents = false;
             // 
             // btnExecute
             // 
@@ -157,6 +163,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // pnlEditMode
             // 
             pnlEditMode.Controls.Add(splitContainer);
+            pnlEditMode.Controls.Add(pnlTemplateMetadata);
             pnlEditMode.Dock = DockStyle.Fill;
             pnlEditMode.Location = new Point(0, 70);
             pnlEditMode.Name = "pnlEditMode";
@@ -164,10 +171,75 @@ namespace CodeGenerator.Presentation.WinForms.Views
             pnlEditMode.TabIndex = 6;
             pnlEditMode.Visible = false;
             // 
+            // pnlTemplateMetadata
+            // 
+            pnlTemplateMetadata.Controls.Add(txtEditDescription);
+            pnlTemplateMetadata.Controls.Add(lblEditDescription);
+            pnlTemplateMetadata.Controls.Add(txtEditDisplayName);
+            pnlTemplateMetadata.Controls.Add(lblEditDisplayName);
+            pnlTemplateMetadata.Controls.Add(txtEditTemplateId);
+            pnlTemplateMetadata.Controls.Add(lblEditTemplateId);
+            pnlTemplateMetadata.Dock = DockStyle.Top;
+            pnlTemplateMetadata.Location = new Point(0, 0);
+            pnlTemplateMetadata.Name = "pnlTemplateMetadata";
+            pnlTemplateMetadata.Size = new Size(300, 81);
+            pnlTemplateMetadata.TabIndex = 1;
+            // 
+            // txtEditDescription
+            // 
+            txtEditDescription.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtEditDescription.Location = new Point(90, 55);
+            txtEditDescription.Name = "txtEditDescription";
+            txtEditDescription.Size = new Size(205, 23);
+            txtEditDescription.TabIndex = 5;
+            // 
+            // lblEditDescription
+            // 
+            lblEditDescription.AutoSize = true;
+            lblEditDescription.Location = new Point(5, 58);
+            lblEditDescription.Name = "lblEditDescription";
+            lblEditDescription.Size = new Size(70, 15);
+            lblEditDescription.TabIndex = 4;
+            lblEditDescription.Text = "Description:";
+            // 
+            // txtEditDisplayName
+            // 
+            txtEditDisplayName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtEditDisplayName.Location = new Point(90, 29);
+            txtEditDisplayName.Name = "txtEditDisplayName";
+            txtEditDisplayName.Size = new Size(205, 23);
+            txtEditDisplayName.TabIndex = 3;
+            // 
+            // lblEditDisplayName
+            // 
+            lblEditDisplayName.AutoSize = true;
+            lblEditDisplayName.Location = new Point(5, 32);
+            lblEditDisplayName.Name = "lblEditDisplayName";
+            lblEditDisplayName.Size = new Size(83, 15);
+            lblEditDisplayName.TabIndex = 2;
+            lblEditDisplayName.Text = "Display Name:";
+            // 
+            // txtEditTemplateId
+            // 
+            txtEditTemplateId.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtEditTemplateId.Location = new Point(90, 3);
+            txtEditTemplateId.Name = "txtEditTemplateId";
+            txtEditTemplateId.Size = new Size(205, 23);
+            txtEditTemplateId.TabIndex = 1;
+            // 
+            // lblEditTemplateId
+            // 
+            lblEditTemplateId.AutoSize = true;
+            lblEditTemplateId.Location = new Point(5, 6);
+            lblEditTemplateId.Name = "lblEditTemplateId";
+            lblEditTemplateId.Size = new Size(72, 15);
+            lblEditTemplateId.TabIndex = 0;
+            lblEditTemplateId.Text = "Template ID:";
+            // 
             // splitContainer
             // 
             splitContainer.Dock = DockStyle.Fill;
-            splitContainer.Location = new Point(0, 0);
+            splitContainer.Location = new Point(0, 81);
             splitContainer.Name = "splitContainer";
             splitContainer.Orientation = Orientation.Horizontal;
             // 
@@ -179,8 +251,8 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // splitContainer.Panel2
             // 
             splitContainer.Panel2.Controls.Add(pnlParameterDetails);
-            splitContainer.Size = new Size(300, 230);
-            splitContainer.SplitterDistance = 100;
+            splitContainer.Size = new Size(300, 175);
+            splitContainer.SplitterDistance = 70;
             splitContainer.TabIndex = 0;
             // 
             // lstParameters
@@ -190,7 +262,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             lstParameters.ItemHeight = 15;
             lstParameters.Location = new Point(0, 0);
             lstParameters.Name = "lstParameters";
-            lstParameters.Size = new Size(200, 100);
+            lstParameters.Size = new Size(200, 70);
             lstParameters.TabIndex = 0;
             // 
             // pnlParameterButtons
@@ -202,7 +274,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             pnlParameterButtons.Dock = DockStyle.Right;
             pnlParameterButtons.Location = new Point(200, 0);
             pnlParameterButtons.Name = "pnlParameterButtons";
-            pnlParameterButtons.Size = new Size(100, 100);
+            pnlParameterButtons.Size = new Size(100, 70);
             pnlParameterButtons.TabIndex = 1;
             // 
             // btnMoveDown
@@ -262,7 +334,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             pnlParameterDetails.Dock = DockStyle.Fill;
             pnlParameterDetails.Location = new Point(0, 0);
             pnlParameterDetails.Name = "pnlParameterDetails";
-            pnlParameterDetails.Size = new Size(300, 126);
+            pnlParameterDetails.Size = new Size(300, 101);
             pnlParameterDetails.TabIndex = 0;
             // 
             // cboType
@@ -410,6 +482,8 @@ namespace CodeGenerator.Presentation.WinForms.Views
             pnlHeader.PerformLayout();
             pnlFooter.ResumeLayout(false);
             pnlEditMode.ResumeLayout(false);
+            pnlTemplateMetadata.ResumeLayout(false);
+            pnlTemplateMetadata.PerformLayout();
             splitContainer.Panel1.ResumeLayout(false);
             splitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer).EndInit();
@@ -425,13 +499,20 @@ namespace CodeGenerator.Presentation.WinForms.Views
 
         private System.Windows.Forms.Label lblTemplateName;
         private System.Windows.Forms.Label lblTemplateDescription;
-        private System.Windows.Forms.FlowLayoutPanel pnlParameters;
+        private System.Windows.Forms.Panel pnlParameters;
         private System.Windows.Forms.Button btnExecute;
         private System.Windows.Forms.Panel pnlHeader;
         private System.Windows.Forms.Panel pnlFooter;
         private System.Windows.Forms.Button btnToggleEditMode;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Panel pnlEditMode;
+        private System.Windows.Forms.Panel pnlTemplateMetadata;
+        private System.Windows.Forms.TextBox txtEditDescription;
+        private System.Windows.Forms.Label lblEditDescription;
+        private System.Windows.Forms.TextBox txtEditDisplayName;
+        private System.Windows.Forms.Label lblEditDisplayName;
+        private System.Windows.Forms.TextBox txtEditTemplateId;
+        private System.Windows.Forms.Label lblEditTemplateId;
         private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.ListBox lstParameters;
         private System.Windows.Forms.Panel pnlParameterButtons;

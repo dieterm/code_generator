@@ -1,4 +1,7 @@
+using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
 using System.Collections.ObjectModel;
@@ -13,6 +16,9 @@ public class TemplateParametersViewModel : ViewModelBase
     private TemplateArtifact? _templateArtifact;
     private string _templateName = string.Empty;
     private string? _templateDescription;
+    private string _editableTemplateId = string.Empty;
+    private string _editableDisplayName = string.Empty;
+    private string _editableDescription = string.Empty;
     private List<FieldViewModelBase> _parameterFields = new();
     private ObservableCollection<TemplateParameterEditModel> _parameterDefinitions = new();
     private TemplateParameterEditModel? _selectedParameterDefinition;
@@ -20,6 +26,15 @@ public class TemplateParametersViewModel : ViewModelBase
     private bool _isExecuting;
     private bool _isEditMode;
     private bool _hasUnsavedChanges;
+    private WorkspaceController? _workspaceController;
+
+    /// <summary>
+    /// Set the workspace controller for accessing workspace data (tables, etc.)
+    /// </summary>
+    public void SetWorkspaceController(WorkspaceController workspaceController)
+    {
+        _workspaceController = workspaceController;
+    }
 
     /// <summary>
     /// The template artifact being configured
@@ -37,7 +52,7 @@ public class TemplateParametersViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Display name of the template
+    /// Display name of the template (read-only, for display in run mode)
     /// </summary>
     public string TemplateName
     {
@@ -52,6 +67,51 @@ public class TemplateParametersViewModel : ViewModelBase
     {
         get => _templateDescription;
         set => SetProperty(ref _templateDescription, value);
+    }
+
+    /// <summary>
+    /// Editable Template ID for the definition file
+    /// </summary>
+    public string EditableTemplateId
+    {
+        get => _editableTemplateId;
+        set
+        {
+            if (SetProperty(ref _editableTemplateId, value))
+            {
+                HasUnsavedChanges = true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Editable Display Name for the definition file
+    /// </summary>
+    public string EditableDisplayName
+    {
+        get => _editableDisplayName;
+        set
+        {
+            if (SetProperty(ref _editableDisplayName, value))
+            {
+                HasUnsavedChanges = true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Editable Description for the definition file
+    /// </summary>
+    public string EditableDescription
+    {
+        get => _editableDescription;
+        set
+        {
+            if (SetProperty(ref _editableDescription, value))
+            {
+                HasUnsavedChanges = true;
+            }
+        }
     }
 
     /// <summary>
@@ -223,6 +283,11 @@ public class TemplateParametersViewModel : ViewModelBase
 
         // Get or create the definition
         var definition = _templateArtifact.GetOrCreateDefinition();
+
+        // Update template metadata
+        definition.TemplateId = EditableTemplateId;
+        definition.DisplayName = EditableDisplayName;
+        definition.Description = string.IsNullOrWhiteSpace(EditableDescription) ? null : EditableDescription;
         
         // Update the parameters from the edit models
         definition.Parameters = ParameterDefinitions
@@ -236,6 +301,10 @@ public class TemplateParametersViewModel : ViewModelBase
 
         // Reload the template artifact to pick up changes
         _templateArtifact.ReloadDefinition();
+        
+        // Update the display name and description shown in the header
+        TemplateName = _templateArtifact.DisplayName;
+        TemplateDescription = _templateArtifact.Description;
         
         // Refresh the parameter fields for execution mode
         if (!IsEditMode)
@@ -253,6 +322,9 @@ public class TemplateParametersViewModel : ViewModelBase
         {
             TemplateName = string.Empty;
             TemplateDescription = null;
+            EditableTemplateId = string.Empty;
+            EditableDisplayName = string.Empty;
+            EditableDescription = string.Empty;
             ParameterFields = new List<FieldViewModelBase>();
             ParameterDefinitions = new ObservableCollection<TemplateParameterEditModel>();
             CanExecute = false;
@@ -261,6 +333,12 @@ public class TemplateParametersViewModel : ViewModelBase
 
         TemplateName = _templateArtifact.DisplayName;
         TemplateDescription = _templateArtifact.Description;
+
+        // Load editable template metadata
+        var definition = _templateArtifact.Definition;
+        EditableTemplateId = definition?.TemplateId ?? Path.GetFileNameWithoutExtension(_templateArtifact.FilePath);
+        EditableDisplayName = definition?.DisplayName ?? _templateArtifact.FileName;
+        EditableDescription = definition?.Description ?? string.Empty;
 
         // Load parameter definitions for edit mode
         var editModels = new ObservableCollection<TemplateParameterEditModel>();
@@ -296,10 +374,61 @@ public class TemplateParametersViewModel : ViewModelBase
     }
 
     /// <summary>
+    /// Get all available TableArtifacts from the workspace
+    /// </summary>
+    private List<TableArtifactItem> GetAvailableTableArtifacts()
+    {
+        var items = new List<TableArtifactItem>();
+
+        if (_workspaceController?.CurrentWorkspace == null)
+            return items;
+
+        // Iterate through all datasources
+        foreach (var datasource in _workspaceController.CurrentWorkspace.Datasources.GetDatasources())
+        {
+            // Find all TableArtifacts in this datasource
+            foreach (var child in datasource.Children)
+            {
+                if (child is TableArtifact tableArtifact)
+                {
+                    var schemaPrefix = !string.IsNullOrEmpty(tableArtifact.Schema) 
+                        ? $"{tableArtifact.Schema}." 
+                        : string.Empty;
+
+                    items.Add(new TableArtifactItem
+                    {
+                        TableArtifact = tableArtifact,
+                        DatasourceArtifact = datasource,
+                        DisplayName = $"{datasource.Name} > {schemaPrefix}{tableArtifact.Name}",
+                        FullPath = $"{datasource.Name}.{schemaPrefix}{tableArtifact.Name}"
+                    });
+                }
+            }
+        }
+
+        return items;
+    }
+
+    /// <summary>
     /// Create the appropriate field view model for a parameter based on its type
     /// </summary>
     private FieldViewModelBase? CreateFieldForParameter(TemplateParameter parameter)
     {
+        // Check for TableArtifactData type first
+        if (parameter.IsTableArtifactData)
+        {
+            var tableField = new TableArtifactFieldModel
+            {
+                Name = parameter.Name,
+                Label = parameter.GetDisplayLabel(),
+                Tooltip = parameter.Description ?? parameter.Tooltip ?? "Select a table from the workspace to load data from",
+                IsRequired = parameter.Required,
+                AvailableTables = GetAvailableTableArtifacts()
+            };
+
+            return tableField;
+        }
+
         var paramType = parameter.GetParameterType() ?? typeof(string);
 
         // If there are allowed values, use combobox
@@ -407,10 +536,21 @@ public class TemplateParametersViewModel : ViewModelBase
         // Check all required parameters have values
         foreach (var field in ParameterFields)
         {
-            if (field.IsRequired && (field.Value == null || string.IsNullOrEmpty(field.Value?.ToString())))
+            if (field.IsRequired)
             {
-                CanExecute = false;
-                return;
+                if (field is TableArtifactFieldModel tableField)
+                {
+                    if (tableField.SelectedTable == null)
+                    {
+                        CanExecute = false;
+                        return;
+                    }
+                }
+                else if (field.Value == null || string.IsNullOrEmpty(field.Value?.ToString()))
+                {
+                    CanExecute = false;
+                    return;
+                }
             }
         }
 
@@ -431,6 +571,14 @@ public class TemplateParametersViewModel : ViewModelBase
 
         return values;
     }
+
+    /// <summary>
+    /// Get the template parameters definitions (for accessing TableDataFilter, etc.)
+    /// </summary>
+    public IReadOnlyList<TemplateParameter> GetTemplateParameters()
+    {
+        return _templateArtifact?.Parameters ?? new List<TemplateParameter>();
+    }
 }
 
 /// <summary>
@@ -447,6 +595,8 @@ public class TemplateParameterEditModel : ViewModelBase
     private string? _label;
     private string? _tooltip;
     private int _displayOrder;
+    private string? _tableDataFilter;
+    private int? _tableDataMaxRows;
 
     /// <summary>
     /// Parameter name (used as key in template)
@@ -530,6 +680,24 @@ public class TemplateParameterEditModel : ViewModelBase
     }
 
     /// <summary>
+    /// SQL WHERE clause filter for TableArtifactData
+    /// </summary>
+    public string? TableDataFilter
+    {
+        get => _tableDataFilter;
+        set => SetProperty(ref _tableDataFilter, value);
+    }
+
+    /// <summary>
+    /// Maximum rows to load for TableArtifactData
+    /// </summary>
+    public int? TableDataMaxRows
+    {
+        get => _tableDataMaxRows;
+        set => SetProperty(ref _tableDataMaxRows, value);
+    }
+
+    /// <summary>
     /// Available type options for the dropdown
     /// </summary>
     public static List<string> AvailableTypes => new()
@@ -541,7 +709,8 @@ public class TemplateParameterEditModel : ViewModelBase
         "System.DateTime",
         "System.DateOnly",
         "System.Decimal",
-        "System.Double"
+        "System.Double",
+        TemplateParameter.TableArtifactDataTypeName
     };
 
     /// <summary>
@@ -561,7 +730,9 @@ public class TemplateParameterEditModel : ViewModelBase
                 : AllowedValuesText.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList(),
             Label = Label,
             Tooltip = Tooltip,
-            DisplayOrder = DisplayOrder
+            DisplayOrder = DisplayOrder,
+            TableDataFilter = TableDataFilter,
+            TableDataMaxRows = TableDataMaxRows
         };
     }
 
@@ -580,7 +751,9 @@ public class TemplateParameterEditModel : ViewModelBase
             AllowedValuesText = param.AllowedValues != null ? string.Join("; ", param.AllowedValues) : null,
             Label = param.Label,
             Tooltip = param.Tooltip,
-            DisplayOrder = param.DisplayOrder
+            DisplayOrder = param.DisplayOrder,
+            TableDataFilter = param.TableDataFilter,
+            TableDataMaxRows = param.TableDataMaxRows
         };
     }
 }

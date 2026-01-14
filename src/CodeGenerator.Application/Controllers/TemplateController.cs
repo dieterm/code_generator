@@ -1,3 +1,4 @@
+using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Core.Artifacts.CodeGeneration;
@@ -5,9 +6,14 @@ using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Interfaces;
 using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.Relational;
+using CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Shared.Ribbon;
 using Microsoft.Extensions.Logging;
+using MySqlConnector;
+using System.Dynamic;
 
 namespace CodeGenerator.Application.Controllers;
 
@@ -17,11 +23,13 @@ namespace CodeGenerator.Application.Controllers;
 public class TemplateController : CoreControllerBase
 {
     private readonly TemplateEngineManager _templateEngineManager;
+    private readonly WorkspaceController _workspaceController;
     private TemplateTreeViewModel? _treeViewModel;
     private TemplateParametersViewModel? _parametersViewModel;
 
     public TemplateController(
         TemplateEngineManager templateEngineManager,
+        WorkspaceController workspaceController,
         IWindowManagerService windowManagerService,
         RibbonBuilder ribbonBuilder,
         ApplicationMessageBus messageBus,
@@ -31,6 +39,7 @@ public class TemplateController : CoreControllerBase
         : base(windowManagerService, ribbonBuilder, messageBus, messageBoxService, fileSystemDialogService, logger)
     {
         _templateEngineManager = templateEngineManager;
+        _workspaceController = workspaceController;
     }
 
     public override void Initialize()
@@ -112,6 +121,7 @@ public class TemplateController : CoreControllerBase
         if (_parametersViewModel == null)
         {
             _parametersViewModel = new TemplateParametersViewModel();
+            _parametersViewModel.SetWorkspaceController(_workspaceController);
             _parametersViewModel.ExecuteRequested += ParametersViewModel_ExecuteRequested;
         }
 
@@ -225,13 +235,14 @@ public class TemplateController : CoreControllerBase
             // Create template instance and set parameters
             var templateInstance = engine.CreateTemplateInstance(templateArtifact.Template);
 
+            // Process parameters - load data for TableArtifact parameters
+            var processedParameters = await ProcessTemplateParametersAsync(parameters, templateArtifact, cancellationToken);
+
             // Set parameters on the template instance
-           
-            foreach (var kvp in parameters)
+            foreach (var kvp in processedParameters)
             {
                 templateInstance.SetParameter(kvp.Key, kvp.Value);
             }
-            
 
             // Render the template
             var output = await engine.RenderAsync(templateInstance, cancellationToken);
@@ -283,6 +294,117 @@ public class TemplateController : CoreControllerBase
                 _parametersViewModel.IsExecuting = false;
             }
         }
+    }
+
+    /// <summary>
+    /// Process template parameters, loading data for TableArtifact parameters
+    /// </summary>
+    private async Task<Dictionary<string, object?>> ProcessTemplateParametersAsync(
+        Dictionary<string, object?> parameters,
+        TemplateArtifact templateArtifact,
+        CancellationToken cancellationToken)
+    {
+        var result = new Dictionary<string, object?>();
+        //{
+        //    {"ConnectionString", parameters["ConnectionString"]}
+        //};
+        var templateParams = _parametersViewModel?.GetTemplateParameters() ?? templateArtifact.Parameters;
+
+        foreach (var kvp in parameters)
+        {
+            var paramDef = templateParams.FirstOrDefault(p => p.Name == kvp.Key);
+
+            // Check if this is a TableArtifactData parameter
+            if (paramDef?.IsTableArtifactData == true && kvp.Value is TableArtifactItem tableItem)
+            {
+                // Load data from the database
+                var data = await LoadTableDataAsync(
+                    tableItem, 
+                    paramDef.TableDataFilter, 
+                    paramDef.TableDataMaxRows,
+                    cancellationToken);
+                result[kvp.Key] = data;
+            }
+            else
+            {
+                result[kvp.Key] = kvp.Value;
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Load data from a table in the database
+    /// </summary>
+    private async Task<IEnumerable<dynamic>> LoadTableDataAsync(
+        TableArtifactItem tableItem,
+        string? filter,
+        int? maxRows,
+        CancellationToken cancellationToken)
+    {
+        var results = new List<dynamic>();
+
+        if (tableItem.DatasourceArtifact is not MysqlDatasourceArtifact mysqlDatasource)
+        {
+            _logger.LogWarning("TableArtifactData is only supported for MySQL datasources currently");
+            return results;
+        }
+
+        var table = tableItem.TableArtifact;
+        var columns = table.GetColumns().ToList();
+
+        // Build SELECT query
+        var columnNames = string.Join(", ", columns.Select(c => $"`{c.Name}`"));
+        var tableName = !string.IsNullOrEmpty(table.Schema) 
+            ? $"`{table.Schema}`.`{table.Name}`" 
+            : $"`{table.Name}`";
+
+        var query = $"SELECT {columnNames} FROM {tableName}";
+
+        if (!string.IsNullOrWhiteSpace(filter))
+        {
+            query += $" WHERE {filter}";
+        }
+
+        if (maxRows.HasValue && maxRows.Value > 0)
+        {
+            query += $" LIMIT {maxRows.Value}";
+        }
+
+        _logger.LogDebug("Executing query: {Query}", query);
+
+        try
+        {
+            await using var connection = new MySqlConnection(mysqlDatasource.ConnectionString);
+            await connection.OpenAsync(cancellationToken);
+
+            await using var command = new MySqlCommand(query, connection);
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                var row = new ExpandoObject() as IDictionary<string, object?>;
+
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    var columnName = reader.GetName(i);
+                    var value = reader.IsDBNull(i) ? null : reader.GetValue(i);
+                    row[columnName] = value;
+                }
+
+                results.Add(row);
+            }
+
+            _logger.LogInformation("Loaded {RowCount} rows from table {TableName}", results.Count, table.Name);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading data from table {TableName}", table.Name);
+            throw;
+        }
+
+        return results;
     }
 
     /// <summary>

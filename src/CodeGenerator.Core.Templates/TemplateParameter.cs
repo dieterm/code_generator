@@ -6,6 +6,11 @@ namespace CodeGenerator.Core.Templates;
 public class TemplateParameter
 {
     /// <summary>
+    /// Special type name for TableArtifact data source parameter
+    /// </summary>
+    public const string TableArtifactDataTypeName = "CodeGenerator.TableArtifactData";
+
+    /// <summary>
     /// Name of the parameter (used as key in template context)
     /// </summary>
     public string Name { get; set; } = string.Empty;
@@ -18,6 +23,7 @@ public class TemplateParameter
     /// <summary>
     /// Fully qualified assembly type name of the parameter value type
     /// Examples: "System.String", "System.Int32", "System.Boolean"
+    /// Special: "CodeGenerator.TableArtifactData" for selecting a table and loading its data
     /// </summary>
     public string FullyQualifiedAssemblyTypeName { get; set; } = "System.String";
 
@@ -67,6 +73,18 @@ public class TemplateParameter
     public string? MaxValue { get; set; }
 
     /// <summary>
+    /// Optional SQL query to limit the data loaded from the table (WHERE clause content)
+    /// Only applicable when FullyQualifiedAssemblyTypeName is TableArtifactDataTypeName
+    /// </summary>
+    public string? TableDataFilter { get; set; }
+
+    /// <summary>
+    /// Optional maximum number of rows to load from the table
+    /// Only applicable when FullyQualifiedAssemblyTypeName is TableArtifactDataTypeName
+    /// </summary>
+    public int? TableDataMaxRows { get; set; }
+
+    /// <summary>
     /// Gets the display label (Label if set, otherwise Name)
     /// </summary>
     public string GetDisplayLabel() => !string.IsNullOrEmpty(Label) ? Label : Name;
@@ -79,6 +97,15 @@ public class TemplateParameter
         if (string.IsNullOrEmpty(FullyQualifiedAssemblyTypeName))
             return typeof(string);
 
+        // Special handling for TableArtifactData type
+        if (FullyQualifiedAssemblyTypeName == TableArtifactDataTypeName)
+            return null; // This is a special type handled differently
+
         return Type.GetType(FullyQualifiedAssemblyTypeName);
     }
+
+    /// <summary>
+    /// Check if this parameter is a TableArtifact data parameter
+    /// </summary>
+    public bool IsTableArtifactData => FullyQualifiedAssemblyTypeName == TableArtifactDataTypeName;
 }

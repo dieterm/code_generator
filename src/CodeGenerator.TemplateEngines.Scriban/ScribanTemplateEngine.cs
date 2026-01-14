@@ -252,6 +252,8 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
             if (!string.IsNullOrEmpty(templateInstance.Template.TemplateId) && _compiledTemplates.TryGetValue(templateInstance.Template.TemplateId, out var compiledTemplate))
             {
                 var context = new TemplateContext();
+                context.LoopLimit = 0;
+                context.LoopLimitQueryable = 0;
                 var templateLocations = new List<string>() { TemplateRootFolder };
                 if (templateInstance.Template is ScribanFileTemplate fileTemplate)
                 {
@@ -270,6 +272,7 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
                 {
                     extraParams.Import(func.Key, func.Value);
                 }
+                
                 context.PushGlobal(extraParams);
                 var result = compiledTemplate.Render(context);
                 if (result != null)
