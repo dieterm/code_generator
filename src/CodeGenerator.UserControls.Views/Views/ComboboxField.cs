@@ -114,12 +114,19 @@ namespace CodeGenerator.UserControls.Views
             {
                 if (_viewModel != null)
                 {
-                    _viewModel.Value = cbxItems.SelectedValue;
-                    //_viewModel.SelectedItem = (ComboboxItem?)cbxItems.SelectedItem;
+                    if (!isChangingValues)
+                    {
+                        isChangingValues = true;
+                        var value = cbxItems.SelectedValue;
+                        var item = (ComboboxItem?)cbxItems.SelectedItem;
+                        _viewModel.SelectedItem = item; 
+                        _viewModel.Value = value;
+                        isChangingValues = false;
+                    }
                 }
             };
         }
-
+        private bool isChangingValues = false;
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (_viewModel == null) return;

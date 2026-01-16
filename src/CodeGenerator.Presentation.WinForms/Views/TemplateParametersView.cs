@@ -363,10 +363,6 @@ namespace CodeGenerator.Presentation.WinForms.Views
         {
             switch (field)
             {
-                case TableArtifactFieldModel tableField:
-                    // Create a ComboBox for selecting TableArtifact
-                    return CreateTableArtifactControl(tableField);
-
                 case BooleanFieldModel boolField:
                     var boolControl = new BooleanField();
                     boolControl.BindViewModel(boolField);
@@ -411,77 +407,6 @@ namespace CodeGenerator.Presentation.WinForms.Views
             }
         }
 
-        private Control CreateTableArtifactControl(TableArtifactFieldModel tableField)
-        {
-            var availableWidth = pnlParameters.ClientSize.Width - SystemInformation.VerticalScrollBarWidth - 10;
-            
-            var panel = new Panel
-            {
-                Height = 55,
-                Width = availableWidth
-            };
-
-            var label = new Label
-            {
-                Text = tableField.Label ?? tableField.Name,
-                Font = new Font(Font, FontStyle.Bold),
-                AutoSize = true,
-                Location = new Point(3, 4)
-            };
-
-            var comboBox = new ComboBox
-            {
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                Location = new Point(115, 0),
-                Width = panel.Width - 120,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
-            };
-
-            // Add items
-            comboBox.Items.Clear();
-            foreach (var table in tableField.AvailableTables)
-            {
-                comboBox.Items.Add(table);
-            }
-            comboBox.DisplayMember = nameof(TableArtifactItem.DisplayName);
-
-            // Set selected item
-            if (tableField.SelectedTable != null)
-            {
-                comboBox.SelectedItem = tableField.SelectedTable;
-            }
-
-            // Handle selection changed
-            comboBox.SelectedIndexChanged += (s, e) =>
-            {
-                if (comboBox.SelectedItem is TableArtifactItem selected)
-                {
-                    tableField.SelectedTable = selected;
-                }
-            };
-
-            // Tooltip
-            if (!string.IsNullOrEmpty(tableField.Tooltip))
-            {
-                var toolTip = new ToolTip();
-                toolTip.SetToolTip(comboBox, tableField.Tooltip);
-            }
-
-            // Required indicator
-            var requiredLabel = new Label
-            {
-                Text = tableField.IsRequired ? "*" : "",
-                ForeColor = Color.Red,
-                AutoSize = true,
-                Location = new Point(comboBox.Right + 2, 4)
-            };
-
-            panel.Controls.Add(label);
-            panel.Controls.Add(comboBox);
-            panel.Controls.Add(requiredLabel);
-
-            return panel;
-        }
 
         private void UpdateExecutingState()
         {
