@@ -12,6 +12,7 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
     /// </summary>
     public class MysqlDatabase : RelationalDatabase
     {
+        public const string MYSQL_DEFAULT_SCHEMA = "dbo";
         private static readonly Lazy<MysqlDatabase> _instance = new(() => new MysqlDatabase());
         public static MysqlDatabase Instance => _instance.Value;
 
@@ -58,7 +59,7 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
             var sb = new System.Text.StringBuilder();
 
             // CREATE TABLE statement
-            var fullTableName = !string.IsNullOrEmpty(schema) && schema != "dbo" 
+            var fullTableName = !string.IsNullOrEmpty(schema) && schema != MYSQL_DEFAULT_SCHEMA
                 ? $"{schema}.{tableName}" 
                 : tableName;
 
@@ -121,7 +122,7 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
             bool isUnique = false,
             string? schema = null)
         {
-            var fullTableName = !string.IsNullOrEmpty(schema) && schema != "dbo"
+            var fullTableName = !string.IsNullOrEmpty(schema) && schema != MYSQL_DEFAULT_SCHEMA
                 ? $"{schema}.{tableName}"
                 : tableName;
 
@@ -129,6 +130,29 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
             var columns = string.Join(", ", columnNames.Select(c => $"`{c}`"));
 
             return $"CREATE {uniqueKeyword}INDEX `{indexName}` ON {fullTableName} ({columns});";
+        }
+        /// <summary>
+        /// Basic SELECT statement generator for MySQL
+        /// </summary>
+        public override string GenerateSelectStatement(string tableName, IEnumerable<string>? columnNames = null, string? schema = null, string? whereClause = null, int? limit = null)
+        {
+            var sb = new StringBuilder();
+            var fullTableName = !string.IsNullOrEmpty(schema) && schema != MYSQL_DEFAULT_SCHEMA
+                ? $"{EscapeIdentifier(schema)}.{EscapeIdentifier(tableName)}"
+                : tableName;
+            var columnsPart = columnNames != null && columnNames.Any()
+                ? string.Join(", ", columnNames.Select(c => EscapeIdentifier(c)))
+                : "*";
+            sb.Append($"SELECT {columnsPart} FROM {fullTableName}");
+            if (!string.IsNullOrEmpty(whereClause))
+            {
+                sb.Append($" WHERE {whereClause}");
+            }
+            if (limit.HasValue && limit.Value > 0)
+            {
+                sb.Append($" LIMIT {limit.Value}");
+            }
+            return sb.ToString();
         }
     }
 }

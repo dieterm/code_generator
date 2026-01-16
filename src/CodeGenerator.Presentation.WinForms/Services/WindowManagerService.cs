@@ -80,12 +80,12 @@ namespace CodeGenerator.Presentation.WinForms.Services
             dockingManager.SetDockLabel(artifactPreviewView, viewModel.TabLabel ?? "Artifact Preview");
            
         }
-        private WorkspaceTreeView? _workspaceTreeView;
+        private ArtifactTreeView? _workspaceTreeView;
         public void ShowWorkspaceTreeView(WorkspaceTreeViewModel treeViewModel)
         {
             if (_workspaceTreeView == null || _workspaceTreeView.IsDisposed)
             {
-                _workspaceTreeView = new WorkspaceTreeView();
+                _workspaceTreeView = new ArtifactTreeView();
 
                 dockingManager.DockControl(_workspaceTreeView, mainView, DockingStyle.Left, 4);
                 dockingManager.SetEnableDocking(_workspaceTreeView, true);

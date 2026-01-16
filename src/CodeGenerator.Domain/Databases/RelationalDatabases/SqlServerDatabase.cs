@@ -114,5 +114,37 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
 
             return $"CREATE {uniqueKeyword}INDEX [{indexName}] ON {schemaPrefix}[{tableName}] ({columns});";
         }
+
+        /// <summary>
+        /// Basic SELECT statement generator for SQL Server
+        /// </summary>
+        public override string GenerateSelectStatement(string tableName, IEnumerable<string>? columnNames = null, string? schema = null, string? whereClause = null, int? limit = null)
+        {
+            var sb = new System.Text.StringBuilder();
+            
+            var schemaPrefix = !string.IsNullOrEmpty(schema)
+                ? $"{EscapeIdentifier(schema)}."
+                : "";
+            
+            var fullTableName = $"{schemaPrefix}{EscapeIdentifier(tableName)}";
+            
+            var columnsPart = columnNames != null && columnNames.Any()
+                ? string.Join(", ", columnNames.Select(c => EscapeIdentifier(c)))
+                : "*";
+            
+            // SQL Server uses TOP instead of LIMIT
+            var topClause = limit.HasValue && limit.Value > 0
+                ? $"TOP {limit.Value} "
+                : "";
+            
+            sb.Append($"SELECT {topClause}{columnsPart} FROM {fullTableName}");
+            
+            if (!string.IsNullOrEmpty(whereClause))
+            {
+                sb.Append($" WHERE {whereClause}");
+            }
+            
+            return sb.ToString();
+        }
     }
 }

@@ -1,6 +1,10 @@
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.Templates;
 using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Core.Workspaces.Services;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.Views.TreeNode;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
 {
@@ -185,6 +189,11 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         public void EndEdit(string oldName, string newName)
         {
             Name = newName;
+        }
+
+        public virtual TemplateDatasourceProviderDecorator? GetTemplateDatasourceProviderDecorator()
+        {
+            return GetDecorator<TemplateDatasourceProviderDecorator>();
         }
     }
 }

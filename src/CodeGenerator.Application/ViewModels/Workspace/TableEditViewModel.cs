@@ -2,6 +2,7 @@ using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
+using System.ComponentModel;
 
 namespace CodeGenerator.Application.ViewModels.Workspace
 {
@@ -31,10 +32,28 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             get => _table;
             set
             {
+                if(_table != null)
+                {
+                    _table.PropertyChanged -= TableArtifact_PropertyChanged;
+                }
                 if (SetProperty(ref _table, value))
                 {
                     LoadFromTable();
+                    // listen for rename event, when table name changes outside this viewmodel
+                    // (e.g., from the tree view editlabel action)
+                    if(_table!=null)
+                        _table.PropertyChanged += TableArtifact_PropertyChanged;
                 }
+            }
+        }
+
+        private void TableArtifact_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {   
+            // listen for rename event, when table name changes outside this viewmodel
+            // (e.g., from the tree view editlabel action)
+            if (e.PropertyName == nameof(TableArtifact.Name))
+            {
+                this.NameField.Value = (sender as TableArtifact)?.Name;
             }
         }
 

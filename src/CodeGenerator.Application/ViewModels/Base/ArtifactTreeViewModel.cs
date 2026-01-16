@@ -63,6 +63,7 @@ public abstract class ArtifactTreeViewModel<TController> : ViewModelBase, IArtif
     protected ArtifactTreeViewModel(TController treeViewController)
     {
         TreeViewController = treeViewController;
+        TreeViewController.BeginRenameRequested += (s, e) => BeginRenameRequested?.Invoke(this, e);
     }
 
     /// <summary>

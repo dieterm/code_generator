@@ -383,6 +383,8 @@ public class TemplateParametersViewModel : ViewModelBase
 
         if (_workspaceController?.CurrentWorkspace == null)
             return items;
+        // TODO: visit complete workspace tree recursively to find datasources
+        // by checking if an artifact has a TemplateDatasourceProviderDecorator
 
         // Iterate through all datasources
         foreach (var datasource in _workspaceController.CurrentWorkspace.Datasources.GetDatasources())
@@ -392,16 +394,16 @@ public class TemplateParametersViewModel : ViewModelBase
             {
                 if (child is TableArtifact tableArtifact)
                 {
-                    var schemaPrefix = !string.IsNullOrEmpty(tableArtifact.Schema) 
-                        ? $"{tableArtifact.Schema}." 
-                        : string.Empty;
+                    var datasourceProvider = tableArtifact.GetTemplateDatasourceProviderDecorator();
+                    if (datasourceProvider == null)
+                        continue;
 
                     items.Add(new TableArtifactItem
                     {
                         TableArtifact = tableArtifact,
                         DatasourceArtifact = datasource,
-                        DisplayName = $"{datasource.Name} > {schemaPrefix}{tableArtifact.Name}",
-                        FullPath = $"{datasource.Name}.{schemaPrefix}{tableArtifact.Name}"
+                        DisplayName = datasourceProvider.DisplayName,
+                        FullPath = datasourceProvider.FullPath
                     });
                 }
             }

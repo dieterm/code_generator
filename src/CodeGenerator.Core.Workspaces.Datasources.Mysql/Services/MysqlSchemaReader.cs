@@ -246,10 +246,20 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
             while (await reader.ReadAsync(cancellationToken))
             {
                 var columnName = reader.GetString("COLUMN_NAME");
-                var dataType = reader.GetString("COLUMN_TYPE");
+                //var dataType = reader.GetString("COLUMN_TYPE");
+                // Use COLUMN_TYPE for full type info
+                // eg. varchar(255), int(11) unsigned, enum('a','b','c')
+                var columnType = reader.GetString("COLUMN_TYPE");
+                var dataType = reader.GetString("DATA_TYPE");
+                // try to map datatype to generic type
+                var typeMapping = MysqlDatabase.Instance.DataTypeMappings.AllMappings.FirstOrDefault(m => string.Equals(m.NativeTypeName, dataType, StringComparison.OrdinalIgnoreCase));
+                if (typeMapping != null)
+                {
+                    columnType = typeMapping.GenericType.Id;
+                }
                 var isNullable = reader.GetString("IS_NULLABLE") == "YES";
 
-                var column = new ColumnArtifact(columnName, dataType, isNullable)
+                var column = new ColumnArtifact(columnName, columnType, isNullable)
                 {
                     MaxLength = reader.IsDBNull(reader.GetOrdinal("CHARACTER_MAXIMUM_LENGTH")) 
                         ? null 
@@ -267,7 +277,7 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
                 column.AddDecorator(new ExistingColumnDecorator
                 {
                     OriginalName = columnName,
-                    OriginalDataType = reader.GetString("DATA_TYPE"),
+                    OriginalDataType = dataType,
                     OriginalOrdinalPosition = column.OrdinalPosition,
                     OriginalIsNullable = isNullable,
                     OriginalMaxLength= column.MaxLength,
@@ -332,23 +342,5 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
                 table.AddChild(index);
             }
         }
-    }
-
-    /// <summary>
-    /// Information about a database object (table or view)
-    /// </summary>
-    public class DatabaseObjectInfo
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Schema { get; set; } = string.Empty;
-        public DatabaseObjectType ObjectType { get; set; }
-
-        public string DisplayName => $"{Schema}.{Name}";
-    }
-
-    public enum DatabaseObjectType
-    {
-        Table,
-        View
     }
 }

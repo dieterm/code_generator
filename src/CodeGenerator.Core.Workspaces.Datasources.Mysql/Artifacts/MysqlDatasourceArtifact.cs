@@ -1,6 +1,8 @@
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.Templates;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
+using CodeGenerator.Domain.Databases.RelationalDatabases;
 using MySqlConnector;
 
 namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts
@@ -11,9 +13,9 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts
     public class MysqlDatasourceArtifact : RelationalDatabaseDatasourceArtifact
     {
         public const string TYPE_ID = "MySql";
-
-        public MysqlDatasourceArtifact(string name) 
-            : base(name)
+        public const string MysqlTemplateDatasourceProviderDecorator_ID = "MysqlTemplateDatasourceProviderDecorator";
+        public MysqlDatasourceArtifact(string name, string? description = null) 
+            : base(name, description)
         {
             Server = "localhost";
             Port = 3306;
@@ -25,6 +27,56 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts
         public MysqlDatasourceArtifact(ArtifactState state)
             : base(state)
         {
+            
+        }
+
+        public override TemplateDatasourceProviderDecorator CreateTableArtifactTemplateDatasourceProviderDecorator()
+        {
+            return new MysqlTableTemplateDatasourceProviderDecorator(MysqlTemplateDatasourceProviderDecorator_ID);
+        }
+        public override TemplateDatasourceProviderDecorator CreateViewArtifactTemplateDatasourceProviderDecorator()
+        {
+            return new MysqlViewTemplateDatasourceProviderDecorator(MysqlTemplateDatasourceProviderDecorator_ID);
+        }
+
+        public override void AddChild(IArtifact child)
+        {
+            base.AddChild(child);
+            if(child is TableArtifact tableArtifact)
+            {
+                // first check if it already has the decorator (from memento state restore)
+                if (tableArtifact.GetTemplateDatasourceProviderDecorator() != null)
+                    return;
+                tableArtifact.AddDecorator(CreateTableArtifactTemplateDatasourceProviderDecorator());
+            }
+            else if(child is ViewArtifact viewArtifact)
+            {
+                // first check if it already has the decorator (from memento state restore)
+                if (viewArtifact.GetTemplateDatasourceProviderDecorator() != null)
+                    return;
+                viewArtifact.AddDecorator(CreateViewArtifactTemplateDatasourceProviderDecorator());
+            }
+        }
+
+        public override void RemoveChild(IArtifact child)
+        {
+            base.RemoveChild(child);
+            if (child is TableArtifact tableArtifact)
+            {
+                var decorator = tableArtifact.GetTemplateDatasourceProviderDecorator();
+                if (decorator != null)
+                {
+                    tableArtifact.RemoveDecorator(decorator);
+                }
+            }
+            else if (child is ViewArtifact viewArtifact)
+            {
+                var decorator = viewArtifact.GetTemplateDatasourceProviderDecorator();
+                if (decorator != null)
+                {
+                    viewArtifact.RemoveDecorator(decorator);
+                }
+            }
         }
 
         public override string DatasourceType => TYPE_ID;
@@ -164,6 +216,11 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts
         public override void EndEdit(string oldName, string newName)
         {
             Name = newName;
+        }
+
+        public override RelationalDatabase GetDomainRelationalDatabase()
+        {
+            return MysqlDatabase.Instance;
         }
     }
 }

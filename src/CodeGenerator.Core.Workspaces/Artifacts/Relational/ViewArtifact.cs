@@ -1,4 +1,5 @@
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.Templates;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Shared.Views.TreeNode;
 
@@ -92,6 +93,11 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         public void EndEdit(string oldName, string newName)
         {
             Name = newName;
+        }
+
+        public IArtifactDecorator GetTemplateDatasourceProviderDecorator()
+        {
+            return GetDecorator<TemplateDatasourceProviderDecorator>()!;
         }
     }
 }

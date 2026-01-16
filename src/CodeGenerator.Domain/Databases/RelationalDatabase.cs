@@ -88,6 +88,22 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
         public virtual int MaxIdentifierLength => 255;
 
         /// <summary>
+        /// Generate a SELECT statement
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <param name="columnNames"></param>
+        /// <param name="schema"></param>
+        /// <param name="whereClause">optional WHERE clause</param>
+        /// <param name="limit">max number of rows to return</param>
+        /// <returns></returns>
+        public abstract string GenerateSelectStatement(
+            string tableName,
+            IEnumerable<string>? columnNames = null,
+            string? schema = null,
+            string? whereClause = null,
+            int? limit = null);
+
+        /// <summary>
         /// Generate a CREATE TABLE statement
         /// </summary>
         public virtual string GenerateCreateTableStatement(

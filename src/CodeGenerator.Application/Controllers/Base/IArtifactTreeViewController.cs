@@ -7,8 +7,12 @@ namespace CodeGenerator.Application.Controllers.Base
     {
         IArtifactTreeViewModel? TreeViewModel { get; set; }
 
+        event EventHandler<IArtifact>? BeginRenameRequested;
         event EventHandler<ArtifactRenamedEventArgs>? ArtifactRenamed;
         event EventHandler<IArtifact?>? ArtifactSelected;
+        event EventHandler<ArtifactChildChangedEventArgs>? ArtifactRemoved;
+        event EventHandler<ArtifactChildChangedEventArgs>? ArtifactAdded;
+        event EventHandler<ArtifactPropertyChangedEventArgs>? ArtifactPropertyChanged;
 
         IEnumerable<ArtifactTreeNodeCommand> GetContextMenuCommands(IArtifact artifact);
         IArtifactController? GetController(IArtifact artifact);

@@ -1,4 +1,5 @@
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.Templates;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Shared.Views.TreeNode;
 
@@ -9,28 +10,18 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
     /// </summary>
     public abstract class DatasourceArtifact : Artifact, IEditableTreeNode
     {
-        //private string _name;
-        //private string _description;
-
-        protected DatasourceArtifact(string name)
+        protected DatasourceArtifact(string name, string? description = null)
         {
-            //Id = $"datasource_{Name.ToLowerInvariant().Replace(" ", "_")}_{GetType().Name}";
             Name = name;
-            Description = string.Empty;
+            Description = description ?? string.Empty;
         }
 
         protected DatasourceArtifact(ArtifactState state)
             : base(state)
         {
-            //Id = $"datasource_{Name.ToLowerInvariant().Replace(" ", "_")}_{GetType().Name}";
+            
         }
 
-        //public override string Id => 
-
-       /* private void UpdateId()
-        {
-            Id = $"datasource_{Name.ToLowerInvariant().Replace(" ", "_")}_{GetType().Name}";
-        }*/
 
         public override string TreeNodeText { get { return Name; } }
 
@@ -86,5 +77,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         public abstract bool CanBeginEdit();
         public abstract bool Validating(string newName);
         public abstract void EndEdit(string oldName, string newName);
+
+        
     }
 }

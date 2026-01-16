@@ -4,6 +4,7 @@ using CodeGenerator.Core.Workspaces.Models;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
@@ -17,17 +18,30 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         private ColumnArtifact? _column;
         private bool _isLoading;
 
+        public IEnumerable<FieldViewModelBase> AllFields => new FieldViewModelBase[]
+        {
+            NameField,
+            DataTypeField,
+            MaxLengthField,
+            PrecisionField,
+            ScaleField,
+            IsNullableField,
+            IsPrimaryKeyField,
+            IsAutoIncrementField,
+            DefaultValueField
+        };
+
         public ColumnEditViewModel()
         {
-            NameField = new SingleLineTextFieldModel { Label = "Column Name", Name = "Name" };
-            DataTypeField = new ComboboxFieldModel { Label = "Data Type", Name = "DataType" };
-            MaxLengthField = new IntegerFieldModel { Label = "Max Length", Name = "MaxLength", Minimum=0, Maximum=int.MaxValue };
-            PrecisionField = new IntegerFieldModel { Label = "Precision", Name = "Precision", Minimum = 0, Maximum = int.MaxValue };
-            ScaleField = new IntegerFieldModel { Label = "Scale", Name = "Scale", Minimum = 0, Maximum = int.MaxValue };
-            IsNullableField = new BooleanFieldModel { Label = "Nullable", Name = "IsNullable" };
-            IsPrimaryKeyField = new BooleanFieldModel { Label = "Primary Key", Name = "IsPrimaryKey" };
-            IsAutoIncrementField = new BooleanFieldModel { Label = "Auto Increment", Name = "IsAutoIncrement" };
-            DefaultValueField = new SingleLineTextFieldModel { Label = "Default Value", Name = "DefaultValue" };
+            NameField = new SingleLineTextFieldModel { Label = "Column Name", Name = nameof(ColumnArtifact.Name) };
+            DataTypeField = new ComboboxFieldModel { Label = "Data Type", Name = nameof(ColumnArtifact.DataType) };
+            MaxLengthField = new IntegerFieldModel { Label = "Max Length", Name = nameof(ColumnArtifact.MaxLength), Minimum=0, Maximum=int.MaxValue };
+            PrecisionField = new IntegerFieldModel { Label = "Precision", Name = nameof(ColumnArtifact.Precision), Minimum = 0, Maximum = int.MaxValue };
+            ScaleField = new IntegerFieldModel { Label = "Scale", Name = nameof(ColumnArtifact.Scale), Minimum = 0, Maximum = int.MaxValue };
+            IsNullableField = new BooleanFieldModel { Label = "Nullable", Name = nameof(ColumnArtifact.IsNullable) };
+            IsPrimaryKeyField = new BooleanFieldModel { Label = "Primary Key", Name = nameof(ColumnArtifact.IsPrimaryKey) };
+            IsAutoIncrementField = new BooleanFieldModel { Label = "Auto Increment", Name = nameof(ColumnArtifact.IsAutoIncrement) };
+            DefaultValueField = new SingleLineTextFieldModel { Label = "Default Value", Name = nameof(ColumnArtifact.DefaultValue) };
 
             DataTypeField.PropertyChanged += DataTypeField_PropertyChanged;
 
@@ -45,7 +59,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
 
         private void DataTypeField_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == nameof(ComboboxFieldModel.SelectedItem))
+            if (e.PropertyName == nameof(ComboboxFieldModel.SelectedItem))
             {
                 var dataType = DataTypeField.SelectedItem as DataTypeComboboxItem;
                 if (dataType != null)
@@ -64,11 +78,35 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             get => _column;
             set
             {
+                if(_column!=null)
+                {
+                    // remove old listener
+                    _column.PropertyChanged -= ColumnArtifact_PropertyChanged;
+                }
                 if (SetProperty(ref _column, value))
                 {
                     LoadFromColumn();
+                    if (_column != null)
+                    {
+                        // add new listener
+                        _column.PropertyChanged += ColumnArtifact_PropertyChanged;
+                    }
                 }
             }
+        }
+
+        private void ColumnArtifact_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            //reflect changes from the ColumnArtifact back to the ViewModel fields
+            var fieldModel = AllFields.FirstOrDefault(f => f.Name == e.PropertyName);
+            if (fieldModel != null)
+            {
+                fieldModel.Value = (sender as ColumnArtifact).GetValue<object>(e.PropertyName);
+            }
+            //if (e.PropertyName == nameof(ColumnArtifact.Name))
+            //{
+            //    this.NameField.Value = (sender as ColumnArtifact)?.Name;
+            //}
         }
 
         // Field ViewModels
@@ -152,8 +190,8 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         {
             if (_column == null) return;
 
-            _column.Name = NameField.Value?.ToString() ?? "Column";
-            _column.DataType = BuildFullDataType();
+            _column.Name = NameField.Value?.ToString();
+            _column.DataType = DataTypeField.Value?.ToString();
             _column.MaxLength = MaxLengthField.Value is int maxLen ? maxLen : null;
             _column.Precision = PrecisionField.Value is int prec ? prec : null;
             _column.Scale = ScaleField.Value is int scale ? scale : null;

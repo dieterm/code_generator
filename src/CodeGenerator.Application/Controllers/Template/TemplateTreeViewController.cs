@@ -7,6 +7,7 @@ using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts.CodeGeneration;
 using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Shared;
@@ -341,68 +342,7 @@ namespace CodeGenerator.Application.Controllers.Template
             int? maxRows,
             CancellationToken cancellationToken)
         {
-            var results = new List<dynamic>();
-
-            if (tableItem.DatasourceArtifact is not MysqlDatasourceArtifact mysqlDatasource)
-            {
-                Logger.LogWarning("TableArtifactData is only supported for MySQL datasources currently");
-                return results;
-            }
-
-            var table = tableItem.TableArtifact;
-            var columns = table.GetColumns().ToList();
-
-            // Build SELECT query
-            var columnNames = string.Join(", ", columns.Select(c => $"`{c.Name}`"));
-            var tableName = !string.IsNullOrEmpty(table.Schema)
-                ? $"`{table.Schema}`.`{table.Name}`"
-                : $"`{table.Name}`";
-
-            var query = $"SELECT {columnNames} FROM {tableName}";
-
-            if (!string.IsNullOrWhiteSpace(filter))
-            {
-                query += $" WHERE {filter}";
-            }
-
-            if (maxRows.HasValue && maxRows.Value > 0)
-            {
-                query += $" LIMIT {maxRows.Value}";
-            }
-
-            Logger.LogDebug("Executing query: {Query}", query);
-
-            try
-            {
-                await using var connection = new MySqlConnection(mysqlDatasource.ConnectionString);
-                await connection.OpenAsync(cancellationToken);
-
-                await using var command = new MySqlCommand(query, connection);
-                await using var reader = await command.ExecuteReaderAsync(cancellationToken);
-
-                while (await reader.ReadAsync(cancellationToken))
-                {
-                    var row = new ExpandoObject() as IDictionary<string, object?>;
-
-                    for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        var columnName = reader.GetName(i);
-                        var value = reader.IsDBNull(i) ? null : reader.GetValue(i);
-                        row[columnName] = value;
-                    }
-
-                    results.Add(row);
-                }
-
-                Logger.LogInformation("Loaded {RowCount} rows from table {TableName}", results.Count, table.Name);
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "Error loading data from table {TableName}", table.Name);
-                throw;
-            }
-
-            return results;
+            return await tableItem.TableArtifact.GetTemplateDatasourceProviderDecorator()!.LoadDataAsync(Logger, filter, maxRows, cancellationToken) ?? Enumerable.Empty<dynamic>();
         }
 
         /// <summary>
@@ -440,13 +380,7 @@ namespace CodeGenerator.Application.Controllers.Template
             if (TreeViewModel != null)
             {
                 TreeViewModel.PropertyChanged -= TreeViewModel_PropertyChanged;
-                //TreeViewModel.TemplateSelected -= TreeViewModel_TemplateSelected;
             }
-
-            //if (_parametersViewModel != null)
-            //{
-            //    _parametersViewModel.ExecuteRequested -= ParametersViewModel_ExecuteRequested;
-            //}
         }
 
         public override void ShowArtifactDetailsView(ViewModelBase? detailsModel)

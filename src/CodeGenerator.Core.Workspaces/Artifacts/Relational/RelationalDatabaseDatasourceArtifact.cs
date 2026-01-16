@@ -1,4 +1,5 @@
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.Templates;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Shared.Views.TreeNode;
 
@@ -11,8 +12,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
     {
         //private string _connectionString;
 
-        protected RelationalDatabaseDatasourceArtifact(string name) 
-            : base(name)
+        protected RelationalDatabaseDatasourceArtifact(string name, string? description = null) 
+            : base(name, description)
         {
             ConnectionString = string.Empty;
         }
@@ -21,6 +22,11 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             : base(state)
         {
         }
+
+        public abstract TemplateDatasourceProviderDecorator CreateTableArtifactTemplateDatasourceProviderDecorator();
+        public abstract TemplateDatasourceProviderDecorator CreateViewArtifactTemplateDatasourceProviderDecorator();
+
+        public abstract Domain.Databases.RelationalDatabases.RelationalDatabase GetDomainRelationalDatabase();
 
         public override string DatasourceCategory => "Relational Database";
 
