@@ -25,7 +25,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
 
         public FileArtifact(ArtifactState state) : base(state)
         {
-            _fileArtifactDecorator = GetDecorator<FileArtifactDecorator>() 
+            _fileArtifactDecorator = GetDecoratorOfType<FileArtifactDecorator>() 
                 ?? throw new InvalidOperationException($"FileArtifact must have a {nameof(FileArtifactDecorator)} with key '{FILE_PROPERTIES_DECORATOR_KEY}'");
             
             ParentChanged += ParentChanged_Handler;
@@ -101,10 +101,10 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
         /// </summary>
         public string? GetTextContent()
         {
-            var textDecorator = GetDecorator<TextContentDecorator>();
+            var textDecorator = GetDecoratorOfType<TextContentDecorator>();
             if(textDecorator!=null) return textDecorator.Content;
 
-            var existingFileDecorator = GetDecorator<ExistingFileArtifactDecorator>();
+            var existingFileDecorator = GetDecoratorOfType<ExistingFileArtifactDecorator>();
             if(existingFileDecorator!=null && !string.IsNullOrWhiteSpace(existingFileDecorator.FilePath))
             {
                 return System.IO.File.ReadAllText(existingFileDecorator.FilePath);

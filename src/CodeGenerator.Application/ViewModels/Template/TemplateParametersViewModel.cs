@@ -1,5 +1,6 @@
 using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Application.ViewModels.Workspace;
+using CodeGenerator.Core.Artifacts.Templates;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
@@ -377,35 +378,34 @@ public class TemplateParametersViewModel : ViewModelBase
     /// <summary>
     /// Get all available TableArtifacts from the workspace
     /// </summary>
-    private List<TableArtifactItem> GetAvailableTableArtifacts()
+    private List<TemplateDatasourceArtifactItem> GetAvailableTableArtifacts()
     {
-        var items = new List<TableArtifactItem>();
+        var items = new List<TemplateDatasourceArtifactItem>();
 
         if (_workspaceController?.CurrentWorkspace == null)
             return items;
-        // TODO: visit complete workspace tree recursively to find datasources
+        // visit complete workspace tree recursively to find datasources
         // by checking if an artifact has a TemplateDatasourceProviderDecorator
-
+        var decorators = _workspaceController?.CurrentWorkspace.FindDescendantDecorators<TemplateDatasourceProviderDecorator>();
+        
         // Iterate through all datasources
-        foreach (var datasource in _workspaceController.CurrentWorkspace.Datasources.GetDatasources())
+        foreach (var decorator in decorators)
         {
-            // Find all TableArtifacts in this datasource
-            foreach (var child in datasource.Children)
+            var datasourceArtifact = decorator.Artifact.FindAncesterOfType<DatasourceArtifact>();
+            
+            if (datasourceArtifact!=null)
             {
-                if (child is TableArtifact tableArtifact)
-                {
-                    var datasourceProvider = tableArtifact.GetTemplateDatasourceProviderDecorator();
-                    if (datasourceProvider == null)
-                        continue;
+                //var datasourceProvider = datasourceArtifact.GetTemplateDatasourceProviderDecorator();
+                //if (datasourceProvider == null)
+                //    continue;
 
-                    items.Add(new TableArtifactItem
-                    {
-                        TableArtifact = tableArtifact,
-                        DatasourceArtifact = datasource,
-                        DisplayName = datasourceProvider.DisplayName,
-                        FullPath = datasourceProvider.FullPath
-                    });
-                }
+                items.Add(new TemplateDatasourceArtifactItem
+                {
+                    DatasourceTargetArtifact = decorator.Artifact,
+                    DatasourceArtifact = datasourceArtifact,
+                    DisplayName = decorator.DisplayName,
+                    FullPath = decorator.FullPath
+                });
             }
         }
 
@@ -418,7 +418,7 @@ public class TemplateParametersViewModel : ViewModelBase
     private FieldViewModelBase? CreateFieldForParameter(TemplateParameter parameter)
     {
         // Check for TableArtifactData type first
-        if (parameter.IsTableArtifactData)
+        if (parameter.IsTemplateDatasourceArtifactData)
         {
             var tableField = new TableArtifactFieldModel
             {
@@ -713,7 +713,7 @@ public class TemplateParameterEditModel : ViewModelBase
         "System.DateOnly",
         "System.Decimal",
         "System.Double",
-        TemplateParameter.TableArtifactDataTypeName
+        TemplateParameter.TemplateDatasourceArtifactDataTypeName
     };
 
     /// <summary>

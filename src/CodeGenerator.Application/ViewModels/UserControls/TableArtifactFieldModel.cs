@@ -7,13 +7,13 @@ namespace CodeGenerator.Application.ViewModels.Workspace;
 /// </summary>
 public class TableArtifactFieldModel : FieldViewModelBase
 {
-    private List<TableArtifactItem> _availableTables = new();
-    private TableArtifactItem? _selectedTable;
+    private List<TemplateDatasourceArtifactItem> _availableTables = new();
+    private TemplateDatasourceArtifactItem? _selectedTable;
 
     /// <summary>
     /// List of available tables from the workspace
     /// </summary>
-    public List<TableArtifactItem> AvailableTables
+    public List<TemplateDatasourceArtifactItem> AvailableTables
     {
         get => _availableTables;
         set => SetProperty(ref _availableTables, value);
@@ -22,7 +22,7 @@ public class TableArtifactFieldModel : FieldViewModelBase
     /// <summary>
     /// Currently selected table
     /// </summary>
-    public TableArtifactItem? SelectedTable
+    public TemplateDatasourceArtifactItem? SelectedTable
     {
         get => _selectedTable;
         set
@@ -40,7 +40,7 @@ public class TableArtifactFieldModel : FieldViewModelBase
         get => _selectedTable;
         set
         {
-            if (value is TableArtifactItem item)
+            if (value is TemplateDatasourceArtifactItem item)
             {
                 SelectedTable = item;
             }

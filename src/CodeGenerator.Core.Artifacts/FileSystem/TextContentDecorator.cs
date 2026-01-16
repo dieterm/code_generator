@@ -27,7 +27,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
 
         override public bool CanGenerate()
         {
-            return !string.IsNullOrWhiteSpace(Artifact.GetDecorator<FileArtifactDecorator>()?.FileName);
+            return !string.IsNullOrWhiteSpace(Artifact.GetDecoratorOfType<FileArtifactDecorator>()?.FileName);
         }
 
         public object? CreatePreview()
@@ -38,7 +38,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
 
         override public async Task GenerateAsync(IProgress<ArtifactGenerationProgress> progress, CancellationToken cancellationToken = default)
         {
-            var fileArtifact = Artifact.GetDecorator<FileArtifactDecorator>() ?? throw new InvalidOperationException("Artifact does not have a FileArtifactDecorator");
+            var fileArtifact = Artifact.GetDecoratorOfType<FileArtifactDecorator>() ?? throw new InvalidOperationException("Artifact does not have a FileArtifactDecorator");
             if(string.IsNullOrWhiteSpace(fileArtifact.FileName))
                 throw new InvalidOperationException("FileArtifactDecorator does not have a FileName set");
 

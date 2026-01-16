@@ -248,7 +248,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 templateInstance.Parameters["DeletedIndexes"] = artifact.RemovedExistingIndexes.ToList();
                 templateInstance.Parameters["ModifiedExistingColumns"] = artifact.GetModifiedExistingColumns().ToList();
                 templateInstance.Parameters["CanAlterTable"] = artifact.CanAlterTable();
-                var existingTableDecorator = artifact.GetDecorator<ExistingTableDecorator>();
+                var existingTableDecorator = artifact.GetDecoratorOfType<ExistingTableDecorator>();
                 templateInstance.Parameters["IsTableRenamed"] = existingTableDecorator != null && !string.Equals(artifact.Name, existingTableDecorator?.OriginalTableName);
                 templateInstance.Parameters["TableOriginalName"] = existingTableDecorator?.OriginalTableName ?? artifact.Name;
                 templateInstance.Functions.Add("GetTypeDef", new Func<ColumnArtifact, string>((c) =>

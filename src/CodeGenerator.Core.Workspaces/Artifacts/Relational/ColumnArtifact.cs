@@ -212,7 +212,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
 
         public bool HasExistingChanges()
         {
-            var decorator = GetDecorator<ExistingColumnDecorator>();
+            var decorator = GetDecoratorOfType<ExistingColumnDecorator>();
             if(decorator == null)
                 return false;
 

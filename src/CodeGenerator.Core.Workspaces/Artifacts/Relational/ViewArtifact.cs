@@ -97,7 +97,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
 
         public IArtifactDecorator GetTemplateDatasourceProviderDecorator()
         {
-            return GetDecorator<TemplateDatasourceProviderDecorator>()!;
+            return GetDecoratorOfType<TemplateDatasourceProviderDecorator>()!;
         }
     }
 }

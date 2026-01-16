@@ -23,15 +23,15 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
         public FolderArtifact(ArtifactState state)
             : base(state)
         {
-            _folderArtifactDecorator = GetDecorator<FolderArtifactDecorator>()
+            _folderArtifactDecorator = GetDecoratorOfType<FolderArtifactDecorator>()
                 ?? throw new InvalidOperationException($"FolderArtifact must have a {nameof(FolderArtifactDecorator)} with key '{FOLDER_PROPERTIES_DECORATOR_KEY}'");
         }
 
         override public string TreeNodeText { get { return FolderName; } }
         override public ITreeNodeIcon TreeNodeIcon { get; } = new ResourceManagerTreeNodeIcon("folder");
         public string FolderName {
-            get { return GetDecorator<FolderArtifactDecorator>().FolderName; }
-            set { GetDecorator<FolderArtifactDecorator>().FolderName = value; }
+            get { return GetDecoratorOfType<FolderArtifactDecorator>().FolderName; }
+            set { GetDecoratorOfType<FolderArtifactDecorator>().FolderName = value; }
         }
         public string FullPath { get { return this.GetFullPath(); } }
 

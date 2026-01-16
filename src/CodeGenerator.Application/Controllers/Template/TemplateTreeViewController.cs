@@ -6,6 +6,7 @@ using CodeGenerator.Application.ViewModels.Template;
 using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts.CodeGeneration;
 using CodeGenerator.Core.Artifacts.FileSystem;
+using CodeGenerator.Core.Artifacts.Templates;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts;
@@ -252,7 +253,7 @@ namespace CodeGenerator.Application.Controllers.Template
                             }
                             else if (fileArtifact.HasDecorator<ImageContentDecorator>())
                             {
-                                var image = fileArtifact.GetDecorator<ImageContentDecorator>()?.CreatePreview() as Image;
+                                var image = fileArtifact.GetDecoratorOfType<ImageContentDecorator>()?.CreatePreview() as Image;
                                 if (image != null) {
                                     WindowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel
                                     {
@@ -314,10 +315,10 @@ namespace CodeGenerator.Application.Controllers.Template
                 var paramDef = templateParams.FirstOrDefault(p => p.Name == kvp.Key);
 
                 // Check if this is a TableArtifactData parameter
-                if (paramDef?.IsTableArtifactData == true && kvp.Value is TableArtifactItem tableItem)
+                if (paramDef?.IsTemplateDatasourceArtifactData == true && kvp.Value is TemplateDatasourceArtifactItem tableItem)
                 {
-                    // Load data from the database
-                    var data = await LoadTableDataAsync(
+                    // Load data from the database, jsonfile, ...
+                    var data = await LoadTemplateDatasourceDataAsync(
                         tableItem,
                         paramDef.TableDataFilter,
                         paramDef.TableDataMaxRows,
@@ -336,13 +337,14 @@ namespace CodeGenerator.Application.Controllers.Template
         /// <summary>
         /// Load data from a table in the database
         /// </summary>
-        private async Task<IEnumerable<dynamic>> LoadTableDataAsync(
-            TableArtifactItem tableItem,
+        private async Task<IEnumerable<dynamic>> LoadTemplateDatasourceDataAsync(
+            TemplateDatasourceArtifactItem tableItem,
             string? filter,
             int? maxRows,
             CancellationToken cancellationToken)
         {
-            return await tableItem.TableArtifact.GetTemplateDatasourceProviderDecorator()!.LoadDataAsync(Logger, filter, maxRows, cancellationToken) ?? Enumerable.Empty<dynamic>();
+            var datasourceDecorator = tableItem.DatasourceTargetArtifact.GetDecoratorLikeType<TemplateDatasourceProviderDecorator>();
+            return await datasourceDecorator.LoadDataAsync(Logger, filter, maxRows, cancellationToken) ?? Enumerable.Empty<dynamic>();
         }
 
         /// <summary>

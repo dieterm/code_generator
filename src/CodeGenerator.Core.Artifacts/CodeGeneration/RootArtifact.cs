@@ -30,8 +30,8 @@ namespace CodeGenerator.Core.Artifacts.CodeGeneration
 
         public string FolderPath
         {
-            get { return GetDecorator<ExistingFolderArtifactDecorator>()!.FolderPath; }
-            set { GetDecorator<ExistingFolderArtifactDecorator>()!.FolderPath = value; }
+            get { return GetDecoratorOfType<ExistingFolderArtifactDecorator>()!.FolderPath; }
+            set { GetDecoratorOfType<ExistingFolderArtifactDecorator>()!.FolderPath = value; }
         }
     }
 }

@@ -23,7 +23,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
             {
                 path = new List<string>();
             }
-            var folderDecorator = artifact.GetDecorator<FolderArtifactDecorator>();
+            var folderDecorator = artifact.GetDecoratorOfType<FolderArtifactDecorator>();
             if (folderDecorator != null)
             {
                 path.Add(folderDecorator.FolderName);
@@ -44,7 +44,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
             IArtifact? current = artifact;
             while (current != null)
             {
-                var folderDecorator = current.GetDecorator<FolderArtifactDecorator>();
+                var folderDecorator = current.GetDecoratorOfType<FolderArtifactDecorator>();
                 if (folderDecorator != null)
                 {
                     return folderDecorator;
@@ -58,7 +58,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
             IArtifact? current = artifact.Parent;
             while (current != null)
             {
-                if (current is FolderArtifact folderArtifact || current.GetDecorator<FolderArtifactDecorator>() != null)
+                if (current is FolderArtifact folderArtifact || current.GetDecoratorOfType<FolderArtifactDecorator>() != null)
                 {
                     return (FolderArtifact)current;
                 }
@@ -70,19 +70,19 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
 
         public static bool IsFileArtifact(this IArtifact artifact)
         {
-            return artifact.GetDecorator<FileArtifactDecorator>() != null;
+            return artifact.GetDecoratorOfType<FileArtifactDecorator>() != null;
         }
         public static bool IsExistingFileArtifact(this IArtifact artifact)
         {
-            return IsFileArtifact(artifact) && artifact.GetDecorator<ExistingFileArtifactDecorator>() != null;
+            return IsFileArtifact(artifact) && artifact.GetDecoratorOfType<ExistingFileArtifactDecorator>() != null;
         }
         public static bool IsFolderArtifact(this IArtifact artifact)
         {
-            return artifact.GetDecorator<FolderArtifactDecorator>() != null;
+            return artifact.GetDecoratorOfType<FolderArtifactDecorator>() != null;
         }
         public static bool IsExistingFolderArtifact(this IArtifact artifact)
         {
-            return IsFolderArtifact(artifact) && artifact.GetDecorator<ExistingFolderArtifactDecorator>() != null;
+            return IsFolderArtifact(artifact) && artifact.GetDecoratorOfType<ExistingFolderArtifactDecorator>() != null;
         }
     }
 }

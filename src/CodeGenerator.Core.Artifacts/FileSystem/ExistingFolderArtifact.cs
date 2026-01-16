@@ -23,7 +23,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
         public ExistingFolderArtifact(ArtifactState state) 
             : base(state)
         {
-            _existingFolderArtifactDecorator = GetDecorator<ExistingFolderArtifactDecorator>()
+            _existingFolderArtifactDecorator = GetDecoratorOfType<ExistingFolderArtifactDecorator>()
                 ?? throw new InvalidOperationException($"ExistingFolderArtifact must have a {nameof(ExistingFolderArtifactDecorator)} with key '{EXISTING_FOLDER_PROPERTIES_DECORATOR_KEY}'");
         }
         public string ExistingFolderPath

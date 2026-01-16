@@ -51,7 +51,7 @@ namespace CodeGenerator.Application.Controllers
 
                     if (previewOutput is string) { 
                         _artifactPreviewViewModel.TextContent = previewOutput as string;
-                        var fileExtension = selectedArtifact.GetDecorator<FileArtifactDecorator>()?.FileName.GetFileExtension();
+                        var fileExtension = selectedArtifact.GetDecoratorOfType<FileArtifactDecorator>()?.FileName.GetFileExtension();
                         switch (fileExtension)
                         {
                             case ".cs":

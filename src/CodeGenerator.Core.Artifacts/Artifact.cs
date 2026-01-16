@@ -158,7 +158,7 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
 
     public T AddOrGetDecorator<T>(Func<T> decoratorFactory) where T : class, IArtifactDecorator
     {
-        var decorator = GetDecorator<T>();
+        var decorator = GetDecoratorOfType<T>();
         if (decorator == null)
         {
             decorator = decoratorFactory();
@@ -187,11 +187,14 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
     /// <summary>
     /// Get a decorator of a specific type
     /// </summary>
-    public T? GetDecorator<T>() where T : class, IArtifactDecorator
+    public T? GetDecoratorOfType<T>() where T : class, IArtifactDecorator
     {
         return Decorators.OfType<T>().FirstOrDefault();
     }
-
+    public T? GetDecoratorLikeType<T>() where T : class, IArtifactDecorator
+    {
+        return Decorators.Where(d => d is T).FirstOrDefault() as T;
+    }
     /// <summary>
     /// Get all decorators of a specific type
     /// </summary>
@@ -213,12 +216,25 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
     /// </summary>
     public bool Is<T>() where T : class, IArtifactDecorator => HasDecorator<T>();
 
+    public T? FindAncesterOfType<T>() where T : class, IArtifact
+    {
+        var current = Parent;
+        while (current != null)
+        {
+            var decorator = current as T;
+            if (decorator != null)
+                return decorator;
+            current = current.Parent;
+        }
+        return null;
+    }
+
     public T? FindAncestor<T>() where T : class, IArtifactDecorator
     {
         var current = Parent;
         while (current != null)
         {
-            var decorator = current.GetDecorator<T>();
+            var decorator = current.GetDecoratorOfType<T>();
             if (decorator != null)
                 return decorator;
             current = current.Parent;
@@ -242,7 +258,7 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
     {
         foreach (var child in Children)
         {
-            var decorator = child.GetDecorator<T>();
+            var decorator = child.GetDecoratorOfType<T>();
             if (decorator != null)
                 yield return decorator;
 

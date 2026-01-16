@@ -33,7 +33,8 @@ namespace CodeGenerator.Core.Artifacts
         Task GenerateAsync(IProgress<ArtifactGenerationProgress> progress, CancellationToken cancellationToken = default);
         Task GenerateSelfAsync(IProgress<ArtifactGenerationProgress> progress, CancellationToken cancellationToken = default);
         IEnumerable<IArtifact> GetAllDescendants();
-        T? GetDecorator<T>() where T : class, IArtifactDecorator;
+        T? GetDecoratorOfType<T>() where T : class, IArtifactDecorator;
+        T? GetDecoratorLikeType<T>() where T : class, IArtifactDecorator;
         IEnumerable<T> GetDecorators<T>() where T : class, IArtifactDecorator;
         bool HasDecorator<T>() where T : class, IArtifactDecorator;
         bool Is<T>() where T : class, IArtifactDecorator;

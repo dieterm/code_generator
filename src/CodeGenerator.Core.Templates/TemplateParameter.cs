@@ -8,7 +8,7 @@ public class TemplateParameter
     /// <summary>
     /// Special type name for TableArtifact data source parameter
     /// </summary>
-    public const string TableArtifactDataTypeName = "CodeGenerator.TableArtifactData";
+    public const string TemplateDatasourceArtifactDataTypeName = "CodeGenerator.TemplateDatasourceArtifactData";
 
     /// <summary>
     /// Name of the parameter (used as key in template context)
@@ -98,7 +98,7 @@ public class TemplateParameter
             return typeof(string);
 
         // Special handling for TableArtifactData type
-        if (FullyQualifiedAssemblyTypeName == TableArtifactDataTypeName)
+        if (FullyQualifiedAssemblyTypeName == TemplateDatasourceArtifactDataTypeName)
             return null; // This is a special type handled differently
 
         return Type.GetType(FullyQualifiedAssemblyTypeName);
@@ -107,5 +107,5 @@ public class TemplateParameter
     /// <summary>
     /// Check if this parameter is a TableArtifact data parameter
     /// </summary>
-    public bool IsTableArtifactData => FullyQualifiedAssemblyTypeName == TableArtifactDataTypeName;
+    public bool IsTemplateDatasourceArtifactData => FullyQualifiedAssemblyTypeName == TemplateDatasourceArtifactDataTypeName;
 }

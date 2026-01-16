@@ -171,7 +171,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
 
         public bool HasExistingNameChanged()
         {
-            var existingTableDecorator = GetDecorator<ExistingTableDecorator>();
+            var existingTableDecorator = GetDecoratorOfType<ExistingTableDecorator>();
             if (existingTableDecorator == null)
                 return false;
             return !string.Equals(existingTableDecorator.OriginalTableName, Name, StringComparison.OrdinalIgnoreCase);
@@ -193,7 +193,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
 
         public virtual TemplateDatasourceProviderDecorator? GetTemplateDatasourceProviderDecorator()
         {
-            return GetDecorator<TemplateDatasourceProviderDecorator>();
+            return GetDecoratorOfType<TemplateDatasourceProviderDecorator>();
         }
     }
 }

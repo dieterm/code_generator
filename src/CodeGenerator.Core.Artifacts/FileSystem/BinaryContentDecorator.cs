@@ -20,12 +20,12 @@ public class BinaryContentDecorator : ArtifactDecorator
 
     public override bool CanGenerate()
     {
-        return !string.IsNullOrWhiteSpace(Artifact?.GetDecorator<FileArtifactDecorator>()?.FileName);
+        return !string.IsNullOrWhiteSpace(Artifact?.GetDecoratorOfType<FileArtifactDecorator>()?.FileName);
     }
 
     public override async Task GenerateAsync(IProgress<ArtifactGenerationProgress> progress, CancellationToken cancellationToken = default)
     {
-        var fileArtifact = Artifact?.GetDecorator<FileArtifactDecorator>() 
+        var fileArtifact = Artifact?.GetDecoratorOfType<FileArtifactDecorator>() 
             ?? throw new InvalidOperationException("Artifact does not have a FileArtifactDecorator");
         
         if (string.IsNullOrWhiteSpace(fileArtifact.FileName))

@@ -185,9 +185,9 @@ namespace CodeGenerator.Core.Artifacts
             return Artifact.GetAllDescendants();
         }
 
-        T? IArtifact.GetDecorator<T>() where T : class
+        T? IArtifact.GetDecoratorOfType<T>() where T : class
         {
-            return ((IArtifact)Artifact).GetDecorator<T>();
+            return ((IArtifact)Artifact).GetDecoratorOfType<T>();
         }
 
         IEnumerable<T> IArtifact.GetDecorators<T>()
@@ -238,6 +238,11 @@ namespace CodeGenerator.Core.Artifacts
         public void ResetIsStateChangedFlag()
         {
             ((IMementoObject)Artifact).ResetIsStateChangedFlag();
+        }
+
+        T? IArtifact.GetDecoratorLikeType<T>() where T : class
+        {
+            return ((IArtifact)Artifact).GetDecoratorLikeType<T>();
         }
     }
 }
