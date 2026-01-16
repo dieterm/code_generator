@@ -1,5 +1,5 @@
-using CodeGenerator.Application.ViewModels;
-using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using Microsoft.Extensions.Logging;
 
@@ -8,38 +8,40 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// <summary>
     /// Controller for IndexArtifact
     /// </summary>
-    public class IndexArtifactController : ArtifactControllerBase<IndexArtifact>
+    public class IndexArtifactController : ArtifactControllerBase<WorkspaceTreeViewController, IndexArtifact>
     {
         private IndexEditViewModel? _editViewModel;
 
+        //protected WorkspaceTreeViewController TreeViewController => (WorkspaceTreeViewController)base.TreeViewController;
+
         public IndexArtifactController(
-            WorkspaceController workspaceController,
+            WorkspaceTreeViewController workspaceController,
             ILogger<IndexArtifactController> logger)
             : base(workspaceController, logger)
         {
         }
 
-        protected override IEnumerable<WorkspaceCommand> GetCommands(IndexArtifact artifact)
+        protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(IndexArtifact artifact)
         {
-            var commands = new List<WorkspaceCommand>();
+            var commands = new List<ArtifactTreeNodeCommand>();
 
             // Rename command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "rename_index",
                 Text = "Rename",
                 IconKey = "edit",
                 Execute = async (a) =>
                 {
-                    WorkspaceController.RequestBeginRename(artifact);
+                    TreeViewController.RequestBeginRename(artifact);
                     await Task.CompletedTask;
                 }
             });
 
-            commands.Add(WorkspaceCommand.Separator);
+            commands.Add(ArtifactTreeNodeCommand.Separator);
 
             // Delete command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "delete_index",
                 Text = "Delete",
@@ -50,7 +52,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                     if (parent != null)
                     {
                         parent.RemoveChild(artifact);
-                        WorkspaceController.OnArtifactRemoved(parent, artifact);
+                        TreeViewController.OnArtifactRemoved(parent, artifact);
                     }
                     await Task.CompletedTask;
                 }
@@ -62,7 +64,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
         protected override Task OnSelectedInternalAsync(IndexArtifact artifact, CancellationToken cancellationToken)
         {
             EnsureEditViewModel(artifact);
-            WorkspaceController.ShowWorkspaceDetailsView(_editViewModel!);
+            TreeViewController.ShowArtifactDetailsView(_editViewModel!);
             return Task.CompletedTask;
         }
 
@@ -79,7 +81,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
         private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
         {
-            WorkspaceController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
+            TreeViewController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
         }
     }
 }

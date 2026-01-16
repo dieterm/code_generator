@@ -95,6 +95,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mysql", "Mysql", "{99D3A0D9
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sqlserver", "Sqlserver", "{5A03ABF0-085B-4AB6-8056-015FF6869436}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.TemplateEngines.PlantUML", "CodeGenerator.TemplateEngines.PlantUML\CodeGenerator.TemplateEngines.PlantUML.csproj", "{129541CB-1DAC-4272-9C1E-490787EE0CA6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlantUml", "PlantUml", "{C9BAFF68-4DF7-4666-AC5B-08BB1F57AB5D}"
+	ProjectSection(SolutionItems) = preProject
+		Templates\PlantUml\diagram.plantuml = Templates\PlantUml\diagram.plantuml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -209,6 +216,10 @@ Global
 		{4A46EB30-E072-49DF-ABAF-2ED032E10132}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A46EB30-E072-49DF-ABAF-2ED032E10132}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A46EB30-E072-49DF-ABAF-2ED032E10132}.Release|Any CPU.Build.0 = Release|Any CPU
+		{129541CB-1DAC-4272-9C1E-490787EE0CA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{129541CB-1DAC-4272-9C1E-490787EE0CA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{129541CB-1DAC-4272-9C1E-490787EE0CA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{129541CB-1DAC-4272-9C1E-490787EE0CA6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -219,6 +230,7 @@ Global
 		{B6ED9962-EAF0-40A5-B53B-55F0EB14C377} = {4F3F356B-7C5C-41D5-83E3-7C53E22D6A43}
 		{99D3A0D9-7504-4DF3-B18B-C6AE7EDEABDA} = {B6ED9962-EAF0-40A5-B53B-55F0EB14C377}
 		{5A03ABF0-085B-4AB6-8056-015FF6869436} = {B6ED9962-EAF0-40A5-B53B-55F0EB14C377}
+		{C9BAFF68-4DF7-4666-AC5B-08BB1F57AB5D} = {4F3F356B-7C5C-41D5-83E3-7C53E22D6A43}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF76BCB8-B816-4DA2-B1B6-D1F900E7DD06}

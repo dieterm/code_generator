@@ -1,4 +1,5 @@
-﻿using CodeGenerator.Core.Templates;
+﻿using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Core.Templates;
 using CodeGenerator.Domain.DotNet;
 
 namespace CodeGenerator.TemplateEngines.DotNetProject
@@ -11,6 +12,7 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
             DotNetLanguage = language;
             DotNetTargetFramework = targetFramework ?? throw new ArgumentNullException(nameof(targetFramework));
             TemplateId = $"DotNetProject-{projectType}-{language.DotNetCommandLineArgument}-{targetFramework}";
+            Icon = new ResourceManagerTreeNodeIcon($"dotnet-{projectType}-{language.DotNetCommandLineArgument}-template");
         }
 
         public DotNetProjectTemplate(string id, string projectType, DotNetLanguage language, string targetFramework)
@@ -19,6 +21,7 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
             DotNetProjectType = projectType ?? throw new ArgumentNullException(nameof(projectType));
             DotNetLanguage = language;
             DotNetTargetFramework = targetFramework ?? throw new ArgumentNullException(nameof(targetFramework));
+            Icon = new ResourceManagerTreeNodeIcon($"dotnet-{projectType}-{language.DotNetCommandLineArgument}-template");
         }
 
         public string TemplateId { get; }
@@ -40,5 +43,7 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
 
         public TemplateType TemplateType { get { return TemplateType.DotNetProject; } }
         public bool UseCaching { get; set; } = false;
+
+        public ITreeNodeIcon Icon { get;  } 
     }
 }

@@ -1,7 +1,7 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Domain.DataTypes;
-using CodeGenerator.Shared.Views;
+using CodeGenerator.Shared.Views.TreeNode;
 
 namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
 {
@@ -236,6 +236,21 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             var orignalValue = decorator.GetType().GetProperty("Original" + propertyName)?.GetValue(decorator);
             var currentValue = this.GetType().GetProperty(propertyName)?.GetValue(this);
             return !Equals(orignalValue, currentValue);
+        }
+
+        public bool CanBeginEdit()
+        {
+            return true;
+        }
+
+        public bool Validating(string newName)
+        {
+            return !string.IsNullOrWhiteSpace(newName);
+        }
+
+        public void EndEdit(string oldName, string newName)
+        {
+            Name = newName;
         }
     }
 }

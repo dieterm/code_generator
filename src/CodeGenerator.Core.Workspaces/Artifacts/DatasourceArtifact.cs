@@ -1,6 +1,6 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
-using CodeGenerator.Shared.Views;
+using CodeGenerator.Shared.Views.TreeNode;
 
 namespace CodeGenerator.Core.Workspaces.Artifacts
 {
@@ -83,5 +83,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         /// Refresh the schema/structure from the datasource
         /// </summary>
         public abstract Task RefreshSchemaAsync(CancellationToken cancellationToken = default);
+        public abstract bool CanBeginEdit();
+        public abstract bool Validating(string newName);
+        public abstract void EndEdit(string oldName, string newName);
     }
 }

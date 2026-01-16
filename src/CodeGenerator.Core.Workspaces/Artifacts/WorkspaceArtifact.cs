@@ -1,6 +1,6 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
-using CodeGenerator.Shared.Views;
+using CodeGenerator.Shared.Views.TreeNode;
 
 namespace CodeGenerator.Core.Workspaces.Artifacts
 {
@@ -102,6 +102,21 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             get { 
                 return Children.OfType<DatasourcesContainerArtifact>().First();
             } 
+        }
+
+        public bool CanBeginEdit()
+        {
+            return true;
+        }
+
+        public bool Validating(string newName)
+        {
+            return !string.IsNullOrWhiteSpace(newName);
+        }
+
+        public void EndEdit(string oldName, string newName)
+        {
+            Name = newName;
         }
     }
 }

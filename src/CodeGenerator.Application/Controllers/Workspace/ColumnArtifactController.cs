@@ -1,4 +1,5 @@
-using CodeGenerator.Application.ViewModels;
+using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
@@ -11,13 +12,15 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// <summary>
     /// Controller for ColumnArtifact
     /// </summary>
-    public class ColumnArtifactController : ArtifactControllerBase<ColumnArtifact>
+    public class ColumnArtifactController : ArtifactControllerBase<WorkspaceTreeViewController, ColumnArtifact>
     {
         private readonly IDatasourceFactory _datasourceFactory;
         private ColumnEditViewModel? _editViewModel;
 
+        //protected WorkspaceTreeViewController TreeViewController => (WorkspaceTreeViewController)base.TreeViewController;
+
         public ColumnArtifactController(
-            WorkspaceController workspaceController,
+            WorkspaceTreeViewController workspaceController,
             IDatasourceFactory datasourceFactory,
             ILogger<ColumnArtifactController> logger)
             : base(workspaceController, logger)
@@ -25,12 +28,12 @@ namespace CodeGenerator.Application.Controllers.Workspace
             _datasourceFactory = datasourceFactory;
         }
 
-        protected override IEnumerable<WorkspaceCommand> GetCommands(ColumnArtifact artifact)
+        protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(ColumnArtifact artifact)
         {
-            var commands = new List<WorkspaceCommand>();
+            var commands = new List<ArtifactTreeNodeCommand>();
 
             // Toggle Primary Key command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "toggle_primary_key",
                 Text = artifact.IsPrimaryKey ? "Remove Primary Key" : "Set as Primary Key",
@@ -38,30 +41,30 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 Execute = async (a) =>
                 {
                     artifact.IsPrimaryKey = !artifact.IsPrimaryKey;
-                    WorkspaceController.OnArtifactPropertyChanged(artifact, nameof(ColumnArtifact.IsPrimaryKey), artifact.IsPrimaryKey);
+                    TreeViewController.OnArtifactPropertyChanged(artifact, nameof(ColumnArtifact.IsPrimaryKey), artifact.IsPrimaryKey);
                     await Task.CompletedTask;
                 }
             });
 
-            commands.Add(WorkspaceCommand.Separator);
+            commands.Add(ArtifactTreeNodeCommand.Separator);
 
             // Rename command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "rename_column",
                 Text = "Rename",
                 IconKey = "edit",
                 Execute = async (a) =>
                 {
-                    WorkspaceController.RequestBeginRename(artifact);
+                    TreeViewController.RequestBeginRename(artifact);
                     await Task.CompletedTask;
                 }
             });
 
-            commands.Add(WorkspaceCommand.Separator);
+            commands.Add(ArtifactTreeNodeCommand.Separator);
 
             // Delete command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "delete_column",
                 Text = "Delete",
@@ -72,7 +75,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                     if (parent != null)
                     {
                         parent.RemoveChild(artifact);
-                        WorkspaceController.OnArtifactRemoved(parent, artifact);
+                        TreeViewController.OnArtifactRemoved(parent, artifact);
                     }
                     await Task.CompletedTask;
                 }
@@ -84,11 +87,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
         protected override Task OnSelectedInternalAsync(ColumnArtifact artifact, CancellationToken cancellationToken)
         {
             EnsureEditViewModel(artifact);
-            
-            // Populate data types from datasource
             PopulateDataTypes(artifact);
-
-            WorkspaceController.ShowWorkspaceDetailsView(_editViewModel!);
+            TreeViewController.ShowArtifactDetailsView(_editViewModel!);
             return Task.CompletedTask;
         }
 
@@ -137,7 +137,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
         private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
         {
-            WorkspaceController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
+            TreeViewController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
         }
     }
 }

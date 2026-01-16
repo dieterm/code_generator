@@ -1,7 +1,10 @@
 using CodeGenerator.Application.Controllers;
+using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Application.Controllers.Template;
 using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
+using CodeGenerator.Application.ViewModels.Template;
 using CodeGenerator.Core.DomainSchema.Services;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Interfaces;
@@ -50,22 +53,29 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<DomainSchemaController>();
         services.AddSingleton<GenerationController>();
         services.AddSingleton<SettingsController>();
-        services.AddSingleton<TemplateController>();
+        //services.AddSingleton<TemplateController>();
         
         // Register Workspace Controllers
-        services.AddSingleton<WorkspaceController>();
+        services.AddSingleton<WorkspaceTreeViewController>();
         services.AddSingleton<IDatasourceFactory, DatasourceFactory>();
         services.AddSingleton<WorkspaceFileService>();
-        
-        // Register Artifact Controllers for Workspace
-        services.AddSingleton<IArtifactController, WorkspaceArtifactController>();
-        services.AddSingleton<IArtifactController, DatasourcesContainerController>();
-        services.AddSingleton<IArtifactController, MysqlDatasourceController>();
-        services.AddSingleton<IArtifactController, TableArtifactController>();
-        services.AddSingleton<IArtifactController, ViewArtifactController>();
-        services.AddSingleton<IArtifactController, ColumnArtifactController>();
-        services.AddSingleton<IArtifactController, IndexArtifactController>();
-        
+
+        // Register Template Controllers
+        services.AddSingleton<TemplateTreeViewController>();
+
+        // Workspace Artifact Controllers
+        services.AddSingleton<WorkspaceArtifactController>();
+        services.AddSingleton<DatasourcesContainerController>();
+        services.AddSingleton<MysqlDatasourceController>();
+        services.AddSingleton<TableArtifactController>();
+        services.AddSingleton<ViewArtifactController>();
+        services.AddSingleton<ColumnArtifactController>();
+        services.AddSingleton<IndexArtifactController>();
+
+        // Template Artifact Controllers
+        services.AddSingleton<TemplateArtifactController>();
+        services.AddSingleton<ExistingFolderArtifactController>();
+
         // Register Datasource Providers
         services.AddMysqlDatasourceServices(configuration);
         
@@ -100,6 +110,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<CodeGenerator.TemplateEngines.DotNetProject.Services.DotNetProjectService>();
         services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.Scriban.ScribanTemplateEngine>();
         services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.T4.T4TemplateEngine>();
+        services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.PlantUML.PlantUmlTemplateEngine>();
 
         // Add logging
         services.AddLogging(builder =>

@@ -10,18 +10,25 @@ using CodeGenerator.Shared;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
-using CodeGenerator.Shared.ExtensionMethods;
+
 using Syncfusion.Windows.Forms.Tools;
 using System.ComponentModel;
 using CodeGenerator.Core.Artifacts.FileSystem;
 using System.Diagnostics;
+using CodeGenerator.Application.ViewModels.Workspace;
+using CodeGenerator.Application.ViewModels.Template;
 
 
 namespace CodeGenerator.Presentation.WinForms
 {
-    public partial class MainView : RibbonForm, IView<MainViewModel>, IWindowManagerService
+    public partial class MainView : RibbonForm, IView<MainViewModel>
     {
         private MainViewModel? _mainViewModel;
+
+        /// <summary>
+        /// expose DockingManger for WindowManagerService
+        /// </summary>
+        public DockingManager DockingManager { get { return dockingManager; } }
 
         public MainView()
         {
@@ -120,197 +127,6 @@ namespace CodeGenerator.Presentation.WinForms
                 e.Cancel = !_mainViewModel.IsClosing;
             }
         }
-        #region IView IWindowManagerService
-        private DomainSchemaTreeView? _domainSchemaTreeView;
-        public void ShowDomainSchemaTreeView(DomainSchemaTreeViewModel treeViewModel)
-        {
-            if (_domainSchemaTreeView == null || _domainSchemaTreeView.IsDisposed)
-            {
-                _domainSchemaTreeView = new DomainSchemaTreeView();
-                
-                dockingManager.DockControl(_domainSchemaTreeView, this, DockingStyle.Left, 4);
-                dockingManager.SetEnableDocking(_domainSchemaTreeView, true);
-                dockingManager.SetControlSize(_domainSchemaTreeView, new Size(300, this.Height - 50));
-                dockingManager.SetDockLabel(_domainSchemaTreeView, "Domain Schema");
-            }
-            else
-            {
-                dockingManager.SetDockVisibility(_domainSchemaTreeView, true);
-                //if (!_domainSchemaTreeView.Visible)
-                //{
-                //    dockingManager.DockControl(_domainSchemaTreeView, this, DockingStyle.Left, 4);
-                //}
-            }
-            _domainSchemaTreeView.BindViewModel(treeViewModel);
-        }
-
-        private GenerationResultTreeView? _generationResultTreeView;
-        public void ShowGenerationTreeView(GenerationResultTreeViewModel treeViewModel)
-        {
-            if(_generationResultTreeView == null || _generationResultTreeView.IsDisposed)
-            {
-                _generationResultTreeView = new GenerationResultTreeView();
-               
-                dockingManager.DockControl(_generationResultTreeView, this, DockingStyle.Right, 4);
-                dockingManager.SetEnableDocking(_generationResultTreeView, true);
-                dockingManager.SetControlSize(_generationResultTreeView, new Size(300, this.Height - 50));
-                dockingManager.SetDockLabel(_generationResultTreeView, "Generation Result");
-            } else
-            {
-                dockingManager.SetDockVisibility(_generationResultTreeView, true);
-                //if (!_generationResultTreeView.Visible)
-                //{
-                //    dockingManager.DockControl(_generationResultTreeView, this, DockingStyle.Right, 4);
-                //}
-            }
-
-            _generationResultTreeView.BindViewModel(treeViewModel);
-        }
-
-        private readonly List<ArtifactPreviewView> _artifactPreviewViews = new List<ArtifactPreviewView>();
-        public void ShowArtifactPreview(ArtifactPreviewViewModel viewModel)
-        {
-            var artifactPreviewView = new ArtifactPreviewView();
-            _artifactPreviewViews.Add(artifactPreviewView);
-            artifactPreviewView.BindViewModel(viewModel);
-            dockingManager.DockAsDocument(artifactPreviewView);
-            dockingManager.SetDockLabel(artifactPreviewView, viewModel.TabLabel ?? "Artifact Preview");
-            /*
-            //if(_artifactPreviewView == null || _artifactPreviewView.IsDisposed)
-            //{
-                _artifactPreviewView = new ArtifactPreviewView();
-                //dockingManager.DockControl(_artifactPreviewView, this, DockingStyle.Tabbed, 4);
-                dockingManager.DockAsDocument(_artifactPreviewView);
-                //dockingManager.SetEnableDocking(_artifactPreviewView, true);
-                //dockingManager.SetControlSize(_artifactPreviewView, new Size(300, this.Height - 50));
-                dockingManager.SetDockLabel(_artifactPreviewView, viewModel.TabLabel?? "Artifact Preview");
-           // }
-            else
-            {
-                dockingManager.SetDockVisibility(_artifactPreviewView, true);
-                //if (!_artifactPreviewView.Visible)
-                //{
-                //    dockingManager.DockControl(_artifactPreviewView, this, DockingStyle.Right, 4);
-                //}
-            }
-            _artifactPreviewView.BindViewModel(viewModel);*/
-        }
-        private WorkspaceTreeView? _workspaceTreeView;
-        public void ShowWorkspaceTreeView(WorkspaceTreeViewModel treeViewModel)
-        {
-            if(_workspaceTreeView==null || _workspaceTreeView.IsDisposed)
-            {
-                _workspaceTreeView = new WorkspaceTreeView();
-                
-                dockingManager.DockControl(_workspaceTreeView, this, DockingStyle.Left, 4);
-                dockingManager.SetEnableDocking(_workspaceTreeView, true);
-                dockingManager.SetControlSize(_workspaceTreeView, new Size(300, this.Height - 50));
-                dockingManager.SetDockLabel(_workspaceTreeView, "Workspace");
-            } else
-            {
-                dockingManager.SetDockVisibility(_workspaceTreeView, true);
-                //if (!_workspaceTreeView.Visible)
-                //{
-                //    dockingManager.SetDockVisibility(_workspaceTreeView, true);
-                //    //dockingManager.DockControl(_workspaceTreeView, this, DockingStyle.Left, 4);
-                //}
-            }
-
-            _workspaceTreeView.ViewModel = treeViewModel;
-        }
-
-        private WorkspaceDetailsView? _workspaceDetailsView;
-        public void ShowWorkspaceDetailsView(WorkspaceDetailsViewModel viewModel)
-        {
-            if(_workspaceDetailsView == null || _workspaceDetailsView.IsDisposed)
-            {
-                _workspaceDetailsView = new WorkspaceDetailsView();
-                
-                dockingManager.DockControl(_workspaceDetailsView, this, DockingStyle.Left, 4);
-                dockingManager.SetEnableDocking(_workspaceDetailsView, true);
-                dockingManager.SetControlSize(_workspaceDetailsView, new Size(300, this.Height - 50));
-                dockingManager.SetDockLabel(_workspaceDetailsView, "Workspace Details");
-            } else
-            {
-                dockingManager.SetDockVisibility(_workspaceDetailsView, true);
-                //if (!_workspaceDetailsView.Visible)
-                //{
-                //    _workspaceDetailsView.Visible = true;
-                //    dockingManager.SetDockVisibility(_workspaceDetailsView, true);
-                //    //dockingManager.DockControl(_workspaceDetailsView, this, DockingStyle.Left, 4);
-                //}
-            }
-
-            _workspaceDetailsView.BindViewModel(viewModel);
-        }
-        
-
-        public void ShowSettingsWindow(SettingsViewModel settingsViewModel)
-        {
-            var settingsView = new SettingsView();
-            settingsView.BindViewModel(settingsViewModel);
-            // show usercontrol as dialog
-            // add 10px padding around the usercontrol
-            var padding = 10;
-            var settingsForm = new Form()
-            {
-                Text = "Settings",
-                Width = 800,
-                Height = 450,
-                StartPosition = FormStartPosition.CenterParent,
-                MaximizeBox = false,
-                MinimizeBox = false,
-                ShowInTaskbar = false,
-                Icon = Resources.LucideIcons__000000.settings.ToIcon()
-            };
-            //settingsView.Dock = DockStyle.Fill;
-            settingsView.Location = new Point(padding, padding);
-            settingsView.Size = new Size(settingsForm.ClientSize.Width - 2 * padding, settingsForm.ClientSize.Height - 2 * padding);
-            settingsView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            settingsForm.Controls.Add(settingsView);
-            settingsForm.ShowDialog(this);
-        }
-
-        private TemplateTreeView? _templateTreeView;
-        public void ShowTemplateTreeView(TemplateTreeViewModel treeViewModel)
-        {
-            if (_templateTreeView == null || _templateTreeView.IsDisposed)
-            {
-                _templateTreeView = new TemplateTreeView();
-                
-                dockingManager.DockControl(_templateTreeView, this, DockingStyle.Left, 4);
-                dockingManager.SetEnableDocking(_templateTreeView, true);
-                dockingManager.SetControlSize(_templateTreeView, new Size(300, this.Height - 50));
-                dockingManager.SetDockLabel(_templateTreeView, "Templates");
-            }
-            else
-            {
-                dockingManager.SetDockVisibility(_templateTreeView, true);
-            }
-
-            _templateTreeView.ViewModel = treeViewModel;
-        }
-
-        private TemplateParametersView? _templateParametersView;
-        public void ShowTemplateParametersView(TemplateParametersViewModel viewModel)
-        {
-            if (_templateParametersView == null || _templateParametersView.IsDisposed)
-            {
-                _templateParametersView = new TemplateParametersView();
-                
-                dockingManager.DockControl(_templateParametersView, this, DockingStyle.Left, 4);
-                dockingManager.SetEnableDocking(_templateParametersView, true);
-                dockingManager.SetControlSize(_templateParametersView, new Size(300, this.Height - 50));
-                dockingManager.SetDockLabel(_templateParametersView, "Template Parameters");
-            }
-            else
-            {
-                dockingManager.SetDockVisibility(_templateParametersView, true);
-            }
-
-            _templateParametersView.BindViewModel(viewModel);
-        }
-        #endregion
 
         #region IView Implementation
         public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase

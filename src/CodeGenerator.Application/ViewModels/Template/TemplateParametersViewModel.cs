@@ -1,4 +1,5 @@
 using CodeGenerator.Application.Controllers.Workspace;
+using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
@@ -6,7 +7,7 @@ using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
 using System.Collections.ObjectModel;
 
-namespace CodeGenerator.Application.ViewModels;
+namespace CodeGenerator.Application.ViewModels.Template;
 
 /// <summary>
 /// ViewModel for the template parameters view, providing input fields for template parameters
@@ -26,12 +27,12 @@ public class TemplateParametersViewModel : ViewModelBase
     private bool _isExecuting;
     private bool _isEditMode;
     private bool _hasUnsavedChanges;
-    private WorkspaceController? _workspaceController;
+    private WorkspaceTreeViewController? _workspaceController;
 
     /// <summary>
     /// Set the workspace controller for accessing workspace data (tables, etc.)
     /// </summary>
-    public void SetWorkspaceController(WorkspaceController workspaceController)
+    public void SetWorkspaceController(WorkspaceTreeViewController workspaceController)
     {
         _workspaceController = workspaceController;
     }

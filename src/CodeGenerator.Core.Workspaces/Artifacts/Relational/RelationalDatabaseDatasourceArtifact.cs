@@ -1,6 +1,6 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
-using CodeGenerator.Shared.Views;
+using CodeGenerator.Shared.Views.TreeNode;
 
 namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
 {

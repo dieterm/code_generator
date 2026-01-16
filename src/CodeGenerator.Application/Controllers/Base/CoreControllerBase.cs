@@ -10,9 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CodeGenerator.Application.Controllers
+namespace CodeGenerator.Application.Controllers.Base
 {
-    public abstract class CoreControllerBase : Shared.Controllers.ControllerBase
+    public abstract class CoreControllerBase : ControllerBase
     {
         protected readonly IMessageBoxService _messageBoxService;
         protected readonly IFileSystemDialogService _fileSystemDialogService;

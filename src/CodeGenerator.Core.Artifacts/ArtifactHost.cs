@@ -234,5 +234,10 @@ namespace CodeGenerator.Core.Artifacts
         {
             return ((IMementoObject)Artifact).CaptureState();
         }
+
+        public void ResetIsStateChangedFlag()
+        {
+            ((IMementoObject)Artifact).ResetIsStateChangedFlag();
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace CodeGenerator.Core.Artifacts
     /// <summary>
     /// This is a JSON-serializable memento class that holds the state of an artifact at a specific point in time.
     /// </summary>
-    public sealed class ArtifactState : MementoState<IArtifact>
+    public sealed class ArtifactState : MementoState//<IArtifact>
     {
         public ArtifactState() : base()
         {
@@ -25,5 +25,16 @@ namespace CodeGenerator.Core.Artifacts
         
         [JsonPropertyName("children")]
         public List<ArtifactState> Children { get; set; } = new List<ArtifactState>();
+
+        public override object Clone()
+        {
+            return new ArtifactState()
+            {
+                TypeName = this.TypeName,
+                Properties = new Dictionary<string, object?>(this.Properties),
+                Decorators = this.Decorators.Select(d => (ArtifactDecoratorState)d.Clone()).ToList(),
+                Children = this.Children.Select(c => (ArtifactState)c.Clone()).ToList()
+            };
+        }
     }
 }

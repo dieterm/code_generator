@@ -1,4 +1,6 @@
 ﻿using CodeGenerator.Application.ViewModels;
+using CodeGenerator.Application.ViewModels.Template;
+using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Settings.ViewModels;
 using System;
@@ -16,8 +18,8 @@ namespace CodeGenerator.Application.Services
         void ShowGenerationTreeView(GenerationResultTreeViewModel treeViewModel);
         void ShowSettingsWindow(SettingsViewModel settingsViewModel);
         void ShowWorkspaceTreeView(WorkspaceTreeViewModel treeViewModel);
-        void ShowWorkspaceDetailsView(WorkspaceDetailsViewModel viewModel);
+        void ShowWorkspaceDetailsView(ArtifactDetailsViewModel viewModel);
         void ShowTemplateTreeView(TemplateTreeViewModel treeViewModel);
-        void ShowTemplateParametersView(TemplateParametersViewModel viewModel);
+        void ShowTemplateDetailsView(ArtifactDetailsViewModel artifactDetailsViewModel);
     }
 }

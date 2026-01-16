@@ -1,6 +1,7 @@
 ﻿using CodeGenerator.Shared.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,11 +24,33 @@ namespace CodeGenerator.Application.ViewModels
             set => SetProperty(ref _textContent, value);
         }
 
+        private string? _filePath;
+        public string? FilePath
+        {
+            get => _filePath;
+            set => SetProperty(ref _filePath, value);
+        }
+
         private KnownLanguages _textLanguageSchema;
         public KnownLanguages TextLanguageSchema
         {
             get => _textLanguageSchema;
             set => SetProperty(ref _textLanguageSchema, value);
+        }
+
+        private Image? _imageContent;
+        public Image? ImageContent
+        {
+            get => _imageContent;
+            set => SetProperty(ref _imageContent, value);
+        }
+        public bool IsTextContent()
+        {
+            return (!string.IsNullOrWhiteSpace(TextContent) || !string.IsNullOrWhiteSpace(FilePath)) && ImageContent==null;
+        }
+        public bool IsImageContent()
+        {
+             return ImageContent != null && string.IsNullOrWhiteSpace(TextContent) && string.IsNullOrWhiteSpace(FilePath);
         }
         public enum KnownLanguages
         {

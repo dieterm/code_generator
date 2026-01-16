@@ -1,12 +1,14 @@
-using CodeGenerator.Application.Controllers.Workspace;
-using CodeGenerator.Application.ViewModels;
+using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Application.ViewModels.Base;
+using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.Events;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
-using CodeGenerator.Shared.Views;
+using CodeGenerator.Shared.Views.TreeNode;
 using Syncfusion.Windows.Forms.Tools;
 using System.ComponentModel;
+
 namespace CodeGenerator.Presentation.WinForms.Views
 {
     /// <summary>
@@ -32,32 +34,16 @@ namespace CodeGenerator.Presentation.WinForms.Views
             set => BindViewModel(value);
         }
 
-        /// <summary>
-        /// Event raised when a detail view should be shown
-        /// </summary>
-        //public event EventHandler<DetailViewRequestedEventArgs>? DetailViewRequested;
-
-        /// <summary>
-        /// Event raised when an artifact is renamed
-        /// </summary>
-        //public event EventHandler<ArtifactRenamedEventArgs>? ArtifactRenamed;
-
         private void SetupTreeView()
         {
-            // Enable label editing
             treeView.LabelEdit = true;
-
-            // Event handlers
             treeView.AfterSelect += TreeView_AfterSelect;
             treeView.MouseClick += TreeView_MouseClick;
             treeView.MouseDoubleClick += TreeView_MouseDoubleClick;
             treeView.BeforeEdit += TreeView_BeforeEdit;
-            // Label edit events for Syncfusion TreeViewAdv
             treeView.NodeEditorValidating += TreeView_NodeEditorValidating;
             treeView.NodeEditorValidated += TreeView_NodeEditorValidated;
         }
-
-
 
         private void BindViewModel(WorkspaceTreeViewModel? viewModel)
         {
@@ -65,7 +51,6 @@ namespace CodeGenerator.Presentation.WinForms.Views
             {
                 _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
                 _viewModel.ContextMenuRequested -= ViewModel_ContextMenuRequested;
-                //_viewModel.DetailViewRequested -= ViewModel_DetailViewRequested;
                 _viewModel.BeginRenameRequested -= ViewModel_BeginRenameRequested;
                 _viewModel.ArtifactRefreshRequested -= ViewModel_ArtifactRefreshRequested;
             }
@@ -76,35 +61,28 @@ namespace CodeGenerator.Presentation.WinForms.Views
             {
                 _viewModel.PropertyChanged += ViewModel_PropertyChanged;
                 _viewModel.ContextMenuRequested += ViewModel_ContextMenuRequested;
-                //_viewModel.DetailViewRequested += ViewModel_DetailViewRequested;
                 _viewModel.BeginRenameRequested += ViewModel_BeginRenameRequested;
                 _viewModel.ArtifactRefreshRequested += ViewModel_ArtifactRefreshRequested;
+                RefreshTree();
             }
-
-            RefreshTree();
         }
 
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(WorkspaceTreeViewModel.Workspace))
+            if (e.PropertyName == nameof(WorkspaceTreeViewModel.Workspace) ||
+                e.PropertyName == nameof(WorkspaceTreeViewModel.RootArtifact))
             {
                 RefreshTree();
             }
         }
 
-        private void ViewModel_ContextMenuRequested(object? sender, ContextMenuRequestedEventArgs e)
+        private void ViewModel_ContextMenuRequested(object? sender, ArtifactContextMenuEventArgs e)
         {
             ShowContextMenu(e);
         }
 
-        //private void ViewModel_DetailViewRequested(object? sender, DetailViewRequestedEventArgs e)
-        //{
-        //    DetailViewRequested?.Invoke(this, e);
-        //}
-
         private void ViewModel_BeginRenameRequested(object? sender, IArtifact artifact)
         {
-            // Find the node for this artifact and begin editing
             if (_nodeMap.TryGetValue(artifact.Id, out var node))
             {
                 treeView.SelectedNode = node;
@@ -114,7 +92,6 @@ namespace CodeGenerator.Presentation.WinForms.Views
 
         private void ViewModel_ArtifactRefreshRequested(object? sender, IArtifact artifact)
         {
-            // Refresh the node text for this artifact
             RefreshNode(artifact);
         }
 
@@ -132,12 +109,10 @@ namespace CodeGenerator.Presentation.WinForms.Views
                     treeView.Nodes.Add(rootNode);
                     rootNode.Expand();
 
-                    // Expand datasources container
                     var datasourcesNode = rootNode.Nodes.Cast<TreeNodeAdv>()
                         .FirstOrDefault(n => n.Tag is DatasourcesContainerArtifact);
                     datasourcesNode?.Expand();
 
-                    // Select the root node
                     treeView.SelectedNode = rootNode;
                 }
             }
@@ -153,69 +128,42 @@ namespace CodeGenerator.Presentation.WinForms.Views
             {
                 Tag = artifact
             };
-            // Subscribe to property changed events
-            artifact.PropertyChanged += (object? s, PropertyChangedEventArgs e) =>
+
+            artifact.PropertyChanged += (s, e) =>
             {
-                if (node.TreeView == null || node.TreeView.IsDisposed)
-                {
-                    return;
-                }
+                if (node.TreeView == null || node.TreeView.IsDisposed) return;
+
                 if (e.PropertyName == nameof(artifact.TreeNodeText))
                 {
                     node.Text = artifact.TreeNodeText;
                 }
                 else if (e.PropertyName == nameof(artifact.TreeNodeIcon))
                 {
-                    try
-                    {
-                        var icon = artifact.TreeNodeIcon?.GetIcon();
-                        if (icon != null)
-                        {
-                            node.LeftImageIndices = new int[] { GetOrAddImageIndex(artifact.TreeNodeIcon.IconKey, icon) };
-                        }
-                    }
-                    catch
-                    {
-                        // Ignore icon errors
-                    }
+                    UpdateNodeIcon(node, artifact);
                 }
             };
-            artifact.ChildAdded += (object? s, ChildAddedEventArgs e) =>
+
+            artifact.ChildAdded += (s, e) =>
             {
-                if (node.TreeView == null || node.TreeView.IsDisposed)
-                {
-                    return;
-                }
+                if (node.TreeView == null || node.TreeView.IsDisposed) return;
                 var childNode = CreateNode(e.ChildArtifact);
                 node.Nodes.Add(childNode);
                 node.Expand();
             };
-            artifact.ChildRemoved += (object? s, ChildRemovedEventArgs e) =>
-            {
-                if (node.TreeView == null || node.TreeView.IsDisposed)
-                {
-                    return;
-                }
-                var childNode = _nodeMap[e.ChildArtifact.Id];
-                node.Nodes.Remove(childNode);
-            };
-            // Set icon
-            try
-            {
-                var icon = artifact.TreeNodeIcon?.GetIcon();
-                if (icon != null)
-                {
-                    node.LeftImageIndices = new int[] { GetOrAddImageIndex(artifact.TreeNodeIcon.IconKey, icon) };
-                }
-            }
-            catch
-            {
-                // Ignore icon errors
-            }
 
+            artifact.ChildRemoved += (s, e) =>
+            {
+                if (node.TreeView == null || node.TreeView.IsDisposed) return;
+                if (_nodeMap.TryGetValue(e.ChildArtifact.Id, out var childNode))
+                {
+                    node.Nodes.Remove(childNode);
+                    _nodeMap.Remove(e.ChildArtifact.Id);
+                }
+            };
+
+            UpdateNodeIcon(node, artifact);
             _nodeMap[artifact.Id] = node;
 
-            // Add children
             foreach (var child in artifact.Children)
             {
                 var childNode = CreateNode(child);
@@ -225,8 +173,20 @@ namespace CodeGenerator.Presentation.WinForms.Views
             return node;
         }
 
+        private void UpdateNodeIcon(TreeNodeAdv node, IArtifact artifact)
+        {
+            try
+            {
+                var icon = artifact.TreeNodeIcon?.GetIcon();
+                if (icon != null)
+                {
+                    node.LeftImageIndices = new int[] { GetOrAddImageIndex(artifact.TreeNodeIcon.IconKey, icon) };
+                }
+            }
+            catch { }
+        }
 
-        private int GetOrAddImageIndex(string key, System.Drawing.Image icon)
+        private int GetOrAddImageIndex(string key, Image icon)
         {
             if (treeView.LeftImageList == null)
             {
@@ -246,7 +206,8 @@ namespace CodeGenerator.Presentation.WinForms.Views
         {
             if (treeView.SelectedNode?.Tag is IArtifact artifact && _viewModel != null)
             {
-                _viewModel.SelectedArtifact = artifact;
+                _viewModel.SelectArtifactCommand.Execute(artifact);
+                //_viewModel.SelectedArtifact = artifact;
             }
         }
 
@@ -274,9 +235,9 @@ namespace CodeGenerator.Presentation.WinForms.Views
 
         private void TreeView_BeforeEdit(object sender, TreeNodeAdvBeforeEditEventArgs e)
         {
-            if (e.Node.Tag is IEditableTreeNode)
+            if (e.Node.Tag is IArtifact artifact)
             {
-                e.Cancel = false;
+                e.Cancel = !(artifact is IEditableTreeNode);
             }
             else
             {
@@ -286,13 +247,9 @@ namespace CodeGenerator.Presentation.WinForms.Views
 
         private void TreeView_NodeEditorValidating(object? sender, TreeNodeAdvCancelableEditEventArgs e)
         {
-            // Only allow editing for certain artifact types
             if (e.Node?.Tag is IArtifact artifact)
             {
-                // Allow editing for WorkspaceArtifact, DatasourceArtifact, TableArtifact, etc.
-                var canEdit = artifact is IEditableTreeNode;
-  
-                if (!canEdit)
+                if (!(artifact is IEditableTreeNode))
                 {
                     e.Cancel = true;
                     e.ContinueEditing = false;
@@ -307,47 +264,22 @@ namespace CodeGenerator.Presentation.WinForms.Views
 
         private void TreeView_NodeEditorValidated(object? sender, TreeNodeAdvEditEventArgs e)
         {
-            if (e.Node?.Tag is not IArtifact artifact)
-            {
-                return;
-            }
+            if (e.Node?.Tag is not IArtifact artifact || _viewModel == null) return;
 
             var newName = e.Label?.Trim();
 
-            // If empty or null, use default name based on artifact type
             if (string.IsNullOrWhiteSpace(newName))
             {
                 newName = GetDefaultName(artifact);
-                // Update the node text manually
                 e.Node.Text = newName;
             }
 
-            // Update the artifact name
             var oldName = GetArtifactName(artifact);
             if (oldName != newName)
             {
                 SetArtifactName(artifact, newName);
-
-                // Notify that the artifact was renamed
-                //ArtifactRenamed?.Invoke(this, new ArtifactRenamedEventArgs(artifact, oldName, newName));
-
-                // Notify ViewModel
-                _viewModel?.OnArtifactRenamed(artifact, oldName, newName);
+                //_viewModel.OnArtifactRenamed(artifact, oldName, newName);
             }
-        }
-
-        private string GetDefaultName(IArtifact artifact)
-        {
-            return artifact switch
-            {
-                WorkspaceArtifact => "Workspace",
-                DatasourceArtifact => "New Datasource",
-                TableArtifact => "NewTable",
-                ViewArtifact => "NewView",
-                ColumnArtifact => "NewColumn",
-                IndexArtifact => "NewIndex",
-                _ => "Unnamed"
-            };
         }
 
         private string GetArtifactName(IArtifact artifact)
@@ -389,56 +321,42 @@ namespace CodeGenerator.Presentation.WinForms.Views
             }
         }
 
-        /// <summary>
-        /// Start editing the label of the currently selected node
-        /// </summary>
-        public void BeginEditSelectedNode()
+        private string GetDefaultName(IArtifact artifact)
         {
-            if (treeView.SelectedNode != null)
+            return artifact switch
             {
-                treeView.BeginEdit(treeView.SelectedNode);
-            }
+                WorkspaceArtifact => "Workspace",
+                DatasourceArtifact => "New Datasource",
+                TableArtifact => "NewTable",
+                ViewArtifact => "NewView",
+                ColumnArtifact => "NewColumn",
+                IndexArtifact => "NewIndex",
+                _ => "Unnamed"
+            };
         }
 
-        private void ShowContextMenu(ContextMenuRequestedEventArgs e)
+        private void ShowContextMenu(ArtifactContextMenuEventArgs e)
         {
             var contextMenu = new ContextMenuStrip();
 
             foreach (var command in e.Commands)
             {
-                if (command.IsSeparator)
-                {
-                    contextMenu.Items.Add(new ToolStripSeparator());
-                }
-                else if (command.SubCommands != null && command.SubCommands.Any())
-                {
-                    var menuItem = new ToolStripMenuItem(command.Text);
-                    foreach (var subCommand in command.SubCommands)
-                    {
-                        var subItem = CreateMenuItem(subCommand, e.Artifact);
-                        menuItem.DropDownItems.Add(subItem);
-                    }
-                    contextMenu.Items.Add(menuItem);
-                }
-                else
-                {
-                    var menuItem = CreateMenuItem(command, e.Artifact);
-                    contextMenu.Items.Add(menuItem);
-                }
+                contextMenu.Items.Add(CreateMenuItem(command, e.Artifact));
             }
 
             if (contextMenu.Items.Count > 0)
             {
-                contextMenu.Show(treeView, new System.Drawing.Point(e.X, e.Y));
+                contextMenu.Show(treeView, new Point(e.X, e.Y));
             }
         }
 
-        private ToolStripItem CreateMenuItem(WorkspaceCommand command, IArtifact artifact)
+        private ToolStripItem CreateMenuItem(ArtifactTreeNodeCommand command, IArtifact artifact)
         {
             if (command.IsSeparator)
             {
                 return new ToolStripSeparator();
             }
+
             var menuItem = new ToolStripMenuItem(command.Text);
 
             if (command.CanExecute != null)
@@ -451,21 +369,17 @@ namespace CodeGenerator.Presentation.WinForms.Views
                 menuItem.Click += async (s, args) => await command.Execute(artifact);
             }
 
-            if(command.SubCommands != null && command.SubCommands.Any())
+            if (command.SubCommands != null && command.SubCommands.Any())
             {
                 foreach (var subCommand in command.SubCommands)
                 {
-                    var subItem = CreateMenuItem(subCommand, artifact);
-                    menuItem.DropDownItems.Add(subItem);
+                    menuItem.DropDownItems.Add(CreateMenuItem(subCommand, artifact));
                 }
             }
 
             return menuItem;
         }
 
-        /// <summary>
-        /// Refresh a specific node
-        /// </summary>
         public void RefreshNode(IArtifact artifact)
         {
             if (_nodeMap.TryGetValue(artifact.Id, out var node))
@@ -474,28 +388,33 @@ namespace CodeGenerator.Presentation.WinForms.Views
             }
         }
 
-        /// <summary>
-        /// Add a new child node
-        /// </summary>
-        public void AddChildNode(IArtifact parent, IArtifact child)
+        public void BeginEditSelectedNode()
         {
-            if (_nodeMap.TryGetValue(parent.Id, out var parentNode))
+            if (treeView.SelectedNode != null)
             {
-                var childNode = CreateNode(child);
-                parentNode.Nodes.Add(childNode);
-                parentNode.Expand();
+                treeView.BeginEdit(treeView.SelectedNode);
             }
         }
 
-        /// <summary>
-        /// Remove a node
-        /// </summary>
-        public void RemoveNode(IArtifact artifact)
+        private void ctxArtifactMenu_Opening(object sender, CancelEventArgs e)
         {
-            if (_nodeMap.TryGetValue(artifact.Id, out var node))
+            if (_viewModel?.SelectedArtifact == null)
             {
-                node.Parent?.Nodes.Remove(node);
-                _nodeMap.Remove(artifact.Id);
+                e.Cancel = true;
+                return;
+            }
+
+            var commands = _viewModel.GetContextMenuCommands(_viewModel.SelectedArtifact);
+            ctxArtifactMenu.Items.Clear();
+
+            foreach (var command in commands)
+            {
+                ctxArtifactMenu.Items.Add(CreateMenuItem(command, _viewModel.SelectedArtifact));
+            }
+
+            if (ctxArtifactMenu.Items.Count == 0)
+            {
+                e.Cancel = true;
             }
         }
 
@@ -507,40 +426,6 @@ namespace CodeGenerator.Presentation.WinForms.Views
                 components?.Dispose();
             }
             base.Dispose(disposing);
-        }
-
-        private void ctxArtifactMenu_Opening(object sender, CancelEventArgs e)
-        {
-            var commands = _viewModel.GetContextMenuCommands(_viewModel.SelectedArtifact);
-            ctxArtifactMenu.Items.Clear();
-            foreach (var command in commands)
-            {
-                ctxArtifactMenu.Items.Add(CreateMenuItem(command, _viewModel.SelectedArtifact));
-                /*if (command.IsSeparator)
-                {
-                    ctxArtifactMenu.Items.Add(new ToolStripSeparator());
-                }
-                else if (command.SubCommands != null && command.SubCommands.Any())
-                {
-                    var menuItem = new ToolStripMenuItem(command.Text);
-                    foreach (var subCommand in command.SubCommands)
-                    {
-                        var subItem = CreateMenuItem(subCommand, _viewModel.SelectedArtifact);
-                        menuItem.DropDownItems.Add(subItem);
-                    }
-                    ctxArtifactMenu.Items.Add(menuItem);
-                }
-                else
-                {
-                    var menuItem = CreateMenuItem(command, _viewModel.SelectedArtifact);
-                    ctxArtifactMenu.Items.Add(menuItem);
-                }*/
-
-            }
-            if (ctxArtifactMenu.Items.Count == 0)
-            {
-                e.Cancel = true;
-            }
         }
     }
 }

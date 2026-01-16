@@ -2,11 +2,12 @@
 using CodeGenerator.Core.Artifacts.Events;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Shared.Memento;
+using CodeGenerator.Shared.Views.TreeNode;
 using System.ComponentModel;
 
 namespace CodeGenerator.Core.Artifacts
 {
-    public interface IArtifact : IMementoObject
+    public interface IArtifact : IMementoObject, ITreeNode
     {
         event EventHandler<ParentChangedEventArgs>? ParentChanged;
         event EventHandler<ChildAddedEventArgs>? ChildAdded;
@@ -18,8 +19,8 @@ namespace CodeGenerator.Core.Artifacts
         IEnumerable<IArtifactDecorator> Decorators { get; }
         string Id { get; }
         IArtifact? Parent { get; }
-        ITreeNodeIcon TreeNodeIcon { get; }
-        string TreeNodeText { get; }
+        //ITreeNodeIcon TreeNodeIcon { get; }
+        //string TreeNodeText { get; }
 
         void AddChild(IArtifact child);
         T AddDecorator<T>(T decorator) where T : IArtifactDecorator;

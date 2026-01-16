@@ -1,7 +1,7 @@
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Shared.ViewModels;
 
-namespace CodeGenerator.Application.ViewModels;
+namespace CodeGenerator.Application.ViewModels.Workspace;
 
 /// <summary>
 /// Field model for selecting a TableArtifact from the workspace

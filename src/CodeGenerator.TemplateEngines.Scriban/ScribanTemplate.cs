@@ -1,4 +1,6 @@
-﻿using CodeGenerator.Core.Templates;
+﻿using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Core.Templates;
+using CodeGenerator.Shared.Views.TreeNode;
 
 namespace CodeGenerator.TemplateEngines.Scriban
 {
@@ -17,5 +19,11 @@ namespace CodeGenerator.TemplateEngines.Scriban
         public string TemplateId { get; }
 
         public bool UseCaching { get; set; } = false;
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public ITreeNodeIcon Icon { get; } = new AssemblyResourceTreeNodeIcon(typeof(ScribanTemplate).Assembly, "CodeGenerator.TemplateEngines.Scriban.scriban-icon.png");
+
     }
 }

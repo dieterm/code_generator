@@ -29,28 +29,7 @@ namespace CodeGenerator.Core.Templates
             }
             return engine;
         }
-        //public ITemplate CreateTemplateFromFile(string filePath)
-        //{
-        //    foreach (var engine in _templateEngines)
-        //    {
-        //        if (engine.SupportsTemplatePath(filePath))
-        //        {
-        //            return engine.CreateTemplateFromFile(filePath);
-        //        }
-        //    }
-        //    throw new InvalidOperationException($"No template engine found that supports the template file '{filePath}'.");
-        //}
-        //public ITemplateInstance CreateTemplateInstance(ITemplate template)
-        //{
-        //    foreach (var engine in _templateEngines)
-        //    {
-        //        if (engine.SupportsTemplate(template))
-        //        {
-        //            return engine.CreateTemplateInstance(template);
-        //        }
-        //    }
-        //    throw new InvalidOperationException($"No template engine found that supports the template '{template.TemplateId}' of type '{template.TemplateType}'.");
-        //}
+       
         /// <summary>
         /// Get a template engine that supports the specified file extension (extension without dot, e.g. "txt", "scriban").
         /// </summary>

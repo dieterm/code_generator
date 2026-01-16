@@ -8,6 +8,7 @@ using CodeGenerator.Shared.Ribbon;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Configuration;
+using CodeGenerator.Application.Controllers.Base;
 
 namespace CodeGenerator.Application.Controllers
 {

@@ -1,5 +1,6 @@
+using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Services;
-using CodeGenerator.Application.ViewModels;
+using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Services;
@@ -11,45 +12,47 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// Controller for WorkspaceArtifact
     /// Handles context menus and detail views for the workspace root node
     /// </summary>
-    public class WorkspaceArtifactController : ArtifactControllerBase<WorkspaceArtifact>
+    public class WorkspaceArtifactController : ArtifactControllerBase<WorkspaceTreeViewController, WorkspaceArtifact>
     {
         private readonly IDatasourceFactory _datasourceFactory;
         private WorkspaceEditViewModel? _editViewModel;
 
+        //protected WorkspaceTreeViewController TreeViewController => (WorkspaceTreeViewController)base.TreeViewController;
+
         public WorkspaceArtifactController(
             IDatasourceFactory datasourceFactory, 
-            WorkspaceController workspaceController,
+            WorkspaceTreeViewController workspaceController,
             ILogger<WorkspaceArtifactController> logger
             ): base(workspaceController, logger)
         {
             _datasourceFactory = datasourceFactory;
         }
 
-        protected override IEnumerable<WorkspaceCommand> GetCommands(WorkspaceArtifact artifact)
+        protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(WorkspaceArtifact artifact)
         {
-            var commands = new List<WorkspaceCommand>();
+            var commands = new List<ArtifactTreeNodeCommand>();
 
             // Rename command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "rename_workspace",
                 Text = "Rename",
                 IconKey = "edit",
                 Execute = async (a) => 
                 {
-                    WorkspaceController.RequestBeginRename(artifact);
+                    TreeViewController.RequestBeginRename(artifact);
                     await Task.CompletedTask;
                 }
             });
 
-            commands.Add(WorkspaceCommand.Separator);
+            commands.Add(ArtifactTreeNodeCommand.Separator);
 
             // Add datasource submenu
-            var addDatasourceSubCommands = new List<WorkspaceCommand>();
+            var addDatasourceSubCommands = new List<ArtifactTreeNodeCommand>();
             
             foreach (var typeInfo in _datasourceFactory.GetAvailableTypes())
             {
-                addDatasourceSubCommands.Add(new WorkspaceCommand
+                addDatasourceSubCommands.Add(new ArtifactTreeNodeCommand
                 {
                     Id = $"add_datasource_{typeInfo.TypeId}",
                     Text = typeInfo.DisplayName,
@@ -60,7 +63,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
             if (addDatasourceSubCommands.Any())
             {
-                commands.Add(new WorkspaceCommand
+                commands.Add(new ArtifactTreeNodeCommand
                 {
                     Id = "add_datasource",
                     Text = "Add Datasource",
@@ -68,19 +71,19 @@ namespace CodeGenerator.Application.Controllers.Workspace
                     SubCommands = addDatasourceSubCommands
                 });
 
-                commands.Add(WorkspaceCommand.Separator);
+                commands.Add(ArtifactTreeNodeCommand.Separator);
             }
 
             // Workspace commands
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "save_workspace",
                 Text = "Save Workspace",
                 IconKey = "save",
-                Execute = async (a) => await WorkspaceController.SaveWorkspaceAsync()
+                Execute = async (a) => await TreeViewController.SaveWorkspaceAsync()
             });
 
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "workspace_properties",
                 Text = "Properties",
@@ -90,12 +93,6 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
             return commands;
         }
-
-        //protected override object? CreateDetailViewInternal(WorkspaceArtifact artifact)
-        //{
-        //    // Return the edit view model - the view will be shown by OnSelectedInternalAsync
-        //    return null;
-        //}
 
         protected override Task OnSelectedInternalAsync(WorkspaceArtifact artifact, CancellationToken cancellationToken)
         {
@@ -118,27 +115,23 @@ namespace CodeGenerator.Application.Controllers.Workspace
             // Notify the controller about the property change
             if (e.Artifact is IArtifact artifact)
             {
-                WorkspaceController.OnArtifactPropertyChanged(artifact, e.PropertyName, e.NewValue);
+                TreeViewController.OnArtifactPropertyChanged(artifact, e.PropertyName, e.NewValue);
             }
         }
 
         private async Task AddDatasourceAsync(WorkspaceArtifact workspace, string typeId)
         {
-            // TODO: Show dialog to configure the datasource
-            // For now, create with default name
-            var datasource = WorkspaceController.AddDatasource(typeId, $"New {typeId} Datasource");
+            var datasource = TreeViewController.AddDatasource(typeId, $"New {typeId} Datasource");
             if (datasource != null)
             {
-                await WorkspaceController.SaveWorkspaceAsync();
+                await TreeViewController.SaveWorkspaceAsync();
             }
         }
 
         private Task ShowPropertiesAsync(WorkspaceArtifact workspace)
         {
-            // Show the edit view
             EnsureEditViewModel(workspace);
-            WorkspaceController.ShowWorkspaceDetailsView(_editViewModel!);
-
+            TreeViewController.ShowArtifactDetailsView(_editViewModel!);
             return Task.CompletedTask;
         }
     }

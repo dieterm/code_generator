@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\Template\TemplateController.cs" />
+    <Compile Remove="ViewModels\Workspace\WorkspaceDetailsViewModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CodeGenerator.Core.Artifacts\CodeGenerator.Core.Artifacts.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.DomainSchema\CodeGenerator.Core.DomainSchema.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Generators\CodeGenerator.Core.Generators.csproj" />
@@ -19,6 +24,7 @@
     <ProjectReference Include="..\CodeGenerator.Generators.DotNet\CodeGenerator.Generators.DotNet.csproj" />
     <ProjectReference Include="..\CodeGenerator.Shared\CodeGenerator.Shared.csproj" />
     <ProjectReference Include="..\CodeGenerator.TemplateEngines.DotNetProject\CodeGenerator.TemplateEngines.DotNetProject.csproj" />
+    <ProjectReference Include="..\CodeGenerator.TemplateEngines.PlantUML\CodeGenerator.TemplateEngines.PlantUML.csproj" />
     <ProjectReference Include="..\CodeGenerator.TemplateEngines.Scriban\CodeGenerator.TemplateEngines.Scriban.csproj" />
     <ProjectReference Include="..\CodeGenerator.TemplateEngines.T4\CodeGenerator.TemplateEngines.T4.csproj" />
     <ProjectReference Include="..\CodeGenerator.UserControls\CodeGenerator.UserControls.csproj" />

@@ -3,6 +3,7 @@ using CodeGenerator.Core.Workspaces.Datasources.Mysql.Services;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.ViewModels
 {
@@ -49,13 +50,29 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.ViewModels
             get => _datasource;
             set
             {
+                if (_datasource!=null)
+                {
+                    _datasource.PropertyChanged -= OnDatasourcePropertyChanged;
+                }
                 if (SetProperty(ref _datasource, value))
                 {
+                    if (_datasource != null)
+                    {
+                        _datasource.PropertyChanged += OnDatasourcePropertyChanged;
+                    }
                     LoadFromDatasource();
                 }
             }
         }
 
+        private void OnDatasourcePropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == nameof(MysqlDatasourceArtifact.Name) && !_isLoading)
+            {
+                NameField.Value = _datasource?.Name;
+            }
+        }
+         
         // Field ViewModels
         public SingleLineTextFieldModel NameField { get; }
         public SingleLineTextFieldModel ServerField { get; }

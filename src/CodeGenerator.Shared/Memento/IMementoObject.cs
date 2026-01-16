@@ -4,6 +4,7 @@ namespace CodeGenerator.Shared.Memento
 {
     public interface IMementoObject
     {
+        void ResetIsStateChangedFlag();
         bool IsStateChanged { get; }
         Dictionary<string, object?> Properties { get; }
 

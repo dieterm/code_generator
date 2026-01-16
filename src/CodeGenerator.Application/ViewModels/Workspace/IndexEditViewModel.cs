@@ -1,11 +1,11 @@
-using CodeGenerator.Application.Controllers.Workspace;
+using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
 using System.Collections.ObjectModel;
 
-namespace CodeGenerator.Application.ViewModels
+namespace CodeGenerator.Application.ViewModels.Workspace
 {
     /// <summary>
     /// ViewModel for editing index properties

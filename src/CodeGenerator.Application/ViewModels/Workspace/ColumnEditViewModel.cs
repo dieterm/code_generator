@@ -1,4 +1,4 @@
-using CodeGenerator.Application.Controllers.Workspace;
+using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Models;
 using CodeGenerator.Shared.ViewModels;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace CodeGenerator.Application.ViewModels
+namespace CodeGenerator.Application.ViewModels.Workspace
 {
     /// <summary>
     /// ViewModel for editing column properties

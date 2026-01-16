@@ -150,5 +150,20 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts
             // Schema refresh is handled separately through the edit view
             await Task.CompletedTask;
         }
+
+        public override bool CanBeginEdit()
+        {
+            return true;
+        }
+
+        public override bool Validating(string newName)
+        {
+            return !string.IsNullOrWhiteSpace(newName);
+        }
+
+        public override void EndEdit(string oldName, string newName)
+        {
+            Name = newName;
+        }
     }
 }

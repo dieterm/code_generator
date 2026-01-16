@@ -31,7 +31,7 @@ public static class ServiceCollectionExtensions
         // Main form
         var mainView = new MainView();
         services.AddSingleton<MainView>(mainView);
-        services.AddSingleton<IWindowManagerService>(mainView);
+        services.AddSingleton<IWindowManagerService>((s) => new WindowManagerService(Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<MainView>(s)));
         // Resources
         services.AddSingleton<ITreeNodeIconResolver<ResourceManagerTreeNodeIcon>, ResourceManagerTreeNodeIconResolver>();
         

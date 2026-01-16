@@ -11,7 +11,7 @@ namespace CodeGenerator.Shared.Memento
     /// <summary>
     /// JSON-serializable state of a memento object.
     /// </summary>
-    public abstract class MementoState<T> : IMementoState where T : IMementoObject
+    public abstract class MementoState : IMementoState// where T : IMementoObject
     {
         private string? _typeName = null;
         public string TypeName {
@@ -26,6 +26,8 @@ namespace CodeGenerator.Shared.Memento
         }
 
         public Dictionary<string, object?> Properties { get; set; } = new Dictionary<string, object?>();
+
+        public abstract object Clone();
 
         protected TValue GetValue<TValue>(string name, TValue? defaultValue = default)
         {

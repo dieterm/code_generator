@@ -1,5 +1,7 @@
+using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
+using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Templates;
@@ -8,21 +10,20 @@ using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.Databases.RelationalDatabases;
 using CodeGenerator.TemplateEngines.Scriban;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Serialization;
 
 namespace CodeGenerator.Application.Controllers.Workspace
 {
     /// <summary>
     /// Controller for TableArtifact
     /// </summary>
-    public class TableArtifactController : ArtifactControllerBase<TableArtifact>
+    public class TableArtifactController : ArtifactControllerBase<WorkspaceTreeViewController, TableArtifact>
     {
         private TableEditViewModel? _editViewModel;
         private readonly TemplateEngineManager _templateEngineManager;
         private readonly IWindowManagerService _windowManagerService;
 
         public TableArtifactController(
-            WorkspaceController workspaceController,
+            WorkspaceTreeViewController workspaceController,
             TemplateEngineManager templateEngineManager,
             IWindowManagerService windowManagerService,
             ILogger<TableArtifactController> logger)
@@ -32,31 +33,31 @@ namespace CodeGenerator.Application.Controllers.Workspace
             _windowManagerService = windowManagerService;
         }
 
-        protected override IEnumerable<WorkspaceCommand> GetCommands(TableArtifact artifact)
+        protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(TableArtifact artifact)
         {
-            var commands = new List<WorkspaceCommand>();
+            var commands = new List<ArtifactTreeNodeCommand>();
             
             // Generate Script command
-            var generateScriptCommand = new WorkspaceCommand
+            var generateScriptCommand = new ArtifactTreeNodeCommand
             {
                 Id = "generate_script",
                 Text = "Generate script",
                 IconKey = "script",
-                SubCommands = new List<WorkspaceCommand>()
+                SubCommands = new List<ArtifactTreeNodeCommand>()
             };
 
             foreach (var db in RelationalDatabases.All)
             {
-                var dbCommand = new WorkspaceCommand
+                var dbCommand = new ArtifactTreeNodeCommand
                 {
                     Id = $"generate_script_{db.Id}",
                     Text = db.Name,
                     IconKey = "database",
-                    SubCommands = new List<WorkspaceCommand>
+                    SubCommands = new List<ArtifactTreeNodeCommand>
                     {
                         CreateScriptCommand(db, artifact, "Create Table", "create_table"),
                         CreateScriptCommand(db, artifact, "Drop Table", "drop_table"),
-                        WorkspaceCommand.Separator,
+                        ArtifactTreeNodeCommand.Separator,
                         CreateScriptCommand(db, artifact, "Select row", "select_row"),
                         CreateScriptCommand(db, artifact, "Insert row", "insert_row"),
                         CreateScriptCommand(db, artifact, "Update row", "update_row"),
@@ -65,16 +66,16 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 };
                 if(artifact.CanAlterTable())
                 {
-                    dbCommand.SubCommands.Insert(1,CreateScriptCommand(db, artifact, "Alter Table", "alter_table"));
+                    dbCommand.SubCommands.Insert(1, CreateScriptCommand(db, artifact, "Alter Table", "alter_table"));
                 }
                 generateScriptCommand.SubCommands.Add(dbCommand);
             }
             commands.Add(generateScriptCommand);
 
-            commands.Add(WorkspaceCommand.Separator);
+            commands.Add(ArtifactTreeNodeCommand.Separator);
 
             // Add Column command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "add_column",
                 Text = "Add Column",
@@ -83,14 +84,14 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 {
                     var column = new ColumnArtifact("NewColumn", "varchar(255)", true);
                     artifact.AddChild(column);
-                    WorkspaceController.OnArtifactAdded(artifact, column);
-                    WorkspaceController.RequestBeginRename(column);
+                    TreeViewController.OnArtifactAdded(artifact, column);
+                    TreeViewController.RequestBeginRename(column);
                     await Task.CompletedTask;
                 }
             });
 
             // Add Index command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "add_index",
                 Text = "Add Index",
@@ -99,31 +100,31 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 {
                     var index = new IndexArtifact("IX_NewIndex", false);
                     artifact.AddChild(index);
-                    WorkspaceController.OnArtifactAdded(artifact, index);
-                    WorkspaceController.RequestBeginRename(index);
+                    TreeViewController.OnArtifactAdded(artifact, index);
+                    TreeViewController.RequestBeginRename(index);
                     await Task.CompletedTask;
                 }
             });
 
-            commands.Add(WorkspaceCommand.Separator);
+            commands.Add(ArtifactTreeNodeCommand.Separator);
 
             // Rename command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "rename_table",
                 Text = "Rename",
                 IconKey = "edit",
                 Execute = async (a) =>
                 {
-                    WorkspaceController.RequestBeginRename(artifact);
+                    TreeViewController.RequestBeginRename(artifact);
                     await Task.CompletedTask;
                 }
             });
 
-            commands.Add(WorkspaceCommand.Separator);
+            commands.Add(ArtifactTreeNodeCommand.Separator);
 
             // Convert to View command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "convert_to_view",
                 Text = "Convert to View",
@@ -134,10 +135,10 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 }
             });
 
-            commands.Add(WorkspaceCommand.Separator);
+            commands.Add(ArtifactTreeNodeCommand.Separator);
 
             // Delete command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "delete_table",
                 Text = "Delete",
@@ -148,7 +149,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                     if (parent != null)
                     {
                         parent.RemoveChild(artifact);
-                        WorkspaceController.OnArtifactRemoved(parent, artifact);
+                        TreeViewController.OnArtifactRemoved(parent, artifact);
                     }
                     await Task.CompletedTask;
                 }
@@ -160,7 +161,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
         protected override Task OnSelectedInternalAsync(TableArtifact artifact, CancellationToken cancellationToken)
         {
             EnsureEditViewModel(artifact);
-            WorkspaceController.ShowWorkspaceDetailsView(_editViewModel!);
+            TreeViewController.ShowArtifactDetailsView(_editViewModel!);
             return Task.CompletedTask;
         }
 
@@ -177,7 +178,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
         private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
         {
-            WorkspaceController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
+            TreeViewController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
         }
 
         private async Task ConvertToViewAsync(TableArtifact table)
@@ -185,30 +186,26 @@ namespace CodeGenerator.Application.Controllers.Workspace
             var parent = table.Parent;
             if (parent == null) return;
 
-            // Create a new view with the same properties
             var view = new ViewArtifact(table.Name, table.Schema);
 
-            // Copy columns
             foreach (var column in table.GetColumns().ToList())
             {
                 table.RemoveChild(column);
                 view.AddChild(column);
             }
 
-            // Remove the table
             parent.RemoveChild(table);
-            WorkspaceController.OnArtifactRemoved(parent, table);
+            TreeViewController.OnArtifactRemoved(parent, table);
 
-            // Add the view
             parent.AddChild(view);
-            WorkspaceController.OnArtifactAdded(parent, view);
+            TreeViewController.OnArtifactAdded(parent, view);
 
             await Task.CompletedTask;
         }
 
-        private WorkspaceCommand CreateScriptCommand(RelationalDatabase db, TableArtifact artifact, string text, string action)
+        private ArtifactTreeNodeCommand CreateScriptCommand(RelationalDatabase db, TableArtifact artifact, string text, string action)
         {
-            return new WorkspaceCommand
+            return new ArtifactTreeNodeCommand
             {
                 Id = $"generate_script_{db.Id}_{action}",
                 Text = text,
@@ -224,7 +221,6 @@ namespace CodeGenerator.Application.Controllers.Workspace
         {
             try
             {
-                // Capitalize first letter of id for folder name (e.g. mysql -> Mysql)
                 var folderName = char.ToUpper(db.Id[0]) + db.Id.Substring(1);
                 var templateFolder = WorkspaceSettings.Instance.DefaultTemplateFolder;
                 if(!Directory.Exists(templateFolder))
@@ -236,17 +232,11 @@ namespace CodeGenerator.Application.Controllers.Workspace
                     folderName,
                     $"table_{action}.sql.scriban");
                 var tabLabel = $"{artifact.Name} - {action} [{db.Id}]";
-                //if (!File.Exists(templatePath))
-                //{
-                //    var errorContent = $"-- Template not found: {templatePath}";
-                //    await AddGeneratedFileAsync(artifact, $"{artifact.Name}_{action}.sql", errorContent);
-                //    return;
-                //}
+
                 var scribanTemplate = new ScribanFileTemplate($"table_{action}.sql.scriban", templatePath);
                 scribanTemplate.CreateTemplateFileIfMissing = true;
                 var templateInstance = new ScribanTemplateInstance(scribanTemplate);
 
-                // Create a context model that includes the table and the target database
                 templateInstance.Parameters["Table"] = artifact;
                 templateInstance.Parameters["Database"] = db;
                 templateInstance.Parameters["Columns"] = artifact.GetColumns().ToList();
@@ -259,7 +249,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 templateInstance.Parameters["ModifiedExistingColumns"] = artifact.GetModifiedExistingColumns().ToList();
                 templateInstance.Parameters["CanAlterTable"] = artifact.CanAlterTable();
                 var existingTableDecorator = artifact.GetDecorator<ExistingTableDecorator>();
-                templateInstance.Parameters["IsTableRenamed"] = existingTableDecorator!=null && ! string.Equals(artifact.Name, existingTableDecorator?.OriginalTableName);
+                templateInstance.Parameters["IsTableRenamed"] = existingTableDecorator != null && !string.Equals(artifact.Name, existingTableDecorator?.OriginalTableName);
                 templateInstance.Parameters["TableOriginalName"] = existingTableDecorator?.OriginalTableName ?? artifact.Name;
                 templateInstance.Functions.Add("GetTypeDef", new Func<ColumnArtifact, string>((c) =>
                 {
@@ -269,21 +259,6 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 {
                     return db.EscapeIdentifier(identifier);
                 }));
-
-                if (false)
-                {
-                    var columns = artifact.GetColumns()
-                    .Select(c => (name: c.Name, type: db.GetMapping(c.DataType)?.GenerateTypeDef(c.MaxLength, c.Precision, c.Scale) ?? c.DataType, isNullable: c.IsNullable, isPrimaryKey: c.IsPrimaryKey))
-                    .ToList();
-                    var createScript = db.GenerateCreateTableStatement(artifact.Name, artifact.Schema, columns);
-                    _windowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel()
-                    {
-                        TabLabel = $"{artifact.Name} - {action} [{db.Id}]",
-                        TextContent = createScript,
-                        TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.SQL
-                    });
-                    return;
-                }
                 
                 var content = await _templateEngineManager.RenderTemplateAsync(templateInstance);
                 if(content.Succeeded == false)
@@ -308,7 +283,6 @@ namespace CodeGenerator.Application.Controllers.Workspace
                         TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.SQL
                     });
                 }
-                
             }
             catch (Exception ex)
             {
@@ -322,12 +296,11 @@ namespace CodeGenerator.Application.Controllers.Workspace
             var fileArtifact = new FileArtifact(fileName);
             fileArtifact.SetTextContent(content);
             
-            // Add to parent (Datasource) to keep it organized
             if (artifact.Parent != null)
             {
                 artifact.Parent.AddChild(fileArtifact);
-                WorkspaceController.OnArtifactAdded(artifact.Parent, fileArtifact);
-                await WorkspaceController.SelectArtifactAsync(fileArtifact);
+                TreeViewController.OnArtifactAdded(artifact.Parent, fileArtifact);
+                await TreeViewController.SelectArtifactAsync(fileArtifact);
             }
         }
     }

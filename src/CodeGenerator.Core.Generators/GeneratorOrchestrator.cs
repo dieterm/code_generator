@@ -64,7 +64,7 @@ public class GeneratorOrchestrator
         // report starting
         var startTime = DateTime.UtcNow;
         // create root artifact
-        var rootArtifact = new RootArtifact(WorkspaceSettings.Instance.DefaultOutputDirectory);
+        var rootArtifact = new RootArtifact("Output", WorkspaceSettings.Instance.DefaultOutputDirectory);
         var result = new GenerationResult(rootArtifact, domainSchema);
         
         try

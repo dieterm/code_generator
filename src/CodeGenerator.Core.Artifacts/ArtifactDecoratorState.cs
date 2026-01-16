@@ -8,9 +8,18 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Core.Artifacts
 {
-    public sealed class ArtifactDecoratorState : MementoState<IArtifactDecorator>
+    public sealed class ArtifactDecoratorState : MementoState//<IArtifactDecorator>
     {
         [JsonIgnore]
-        public string Key { get {  return GetValue<string>(nameof(Key)); } } 
+        public string Key { get {  return GetValue<string>(nameof(Key)); } }
+
+        public override object Clone()
+        {
+            return new ArtifactDecoratorState()
+            {
+                TypeName = this.TypeName,
+                Properties = new Dictionary<string, object?>(this.Properties)
+            };
+        }
     }
 }

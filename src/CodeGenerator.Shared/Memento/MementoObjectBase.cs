@@ -89,7 +89,7 @@ namespace CodeGenerator.Shared.Memento
             {
                 Properties[kvp.Key] = kvp.Value;
             }
-            IsStateChanged = false;
+            ResetIsStateChangedFlag();
         }
 
         public virtual IMementoState CaptureState()
@@ -102,6 +102,11 @@ namespace CodeGenerator.Shared.Memento
             }
             
             return state;
+        }
+
+        public void ResetIsStateChangedFlag()
+        {
+            IsStateChanged = false;
         }
 
         protected MementoObjectBase(IMementoState state)

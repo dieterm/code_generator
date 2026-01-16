@@ -1,6 +1,6 @@
 using CodeGenerator.Core.Artifacts;
 
-namespace CodeGenerator.Application.Controllers.Workspace
+namespace CodeGenerator.Application.Controllers.Base
 {
     /// <summary>
     /// Base interface for artifact controllers
@@ -21,13 +21,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
         /// <summary>
         /// Get context menu commands for the artifact
         /// </summary>
-        IEnumerable<WorkspaceCommand> GetContextMenuCommands(IArtifact artifact);
-
-        ///// <summary>
-        ///// Get the detail view control for the artifact
-        ///// Returns null if no detail view is available
-        ///// </summary>
-        //object? CreateDetailView(IArtifact artifact);
+        IEnumerable<ArtifactTreeNodeCommand> GetContextMenuCommands(IArtifact artifact);
 
         /// <summary>
         /// Called when the artifact is selected in the tree
@@ -38,5 +32,6 @@ namespace CodeGenerator.Application.Controllers.Workspace
         /// Called when the artifact is double-clicked
         /// </summary>
         Task OnDoubleClickAsync(IArtifact artifact, CancellationToken cancellationToken = default);
+        void OnArtifactRenamed(IArtifact artifact, string oldName, string newName);
     }
 }

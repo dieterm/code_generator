@@ -2,21 +2,22 @@ using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Artifacts;
 using Microsoft.Extensions.Logging;
 
-namespace CodeGenerator.Application.Controllers.Workspace
+namespace CodeGenerator.Application.Controllers.Base
 {
     /// <summary>
     /// Base class for artifact controllers
     /// </summary>
-    public abstract class ArtifactControllerBase<TArtifact> : IArtifactController where TArtifact : class, IArtifact
+    public abstract class ArtifactControllerBase<TTreeView, TArtifact> : IArtifactController where TArtifact : class, IArtifact where TTreeView : IArtifactTreeViewController
     {
-        protected ILogger Logger { get; private set; }
-        protected WorkspaceController WorkspaceController { get; private set; }
+        protected ILogger Logger { get; }
+        protected TTreeView TreeViewController { get; }
 
-        protected ArtifactControllerBase(WorkspaceController workspaceController, ILogger logger)
+        protected ArtifactControllerBase(TTreeView treeViewController, ILogger logger)
         {
-            WorkspaceController = workspaceController;
+            TreeViewController = treeViewController;
             Logger = logger;
         }
+
         public Type ArtifactType => typeof(TArtifact);
 
         public virtual bool CanHandle(IArtifact artifact)
@@ -24,23 +25,14 @@ namespace CodeGenerator.Application.Controllers.Workspace
             return artifact is TArtifact;
         }
 
-        public IEnumerable<WorkspaceCommand> GetContextMenuCommands(IArtifact artifact)
+        public IEnumerable<ArtifactTreeNodeCommand> GetContextMenuCommands(IArtifact artifact)
         {
             if (artifact is TArtifact typedArtifact)
             {
                 return GetCommands(typedArtifact);
             }
-            return Enumerable.Empty<WorkspaceCommand>();
+            return Enumerable.Empty<ArtifactTreeNodeCommand>();
         }
-
-        //public object? CreateDetailView(IArtifact artifact)
-        //{
-        //    if (artifact is TArtifact typedArtifact)
-        //    {
-        //        return CreateDetailViewInternal(typedArtifact);
-        //    }
-        //    return null;
-        //}
 
         public async Task OnSelectedAsync(IArtifact artifact, CancellationToken cancellationToken = default)
         {
@@ -61,12 +53,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
         /// <summary>
         /// Get commands for the artifact
         /// </summary>
-        protected abstract IEnumerable<WorkspaceCommand> GetCommands(TArtifact artifact);
-
-        ///// <summary>
-        ///// Create the detail view for the artifact
-        ///// </summary>
-        //protected virtual object? CreateDetailViewInternal(TArtifact artifact) => null;
+        protected abstract IEnumerable<ArtifactTreeNodeCommand> GetCommands(TArtifact artifact);
 
         /// <summary>
         /// Handle artifact selection
@@ -77,5 +64,18 @@ namespace CodeGenerator.Application.Controllers.Workspace
         /// Handle artifact double-click
         /// </summary>
         protected virtual Task OnDoubleClickInternalAsync(TArtifact artifact, CancellationToken cancellationToken) => Task.CompletedTask;
+
+        protected virtual void OnArtifactRenamedInternal(TArtifact artifact, string oldName, string newName)
+        {
+            // Default implementation does nothing
+        }
+
+        void IArtifactController.OnArtifactRenamed(IArtifact artifact, string oldName, string newName)
+        {
+            if (artifact is TArtifact typedArtifact)
+            {
+                OnArtifactRenamedInternal(typedArtifact, oldName, newName);
+            }
+        }
     }
 }

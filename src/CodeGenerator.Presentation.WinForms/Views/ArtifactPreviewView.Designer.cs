@@ -30,7 +30,9 @@
         {
             Syncfusion.Windows.Forms.Edit.Implementation.Config.Config config1 = new Syncfusion.Windows.Forms.Edit.Implementation.Config.Config();
             editControl = new Syncfusion.Windows.Forms.Edit.EditControl();
+            imageBox = new PictureBox();
             ((System.ComponentModel.ISupportInitialize)editControl).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)imageBox).BeginInit();
             SuspendLayout();
             // 
             // editControl
@@ -70,19 +72,31 @@
             editControl.VScrollMode = Syncfusion.Windows.Forms.Edit.ScrollMode.Immediate;
             editControl.ZoomFactor = 1F;
             // 
+            // imageBox
+            // 
+            imageBox.Dock = DockStyle.Fill;
+            imageBox.Location = new Point(0, 0);
+            imageBox.Name = "imageBox";
+            imageBox.Size = new Size(586, 454);
+            imageBox.TabIndex = 1;
+            imageBox.TabStop = false;
+            // 
             // ArtifactPreviewView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(editControl);
+            Controls.Add(imageBox);
             Name = "ArtifactPreviewView";
             Size = new Size(586, 454);
             ((System.ComponentModel.ISupportInitialize)editControl).EndInit();
+            ((System.ComponentModel.ISupportInitialize)imageBox).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
 
         private Syncfusion.Windows.Forms.Edit.EditControl editControl;
+        private PictureBox imageBox;
     }
 }

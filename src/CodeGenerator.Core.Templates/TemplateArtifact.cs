@@ -94,7 +94,7 @@ public class TemplateArtifact : Artifact
 
     public override string TreeNodeText => DisplayName;
 
-    public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("file_code");
+    public override ITreeNodeIcon TreeNodeIcon => Template.Icon;
 
     /// <summary>
     /// Creates or gets the definition for this template

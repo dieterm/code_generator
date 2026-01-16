@@ -1,3 +1,4 @@
+using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts;
@@ -9,38 +10,51 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// <summary>
     /// Controller for MySQL datasource artifacts
     /// </summary>
-    public class MysqlDatasourceController : ArtifactControllerBase<MysqlDatasourceArtifact>
+    public class MysqlDatasourceController : ArtifactControllerBase<WorkspaceTreeViewController, MysqlDatasourceArtifact>
     {
         private MysqlDatasourceEditViewModel? _editViewModel;
 
+        //protected WorkspaceTreeViewController TreeViewController => (WorkspaceTreeViewController)base.TreeViewController;
+
         public MysqlDatasourceController(
-            WorkspaceController workspaceController,
+            WorkspaceTreeViewController workspaceController,
             ILogger<MysqlDatasourceController> logger)
             : base(workspaceController, logger)
         {
+            
+        }
+        /// <summary>
+        /// Handle Treeview EditLabel complete event
+        /// </summary>
+        /// <param name="artifact"></param>
+        /// <param name="oldName"></param>
+        /// <param name="newName"></param>
+        protected override void OnArtifactRenamedInternal(MysqlDatasourceArtifact artifact, string oldName, string newName)
+        {
+            artifact.Name = newName;
         }
 
-        protected override IEnumerable<WorkspaceCommand> GetCommands(MysqlDatasourceArtifact artifact)
+        protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(MysqlDatasourceArtifact artifact)
         {
-            var commands = new List<WorkspaceCommand>();
+            var commands = new List<ArtifactTreeNodeCommand>();
 
             // Rename command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "rename_datasource",
                 Text = "Rename",
                 IconKey = "edit",
                 Execute = async (a) =>
                 {
-                    WorkspaceController.RequestBeginRename(artifact);
+                    TreeViewController.RequestBeginRename(artifact);
                     await Task.CompletedTask;
                 }
             });
 
-            commands.Add(WorkspaceCommand.Separator);
+            commands.Add(ArtifactTreeNodeCommand.Separator);
 
             // Add table command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "add_table",
                 Text = "Add Table",
@@ -49,13 +63,13 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 {
                     var table = new TableArtifact("NewTable");
                     artifact.AddChild(table);
-                    WorkspaceController.OnArtifactAdded(artifact, table);
+                    TreeViewController.OnArtifactAdded(artifact, table);
                     await Task.CompletedTask;
                 }
             });
 
             // Add view command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "add_view",
                 Text = "Add View",
@@ -64,15 +78,15 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 {
                     var view = new ViewArtifact("NewView");
                     artifact.AddChild(view);
-                    WorkspaceController.OnArtifactAdded(artifact, view);
+                    TreeViewController.OnArtifactAdded(artifact, view);
                     await Task.CompletedTask;
                 }
             });
 
-            commands.Add(WorkspaceCommand.Separator);
+            commands.Add(ArtifactTreeNodeCommand.Separator);
 
             // Refresh schema command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "refresh_schema",
                 Text = "Refresh Schema",
@@ -84,10 +98,10 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 }
             });
 
-            commands.Add(WorkspaceCommand.Separator);
+            commands.Add(ArtifactTreeNodeCommand.Separator);
 
             // Delete command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "delete_datasource",
                 Text = "Delete",
@@ -98,14 +112,14 @@ namespace CodeGenerator.Application.Controllers.Workspace
                     if (parent != null)
                     {
                         parent.RemoveChild(artifact);
-                        WorkspaceController.OnArtifactRemoved(parent, artifact);
+                        TreeViewController.OnArtifactRemoved(parent, artifact);
                     }
                     await Task.CompletedTask;
                 }
             });
 
             // Properties command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "datasource_properties",
                 Text = "Properties",
@@ -137,7 +151,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
         {
             if (_editViewModel?.Datasource is IArtifact artifact)
             {
-                WorkspaceController.OnArtifactPropertyChanged(artifact, e.PropertyName, e.Value);
+                TreeViewController.OnArtifactPropertyChanged(artifact, e.PropertyName, e.Value);
             }
         }
 
@@ -150,14 +164,14 @@ namespace CodeGenerator.Application.Controllers.Workspace
             if (e.DatabaseObject is TableArtifact table)
             {
                 datasource.AddChild(table);
-                WorkspaceController.OnArtifactAdded(datasource, table);
+                TreeViewController.OnArtifactAdded(datasource, table);
                 Logger.LogInformation("Added table {TableName} to datasource {DatasourceName}", 
                     table.Name, datasource.Name);
             }
             else if (e.DatabaseObject is ViewArtifact view)
             {
                 datasource.AddChild(view);
-                WorkspaceController.OnArtifactAdded(datasource, view);
+                TreeViewController.OnArtifactAdded(datasource, view);
                 Logger.LogInformation("Added view {ViewName} to datasource {DatasourceName}", 
                     view.Name, datasource.Name);
             }
@@ -166,7 +180,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
         private Task ShowPropertiesAsync(MysqlDatasourceArtifact datasource)
         {
             EnsureEditViewModel(datasource);
-            WorkspaceController.ShowWorkspaceDetailsView(_editViewModel!);
+            TreeViewController.ShowArtifactDetailsView(_editViewModel!);
             return Task.CompletedTask;
         }
     }

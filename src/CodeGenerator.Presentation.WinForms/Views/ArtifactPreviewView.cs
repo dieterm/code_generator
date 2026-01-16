@@ -1,6 +1,7 @@
 ﻿using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
+using Microsoft.DotNet.DesignTools.ViewModels;
 using Syncfusion.Windows.Forms.Edit;
 using Syncfusion.Windows.Forms.Edit.Enums;
 using System;
@@ -30,29 +31,66 @@ namespace CodeGenerator.Presentation.WinForms.Views
 
             if (viewModel == null) return;
 
-            editControl.Visible = viewModel.TextContent != null;
-            if (viewModel.TextContent != null) { 
-                // default_language;XML;Pascal;C#;JScript;HTML (Light);Java;C;PowerShell;VB.NET;SQL;VBScript; (Parameter 'name')'
-                // map ArtifactPreviewViewModel.KnownLanguages to Syncfusion.Windows.Forms.Edit.Enums.KnownLanguages by name
+            if(viewModel.IsTextContent())
+            {
+                editControl.Visible = true;
+                imageBox.Visible = false;
+                ShowTextContent(viewModel);
+            }
+            else if(viewModel.IsImageContent())
+            {
+                imageBox.Visible = true;
+                editControl.Visible = false;
+                imageBox.Image = viewModel.ImageContent;
+                return;
+            } 
+            else 
+            {
+                imageBox.Visible = false;
+                editControl.Visible = true;
+                editControl.Text = $"Error: Both TextContent and FilePath and ImageContent are null.";
+                //throw new InvalidOperationException("Both TextContent and FilePath are null.");
+            }
+        }
+
+        private void ShowTextContent(ArtifactPreviewViewModel viewModel)
+        {
+            editControl.Visible = viewModel.TextContent != null || viewModel.FilePath != null;
+
+            // default_language;XML;Pascal;C#;JScript;HTML (Light);Java;C;PowerShell;VB.NET;SQL;VBScript; (Parameter 'name')'
+            // map ArtifactPreviewViewModel.KnownLanguages to Syncfusion.Windows.Forms.Edit.Enums.KnownLanguages by name
+            try
+            {
+                KnownLanguages language;
+                if (!Enum.TryParse<KnownLanguages>(viewModel.TextLanguageSchema.ToString(), out language) || language == KnownLanguages.Undefined)
+                {
+                    language = KnownLanguages.Text;
+                }
+
+                editControl.ApplyConfiguration(language);
+            }
+            catch (Exception ex)
+            {
+
+                // throw;
+            }
+
+            if (viewModel.FilePath != null)
+            {
                 try
                 {
-                    KnownLanguages language;
-                    if (!Enum.TryParse<KnownLanguages>(viewModel.TextLanguageSchema.ToString(), out language) || language== KnownLanguages.Undefined)
-                    {
-                        language = KnownLanguages.Text;
-                    }
-
-                    editControl.ApplyConfiguration(language);
+                    editControl.LoadFile(viewModel.FilePath);
                 }
                 catch (Exception ex)
                 {
-
                     // throw;
                 }
+            }
+            else if (viewModel.TextContent != null)
+            {
+
                 editControl.Text = viewModel.TextContent ?? string.Empty;
             }
-
-            
             
         }
 

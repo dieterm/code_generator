@@ -1,4 +1,5 @@
-﻿using CodeGenerator.Core.Templates;
+﻿using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Core.Templates;
 
 namespace CodeGenerator.TemplateEngines.T4
 {
@@ -14,5 +15,7 @@ namespace CodeGenerator.TemplateEngines.T4
         public abstract string Content { get; }
 
         public bool UseCaching { get; set; } = false;
+
+        public ITreeNodeIcon Icon { get; } = new ResourceManagerTreeNodeIcon("text_template");
     }
 }

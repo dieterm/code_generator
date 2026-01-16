@@ -1,4 +1,4 @@
-using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using Microsoft.Extensions.Logging;
 
@@ -7,21 +7,23 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// <summary>
     /// Controller for ViewArtifact
     /// </summary>
-    public class ViewArtifactController : ArtifactControllerBase<ViewArtifact>
+    public class ViewArtifactController : ArtifactControllerBase<WorkspaceTreeViewController, ViewArtifact>
     {
+        //protected WorkspaceTreeViewController TreeViewController => (WorkspaceTreeViewController)base.TreeViewController;
+
         public ViewArtifactController(
-            WorkspaceController workspaceController,
+            WorkspaceTreeViewController workspaceController,
             ILogger<ViewArtifactController> logger)
             : base(workspaceController, logger)
         {
         }
 
-        protected override IEnumerable<WorkspaceCommand> GetCommands(ViewArtifact artifact)
+        protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(ViewArtifact artifact)
         {
-            var commands = new List<WorkspaceCommand>();
+            var commands = new List<ArtifactTreeNodeCommand>();
 
             // Add Column command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "add_column",
                 Text = "Add Column",
@@ -30,14 +32,14 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 {
                     var column = new ColumnArtifact("NewColumn", "varchar(255)", true);
                     artifact.AddChild(column);
-                    WorkspaceController.OnArtifactAdded(artifact, column);
-                    WorkspaceController.RequestBeginRename(column);
+                    TreeViewController.OnArtifactAdded(artifact, column);
+                    TreeViewController.RequestBeginRename(column);
                     await Task.CompletedTask;
                 }
             });
 
-            // Add Index command (views can have indexes in some databases)
-            commands.Add(new WorkspaceCommand
+            // Add Index command
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "add_index",
                 Text = "Add Index",
@@ -46,31 +48,31 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 {
                     var index = new IndexArtifact("IX_NewIndex", false);
                     artifact.AddChild(index);
-                    WorkspaceController.OnArtifactAdded(artifact, index);
-                    WorkspaceController.RequestBeginRename(index);
+                    TreeViewController.OnArtifactAdded(artifact, index);
+                    TreeViewController.RequestBeginRename(index);
                     await Task.CompletedTask;
                 }
             });
 
-            commands.Add(WorkspaceCommand.Separator);
+            commands.Add(ArtifactTreeNodeCommand.Separator);
 
             // Rename command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "rename_view",
                 Text = "Rename",
                 IconKey = "edit",
                 Execute = async (a) =>
                 {
-                    WorkspaceController.RequestBeginRename(artifact);
+                    TreeViewController.RequestBeginRename(artifact);
                     await Task.CompletedTask;
                 }
             });
 
-            commands.Add(WorkspaceCommand.Separator);
+            commands.Add(ArtifactTreeNodeCommand.Separator);
 
             // Convert to Table command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "convert_to_table",
                 Text = "Convert to Table",
@@ -81,10 +83,10 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 }
             });
 
-            commands.Add(WorkspaceCommand.Separator);
+            commands.Add(ArtifactTreeNodeCommand.Separator);
 
             // Delete command
-            commands.Add(new WorkspaceCommand
+            commands.Add(new ArtifactTreeNodeCommand
             {
                 Id = "delete_view",
                 Text = "Delete",
@@ -95,7 +97,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                     if (parent != null)
                     {
                         parent.RemoveChild(artifact);
-                        WorkspaceController.OnArtifactRemoved(parent, artifact);
+                        TreeViewController.OnArtifactRemoved(parent, artifact);
                     }
                     await Task.CompletedTask;
                 }
@@ -106,8 +108,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
         protected override Task OnSelectedInternalAsync(ViewArtifact artifact, CancellationToken cancellationToken)
         {
-            // Views don't have a specific edit view, just show in tree
-            WorkspaceController.ShowWorkspaceDetailsView(null);
+            TreeViewController.ShowArtifactDetailsView(null);
             return Task.CompletedTask;
         }
 
@@ -116,23 +117,19 @@ namespace CodeGenerator.Application.Controllers.Workspace
             var parent = view.Parent;
             if (parent == null) return;
 
-            // Create a new table with the same properties
             var table = new TableArtifact(view.Name, view.Schema);
 
-            // Copy columns
             foreach (var column in view.GetColumns().ToList())
             {
                 view.RemoveChild(column);
                 table.AddChild(column);
             }
 
-            // Remove the view
             parent.RemoveChild(view);
-            WorkspaceController.OnArtifactRemoved(parent, view);
+            TreeViewController.OnArtifactRemoved(parent, view);
 
-            // Add the table
             parent.AddChild(table);
-            WorkspaceController.OnArtifactAdded(parent, table);
+            TreeViewController.OnArtifactAdded(parent, table);
 
             await Task.CompletedTask;
         }

@@ -1,3 +1,4 @@
+using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Services;
 using Microsoft.Extensions.Logging;
@@ -8,19 +9,21 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// Controller for DatasourcesContainerArtifact
     /// Handles context menus for the datasources container node
     /// </summary>
-    public class DatasourcesContainerController : ArtifactControllerBase<DatasourcesContainerArtifact>
+    public class DatasourcesContainerController : ArtifactControllerBase<WorkspaceTreeViewController,DatasourcesContainerArtifact>
     {
         private readonly IDatasourceFactory _datasourceFactory;
 
-        public DatasourcesContainerController(IDatasourceFactory datasourceFactory, WorkspaceController workspaceController, ILogger<DatasourcesContainerController> logger)
+        //protected WorkspaceTreeViewController TreeViewController => (WorkspaceTreeViewController)base.TreeViewController;
+
+        public DatasourcesContainerController(IDatasourceFactory datasourceFactory, WorkspaceTreeViewController workspaceController, ILogger<DatasourcesContainerController> logger)
             : base(workspaceController, logger)
         {
             _datasourceFactory = datasourceFactory;
         }
 
-        protected override IEnumerable<WorkspaceCommand> GetCommands(DatasourcesContainerArtifact artifact)
+        protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(DatasourcesContainerArtifact artifact)
         {
-            var commands = new List<WorkspaceCommand>();
+            var commands = new List<ArtifactTreeNodeCommand>();
 
             // Group datasource types by category
             var typesByCategory = _datasourceFactory.GetAvailableTypes()
@@ -29,11 +32,11 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
             foreach (var categoryGroup in typesByCategory)
             {
-                var categoryCommands = new List<WorkspaceCommand>();
+                var categoryCommands = new List<ArtifactTreeNodeCommand>();
 
                 foreach (var typeInfo in categoryGroup.OrderBy(t => t.DisplayName))
                 {
-                    categoryCommands.Add(new WorkspaceCommand
+                    categoryCommands.Add(new ArtifactTreeNodeCommand
                     {
                         Id = $"add_datasource_{typeInfo.TypeId}",
                         Text = typeInfo.DisplayName,
@@ -42,7 +45,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                     });
                 }
 
-                commands.Add(new WorkspaceCommand
+                commands.Add(new ArtifactTreeNodeCommand
                 {
                     Id = $"add_datasource_category_{categoryGroup.Key.Replace(" ", "_").ToLowerInvariant()}",
                     Text = $"Add {categoryGroup.Key}",
@@ -56,9 +59,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
         protected override Task OnSelectedInternalAsync(DatasourcesContainerArtifact artifact, CancellationToken cancellationToken)
         {
-            // Show the details view for the datasources container
-            // for now we just clear the details view
-            WorkspaceController.ShowWorkspaceDetailsView(null);
+            TreeViewController.ShowArtifactDetailsView(null);
             return Task.CompletedTask;
         }
 
@@ -79,12 +80,10 @@ namespace CodeGenerator.Application.Controllers.Workspace
             var typeInfo = types.FirstOrDefault(t => t.TypeId == typeId);
             if (typeInfo == null) return;
 
-            // TODO: Show dialog to configure the datasource
-            // For now, just add with default name
-            var datasource = WorkspaceController.AddDatasource(typeId, $"New {typeInfo.DisplayName}");
+            var datasource = TreeViewController.AddDatasource(typeId, $"New {typeInfo.DisplayName}");
             if (datasource != null)
             {
-                await WorkspaceController.SaveWorkspaceAsync();
+                await TreeViewController.SaveWorkspaceAsync();
             }
         }
     }

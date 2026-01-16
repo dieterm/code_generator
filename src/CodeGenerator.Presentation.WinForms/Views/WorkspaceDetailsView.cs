@@ -1,4 +1,4 @@
-﻿using CodeGenerator.Application.ViewModels;
+﻿using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql.ViewModels;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
@@ -6,9 +6,9 @@ using System.ComponentModel;
 
 namespace CodeGenerator.Presentation.WinForms.Views
 {
-    public partial class WorkspaceDetailsView : UserControl, IView<WorkspaceDetailsViewModel>
+    public partial class WorkspaceDetailsView : UserControl, IView<ArtifactDetailsViewModel>
     {
-        private WorkspaceDetailsViewModel? _viewModel;
+        private ArtifactDetailsViewModel? _viewModel;
         public WorkspaceDetailsView()
         {
             InitializeComponent();
@@ -23,7 +23,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             }
         }
 
-        public void BindViewModel(WorkspaceDetailsViewModel viewModel)
+        public void BindViewModel(ArtifactDetailsViewModel viewModel)
         {
             if (_viewModel != null)
             {
@@ -42,7 +42,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
 
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(WorkspaceDetailsViewModel.DetailsViewModel))
+            if (e.PropertyName == nameof(ArtifactDetailsViewModel.DetailsViewModel))
             {
                 ShowDetailsControl();
             }
@@ -88,7 +88,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
 
         public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
         {
-            BindViewModel((WorkspaceDetailsViewModel)(object)viewModel);
+            BindViewModel((ArtifactDetailsViewModel)(object)viewModel);
         }
     }
 }

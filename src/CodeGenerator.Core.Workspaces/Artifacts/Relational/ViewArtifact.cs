@@ -1,6 +1,6 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
-using CodeGenerator.Shared.Views;
+using CodeGenerator.Shared.Views.TreeNode;
 
 namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
 {
@@ -9,10 +9,6 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
     /// </summary>
     public class ViewArtifact : Artifact, IEditableTreeNode
     {
-        //private string _name;
-        //private string _schema;
-        //private string _definition;
-
         public ViewArtifact(string name, string schema = TableArtifact.DEFAULT_SCHEMA)
         {
             Name = name;
@@ -24,8 +20,6 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             : base(state)
         {
         }
-
-        //public override string Id => $"view_{Schema}_{Name}".ToLowerInvariant();
 
         public override string TreeNodeText => string.IsNullOrEmpty(Schema) || Schema == TableArtifact.DEFAULT_SCHEMA
             ? Name 
@@ -83,6 +77,21 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             var column = new ColumnArtifact(columnName, dataType, isNullable);
             AddChild(column);
             return column;
+        }
+
+        public bool CanBeginEdit()
+        {
+            return true;
+        }
+
+        public bool Validating(string newName)
+        {
+            return !string.IsNullOrWhiteSpace(newName);
+        }
+
+        public void EndEdit(string oldName, string newName)
+        {
+            Name = newName;
         }
     }
 }
