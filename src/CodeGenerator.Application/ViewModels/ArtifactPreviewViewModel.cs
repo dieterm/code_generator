@@ -31,6 +31,16 @@ namespace CodeGenerator.Application.ViewModels
             set => SetProperty(ref _filePath, value);
         }
 
+        private string? _fileName;
+        /// <summary>
+        /// Proposed filename for artifact content
+        /// </summary>
+        public string? FileName
+        {
+            get => _fileName;
+            set => SetProperty(ref _fileName, value);
+        }
+
         private KnownLanguages _textLanguageSchema;
         public KnownLanguages TextLanguageSchema
         {

@@ -21,7 +21,7 @@
       "minValue": null,
       "maxValue": null,
       "tableDataFilter": null,
-      "tableDataMaxRows": null,
+      "tableDataMaxRows": 100,
       "isTemplateDatasourceArtifactData": true
     }
   ]

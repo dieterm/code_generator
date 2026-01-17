@@ -18,17 +18,17 @@ public class TemplateParametersViewModel : ViewModelBase
     private TemplateArtifact? _templateArtifact;
     private string _templateName = string.Empty;
     private string? _templateDescription;
-    private string _editableTemplateId = string.Empty;
-    private string _editableDisplayName = string.Empty;
-    private string _editableDescription = string.Empty;
-    private List<FieldViewModelBase> _parameterFields = new();
-    private ObservableCollection<TemplateParameterEditModel> _parameterDefinitions = new();
-    private TemplateParameterEditModel? _selectedParameterDefinition;
-    private bool _canExecute;
-    private bool _isExecuting;
     private bool _isEditMode;
-    private bool _hasUnsavedChanges;
     private WorkspaceTreeViewController? _workspaceController;
+    private TemplateParametersEditViewModel _editViewModel = new();
+    private TemplateExecutionViewModel _executionViewModel = new();
+
+    public TemplateParametersViewModel()
+    {
+        // Subscribe to child ViewModel events
+        _editViewModel.SaveRequested += (s, e) => SaveParameterDefinitions();
+        _executionViewModel.ExecuteRequested += (s, e) => ExecuteRequested?.Invoke(this, EventArgs.Empty);
+    }
 
     /// <summary>
     /// Set the workspace controller for accessing workspace data (tables, etc.)
@@ -54,7 +54,7 @@ public class TemplateParametersViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Display name of the template (read-only, for display in run mode)
+    /// Display name of the template (read-only, for display in header)
     /// </summary>
     public string TemplateName
     {
@@ -72,96 +72,6 @@ public class TemplateParametersViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Editable Template ID for the definition file
-    /// </summary>
-    public string EditableTemplateId
-    {
-        get => _editableTemplateId;
-        set
-        {
-            if (SetProperty(ref _editableTemplateId, value))
-            {
-                HasUnsavedChanges = true;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Editable Display Name for the definition file
-    /// </summary>
-    public string EditableDisplayName
-    {
-        get => _editableDisplayName;
-        set
-        {
-            if (SetProperty(ref _editableDisplayName, value))
-            {
-                HasUnsavedChanges = true;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Editable Description for the definition file
-    /// </summary>
-    public string EditableDescription
-    {
-        get => _editableDescription;
-        set
-        {
-            if (SetProperty(ref _editableDescription, value))
-            {
-                HasUnsavedChanges = true;
-            }
-        }
-    }
-
-    /// <summary>
-    /// List of parameter field view models for the UI (execution mode)
-    /// </summary>
-    public List<FieldViewModelBase> ParameterFields
-    {
-        get => _parameterFields;
-        set => SetProperty(ref _parameterFields, value);
-    }
-
-    /// <summary>
-    /// List of parameter definitions for editing
-    /// </summary>
-    public ObservableCollection<TemplateParameterEditModel> ParameterDefinitions
-    {
-        get => _parameterDefinitions;
-        set => SetProperty(ref _parameterDefinitions, value);
-    }
-
-    /// <summary>
-    /// Currently selected parameter definition for editing
-    /// </summary>
-    public TemplateParameterEditModel? SelectedParameterDefinition
-    {
-        get => _selectedParameterDefinition;
-        set => SetProperty(ref _selectedParameterDefinition, value);
-    }
-
-    /// <summary>
-    /// Whether the template can be executed (all required parameters are set)
-    /// </summary>
-    public bool CanExecute
-    {
-        get => _canExecute;
-        set => SetProperty(ref _canExecute, value);
-    }
-
-    /// <summary>
-    /// Whether the template is currently being executed
-    /// </summary>
-    public bool IsExecuting
-    {
-        get => _isExecuting;
-        set => SetProperty(ref _isExecuting, value);
-    }
-
-    /// <summary>
     /// Whether we are in edit mode (editing parameter definitions) or execution mode
     /// </summary>
     public bool IsEditMode
@@ -171,13 +81,41 @@ public class TemplateParametersViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Whether there are unsaved changes to parameter definitions
+    /// ViewModel for the edit view (parameter definitions)
     /// </summary>
-    public bool HasUnsavedChanges
+    public TemplateParametersEditViewModel EditViewModel
     {
-        get => _hasUnsavedChanges;
-        set => SetProperty(ref _hasUnsavedChanges, value);
+        get => _editViewModel;
+        set => SetProperty(ref _editViewModel, value);
     }
+
+    /// <summary>
+    /// ViewModel for the execution view (parameter input fields)
+    /// </summary>
+    public TemplateExecutionViewModel ExecutionViewModel
+    {
+        get => _executionViewModel;
+        set => SetProperty(ref _executionViewModel, value);
+    }
+
+    /// <summary>
+    /// Whether the template can be executed (delegates to ExecutionViewModel)
+    /// </summary>
+    public bool CanExecute => ExecutionViewModel.CanExecute;
+
+    /// <summary>
+    /// Whether the template is currently being executed
+    /// </summary>
+    public bool IsExecuting
+    {
+        get => ExecutionViewModel.IsExecuting;
+        set => ExecutionViewModel.IsExecuting = value;
+    }
+
+    /// <summary>
+    /// Whether there are unsaved changes (delegates to EditViewModel)
+    /// </summary>
+    public bool HasUnsavedChanges => EditViewModel.HasUnsavedChanges;
 
     /// <summary>
     /// Event raised when the user requests to execute the template
@@ -189,7 +127,7 @@ public class TemplateParametersViewModel : ViewModelBase
     /// </summary>
     public void RequestExecute()
     {
-        ExecuteRequested?.Invoke(this, EventArgs.Empty);
+        ExecutionViewModel.RequestExecute();
     }
 
     /// <summary>
@@ -206,77 +144,6 @@ public class TemplateParametersViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Add a new parameter definition
-    /// </summary>
-    public void AddParameter()
-    {
-        var newParam = new TemplateParameterEditModel
-        {
-            Name = $"Parameter{ParameterDefinitions.Count + 1}",
-            DisplayOrder = ParameterDefinitions.Count
-        };
-        newParam.PropertyChanged += (s, e) => HasUnsavedChanges = true;
-        ParameterDefinitions.Add(newParam);
-        SelectedParameterDefinition = newParam;
-        HasUnsavedChanges = true;
-    }
-
-    /// <summary>
-    /// Remove the selected parameter definition
-    /// </summary>
-    public void RemoveSelectedParameter()
-    {
-        if (SelectedParameterDefinition != null)
-        {
-            ParameterDefinitions.Remove(SelectedParameterDefinition);
-            SelectedParameterDefinition = ParameterDefinitions.LastOrDefault();
-            HasUnsavedChanges = true;
-            ReorderParameters();
-        }
-    }
-
-    /// <summary>
-    /// Move the selected parameter up in the list
-    /// </summary>
-    public void MoveParameterUp()
-    {
-        if (SelectedParameterDefinition == null) return;
-        var index = ParameterDefinitions.IndexOf(SelectedParameterDefinition);
-        if (index > 0)
-        {
-            ParameterDefinitions.Move(index, index - 1);
-            HasUnsavedChanges = true;
-            ReorderParameters();
-        }
-    }
-
-    /// <summary>
-    /// Move the selected parameter down in the list
-    /// </summary>
-    public void MoveParameterDown()
-    {
-        if (SelectedParameterDefinition == null) return;
-        var index = ParameterDefinitions.IndexOf(SelectedParameterDefinition);
-        if (index < ParameterDefinitions.Count - 1)
-        {
-            ParameterDefinitions.Move(index, index + 1);
-            HasUnsavedChanges = true;
-            ReorderParameters();
-        }
-    }
-
-    /// <summary>
-    /// Reorder parameters based on their position in the collection
-    /// </summary>
-    private void ReorderParameters()
-    {
-        for (int i = 0; i < ParameterDefinitions.Count; i++)
-        {
-            ParameterDefinitions[i].DisplayOrder = i;
-        }
-    }
-
-    /// <summary>
     /// Save parameter definitions to the .def file
     /// </summary>
     public void SaveParameterDefinitions()
@@ -286,20 +153,20 @@ public class TemplateParametersViewModel : ViewModelBase
         // Get or create the definition
         var definition = _templateArtifact.GetOrCreateDefinition();
 
-        // Update template metadata
-        definition.TemplateId = EditableTemplateId;
-        definition.DisplayName = EditableDisplayName;
-        definition.Description = string.IsNullOrWhiteSpace(EditableDescription) ? null : EditableDescription;
+        // Update template metadata from edit view model
+        definition.TemplateId = EditViewModel.EditableTemplateId;
+        definition.DisplayName = EditViewModel.EditableDisplayName;
+        definition.Description = string.IsNullOrWhiteSpace(EditViewModel.EditableDescription) 
+            ? null 
+            : EditViewModel.EditableDescription;
         
         // Update the parameters from the edit models
-        definition.Parameters = ParameterDefinitions
-            .Select(p => p.ToTemplateParameter())
-            .ToList();
+        definition.Parameters = EditViewModel.GetTemplateParameters();
 
         // Save to file
         definition.SaveForTemplate(_templateArtifact.FilePath);
         
-        HasUnsavedChanges = false;
+        EditViewModel.HasUnsavedChanges = false;
 
         // Reload the template artifact to pick up changes
         _templateArtifact.ReloadDefinition();
@@ -324,12 +191,12 @@ public class TemplateParametersViewModel : ViewModelBase
         {
             TemplateName = string.Empty;
             TemplateDescription = null;
-            EditableTemplateId = string.Empty;
-            EditableDisplayName = string.Empty;
-            EditableDescription = string.Empty;
-            ParameterFields = new List<FieldViewModelBase>();
-            ParameterDefinitions = new ObservableCollection<TemplateParameterEditModel>();
-            CanExecute = false;
+            EditViewModel.LoadFromParameters(
+                Enumerable.Empty<TemplateParameter>(), 
+                string.Empty, 
+                string.Empty, 
+                null);
+            ExecutionViewModel.ParameterFields = new List<FieldViewModelBase>();
             return;
         }
 
@@ -338,19 +205,16 @@ public class TemplateParametersViewModel : ViewModelBase
 
         // Load editable template metadata
         var definition = _templateArtifact.Definition;
-        EditableTemplateId = definition?.TemplateId ?? Path.GetFileNameWithoutExtension(_templateArtifact.FilePath);
-        EditableDisplayName = definition?.DisplayName ?? _templateArtifact.FileName;
-        EditableDescription = definition?.Description ?? string.Empty;
+        var templateId = definition?.TemplateId ?? Path.GetFileNameWithoutExtension(_templateArtifact.FilePath);
+        var displayName = definition?.DisplayName ?? _templateArtifact.FileName;
+        var description = definition?.Description;
 
         // Load parameter definitions for edit mode
-        var editModels = new ObservableCollection<TemplateParameterEditModel>();
-        foreach (var param in _templateArtifact.Parameters.OrderBy(p => p.DisplayOrder))
-        {
-            var editModel = TemplateParameterEditModel.FromTemplateParameter(param);
-            editModel.PropertyChanged += (s, e) => HasUnsavedChanges = true;
-            editModels.Add(editModel);
-        }
-        ParameterDefinitions = editModels;
+        EditViewModel.LoadFromParameters(
+            _templateArtifact.Parameters, 
+            templateId, 
+            displayName, 
+            description);
 
         // Create field view models for each parameter (execution mode)
         var fields = new List<FieldViewModelBase>();
@@ -359,20 +223,11 @@ public class TemplateParametersViewModel : ViewModelBase
             var field = CreateFieldForParameter(parameter);
             if (field != null)
             {
-                field.PropertyChanged += (s, e) =>
-                {
-                    if (e.PropertyName == nameof(FieldViewModelBase.Value))
-                    {
-                        ValidateParameters();
-                    }
-                };
                 fields.Add(field);
             }
         }
 
-        ParameterFields = fields;
-        HasUnsavedChanges = false;
-        ValidateParameters();
+        ExecutionViewModel.ParameterFields = fields;
     }
 
     /// <summary>
@@ -384,16 +239,14 @@ public class TemplateParametersViewModel : ViewModelBase
 
         if (_workspaceController?.CurrentWorkspace == null)
             return items;
-        // visit complete workspace tree recursively to find datasources
-        // by checking if an artifact has a TemplateDatasourceProviderDecorator
+
         var decorators = _workspaceController?.CurrentWorkspace.FindDescendantDecorators<TemplateDatasourceProviderDecorator>();
         
-        // Iterate through all datasources
         foreach (var decorator in decorators)
         {
             var datasourceArtifact = decorator.Artifact.FindAncesterOfType<DatasourceArtifact>();
             
-            if (datasourceArtifact!=null)
+            if (datasourceArtifact != null)
             {
                 items.Add(new TemplateDatasourceArtifactItem
                 {
@@ -522,61 +375,11 @@ public class TemplateParametersViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Validate that all required parameters have values
-    /// </summary>
-    private void ValidateParameters()
-    {
-        if (_templateArtifact == null)
-        {
-            CanExecute = false;
-            return;
-        }
-
-        // Check all required parameters have values
-        foreach (var field in ParameterFields)
-        {
-            if (field.IsRequired)
-            {
-                if (field is ComboboxFieldModel comboField)
-                {
-                    if (comboField.SelectedItem == null)
-                    {
-                        CanExecute = false;
-                        return;
-                    }
-                }
-                else if (field.Value == null || string.IsNullOrEmpty(field.Value?.ToString()))
-                {
-                    CanExecute = false;
-                    return;
-                }
-            }
-        }
-
-        CanExecute = true;
-    }
-
-    /// <summary>
     /// Get parameter values as a dictionary for template execution
     /// </summary>
     public Dictionary<string, object?> GetParameterValues()
     {
-        var values = new Dictionary<string, object?>();
-
-        foreach (var field in ParameterFields)
-        {
-            if (field is ComboboxFieldModel comboField)
-            {
-                if (comboField.SelectedItem is TemplateDatasourceArtifactItem tableItem)
-                {
-                    values[field.Name] = tableItem;
-                    continue;
-                }
-            }
-            values[field.Name] = field.Value;
-        }
-
-        return values;
+        return ExecutionViewModel.GetParameterValues();
     }
 
     /// <summary>
@@ -586,4 +389,80 @@ public class TemplateParametersViewModel : ViewModelBase
     {
         return _templateArtifact?.Parameters ?? new List<TemplateParameter>();
     }
+
+    #region Legacy properties for backward compatibility
+    
+    /// <summary>
+    /// List of parameter field view models for the UI (execution mode)
+    /// </summary>
+    [Obsolete("Use ExecutionViewModel.ParameterFields instead")]
+    public List<FieldViewModelBase> ParameterFields
+    {
+        get => ExecutionViewModel.ParameterFields;
+        set => ExecutionViewModel.ParameterFields = value;
+    }
+
+    /// <summary>
+    /// List of parameter definitions for editing
+    /// </summary>
+    [Obsolete("Use EditViewModel.ParameterDefinitions instead")]
+    public ObservableCollection<TemplateParameterEditModel> ParameterDefinitions
+    {
+        get => EditViewModel.ParameterDefinitions;
+        set => EditViewModel.ParameterDefinitions = value;
+    }
+
+    /// <summary>
+    /// Currently selected parameter definition for editing
+    /// </summary>
+    [Obsolete("Use EditViewModel.SelectedParameterDefinition instead")]
+    public TemplateParameterEditModel? SelectedParameterDefinition
+    {
+        get => EditViewModel.SelectedParameterDefinition;
+        set => EditViewModel.SelectedParameterDefinition = value;
+    }
+
+    /// <summary>
+    /// Editable Template ID
+    /// </summary>
+    [Obsolete("Use EditViewModel.EditableTemplateId instead")]
+    public string EditableTemplateId
+    {
+        get => EditViewModel.EditableTemplateId;
+        set => EditViewModel.EditableTemplateId = value;
+    }
+
+    /// <summary>
+    /// Editable Display Name
+    /// </summary>
+    [Obsolete("Use EditViewModel.EditableDisplayName instead")]
+    public string EditableDisplayName
+    {
+        get => EditViewModel.EditableDisplayName;
+        set => EditViewModel.EditableDisplayName = value;
+    }
+
+    /// <summary>
+    /// Editable Description
+    /// </summary>
+    [Obsolete("Use EditViewModel.EditableDescription instead")]
+    public string EditableDescription
+    {
+        get => EditViewModel.EditableDescription;
+        set => EditViewModel.EditableDescription = value;
+    }
+
+    [Obsolete("Use EditViewModel.AddParameter instead")]
+    public void AddParameter() => EditViewModel.AddParameter();
+
+    [Obsolete("Use EditViewModel.RemoveSelectedParameter instead")]
+    public void RemoveSelectedParameter() => EditViewModel.RemoveSelectedParameter();
+
+    [Obsolete("Use EditViewModel.MoveParameterUp instead")]
+    public void MoveParameterUp() => EditViewModel.MoveParameterUp();
+
+    [Obsolete("Use EditViewModel.MoveParameterDown instead")]
+    public void MoveParameterDown() => EditViewModel.MoveParameterDown();
+
+    #endregion
 }

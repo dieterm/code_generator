@@ -12,6 +12,7 @@ using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.ExtensionMethods;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.ViewModels;
 using Microsoft.Extensions.Logging;
@@ -245,6 +246,7 @@ namespace CodeGenerator.Application.Controllers.Template
                                 // If the file artifact has text content decorator, show that
                                 WindowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel
                                 {
+                                    FileName = fileArtifact.FileName,
                                     TabLabel = $"Generated: {templateArtifact.DisplayName}",
                                     TextContent = fileArtifact.GetTextContent(),
                                     TextLanguageSchema = DetermineLanguageSchema(templateArtifact.FilePath)
@@ -257,6 +259,7 @@ namespace CodeGenerator.Application.Controllers.Template
                                 if (image != null) {
                                     WindowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel
                                     {
+                                        FileName = fileArtifact.FileName,
                                         TabLabel = $"Generated: {templateArtifact.DisplayName}",
                                         //TextContent = fileArtifact.GetTextContent(),
                                         ImageContent = image,
@@ -270,6 +273,7 @@ namespace CodeGenerator.Application.Controllers.Template
                     {
                         WindowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel
                         {
+                            FileName = templateArtifact.FileName?.GetFileNameWithoutExtension()??"output.txt",
                             TabLabel = $"Generated: {templateArtifact.DisplayName}",
                             TextContent = output.TextContent,
                             TextLanguageSchema = DetermineLanguageSchema(templateArtifact.FilePath)
