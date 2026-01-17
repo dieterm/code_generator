@@ -1,6 +1,7 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Domain.DataTypes;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Diagnostics;
 using System.Text.Json;
 
@@ -78,43 +79,23 @@ public class JsonSchemaReader
         using var document = JsonDocument.Parse(jsonContent);
         var root = document.RootElement;
         
-        // Get a representative object to extract columns from
-        JsonElement? representativeObject = GetRepresentativeObject(root);
-        if (representativeObject.HasValue)
+        // Extract columns by sampling all objects
+        if (root.ValueKind == JsonValueKind.Object)
         {
-            ExtractColumnArtifacts(table, representativeObject.Value);
+            ExtractColumnArtifactsFromObject(table, root);
+        }
+        else if (root.ValueKind == JsonValueKind.Array)
+        {
+            ExtractColumnArtifactsFromArray(table, root);
         }
         
         return Task.FromResult(table);
     }
 
     /// <summary>
-    /// Get a representative JSON object from root (either the root itself or first array item)
+    /// Extract column artifacts from a single JSON object
     /// </summary>
-    private JsonElement? GetRepresentativeObject(JsonElement root)
-    {
-        if (root.ValueKind == JsonValueKind.Object)
-        {
-            return root;
-        }
-        else if (root.ValueKind == JsonValueKind.Array)
-        {
-            // Return the first object in the array
-            foreach (var item in root.EnumerateArray())
-            {
-                if (item.ValueKind == JsonValueKind.Object)
-                {
-                    return item;
-                }
-            }
-        }
-        return null;
-    }
-
-    /// <summary>
-    /// Recursively extract column artifacts from a JSON object
-    /// </summary>
-    private void ExtractColumnArtifacts(IArtifact parent, JsonElement objectElement)
+    private void ExtractColumnArtifactsFromObject(IArtifact parent, JsonElement objectElement)
     {
         if (objectElement.ValueKind != JsonValueKind.Object)
             return;
@@ -147,35 +128,245 @@ public class JsonSchemaReader
 
             parent.AddChild(column);
 
+            // create sub-table
+            var subTable = new TableArtifact(column.Name, string.Empty);
+
             // Recursively add nested columns for object properties
             if (propInfo.IsObject)
             {
-                ExtractColumnArtifacts(column, prop.Value);
+                ExtractColumnArtifactsFromObject(subTable, prop.Value);
             }
             else if (propInfo.IsArray)
             {
-                // If the array contains objects, extract columns from the first object
-                ExtractColumnsFromArray(column, prop.Value);
+                // If the array contains objects, extract columns from all objects (union)
+                ExtractColumnArtifactsFromArray(subTable, prop.Value);
+            }
+            if(subTable.Children.Any())
+            {
+                column.AddChild(subTable);
             }
         }
     }
 
     /// <summary>
-    /// Extract columns from a JSON array (samples the first object in the array)
+    /// Extract columns from a JSON array by sampling all objects and creating a union of properties
     /// </summary>
-    private void ExtractColumnsFromArray(ColumnArtifact parentColumn, JsonElement arrayElement)
+    private void ExtractColumnArtifactsFromArray(IArtifact parent, JsonElement arrayElement, int maxSampleSize = 100)
     {
         if (arrayElement.ValueKind != JsonValueKind.Array)
             return;
 
-        // Find the first object in the array to use as a template
+        // First, collect a union of all properties from all objects in the array
+        var propertyUnion = new Dictionary<string, JsonPropertyUnionInfo>();
+        int sampleCount = 0;
+
         foreach (var item in arrayElement.EnumerateArray())
         {
+            if (sampleCount >= maxSampleSize)
+                break;
+
             if (item.ValueKind == JsonValueKind.Object)
             {
-                // Recursively extract columns from this object
-                ExtractColumnArtifacts(parentColumn, item);
-                break; // Only sample the first object
+                foreach (var prop in item.EnumerateObject())
+                {
+                    if (!propertyUnion.TryGetValue(prop.Name, out var unionInfo))
+                    {
+                        // First time seeing this property
+                        unionInfo = new JsonPropertyUnionInfo
+                        {
+                            Name = prop.Name,
+                            InferredType = InferTypeFromValue(prop.Value),
+                            IsNullable = prop.Value.ValueKind == JsonValueKind.Null,
+                            IsObject = prop.Value.ValueKind == JsonValueKind.Object,
+                            IsArray = prop.Value.ValueKind == JsonValueKind.Array,
+                            SampleValues = new List<JsonElement>()
+                        };
+                        propertyUnion[prop.Name] = unionInfo;
+                    }
+                    else
+                    {
+                        // Update nullability if we find a null value
+                        if (prop.Value.ValueKind == JsonValueKind.Null)
+                        {
+                            unionInfo.IsNullable = true;
+                        }
+                        // If the property was previously seen as non-object/non-array but now is, update
+                        if (prop.Value.ValueKind == JsonValueKind.Object && !unionInfo.IsObject)
+                        {
+                            unionInfo.IsObject = true;
+                            unionInfo.InferredType = GenericDataTypes.Json.Id;
+                        }
+                        if (prop.Value.ValueKind == JsonValueKind.Array && !unionInfo.IsArray)
+                        {
+                            unionInfo.IsArray = true;
+                            unionInfo.InferredType = GenericDataTypes.Json.Id;
+                        }
+                    }
+
+                    // Collect sample values for nested extraction (limit to avoid memory issues)
+                    if (unionInfo.SampleValues.Count < maxSampleSize && 
+                        (prop.Value.ValueKind == JsonValueKind.Object || prop.Value.ValueKind == JsonValueKind.Array))
+                    {
+                        unionInfo.SampleValues.Add(prop.Value.Clone());
+                    }
+                }
+                sampleCount++;
+            }
+        }
+
+        // Mark properties as nullable if they don't appear in all sampled objects
+        // (they are optional)
+        foreach (var unionInfo in propertyUnion.Values)
+        {
+            // If a property doesn't appear in all objects, it's nullable/optional
+            // We can't easily count this without another pass, so we'll be conservative
+            // and mark all properties from arrays as nullable
+            unionInfo.IsNullable = true;
+        }
+        
+
+        // Now create column artifacts from the union
+        int ordinal = 1;
+        foreach (var unionInfo in propertyUnion.Values)
+        {
+            var column = new ColumnArtifact(unionInfo.Name, unionInfo.InferredType, unionInfo.IsNullable)
+            {
+                OrdinalPosition = ordinal++
+            };
+
+            // Add decorator to mark as existing
+            column.AddDecorator(new ExistingColumnDecorator
+            {
+                OriginalName = unionInfo.Name,
+                OriginalDataType = unionInfo.InferredType,
+                OriginalOrdinalPosition = column.OrdinalPosition,
+                OriginalIsNullable = unionInfo.IsNullable
+            });
+
+            parent.AddChild(column);
+
+            // Recursively extract nested columns
+            if (unionInfo.IsObject && unionInfo.SampleValues.Count > 0)
+            {
+                // Create a merged view of all object samples
+                ExtractNestedColumnsFromSamples(column, unionInfo.SampleValues, isArray: false);
+            }
+            else if (unionInfo.IsArray && unionInfo.SampleValues.Count > 0)
+            {
+                // Extract from all array samples
+                ExtractNestedColumnsFromSamples(column, unionInfo.SampleValues, isArray: true);
+            }
+        }
+        //if(subTable.Children.Any())
+        //{
+        //    parent.AddChild(subTable);
+        //}   
+    }
+
+    /// <summary>
+    /// Extract nested columns from multiple sample values (union of all properties)
+    /// </summary>
+    private void ExtractNestedColumnsFromSamples(ColumnArtifact parentColumn, List<JsonElement> samples, bool isArray)
+    {
+        var nestedPropertyUnion = new Dictionary<string, JsonPropertyUnionInfo>();
+
+        foreach (var sample in samples)
+        {
+            if (isArray && sample.ValueKind == JsonValueKind.Array)
+            {
+                // For arrays, scan all objects within each array sample
+                foreach (var item in sample.EnumerateArray())
+                {
+                    if (item.ValueKind == JsonValueKind.Object)
+                    {
+                        MergeObjectPropertiesIntoUnion(nestedPropertyUnion, item);
+                    }
+                }
+            }
+            else if (!isArray && sample.ValueKind == JsonValueKind.Object)
+            {
+                // For objects, merge properties directly
+                MergeObjectPropertiesIntoUnion(nestedPropertyUnion, sample);
+            }
+        }
+        // create sub-table
+        var subTable = new TableArtifact(parentColumn.Name, string.Empty);
+        
+        int ordinal = 1;
+        foreach (var unionInfo in nestedPropertyUnion.Values)
+        {
+            var column = new ColumnArtifact(unionInfo.Name, unionInfo.InferredType, true) // Always nullable for nested
+            {
+                OrdinalPosition = ordinal++
+            };
+
+            column.AddDecorator(new ExistingColumnDecorator
+            {
+                OriginalName = unionInfo.Name,
+                OriginalDataType = unionInfo.InferredType,
+                OriginalOrdinalPosition = column.OrdinalPosition,
+                OriginalIsNullable = true
+            });
+
+            subTable.AddChild(column);
+
+            // Continue recursion for nested structures
+            if (unionInfo.IsObject && unionInfo.SampleValues.Count > 0)
+            {
+                ExtractNestedColumnsFromSamples(column, unionInfo.SampleValues, isArray: false);
+            }
+            else if (unionInfo.IsArray && unionInfo.SampleValues.Count > 0)
+            {
+                ExtractNestedColumnsFromSamples(column, unionInfo.SampleValues, isArray: true);
+            }
+        }
+        if(subTable.Children.Any())
+        {
+            parentColumn.AddChild(subTable);
+        }
+    }
+
+    /// <summary>
+    /// Merge properties from a JSON object into a property union dictionary
+    /// </summary>
+    private void MergeObjectPropertiesIntoUnion(Dictionary<string, JsonPropertyUnionInfo> union, JsonElement objectElement)
+    {
+        foreach (var prop in objectElement.EnumerateObject())
+        {
+            if (!union.TryGetValue(prop.Name, out var unionInfo))
+            {
+                unionInfo = new JsonPropertyUnionInfo
+                {
+                    Name = prop.Name,
+                    InferredType = InferTypeFromValue(prop.Value),
+                    IsNullable = prop.Value.ValueKind == JsonValueKind.Null,
+                    IsObject = prop.Value.ValueKind == JsonValueKind.Object,
+                    IsArray = prop.Value.ValueKind == JsonValueKind.Array,
+                    SampleValues = new List<JsonElement>()
+                };
+                union[prop.Name] = unionInfo;
+            }
+            else
+            {
+                if (prop.Value.ValueKind == JsonValueKind.Null)
+                {
+                    unionInfo.IsNullable = true;
+                }
+                if (prop.Value.ValueKind == JsonValueKind.Object)
+                {
+                    unionInfo.IsObject = true;
+                }
+                if (prop.Value.ValueKind == JsonValueKind.Array)
+                {
+                    unionInfo.IsArray = true;
+                }
+            }
+
+            // Collect samples for further nesting (limit to 10 per property to avoid memory issues)
+            if (unionInfo.SampleValues.Count < 10 &&
+                (prop.Value.ValueKind == JsonValueKind.Object || prop.Value.ValueKind == JsonValueKind.Array))
+            {
+                unionInfo.SampleValues.Add(prop.Value.Clone());
             }
         }
     }

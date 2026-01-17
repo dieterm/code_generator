@@ -58,7 +58,7 @@ public class JsonDatasourceArtifact : DatasourceArtifact
 
     public override string DatasourceCategory => "File";
 
-    protected override string IconKey => "file-json";
+    protected override string IconKey => "file-braces";
 
     /// <summary>
     /// Path to the JSON file

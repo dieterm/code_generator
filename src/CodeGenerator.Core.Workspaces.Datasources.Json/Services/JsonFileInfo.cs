@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace CodeGenerator.Core.Workspaces.Datasources.Json.Services;
 
 /// <summary>
@@ -27,4 +29,21 @@ public class JsonPropertyInfo
     public bool IsNullable { get; set; } = true;
     public bool IsObject { get; set; }
     public bool IsArray { get; set; }
+}
+
+/// <summary>
+/// Extended property info used during union extraction to hold sample values
+/// </summary>
+internal class JsonPropertyUnionInfo
+{
+    public string Name { get; set; } = string.Empty;
+    public string InferredType { get; set; } = "string";
+    public bool IsNullable { get; set; } = true;
+    public bool IsObject { get; set; }
+    public bool IsArray { get; set; }
+    
+    /// <summary>
+    /// Sample values collected for nested extraction
+    /// </summary>
+    public List<JsonElement> SampleValues { get; set; } = new();
 }
