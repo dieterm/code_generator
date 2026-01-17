@@ -102,6 +102,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlantUml", "PlantUml", "{C9
 		Templates\PlantUml\diagram.plantuml = Templates\PlantUml\diagram.plantuml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core.Workspaces.Datasources.SqlServer", "CodeGenerator.Core.Workspaces.Datasources.SqlServer\CodeGenerator.Core.Workspaces.Datasources.SqlServer.csproj", "{29A5DD50-1FF0-4B16-9CA0-146732FACD77}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -220,6 +222,10 @@ Global
 		{129541CB-1DAC-4272-9C1E-490787EE0CA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{129541CB-1DAC-4272-9C1E-490787EE0CA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{129541CB-1DAC-4272-9C1E-490787EE0CA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29A5DD50-1FF0-4B16-9CA0-146732FACD77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29A5DD50-1FF0-4B16-9CA0-146732FACD77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29A5DD50-1FF0-4B16-9CA0-146732FACD77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29A5DD50-1FF0-4B16-9CA0-146732FACD77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

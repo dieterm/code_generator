@@ -1,0 +1,49 @@
+{
+  "templateId": "test1",
+  "displayName": "test1",
+  "description": "Some random sentince",
+  "category": null,
+  "tags": null,
+  "version": null,
+  "author": null,
+  "parameters": [
+    {
+      "name": "Word",
+      "description": "the word to render",
+      "fullyQualifiedAssemblyTypeName": "System.String",
+      "required": true,
+      "defaultValue": "Mickey Mouse",
+      "allowedValues": [
+        "Pluto",
+        "Mickey",
+        "Donald Duck"
+      ],
+      "label": "Word",
+      "tooltip": "test",
+      "displayOrder": 0,
+      "validationPattern": null,
+      "minValue": null,
+      "maxValue": null,
+      "tableDataFilter": null,
+      "tableDataMaxRows": null,
+      "isTemplateDatasourceArtifactData": false
+    },
+    {
+      "name": "Postcodes",
+      "description": "Postcodes",
+      "fullyQualifiedAssemblyTypeName": "CodeGenerator.TemplateDatasourceArtifactData",
+      "required": true,
+      "defaultValue": null,
+      "allowedValues": null,
+      "label": "Postcodes",
+      "tooltip": null,
+      "displayOrder": 1,
+      "validationPattern": null,
+      "minValue": null,
+      "maxValue": null,
+      "tableDataFilter": null,
+      "tableDataMaxRows": null,
+      "isTemplateDatasourceArtifactData": true
+    }
+  ]
+}

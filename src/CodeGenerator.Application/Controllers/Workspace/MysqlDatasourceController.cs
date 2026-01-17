@@ -14,8 +14,6 @@ namespace CodeGenerator.Application.Controllers.Workspace
     {
         private MysqlDatasourceEditViewModel? _editViewModel;
 
-        //protected WorkspaceTreeViewController TreeViewController => (WorkspaceTreeViewController)base.TreeViewController;
-
         public MysqlDatasourceController(
             WorkspaceTreeViewController workspaceController,
             ILogger<MysqlDatasourceController> logger)

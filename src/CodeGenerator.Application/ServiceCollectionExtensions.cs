@@ -14,6 +14,7 @@ using CodeGenerator.Core.Settings.Generators;
 using CodeGenerator.Core.Settings.ViewModels;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql;
+using CodeGenerator.Core.Workspaces.Datasources.SqlServer;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.CodeArchitecture;
@@ -67,6 +68,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<WorkspaceArtifactController>();
         services.AddSingleton<DatasourcesContainerController>();
         services.AddSingleton<MysqlDatasourceController>();
+        services.AddSingleton<SqlServerDatasourceController>();
         services.AddSingleton<TableArtifactController>();
         services.AddSingleton<ViewArtifactController>();
         services.AddSingleton<ColumnArtifactController>();
@@ -78,6 +80,7 @@ public static class ServiceCollectionExtensions
 
         // Register Datasource Providers
         services.AddMysqlDatasourceServices(configuration);
+        services.AddSqlServerDatasourceServices(configuration);
         
         // Register Message Bus systems
         services.AddSingleton<ApplicationMessageBus>();

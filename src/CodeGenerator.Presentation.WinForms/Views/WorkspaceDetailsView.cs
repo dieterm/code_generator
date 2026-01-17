@@ -1,5 +1,6 @@
 ﻿using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql.ViewModels;
+using CodeGenerator.Core.Workspaces.Datasources.SqlServer.ViewModels;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
 using System.ComponentModel;
@@ -62,6 +63,11 @@ namespace CodeGenerator.Presentation.WinForms.Views
             {
                 detailsControl = new MysqlDatasourceEditView();
                 ((MysqlDatasourceEditView)detailsControl).BindViewModel(mysqlViewModel);
+            }
+            else if (_viewModel?.DetailsViewModel is SqlServerDatasourceEditViewModel sqlServerViewModel)
+            {
+                detailsControl = new SqlServerDatasourceEditView();
+                ((SqlServerDatasourceEditView)detailsControl).BindViewModel(sqlServerViewModel);
             }
             else if (_viewModel?.DetailsViewModel is ColumnEditViewModel columnViewModel)
             {

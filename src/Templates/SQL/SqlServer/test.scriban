@@ -1,0 +1,7 @@
+Hello {{ Word }}!
+
+{{ Postcodes.size }} rows
+
+{{- for postcode in Postcodes }}
+- {{postcode.postcode}} / {{postcode.plaatsnaam}}
+{{- end }}

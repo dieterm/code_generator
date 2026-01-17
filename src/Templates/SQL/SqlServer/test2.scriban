@@ -1,0 +1,5 @@
+{{ Enterprises.size }} rows
+
+{{- for enterprise in Enterprises }}
+- {{enterprise.EnterpriseNumber}} / {{enterprise.name_search}}
+{{- end }}

@@ -45,6 +45,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<WorkspaceArtifactController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<DatasourcesContainerController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<MysqlDatasourceController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<SqlServerDatasourceController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<TableArtifactController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<ViewArtifactController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<ColumnArtifactController>(),
