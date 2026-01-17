@@ -21,5 +21,10 @@ namespace CodeGenerator.Core.Workspaces.Models
         /// warnings or notes about this data type
         /// </summary>
         public string? TypeNotes { get; set; }
+
+        public override string ToString()
+        {
+            return $"{DisplayName} ({Value})";
+        }
     }
 }

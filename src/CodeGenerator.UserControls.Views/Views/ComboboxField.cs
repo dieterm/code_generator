@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -31,8 +32,11 @@ namespace CodeGenerator.UserControls.Views
         private void ComboboxField_Disposed(object? sender, EventArgs e)
         {
             ClearDataBindings();
-            if(_viewModel!=null)
+            cbxItems.SelectedValueChanged -= cbxItems_SelectedValueChanged;
+            
+            if (_viewModel != null) { 
                 _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
+            }
         }
 
         /// <summary>
@@ -106,27 +110,22 @@ namespace CodeGenerator.UserControls.Views
             cbxItems.SelectedValue = viewModel.Value;
             cbxItems.DisplayMember = viewModel.DisplayMember;
             toolTip.SetToolTip(cbxItems, viewModel.Tooltip);
-            // Subscribe to PropertyChanged to update the control when ViewModel changes
+
+            // Subscribe to PropertyChanged to update the control when ViewModel changes from outside
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
-            
+
             // Subscribe to selection changes to update the ViewModel
-            cbxItems.SelectedValueChanged += (s, e) =>
-            {
-                if (_viewModel != null)
-                {
-                    if (!isChangingValues)
-                    {
-                        isChangingValues = true;
-                        var value = cbxItems.SelectedValue;
-                        var item = (ComboboxItem?)cbxItems.SelectedItem;
-                        _viewModel.SelectedItem = item; 
-                        _viewModel.Value = value;
-                        isChangingValues = false;
-                    }
-                }
-            };
+            cbxItems.SelectedValueChanged += cbxItems_SelectedValueChanged;
         }
-        private bool isChangingValues = false;
+
+        private void cbxItems_SelectedValueChanged(object? sender, EventArgs e)
+        {
+            if (_viewModel != null)
+            {
+                _viewModel.SelectedItem = (ComboboxItem?)cbxItems.SelectedItem;
+            }
+        }
+
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (_viewModel == null) return;
@@ -137,7 +136,7 @@ namespace CodeGenerator.UserControls.Views
             }
             else if (e.PropertyName == nameof(_viewModel.Value))
             {
-                cbxItems.SelectedItem = _viewModel.Value;
+                cbxItems.SelectedValue = _viewModel.Value;
             }
             else if(e.PropertyName == nameof(_viewModel.SelectedItem))
             {

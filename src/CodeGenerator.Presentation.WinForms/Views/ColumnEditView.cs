@@ -25,6 +25,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
         {
             if (_viewModel != null)
             {
+                _viewModel.DataTypeField.PropertyChanged -= DataTypeField_PropertyChanged;
                 _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
             }
 
@@ -35,7 +36,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // Bind fields
             txtName.BindViewModel(_viewModel.NameField);
             cbxDataType.BindViewModel(_viewModel.DataTypeField);
-            _viewModel.DataTypeField.PropertyChanged += DataTypeField_PropertyChanged;
+            
             txtMaxLength.BindViewModel(_viewModel.MaxLengthField);
             txtPrecision.BindViewModel(_viewModel.PrecisionField);
             txtScale.BindViewModel(_viewModel.ScaleField);
@@ -43,8 +44,12 @@ namespace CodeGenerator.Presentation.WinForms.Views
             chkPrimaryKey.BindViewModel(_viewModel.IsPrimaryKeyField);
             chkAutoIncrement.BindViewModel(_viewModel.IsAutoIncrementField);
             txtDefaultValue.BindViewModel(_viewModel.DefaultValueField);
+            
+            // set initial visibility
             UpdateVisibilityFields();
+            
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
+            _viewModel.DataTypeField.PropertyChanged += DataTypeField_PropertyChanged;
         }
 
         /// <summary>
@@ -64,9 +69,12 @@ namespace CodeGenerator.Presentation.WinForms.Views
 
         private void DataTypeField_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(ComboboxFieldModel.SelectedItem))
-            {
-                UpdateVisibilityFields();
+            if(sender is ComboboxFieldModel) 
+            { 
+                if (e.PropertyName == nameof(ComboboxFieldModel.SelectedItem))
+                {
+                    UpdateVisibilityFields();
+                }
             }
         }
 
@@ -87,6 +95,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
                 if (_viewModel != null)
                 {
                     _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
+                    _viewModel.DataTypeField.PropertyChanged -= DataTypeField_PropertyChanged;  
                 }
                 components?.Dispose();
             }

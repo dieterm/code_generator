@@ -19,17 +19,38 @@ namespace CodeGenerator.UserControls.ViewModels
         public ComboboxItem? SelectedItem
         {
             get { return _selectedItem; }
-            set { SetProperty(ref _selectedItem, value); }
-        }
+            set {
+                if (SetProperty(ref _selectedItem, value)) { 
+                    if(_isChangingValues)
+                        return;
+                    _isChangingValues = true;
 
-        public virtual object Value
+                    if (value == null)
+                    {
+                        Value = null;
+                    }
+                    else
+                    {
+                        Value = value.Value;
+                    }
+
+                    _isChangingValues = false;
+                }
+            }
+        }
+        bool _isChangingValues = false;
+        public override object Value
         {
             get => GetValue<object>();
             set {
                 if (SetValue(value))
                 {
+                    if (_isChangingValues)
+                        return;
+                    _isChangingValues = true;
+                    
                     // Update SelectedItem based on Value
-                    if (value != null)
+                    if (value != null && Items?.Count>0)
                     {
                         foreach (var item in Items)
                         {
@@ -39,12 +60,13 @@ namespace CodeGenerator.UserControls.ViewModels
                                 return;
                             }
                         }
-                        SelectedItem = null; // No matching item found
+                        throw new InvalidOperationException($"Value {value} not found in Items collection.");
                     }
                     else
                     {
                         SelectedItem = null; // Value is null
                     }
+                    _isChangingValues = false;
                 }
             }
         }
@@ -55,11 +77,5 @@ namespace CodeGenerator.UserControls.ViewModels
             get { return _displayMember; }
             set { SetProperty(ref _displayMember, value); }
         }
-
-
-        //public virtual bool SetItems(ICollection<ComboboxItem> items)
-        //{
-        //    return SetProperty(ref _items, items, nameof(Items));
-        //}
     }
 }

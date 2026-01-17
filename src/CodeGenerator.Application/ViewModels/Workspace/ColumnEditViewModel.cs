@@ -36,8 +36,8 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             NameField = new SingleLineTextFieldModel { Label = "Column Name", Name = nameof(ColumnArtifact.Name) };
             DataTypeField = new ComboboxFieldModel { Label = "Data Type", Name = nameof(ColumnArtifact.DataType) };
             MaxLengthField = new IntegerFieldModel { Label = "Max Length", Name = nameof(ColumnArtifact.MaxLength), Minimum=0, Maximum=int.MaxValue };
-            PrecisionField = new IntegerFieldModel { Label = "Precision", Name = nameof(ColumnArtifact.Precision), Minimum = 0, Maximum = int.MaxValue };
-            ScaleField = new IntegerFieldModel { Label = "Scale", Name = nameof(ColumnArtifact.Scale), Minimum = 0, Maximum = int.MaxValue };
+            PrecisionField = new IntegerFieldModel { Label = "Precision", Name = nameof(ColumnArtifact.Precision), Minimum = 0, Maximum = int.MaxValue, Tooltip="Total number of digits (including decimals)" };
+            ScaleField = new IntegerFieldModel { Label = "Scale", Name = nameof(ColumnArtifact.Scale), Minimum = 0, Maximum = int.MaxValue, Tooltip="Number of digits after comma" };
             IsNullableField = new BooleanFieldModel { Label = "Nullable", Name = nameof(ColumnArtifact.IsNullable) };
             IsPrimaryKeyField = new BooleanFieldModel { Label = "Primary Key", Name = nameof(ColumnArtifact.IsPrimaryKey) };
             IsAutoIncrementField = new BooleanFieldModel { Label = "Auto Increment", Name = nameof(ColumnArtifact.IsAutoIncrement) };
