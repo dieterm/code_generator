@@ -8,7 +8,7 @@
   "author": null,
   "parameters": [
     {
-      "name": "Enterprises",
+      "name": "Municipalities",
       "description": null,
       "fullyQualifiedAssemblyTypeName": "CodeGenerator.TemplateDatasourceArtifactData",
       "required": true,
@@ -21,7 +21,7 @@
       "minValue": null,
       "maxValue": null,
       "tableDataFilter": null,
-      "tableDataMaxRows": 100,
+      "tableDataMaxRows": null,
       "isTemplateDatasourceArtifactData": true
     }
   ]

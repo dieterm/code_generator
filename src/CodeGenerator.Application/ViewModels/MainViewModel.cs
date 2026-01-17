@@ -1,5 +1,7 @@
-﻿using CodeGenerator.Application.Services;
+﻿using CodeGenerator.Application.Events.Application;
+using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Generators;
+using CodeGenerator.Core.Settings.Application;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.ViewModels;
@@ -19,6 +21,7 @@ namespace CodeGenerator.Presentation.WinForms.ViewModels
         // Events
         public event EventHandler? NewRequested;
         public event EventHandler? OpenRequested;
+        public event EventHandler<OpenRecentFileRequestedEventArgs> OpenRecentFileRequested;
         public event EventHandler? SaveRequested;
         public event EventHandler? SaveAsRequested;
         public event EventHandler? GenerateRequested;
@@ -32,6 +35,7 @@ namespace CodeGenerator.Presentation.WinForms.ViewModels
         // Commands
         public RelayCommand NewCommand { get; }
         public RelayCommand OpenCommand { get; }
+        public RelayCommand OpenRecentFileCommand { get; }
         public RelayCommand SaveCommand { get; }
         public RelayCommand SaveAsCommand { get; }
         public RelayCommand GenerateCommand { get; }
@@ -72,7 +76,7 @@ namespace CodeGenerator.Presentation.WinForms.ViewModels
             get => _ribbonViewModel;
             set => SetProperty(ref _ribbonViewModel, value);
         }
-
+        public IEnumerable<string> RecentFiles { get { return ApplicationSettings.Instance.RecentFiles.Cast<string>().ToArray(); } } 
         // Constructor
         public MainViewModel(IMessageBoxService messageBoxService)
         {
@@ -80,6 +84,7 @@ namespace CodeGenerator.Presentation.WinForms.ViewModels
             
             NewCommand = new RelayCommand(_ => NewRequested?.Invoke(this, EventArgs.Empty));
             OpenCommand = new RelayCommand(_ => OpenRequested?.Invoke(this, EventArgs.Empty));
+            OpenRecentFileCommand = new RelayCommand((object? file) => OpenRecentFileRequested?.Invoke(this, new OpenRecentFileRequestedEventArgs(file as string)));
             SaveCommand = new RelayCommand(_ => SaveRequested?.Invoke(this, EventArgs.Empty));
             SaveAsCommand = new RelayCommand(_ => SaveAsRequested?.Invoke(this, EventArgs.Empty));
             GenerateCommand = new RelayCommand(_ => GenerateRequested?.Invoke(this, EventArgs.Empty));

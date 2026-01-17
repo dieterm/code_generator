@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Application.ViewModels.Workspace;
+using CodeGenerator.Core.Workspaces.Datasources.Excel.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.PostgreSql.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.SqlServer.ViewModels;
@@ -74,6 +75,11 @@ namespace CodeGenerator.Presentation.WinForms.Views
             {
                 detailsControl = new PostgreSqlDatasourceEditView();
                 ((PostgreSqlDatasourceEditView)detailsControl).BindViewModel(postgreSqlViewModel);
+            }
+            else if (_viewModel?.DetailsViewModel is ExcelDatasourceEditViewModel excelViewModel)
+            {
+                detailsControl = new ExcelDatasourceEditView();
+                ((ExcelDatasourceEditView)detailsControl).BindViewModel(excelViewModel);
             }
             else if (_viewModel?.DetailsViewModel is ColumnEditViewModel columnViewModel)
             {

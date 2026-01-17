@@ -327,7 +327,12 @@ namespace CodeGenerator.Application.Controllers.Template
                         paramDef.TableDataFilter,
                         paramDef.TableDataMaxRows,
                         cancellationToken);
-                    result[kvp.Key] = data;
+                    result[kvp.Key] = new {
+                        Data = data,
+                        DataSource = tableItem.DatasourceArtifact,
+                        Target = tableItem.DatasourceTargetArtifact,
+                        Columns = tableItem.DatasourceTargetArtifact is TableArtifact tableArtifact ? tableArtifact.GetColumns().ToList() : new List<ColumnArtifact>()
+                    };
                 }
                 else
                 {

@@ -299,7 +299,12 @@ public class TemplateParametersViewModel : ViewModelBase
 
             if (!string.IsNullOrEmpty(parameter.DefaultValue))
             {
-                comboField.Value = parameter.DefaultValue;
+                var selectedItem = comboField.Items
+                    .FirstOrDefault(i => i.Value?.ToString() == parameter.DefaultValue);
+                if (selectedItem != null)
+                {
+                    comboField.Value = selectedItem.Value;
+                }
             }
 
             return comboField;

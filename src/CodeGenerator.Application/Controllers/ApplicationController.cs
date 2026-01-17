@@ -1,11 +1,13 @@
 ﻿using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Controllers.Template;
 using CodeGenerator.Application.Controllers.Workspace;
+using CodeGenerator.Application.Events.Application;
 using CodeGenerator.Application.Events.DomainSchema;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Events.Application;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.MessageBus;
+using CodeGenerator.Core.Settings.Application;
 using CodeGenerator.Presentation.WinForms.ViewModels;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Ribbon;
@@ -120,6 +122,7 @@ namespace CodeGenerator.Application.Controllers
             // Subscribe to ViewModel events
             _mainViewModel.NewRequested += OnNewRequested;
             _mainViewModel.OpenRequested += OnOpenRequested;
+            _mainViewModel.OpenRecentFileRequested += OnOpenRecentFileRequested;
             _mainViewModel.SaveRequested += OnSaveRequested;
             _mainViewModel.SaveAsRequested += OnSaveAsRequested;
             _mainViewModel.GenerateRequested += OnGenerateRequested;
@@ -128,6 +131,8 @@ namespace CodeGenerator.Application.Controllers
             _applicationService.RunApplication(_mainViewModel);
             // we never get here, because RunApplication is blocking in Gui-loop
         }
+
+
 
         public const string CodeGeneratorFileDialogFilter = "CodeGenerator Workspace Files (*.codegenerator)|*.codegenerator|All Files (*.*)|*.*";
         
@@ -204,7 +209,31 @@ namespace CodeGenerator.Application.Controllers
             }
             return true;
         }
+        private async void OnOpenRecentFileRequested(object? sender, OpenRecentFileRequestedEventArgs e)
+        {
+            if (e.FilePath == null)
+                throw new ArgumentNullException(nameof(e.FilePath));
 
+            if (!HandleUnsavedChanges())
+                return;
+
+            if (!File.Exists(e.FilePath)) {
+                ApplicationSettings.Instance.RecentFiles.Remove(e.FilePath);
+                return;
+            }
+
+            try
+            {
+                await _workspaceController.LoadWorkspaceAsync(e.FilePath);
+                _mainViewModel.IsDirty = false;
+                _mainViewModel.StatusLabel = $"Loaded workspace: {System.IO.Path.GetFileNameWithoutExtension(e.FilePath)}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to load workspace from {FilePath}", e.FilePath);
+                _messageBoxService.ShowError($"Failed to load workspace: {ex.Message}", "Error");
+            }
+        }
         private async void OnOpenRequested(object? sender, EventArgs e)
         {
             if (!HandleUnsavedChanges())
@@ -216,6 +245,7 @@ namespace CodeGenerator.Application.Controllers
 
             try
             {
+                ApplicationSettings.Instance.AddRecentFile(filePath);
                 await _workspaceController.LoadWorkspaceAsync(filePath);
                 _mainViewModel.IsDirty = false;
                 _mainViewModel.StatusLabel = $"Loaded workspace: {System.IO.Path.GetFileNameWithoutExtension(filePath)}";

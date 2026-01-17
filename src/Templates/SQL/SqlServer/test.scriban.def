@@ -12,7 +12,7 @@
       "description": "the word to render",
       "fullyQualifiedAssemblyTypeName": "System.String",
       "required": true,
-      "defaultValue": "Mickey Mouse",
+      "defaultValue": "Mickey",
       "allowedValues": [
         "Pluto",
         "Mickey",

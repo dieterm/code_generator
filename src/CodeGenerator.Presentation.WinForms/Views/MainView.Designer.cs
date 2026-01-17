@@ -39,6 +39,10 @@
             back_tab_new = new Syncfusion.Windows.Forms.BackStageTab();
             btnNew = new Button();
             back_tab_open = new Syncfusion.Windows.Forms.BackStageTab();
+            lblRecentWorkspaces = new Label();
+            lvRecentWorkspaces = new ListView();
+            clnWorkspaceName = new ColumnHeader();
+            clnWorkspaceLocation = new ColumnHeader();
             btnOpen = new Button();
             btnSave = new Syncfusion.Windows.Forms.BackStageButton();
             backStageSeparator1 = new Syncfusion.Windows.Forms.BackStageSeparator();
@@ -48,6 +52,9 @@
             pbProgress = new ToolStripProgressBar();
             lblStatus = new Syncfusion.Windows.Forms.Tools.StatusStripLabel();
             dockingManager = new Syncfusion.Windows.Forms.Tools.DockingManager(components);
+            ctxmnuRecentWorkspaces = new ContextMenuStrip(components);
+            mniToggleRecentFileAsFavorite = new ToolStripMenuItem();
+            mniRemoveRecentFileFromList = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)ribbonControl).BeginInit();
             ((System.ComponentModel.ISupportInitialize)backStage1).BeginInit();
             backStage1.SuspendLayout();
@@ -56,6 +63,7 @@
             back_tab_open.SuspendLayout();
             statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dockingManager).BeginInit();
+            ctxmnuRecentWorkspaces.SuspendLayout();
             SuspendLayout();
             // 
             // ribbonControl
@@ -179,6 +187,8 @@
             // back_tab_open
             // 
             back_tab_open.Accelerator = "";
+            back_tab_open.Controls.Add(lblRecentWorkspaces);
+            back_tab_open.Controls.Add(lvRecentWorkspaces);
             back_tab_open.Controls.Add(btnOpen);
             back_tab_open.Image = Resources.LucideIcons__ffffff.folder_open;
             back_tab_open.ImageSize = new Size(16, 16);
@@ -191,10 +201,42 @@
             back_tab_open.TabIndex = 3;
             back_tab_open.Text = "&Openen";
             back_tab_open.ThemesEnabled = false;
+            back_tab_open.VisibleChanged += back_tab_open_VisibleChanged;
+            // 
+            // lblRecentWorkspaces
+            // 
+            lblRecentWorkspaces.AutoSize = true;
+            lblRecentWorkspaces.Location = new Point(23, 41);
+            lblRecentWorkspaces.Name = "lblRecentWorkspaces";
+            lblRecentWorkspaces.Size = new Size(108, 13);
+            lblRecentWorkspaces.TabIndex = 2;
+            lblRecentWorkspaces.Text = "Recent workspaces:";
+            // 
+            // lvRecentWorkspaces
+            // 
+            lvRecentWorkspaces.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            lvRecentWorkspaces.Columns.AddRange(new ColumnHeader[] { clnWorkspaceName, clnWorkspaceLocation });
+            lvRecentWorkspaces.Location = new Point(23, 71);
+            lvRecentWorkspaces.Name = "lvRecentWorkspaces";
+            lvRecentWorkspaces.Size = new Size(628, 292);
+            lvRecentWorkspaces.TabIndex = 1;
+            lvRecentWorkspaces.UseCompatibleStateImageBehavior = false;
+            lvRecentWorkspaces.View = View.Details;
+            lvRecentWorkspaces.MouseDoubleClick += lvRecentWorkspaces_MouseDoubleClick;
+            // 
+            // clnWorkspaceName
+            // 
+            clnWorkspaceName.Text = "Workspace";
+            clnWorkspaceName.Width = 180;
+            // 
+            // clnWorkspaceLocation
+            // 
+            clnWorkspaceLocation.Text = "Location";
+            clnWorkspaceLocation.Width = 300;
             // 
             // btnOpen
             // 
-            btnOpen.Location = new Point(59, 31);
+            btnOpen.Location = new Point(23, 15);
             btnOpen.Name = "btnOpen";
             btnOpen.Size = new Size(75, 23);
             btnOpen.TabIndex = 0;
@@ -217,7 +259,7 @@
             // backStageSeparator1
             // 
             backStageSeparator1.BackColor = Color.FromArgb(100, 189, 255);
-            backStageSeparator1.Location = new Point(20, 196);
+            backStageSeparator1.Location = new Point(20, 163);
             backStageSeparator1.Name = "backStageSeparator1";
             backStageSeparator1.Placement = Syncfusion.Windows.Forms.BackStageItemPlacement.Top;
             backStageSeparator1.Size = new Size(90, 1);
@@ -240,12 +282,12 @@
             // statusStrip
             // 
             statusStrip.BackColor = Color.FromArgb(241, 241, 241);
-            statusStrip.BeforeTouchSize = new Size(800, 22);
+            statusStrip.BeforeTouchSize = new Size(798, 22);
             statusStrip.Items.AddRange(new ToolStripItem[] { lblProgress, pbProgress, lblStatus });
-            statusStrip.Location = new Point(1, 427);
+            statusStrip.Location = new Point(2, 427);
             statusStrip.MetroColor = Color.FromArgb(135, 206, 255);
             statusStrip.Name = "statusStrip";
-            statusStrip.Size = new Size(800, 22);
+            statusStrip.Size = new Size(798, 22);
             statusStrip.TabIndex = 2;
             statusStrip.Text = "statusStripEx1";
             statusStrip.ThemeName = "Office2016Colorful";
@@ -286,13 +328,33 @@
             dockingManager.CaptionButtons.Add(new Syncfusion.Windows.Forms.Tools.CaptionButton(Syncfusion.Windows.Forms.Tools.CaptionButtonType.Restore, "RestoreButton"));
             dockingManager.CaptionButtons.Add(new Syncfusion.Windows.Forms.Tools.CaptionButton(Syncfusion.Windows.Forms.Tools.CaptionButtonType.Menu, "MenuButton"));
             // 
+            // ctxmnuRecentWorkspaces
+            // 
+            ctxmnuRecentWorkspaces.Items.AddRange(new ToolStripItem[] { mniToggleRecentFileAsFavorite, mniRemoveRecentFileFromList });
+            ctxmnuRecentWorkspaces.Name = "ctxmnuRecentWorkspaces";
+            ctxmnuRecentWorkspaces.Size = new Size(165, 48);
+            // 
+            // mniToggleRecentFileAsFavorite
+            // 
+            mniToggleRecentFileAsFavorite.Name = "mniToggleRecentFileAsFavorite";
+            mniToggleRecentFileAsFavorite.Size = new Size(164, 22);
+            mniToggleRecentFileAsFavorite.Text = "Toggle favorite";
+            mniToggleRecentFileAsFavorite.Click += mniToggleRecentFileAsFavorite_Click;
+            // 
+            // mniRemoveRecentFileFromList
+            // 
+            mniRemoveRecentFileFromList.Name = "mniRemoveRecentFileFromList";
+            mniRemoveRecentFileFromList.Size = new Size(164, 22);
+            mniRemoveRecentFileFromList.Text = "Remove from list";
+            mniRemoveRecentFileFromList.Click += mniRemoveRecentFileFromList_Click;
+            // 
             // MainView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(statusStrip);
             Controls.Add(backStage1);
+            Controls.Add(statusStrip);
             Controls.Add(ribbonControl);
             Icon = (Icon)resources.GetObject("$this.Icon");
             IsMdiContainer = true;
@@ -305,8 +367,10 @@
             back_tab_home.ResumeLayout(false);
             back_tab_new.ResumeLayout(false);
             back_tab_open.ResumeLayout(false);
+            back_tab_open.PerformLayout();
             statusStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dockingManager).EndInit();
+            ctxmnuRecentWorkspaces.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -330,5 +394,12 @@
         private ToolStripProgressBar pbProgress;
         private Syncfusion.Windows.Forms.Tools.StatusStripLabel lblStatus;
         private Syncfusion.Windows.Forms.Tools.DockingManager dockingManager;
+        private Label lblRecentWorkspaces;
+        private ListView lvRecentWorkspaces;
+        private ColumnHeader clnWorkspaceName;
+        private ColumnHeader clnWorkspaceLocation;
+        private ContextMenuStrip ctxmnuRecentWorkspaces;
+        private ToolStripMenuItem mniToggleRecentFileAsFavorite;
+        private ToolStripMenuItem mniRemoveRecentFileFromList;
     }
 }
