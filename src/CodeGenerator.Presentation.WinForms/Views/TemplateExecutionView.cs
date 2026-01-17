@@ -18,6 +18,7 @@ public partial class TemplateExecutionView : UserControl, IView<TemplateExecutio
     {
         InitializeComponent();
         btnExecute.Click += BtnExecute_Click;
+        btnEditTemplate.Click += BtnEditTemplate_Click;
         pnlParameters.Resize += PnlParameters_Resize;
     }
 
@@ -35,6 +36,7 @@ public partial class TemplateExecutionView : UserControl, IView<TemplateExecutio
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
             RebuildParameterControls();
             UpdateExecutingState();
+            UpdateEditTemplateButtonVisibility();
         }
     }
 
@@ -59,6 +61,9 @@ public partial class TemplateExecutionView : UserControl, IView<TemplateExecutio
             case nameof(TemplateExecutionViewModel.CanExecute):
             case nameof(TemplateExecutionViewModel.IsExecuting):
                 UpdateExecutingState();
+                break;
+            case nameof(TemplateExecutionViewModel.IsScribanTemplate):
+                UpdateEditTemplateButtonVisibility();
                 break;
         }
     }
@@ -174,6 +179,7 @@ public partial class TemplateExecutionView : UserControl, IView<TemplateExecutio
 
         btnExecute.Enabled = _viewModel.CanExecute && !_viewModel.IsExecuting;
         btnExecute.Text = _viewModel.IsExecuting ? "Executing..." : "Execute";
+        btnEditTemplate.Enabled = !_viewModel.IsExecuting;
 
         foreach (Control control in pnlParameters.Controls)
         {
@@ -181,8 +187,20 @@ public partial class TemplateExecutionView : UserControl, IView<TemplateExecutio
         }
     }
 
+    private void UpdateEditTemplateButtonVisibility()
+    {
+        if (_viewModel == null) return;
+
+        btnEditTemplate.Visible = _viewModel.IsScribanTemplate;
+    }
+
     private void BtnExecute_Click(object? sender, EventArgs e)
     {
         _viewModel?.RequestExecute();
+    }
+
+    private void BtnEditTemplate_Click(object? sender, EventArgs e)
+    {
+        _viewModel?.RequestEditTemplate();
     }
 }

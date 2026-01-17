@@ -80,6 +80,17 @@ namespace CodeGenerator.Presentation.WinForms.Services
             dockingManager.SetDockLabel(artifactPreviewView, viewModel.TabLabel ?? "Artifact Preview");
            
         }
+
+        private readonly List<ScribanTemplateEditView> _scribanTemplateEditViews = new List<ScribanTemplateEditView>();
+        public void ShowScribanTemplateEditView(ScribanTemplateEditViewModel viewModel)
+        {
+            var scribanTemplateEditView = new ScribanTemplateEditView();
+            _scribanTemplateEditViews.Add(scribanTemplateEditView);
+            scribanTemplateEditView.BindViewModel(viewModel);
+            dockingManager.DockAsDocument(scribanTemplateEditView);
+            dockingManager.SetDockLabel(scribanTemplateEditView, viewModel.TabLabel ?? "Template Editor");
+        }
+
         private ArtifactTreeView? _workspaceTreeView;
         public void ShowWorkspaceTreeView(WorkspaceTreeViewModel treeViewModel)
         {

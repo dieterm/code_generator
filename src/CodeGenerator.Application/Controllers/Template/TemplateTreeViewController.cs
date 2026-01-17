@@ -15,6 +15,8 @@ using CodeGenerator.Shared;
 using CodeGenerator.Shared.ExtensionMethods;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.ViewModels;
+using CodeGenerator.TemplateEngines.Scriban;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Extensions.Logging;
 using MySqlConnector;
 using System;
@@ -189,6 +191,65 @@ namespace CodeGenerator.Application.Controllers.Template
         }
 
         private TemplateParametersViewModel? _parametersViewModel { get { return ArtifactControllers.OfType<TemplateArtifactController>().FirstOrDefault()?.EditViewModel; } }
+        /// <summary>
+        /// Open the template editor for Scriban templates
+        /// </summary>
+        public async Task OpenTemplateEditor(TemplateArtifact templateArtifact, Dictionary<string, object?> parameters, CancellationToken cancellationToken = default)
+        {
+            var templateInstance = await CreateTemplateInstanceAsync(templateArtifact, parameters, cancellationToken) as ScribanTemplateInstance;
+            
+            if (templateInstance == null)
+                return;
+
+            var windowService = ServiceProviderHolder.GetRequiredService<IWindowManagerService>();
+            var editViewModel = new ScribanTemplateEditViewModel
+            {
+                TemplateFilePath = templateArtifact.FilePath,
+                TabLabel = templateArtifact.FileName,
+                TemplateInstance = templateInstance
+            };
+            windowService.ShowScribanTemplateEditView(editViewModel);
+        }
+        private async Task<ITemplateInstance?> CreateTemplateInstanceAsync(TemplateArtifact templateArtifact, Dictionary<string, object?> parameters, CancellationToken cancellationToken = default)
+        {
+            if (templateArtifact.Template == null)
+            {
+                MessageBoxService.ShowError("Failed to load template.", "Template Error");
+                return null;
+            }
+            try
+            {
+                // Get the appropriate template engine
+                var engines = _templateEngineManager.GetTemplateEnginesForTemplate(templateArtifact.Template);
+                var engine = engines.FirstOrDefault();
+
+                if (engine == null)
+                {
+                    MessageBoxService.ShowError("No template engine found for this template type.", "Template Error");
+                    return null;
+                }
+
+                // Create template instance and set parameters
+                var templateInstance = engine.CreateTemplateInstance(templateArtifact.Template);
+
+                // Process parameters - load data for TableArtifact parameters
+                var processedParameters = await ProcessTemplateParametersAsync(parameters, templateArtifact, cancellationToken);
+
+                // Set parameters on the template instance
+                foreach (var kvp in processedParameters)
+                {
+                    templateInstance.SetParameter(kvp.Key, kvp.Value);
+                }
+
+                return templateInstance;
+            }
+            catch (Exception ex)
+            {
+                MessageBoxService.ShowError($"Error creating template instance: {ex.Message}", "Template Error");
+                Logger.LogError(ex, "Error creating template instance: {TemplateName}", templateArtifact.DisplayName);
+                return null;
+            }
+        }
 
         /// <summary>
         /// Execute a template with the given parameters

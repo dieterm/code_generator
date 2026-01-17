@@ -20,7 +20,7 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
 {
     private readonly ScriptObject _globalFunctions = new ScriptObject();
     private readonly ConcurrentDictionary<string, Template> _compiledTemplates = new ConcurrentDictionary<string, Template>();
-
+    public ScriptObject GlobalFunctions { get { return _globalFunctions; } }
     public string TemplateRootFolder { get { return WorkspaceSettings.Instance.DefaultTemplateFolder; } }
 
     public ScribanTemplateEngine(ILogger<ScribanTemplateEngine> logger)

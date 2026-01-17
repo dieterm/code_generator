@@ -12,6 +12,8 @@ public class TemplateExecutionViewModel : ViewModelBase
     private List<FieldViewModelBase> _parameterFields = new();
     private bool _canExecute;
     private bool _isExecuting;
+    private bool _isScribanTemplate;
+    private string? _templateFilePath;
 
     /// <summary>
     /// List of parameter field view models for the UI
@@ -54,9 +56,32 @@ public class TemplateExecutionViewModel : ViewModelBase
     }
 
     /// <summary>
+    /// Whether the current template is a Scriban template (determines if Edit Template button is visible)
+    /// </summary>
+    public bool IsScribanTemplate
+    {
+        get => _isScribanTemplate;
+        set => SetProperty(ref _isScribanTemplate, value);
+    }
+
+    /// <summary>
+    /// Path to the template file (used for editing)
+    /// </summary>
+    public string? TemplateFilePath
+    {
+        get => _templateFilePath;
+        set => SetProperty(ref _templateFilePath, value);
+    }
+
+    /// <summary>
     /// Event raised when the user requests to execute the template
     /// </summary>
     public event EventHandler? ExecuteRequested;
+
+    /// <summary>
+    /// Event raised when the user requests to edit the template
+    /// </summary>
+    public event EventHandler? EditTemplateRequested;
 
     /// <summary>
     /// Raises the ExecuteRequested event
@@ -66,6 +91,17 @@ public class TemplateExecutionViewModel : ViewModelBase
         if (CanExecute && !IsExecuting)
         {
             ExecuteRequested?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    /// <summary>
+    /// Raises the EditTemplateRequested event
+    /// </summary>
+    public void RequestEditTemplate()
+    {
+        if (IsScribanTemplate && !string.IsNullOrEmpty(TemplateFilePath))
+        {
+            EditTemplateRequested?.Invoke(this, EventArgs.Empty);
         }
     }
 

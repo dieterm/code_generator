@@ -1,0 +1,17 @@
+Ik heb nog enkele wijzigingen aangebracht in JsonSchemaReader.cs om recursief een TableArtifact onder elke json-kolom aan te maken.
+Dus bekijk die verandering eerst goed.
+
+Implementeer in project CodeGenerator.Core.Workspaces.Datasources.Yaml de ondersteuning voor een yaml-bestand (*.yaml) datasource.
+Voeg indien nodig nog een nugetpackage toe voor yaml-lees/schrijf ondersteuning.
+Probeer het op dezelfde manier te implementeren als een Json datasource.
+
+Je kan het project CodeGenerator.Core.Workspaces.Datasources.Json als voorbeeld nemen voor een Json datasource.
+
+Maak ook een YamlDatasourceController aan.
+Je kan de gelijkaardige controller voor Json als voorbeeld vinden in D:\Cloud\GitHub\code_generator\src\CodeGenerator.Application\Controllers\Workspace\JsonDatasourceController.cs.
+Voeg de YamlDatasourceController in functie WorkspaceTeeViewControler.LoadArtifactControllers() toe. 
+En ook in de dependency injection configuratie: D:\Cloud\GitHub\code_generator\src\CodeGenerator.Application\ServiceCollectionExtensions.cs.
+
+Genereer in project "CodeGenerator.Presentation.WinForms" ook een YamlDatasourceEditView gelijkaardig aan JsonDatasourceEditView 
+Voeg die nieuwe YamlDatasourceEditView daarna toe in functie WorkspaceDetailsView.ShowDetailsControl()
+Gebruik een CodeGenerator.UserControls.Views.FileField control om een json-file te selecteren.

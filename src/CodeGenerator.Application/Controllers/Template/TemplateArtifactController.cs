@@ -26,9 +26,17 @@ namespace CodeGenerator.Application.Controllers.Template
                 _editViewModel = new TemplateParametersViewModel();
                 _editViewModel.SetWorkspaceController(_workspaceController);
                 _editViewModel.ExecuteRequested += ParametersViewModel_ExecuteRequested;
+                _editViewModel.EditTemplateRequested += ParametersViewModel_EditTemplateRequested;
             }
             _editViewModel.TemplateArtifact = templateArtifact;
         }
+
+        private async void ParametersViewModel_EditTemplateRequested(object? sender, EventArgs e)
+        {
+            var templateController = ServiceProviderHolder.GetRequiredService<TemplateTreeViewController>();
+            await templateController.OpenTemplateEditor(_editViewModel!.TemplateArtifact!, _editViewModel.GetParameterValues());
+        }
+
         public TemplateParametersViewModel? EditViewModel => _editViewModel;
 
         public TemplateArtifactController(WorkspaceTreeViewController workspaceController, TemplateTreeViewController treeViewController, ILogger<TemplateArtifactController> logger) 

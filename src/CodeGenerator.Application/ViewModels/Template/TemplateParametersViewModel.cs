@@ -1,9 +1,11 @@
 using CodeGenerator.Application.Controllers.Workspace;
+using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts.Templates;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
 using System.Collections.ObjectModel;
@@ -28,6 +30,7 @@ public class TemplateParametersViewModel : ViewModelBase
         // Subscribe to child ViewModel events
         _editViewModel.SaveRequested += (s, e) => SaveParameterDefinitions();
         _executionViewModel.ExecuteRequested += (s, e) => ExecuteRequested?.Invoke(this, EventArgs.Empty);
+        _executionViewModel.EditTemplateRequested += (s, e) => EditTemplateRequested?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -121,6 +124,7 @@ public class TemplateParametersViewModel : ViewModelBase
     /// Event raised when the user requests to execute the template
     /// </summary>
     public event EventHandler? ExecuteRequested;
+    public event EventHandler EditTemplateRequested;
 
     /// <summary>
     /// Raises the ExecuteRequested event
@@ -197,11 +201,18 @@ public class TemplateParametersViewModel : ViewModelBase
                 string.Empty, 
                 null);
             ExecutionViewModel.ParameterFields = new List<FieldViewModelBase>();
+            ExecutionViewModel.IsScribanTemplate = false;
+            ExecutionViewModel.TemplateFilePath = null;
             return;
         }
 
         TemplateName = _templateArtifact.DisplayName;
         TemplateDescription = _templateArtifact.Description;
+
+        // Set template type info for execution view - check by file extension
+        var fileExtension = Path.GetExtension(_templateArtifact.FilePath)?.ToLowerInvariant();
+        ExecutionViewModel.IsScribanTemplate = fileExtension == ".scriban";
+        ExecutionViewModel.TemplateFilePath = _templateArtifact.FilePath;
 
         // Load editable template metadata
         var definition = _templateArtifact.Definition;

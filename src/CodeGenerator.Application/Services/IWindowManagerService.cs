@@ -3,11 +3,6 @@ using CodeGenerator.Application.ViewModels.Template;
 using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Settings.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CodeGenerator.Application.Services
 {
@@ -21,5 +16,6 @@ namespace CodeGenerator.Application.Services
         void ShowWorkspaceDetailsView(ArtifactDetailsViewModel viewModel);
         void ShowTemplateTreeView(TemplateTreeViewModel treeViewModel);
         void ShowTemplateDetailsView(ArtifactDetailsViewModel artifactDetailsViewModel);
+        void ShowScribanTemplateEditView(ScribanTemplateEditViewModel viewModel);
     }
 }

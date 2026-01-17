@@ -30,6 +30,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
         {
             pnlParameters = new Panel();
             pnlFooter = new Panel();
+            btnEditTemplate = new Button();
             btnExecute = new Button();
             pnlFooter.SuspendLayout();
             SuspendLayout();
@@ -46,12 +47,24 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // 
             // pnlFooter
             // 
+            pnlFooter.Controls.Add(btnEditTemplate);
             pnlFooter.Controls.Add(btnExecute);
             pnlFooter.Dock = DockStyle.Bottom;
             pnlFooter.Location = new Point(0, 250);
             pnlFooter.Name = "pnlFooter";
             pnlFooter.Size = new Size(300, 50);
             pnlFooter.TabIndex = 1;
+            // 
+            // btnEditTemplate
+            // 
+            btnEditTemplate.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnEditTemplate.Location = new Point(113, 12);
+            btnEditTemplate.Name = "btnEditTemplate";
+            btnEditTemplate.Size = new Size(90, 30);
+            btnEditTemplate.TabIndex = 1;
+            btnEditTemplate.Text = "Edit Template";
+            btnEditTemplate.UseVisualStyleBackColor = true;
+            btnEditTemplate.Visible = false;
             // 
             // btnExecute
             // 
@@ -79,6 +92,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
 
         private Panel pnlParameters;
         private Panel pnlFooter;
+        private Button btnEditTemplate;
         private Button btnExecute;
     }
 }
