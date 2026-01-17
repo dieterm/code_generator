@@ -1,12 +1,12 @@
-{{ Municipalities.data.size }} rows
+{{ Landen.data.size }} rows
 
-{{- for column in Municipalities.columns }}
+{{- for column in Landen.columns }}
 {{column.Name}}
 {{ for property in column.properties }}
 {{property.key}} : {{property.value}}
 {{- end }}
 {{- end }}
 
-{{- for municipality in Municipalities.data }}
-- {{municipality.CNIS5_2025}} / {{municipality.T_MUN_NL}}
+{{- for municipality in Landen.data }}
+- {{municipality.iso2_code}} / {{municipality.name_nl}}
 {{- end }}

@@ -108,6 +108,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core.Workspac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core.Workspaces.Datasources.Excel", "CodeGenerator.Core.Workspaces.Datasources.Excel\CodeGenerator.Core.Workspaces.Datasources.Excel.csproj", "{A1B615BD-8F82-4C19-AF7C-C5781C9574A4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core.Workspaces.Datasources.Csv", "CodeGenerator.Core.Workspaces.Datasources.Csv\CodeGenerator.Core.Workspaces.Datasources.Csv.csproj", "{9AE57257-6A18-44F9-9B25-1A4C3C7E59F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -238,6 +240,10 @@ Global
 		{A1B615BD-8F82-4C19-AF7C-C5781C9574A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1B615BD-8F82-4C19-AF7C-C5781C9574A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1B615BD-8F82-4C19-AF7C-C5781C9574A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AE57257-6A18-44F9-9B25-1A4C3C7E59F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AE57257-6A18-44F9-9B25-1A4C3C7E59F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AE57257-6A18-44F9-9B25-1A4C3C7E59F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AE57257-6A18-44F9-9B25-1A4C3C7E59F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

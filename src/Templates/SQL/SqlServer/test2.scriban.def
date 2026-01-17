@@ -8,7 +8,7 @@
   "author": null,
   "parameters": [
     {
-      "name": "Municipalities",
+      "name": "Landen",
       "description": null,
       "fullyQualifiedAssemblyTypeName": "CodeGenerator.TemplateDatasourceArtifactData",
       "required": true,

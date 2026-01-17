@@ -38,6 +38,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CodeGenerator.Application\CodeGenerator.Application.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Settings.Views\CodeGenerator.Core.Settings.Views.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Csv\CodeGenerator.Core.Workspaces.Datasources.Csv.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Excel\CodeGenerator.Core.Workspaces.Datasources.Excel.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Mysql\CodeGenerator.Core.Workspaces.Datasources.Mysql.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.PostgreServer\CodeGenerator.Core.Workspaces.Datasources.PostgreServer.csproj" />
