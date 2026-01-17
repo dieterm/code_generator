@@ -1,6 +1,7 @@
 ﻿using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Workspaces.Datasources.Csv.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Excel.ViewModels;
+using CodeGenerator.Core.Workspaces.Datasources.Json.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.PostgreSql.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.SqlServer.ViewModels;
@@ -86,6 +87,11 @@ namespace CodeGenerator.Presentation.WinForms.Views
             {
                 detailsControl = new CsvDatasourceEditView();
                 ((CsvDatasourceEditView)detailsControl).BindViewModel(csvViewModel);
+            }
+            else if (_viewModel?.DetailsViewModel is JsonDatasourceEditViewModel jsonViewModel)
+            {
+                detailsControl = new JsonDatasourceEditView();
+                ((JsonDatasourceEditView)detailsControl).BindViewModel(jsonViewModel);
             }
             else if (_viewModel?.DetailsViewModel is ColumnEditViewModel columnViewModel)
             {

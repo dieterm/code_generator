@@ -15,6 +15,7 @@ using CodeGenerator.Core.Settings.ViewModels;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Datasources.Csv;
 using CodeGenerator.Core.Workspaces.Datasources.Excel;
+using CodeGenerator.Core.Workspaces.Datasources.Json;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql;
 using CodeGenerator.Core.Workspaces.Datasources.PostgreSql;
 using CodeGenerator.Core.Workspaces.Datasources.SqlServer;
@@ -75,6 +76,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<PostgreSqlDatasourceController>();
         services.AddSingleton<ExcelDatasourceController>();
         services.AddSingleton<CsvDatasourceController>();
+        services.AddSingleton<JsonDatasourceController>();
         services.AddSingleton<TableArtifactController>();
         services.AddSingleton<ViewArtifactController>();
         services.AddSingleton<ColumnArtifactController>();
@@ -90,6 +92,7 @@ public static class ServiceCollectionExtensions
         services.AddPostgreSqlDatasourceServices(configuration);
         services.AddExcelDatasourceServices(configuration);
         services.AddCsvDatasourceServices(configuration);
+        services.AddJsonDatasourceServices(configuration);
         
         // Register Message Bus systems
         services.AddSingleton<ApplicationMessageBus>();
