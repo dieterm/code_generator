@@ -13,9 +13,17 @@ namespace CodeGenerator.Presentation.WinForms.Views
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing)
             {
-                components.Dispose();
+                // Clean up temp config file
+                CleanupTempConfigFile();
+                
+                if (_viewModel != null)
+                {
+                    _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
+                }
+                
+                components?.Dispose();
             }
             base.Dispose(disposing);
         }
