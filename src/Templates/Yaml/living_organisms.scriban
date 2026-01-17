@@ -1,0 +1,12 @@
+{{~ for kingdom in LivingOrganisms.data[0].kingdoms}}
+# {{ kingdom.name }}
+{{- for division in kingdom.divisions }}
+## Division: {{ division.name }}
+{{- for family in division.families }}
+### Family: {{ family.name }}
+{{end }}
+{{end }}
+{{- for group in kingdom.groups }}
+## Group: {{ group.name }}
+{{ end }}
+{{end ~}}

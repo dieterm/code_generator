@@ -44,6 +44,7 @@
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Mysql\CodeGenerator.Core.Workspaces.Datasources.Mysql.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.PostgreServer\CodeGenerator.Core.Workspaces.Datasources.PostgreServer.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.SqlServer\CodeGenerator.Core.Workspaces.Datasources.SqlServer.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Yaml\CodeGenerator.Core.Workspaces.Datasources.Yaml.csproj" />
     <ProjectReference Include="..\CodeGenerator.Shared\CodeGenerator.Shared.csproj" />
     <ProjectReference Include="..\CodeGenerator.TemplateEngines.DotNetProject\CodeGenerator.TemplateEngines.DotNetProject.csproj" />
     <ProjectReference Include="..\CodeGenerator.TemplateEngines.PlantUML\CodeGenerator.TemplateEngines.PlantUML.csproj" />

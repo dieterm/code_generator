@@ -5,6 +5,7 @@ using CodeGenerator.Core.Workspaces.Datasources.Json.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.PostgreSql.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.SqlServer.ViewModels;
+using CodeGenerator.Core.Workspaces.Datasources.Yaml.ViewModels;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
 using System.ComponentModel;
@@ -92,6 +93,11 @@ namespace CodeGenerator.Presentation.WinForms.Views
             {
                 detailsControl = new JsonDatasourceEditView();
                 ((JsonDatasourceEditView)detailsControl).BindViewModel(jsonViewModel);
+            }
+            else if (_viewModel?.DetailsViewModel is YamlDatasourceEditViewModel yamlViewModel)
+            {
+                detailsControl = new YamlDatasourceEditView();
+                ((YamlDatasourceEditView)detailsControl).BindViewModel(yamlViewModel);
             }
             else if (_viewModel?.DetailsViewModel is ColumnEditViewModel columnViewModel)
             {
