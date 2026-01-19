@@ -24,6 +24,7 @@ namespace CodeGenerator.Core.Templates
         /// </summary>
         public string DisplayName { get; }
         protected ILogger Logger { get; }
+        public abstract string DefaultFileExtension { get; }
 
         protected TemplateEngine(ILogger logger, string id, string displayName, TemplateType supportedTemplateType, string[]? supportedFileExtensions = null)
         {

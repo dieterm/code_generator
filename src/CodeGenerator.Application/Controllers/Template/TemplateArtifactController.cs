@@ -55,17 +55,49 @@ namespace CodeGenerator.Application.Controllers.Template
                 IconKey = "edit",
                 Execute = async (a) =>
                 {
-                    var windowService = ServiceProviderHolder.GetRequiredService<IWindowManagerService>();
-                    var previewViewModel = new ViewModels.ArtifactPreviewViewModel { 
-                        TabLabel = templateArtifact.FileName, 
-                        FilePath = templateArtifact.FilePath,
-                        //TextContent = System.IO.File.ReadAllText(templateArtifact.FilePath), 
-                        TextLanguageSchema = ViewModels.ArtifactPreviewViewModel.KnownLanguages.Text 
-                    };
-                    windowService.ShowArtifactPreview(previewViewModel);
-                    await Task.CompletedTask;
+                    if(templateArtifact.FileName.EndsWith(".scriban"))
+                        await TreeViewController.OpenTemplateEditor(templateArtifact, new Dictionary<string, object?>());
+                    else
+                    {
+                        var windowService = ServiceProviderHolder.GetRequiredService<IWindowManagerService>();
+                        var previewViewModel = new ViewModels.ArtifactPreviewViewModel
+                        {
+                            TabLabel = templateArtifact.FileName,
+                            FilePath = templateArtifact.FilePath,
+                            //TextContent = System.IO.File.ReadAllText(templateArtifact.FilePath), 
+                            TextLanguageSchema = ViewModels.ArtifactPreviewViewModel.KnownLanguages.Text
+                        };
+                        windowService.ShowArtifactPreview(previewViewModel);
+                        await Task.CompletedTask;
+                    }
                 }
             };
+            var templateDefinitionFilePath = TemplateDefinition.GetDefinitionFilePath(templateArtifact.FilePath);
+            if (File.Exists(templateDefinitionFilePath))
+            {
+                yield return new ArtifactTreeNodeCommand
+                {
+                    Id = "edit_template_definition",
+                    Text = "Edit Template Definition",
+                    IconKey = "edit",
+                    Execute = async (a) =>
+                    {
+                        var templateDefinitionFilePath = TemplateDefinition.GetDefinitionFilePath(templateArtifact.FilePath);
+                        var defFileName = Path.GetFileName(templateDefinitionFilePath);
+                        //var definition = TemplateDefinition.LoadFromFile(templateDefinitionFilePath);
+                        var windowService = ServiceProviderHolder.GetRequiredService<IWindowManagerService>();
+                        var previewViewModel = new ViewModels.ArtifactPreviewViewModel
+                        {
+                            TabLabel = defFileName,
+                            FilePath = templateDefinitionFilePath,
+                            //TextContent = System.IO.File.ReadAllText(templateArtifact.FilePath), 
+                            TextLanguageSchema = ViewModels.ArtifactPreviewViewModel.KnownLanguages.Text
+                        };
+                        windowService.ShowArtifactPreview(previewViewModel);
+                        await Task.CompletedTask;
+                    }
+                };
+            }
             yield return new ArtifactTreeNodeCommand
             {
                 Id = "execute_template",
@@ -76,6 +108,53 @@ namespace CodeGenerator.Application.Controllers.Template
                     //OnTemplateSelected(templateArtifact);
                     await this.TreeViewController.SelectArtifactAsync(templateArtifact);
                     await Task.CompletedTask;
+                }
+            };
+
+            yield return ArtifactTreeNodeCommand.Separator;
+
+            yield return new ArtifactTreeNodeCommand
+            {
+                Id = "delete_template",
+                Text = "Delete Template",
+                IconKey = "trash",
+                Execute = async (a) =>
+                {
+                    var messageService = ServiceProviderHolder.GetRequiredService<IMessageBoxService>();
+                    var confirm = messageService.Confirm($"Are you sure you want to delete the template '{templateArtifact.FileName}'?");
+                    if (confirm)
+                    {
+                        var templateFilePath = templateArtifact.FilePath;
+                        if (File.Exists(templateFilePath))
+                        {
+                            try
+                            {
+                                File.Delete(templateFilePath);
+                            }
+                            catch (Exception ex)
+                            {
+                                messageService.ShowError($"Failed to delete template file.\n\n{ex.Message}");
+                            }
+                        }
+                        var templateDefinitionFilePath = TemplateDefinition.GetDefinitionFilePath(templateFilePath);
+                        if (File.Exists(templateDefinitionFilePath))
+                        {
+                            try
+                            {
+                                File.Delete(templateDefinitionFilePath);
+                            }
+                            catch (Exception ex)
+                            {
+                                messageService.ShowError($"Failed to delete template definition file.\n\n{ex.Message}");
+                            }
+                        }
+                        var parent = templateArtifact.Parent;
+                        if (parent != null)
+                        {
+                            parent.RemoveChild(templateArtifact);
+                            TreeViewController.OnArtifactRemoved(parent, templateArtifact);
+                        }
+                    }
                 }
             };
 

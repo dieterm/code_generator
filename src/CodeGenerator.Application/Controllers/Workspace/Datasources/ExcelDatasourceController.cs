@@ -5,7 +5,7 @@ using CodeGenerator.Core.Workspaces.Datasources.Excel.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.Excel.ViewModels;
 using Microsoft.Extensions.Logging;
 
-namespace CodeGenerator.Application.Controllers.Workspace;
+namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
 
 /// <summary>
 /// Controller for Excel datasource artifacts

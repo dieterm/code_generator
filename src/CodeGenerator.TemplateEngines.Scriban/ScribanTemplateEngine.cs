@@ -181,6 +181,9 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
         FUNCTION_IF_EMPTY
     };
     public static Dictionary<string, string> BuildinFunctionsTooltips { get; } = new Dictionary<string, string>();
+
+    public override string DefaultFileExtension => "scriban";
+
     private static void RegisterBuiltInFunctions()
     {
         // String manipulation
@@ -394,12 +397,12 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
                             await emptyFile.WriteLineAsync();
                         }
 
-                        foreach(var helperMethod in templateInstance.Functions)
+                        foreach (var helperMethod in templateInstance.Functions)
                         {
                             await emptyFile.WriteLineAsync($"# Function: {helperMethod.Key}()");
                         }
 
-                        foreach(var globalHelperMethod in _globalFunctions)
+                        foreach (var globalHelperMethod in _globalFunctions)
                         {
                             await emptyFile.WriteLineAsync($"# Global Function: {globalHelperMethod.Key}()");
                         }
@@ -408,7 +411,30 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
                 }
 
                 Logger.LogError(errorMsg);
-               
+
+            }
+            var templateDefinitionFile = TemplateDefinition.GetDefinitionFilePath(fileTemplate.FilePath);
+            if (!File.Exists(templateDefinitionFile))
+            {
+                if(!fileTemplate.CreateTemplateFileIfMissing)
+                {
+                    Logger.LogWarning("Template definition file not found: {Path}", templateDefinitionFile);
+                    return;
+                }
+                var definition = TemplateDefinition.CreateDefault(fileTemplate.FilePath);
+                foreach(var param in templateInstance.Parameters)
+                {
+                    var templateParam = new TemplateParameter
+                    {
+                        Name = param.Key,
+                        Label = param.Key,
+                        FullyQualifiedAssemblyTypeName = param.Value?.GetType().AssemblyQualifiedName ?? typeof(string).AssemblyQualifiedName,
+                        Description = $"Parameter '{param.Key}' of type '{param.Value?.GetType().Name ?? "string"}'"
+                    };
+                    definition.Parameters.Add(templateParam);
+                }
+                definition.SaveToFile(templateDefinitionFile);
+                Logger.LogInformation("Created default template definition file at {Path}", templateDefinitionFile);
             }
         }
     }

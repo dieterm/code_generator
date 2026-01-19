@@ -14,6 +14,8 @@ public class PlantUmlTemplateEngine : TemplateEngine<PlantUmlTemplate, PlantUmlT
 
     private readonly RendererFactory _rendererFactory;
 
+    public override string DefaultFileExtension => "puml";
+
     public PlantUmlTemplateEngine(ILogger<PlantUmlTemplateEngine> logger)
         : base(logger, "plantuml_template_engine", "PlantUML Template Engine", TemplateType.ImageFile, new[] { "puml", "plantuml" })
     {

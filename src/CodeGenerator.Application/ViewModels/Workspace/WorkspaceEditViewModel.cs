@@ -24,7 +24,10 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             // Set up target framework options
             DefaultTargetFrameworkField.Items = TargetFrameworks.AllFrameworks.Select((f) => new ComboboxItem { DisplayName = f, Value = f }).ToList();
             // Set up language options
-            DefaultLanguageField.Items = DotNetLanguages.AllLanguages.Select((lang) => new ComboboxItem { DisplayName = lang.DotNetCommandLineArgument }).ToList();
+            DefaultLanguageField.Items = DotNetLanguages.AllLanguages.Select((lang) => new ComboboxItem { 
+                DisplayName = lang.DotNetCommandLineArgument, 
+                Value = lang.DotNetCommandLineArgument 
+            }).ToList();
 
             // Subscribe to field changes
             NameField.PropertyChanged += OnFieldChanged;

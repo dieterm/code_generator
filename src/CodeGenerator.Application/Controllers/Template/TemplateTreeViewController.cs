@@ -49,6 +49,7 @@ namespace CodeGenerator.Application.Controllers.Template
             // TemplateArtifactController
             return new IArtifactController[]
             {
+                ServiceProviderHolder.GetRequiredService<RootArtifactController>(),
                 ServiceProviderHolder.GetRequiredService<TemplateArtifactController>(),
                 ServiceProviderHolder.GetRequiredService<ExistingFolderArtifactController>(),
             };

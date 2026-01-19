@@ -54,19 +54,18 @@ namespace CodeGenerator.TemplateEngines.Scriban
             sb.AppendLine("      <lexem BeginBlock=\"\\n\" IsBeginRegex=\"true\" />");
             sb.AppendLine("      <lexem BeginBlock=\"{\" EndBlock=\"}\" Type=\"Operator\" OnlyLocalSublexems=\"false\" IsComplex=\"true\">");
             sb.AppendLine("        <SubLexems>");
-            sb.AppendLine("          <!-- support for comments (multiline) block -->");
-            sb.AppendLine("          <lexem BeginBlock=\"#\" Type=\"Comment\" IsComplex=\"true\" OnlyLocalSublexems=\"true\" >");
-            sb.AppendLine("            <SubLexems>");
+            sb.AppendLine("          <!-- support for comments block (single line) -->");
+
             sb.AppendLine("             <lexem BeginBlock=\"#\" Type=\"Comment\" IsComplex=\"true\" OnlyLocalSublexems=\"true\" >");
             sb.AppendLine("                 <SubLexems>");
-            sb.AppendLine("                     <lexem BeginBlock=\"[^}\\r\\n]+\" IsBeginRegex=\"true\" Type=\"Comment\" />");
+            sb.AppendLine("                     <lexem BeginBlock=\"[^#]+\" EndBlock=\"[^}\\r\\n]+\" IsBeginRegex=\"true\" IsEndRegex=\"true\"  Type=\"Comment\" />");
             sb.AppendLine("                 </SubLexems>");
-            sb.AppendLine("             </lexem>"); 
-            sb.AppendLine("            </SubLexems>");
-            sb.AppendLine("          </lexem>");
+            sb.AppendLine("             </lexem>");
+
             sb.AppendLine("          <!-- support for dot and pipe operators -->");
             sb.AppendLine("          <lexem BeginBlock=\".\" Type=\"Operator\" DropContextChoiceList=\"true\"/>");
             sb.AppendLine("          <lexem BeginBlock=\"|\" Type=\"Operator\" DropContextChoiceList=\"true\"/>");
+
             // Scriban keywords
             var keywords = new[] {
                 "if", "else", "elseif", "end",  "in", "while", "break",
@@ -109,32 +108,6 @@ namespace CodeGenerator.TemplateEngines.Scriban
             {
                 sb.AppendLine($"      <lexem BeginBlock=\"{parameter}\" Type=\"Custom\" FormatName=\"Parameter\" />");
             }
-            //sb.AppendLine("          <lexem BeginBlock=\"LivingOrganisms\" IsComplex=\"true\" Type=\"Custom\" FormatName=\"Parameter\">");
-            //sb.AppendLine("            <SubLexems>");
-            //sb.AppendLine("              <lexem BeginBlock=\"data\" Type=\"Custom\" FormatName=\"Parameter\" />");
-            //sb.AppendLine("            </SubLexems>");
-            //sb.AppendLine("          </lexem>");
-            //sb.AppendLine("          <lexem BeginBlock=\"LivingOrganisms\" Type=\"Parameter\" IsComplex=\"true\" OnlyLocalSublexems=\"true\" >");
-            //sb.AppendLine("            <SubLexems>"); // LivingOrganisms
-            //sb.AppendLine("              <lexem BeginBlock=\"data\" Type=\"Parameter\"  />");
-            //////sb.AppendLine("                <SubLexems>"); // data
-            ////sb.AppendLine("                     <lexem BeginBlock=\"[\" EndBlock=\"]\" Type=\"KeyWord\"  IsComplex=\"true\" >");
-            ////sb.AppendLine("                         <SubLexems>"); // indexer
-            ////sb.AppendLine("                             <lexem BeginBlock=\"[0-9]+\" IsBeginRegex=\"true\" Type=\"Number\" IsComplex=\"true\" />");
-            ////sb.AppendLine("                             <lexem BeginBlock=\"&quot;\" EndBlock=\"&quot;\" Type=\"String\" IsComplex=\"true\" >");
-            ////sb.AppendLine("                                 <SubLexems>"); // string indexer
-            ////sb.AppendLine("                                     <lexem BeginBlock=\"[^&quot;]+\" IsBeginRegex=\"true\" Type=\"String\" />");
-            ////sb.AppendLine("                                 </SubLexems>"); // string indexer
-            ////sb.AppendLine("                             </lexem>");
-            ////sb.AppendLine("                         </SubLexems>"); // indexer
-            ////sb.AppendLine("                     </lexem>");
-            //////sb.AppendLine("                     <lexem BeginBlock=\"kingdoms\" Type=\"Parameter\" />");
-            //////sb.AppendLine("                </SubLexems>"); // data
-            //////sb.AppendLine("              </lexem>");
-            //sb.AppendLine("            </SubLexems>"); // LivingOrganisms
-            //sb.AppendLine("          </lexem>");
-            // LivingOrganisms.data[0].kingdoms
-
 
             sb.AppendLine("        </SubLexems>");
             sb.AppendLine("      </lexem>");
@@ -143,7 +116,7 @@ namespace CodeGenerator.TemplateEngines.Scriban
             sb.AppendLine("    </lexems>");
 
             sb.AppendLine("     <splits>");
-            //sb.AppendLine("         <split>{%{</split>");
+            //sb.AppendLine("         <split>##</split>");
             sb.AppendLine("     </splits>");
             sb.AppendLine("  </ConfigLanguage>");
             sb.AppendLine("</ArrayOfConfigLanguage>");

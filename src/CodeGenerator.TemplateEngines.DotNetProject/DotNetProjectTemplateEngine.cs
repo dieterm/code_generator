@@ -26,6 +26,11 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
             _dotNetProjectService = dotNetProjectService;
         }
 
+        /// <summary>
+        /// This template engine does not have a default file extension since it creates projects from parameters.
+        /// </summary>
+        public override string DefaultFileExtension => null;
+
         public override ITemplate CreateTemplateFromFile(string filePath)
         {
             throw new NotImplementedException();

@@ -16,6 +16,8 @@ namespace CodeGenerator.TemplateEngines.T4
         private readonly ConcurrentDictionary<string, (CompiledTemplate Template, TemplateGenerator Generator)> _compiledTemplates = new();
         private readonly string? _templateRootFolder;
 
+        public override string DefaultFileExtension => "tt";
+
         public T4TemplateEngine(ILogger<T4TemplateEngine> logger, string? templateRootFolder = null)
             : base(logger, "t4_template_engine", "T4 Template Engine", TemplateType.T4, new[] { "tt" })
         {

@@ -16,6 +16,8 @@ public interface ITemplateEngine
     /// Display name used in logs and user interface
     /// </summary>
     string DisplayName { get; }
+    string DefaultFileExtension { get; }
+
     bool SupportsTemplatePath(string fileOrFolderName);
     /// <summary>
     /// File extensions supported by this template engine (without dot) eg. "scriban", "tt"<br />

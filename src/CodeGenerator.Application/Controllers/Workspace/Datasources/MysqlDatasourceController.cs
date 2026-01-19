@@ -5,7 +5,7 @@ using CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql.ViewModels;
 using Microsoft.Extensions.Logging;
 
-namespace CodeGenerator.Application.Controllers.Workspace
+namespace CodeGenerator.Application.Controllers.Workspace.Datasources
 {
     /// <summary>
     /// Controller for MySQL datasource artifacts

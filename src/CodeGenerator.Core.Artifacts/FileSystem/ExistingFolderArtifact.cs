@@ -1,3 +1,5 @@
+using CodeGenerator.Shared;
+using CodeGenerator.Shared.Views.TreeNode;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Core.Artifacts.FileSystem
 {
-    public class ExistingFolderArtifact : FolderArtifact
+    public class ExistingFolderArtifact : FolderArtifact, IEditableTreeNode
     {
         public const string EXISTING_FOLDER_PROPERTIES_DECORATOR_KEY = "ExistingFolderProperties";
         private ExistingFolderArtifactDecorator _existingFolderArtifactDecorator;
-        public ExistingFolderArtifact(string existingFolderPath, string? folderName = null) 
+        public ExistingFolderArtifact(string existingFolderPath, string? folderName = null)
             : base(folderName ?? System.IO.Path.GetDirectoryName(existingFolderPath))
         {
             if (!Directory.Exists(existingFolderPath)) throw new ArgumentException("The specified existing folder path does not exist.", nameof(existingFolderPath));
@@ -20,7 +22,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
             ExistingFolderPath = existingFolderPath;
         }
 
-        public ExistingFolderArtifact(ArtifactState state) 
+        public ExistingFolderArtifact(ArtifactState state)
             : base(state)
         {
             _existingFolderArtifactDecorator = GetDecoratorOfType<ExistingFolderArtifactDecorator>()
@@ -34,7 +36,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
 
         public override T AddDecorator<T>(T decorator)
         {
-            if(decorator is ExistingFolderArtifactDecorator existingFolderDecorator)
+            if (decorator is ExistingFolderArtifactDecorator existingFolderDecorator)
             {
                 if (_existingFolderArtifactDecorator != null && _existingFolderArtifactDecorator != existingFolderDecorator)
                 {
@@ -64,6 +66,37 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
             }
         }
 
+        public bool CanBeginEdit()
+        {
+            return Directory.Exists(ExistingFolderPath);
+        }
 
+        public bool Validating(string newName)
+        {
+            if (newName == this.FolderName)
+                return false;
+            var parentDirectory = System.IO.Path.GetDirectoryName(ExistingFolderPath);
+            var newFolder = System.IO.Path.Combine(parentDirectory ?? string.Empty, newName);
+            return !Directory.Exists(newFolder);
+        }
+
+        public void EndEdit(string oldName, string newName)
+        {
+            try
+            {
+                var parentDirectory = System.IO.Path.GetDirectoryName(ExistingFolderPath);
+                var newFolder = System.IO.Path.Combine(parentDirectory ?? string.Empty, newName);
+                if (Directory.Exists(ExistingFolderPath) && !Directory.Exists(newFolder))
+                {
+                    Directory.Move(ExistingFolderPath, newFolder);
+                    ExistingFolderPath = newFolder;
+                    this.FolderName = newName;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }

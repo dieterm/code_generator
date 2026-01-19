@@ -1,22 +1,22 @@
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
-using CodeGenerator.Core.Workspaces.Datasources.Json.Artifacts;
-using CodeGenerator.Core.Workspaces.Datasources.Json.ViewModels;
+using CodeGenerator.Core.Workspaces.Datasources.PostgreSql.Artifacts;
+using CodeGenerator.Core.Workspaces.Datasources.PostgreSql.ViewModels;
 using Microsoft.Extensions.Logging;
 
-namespace CodeGenerator.Application.Controllers.Workspace;
+namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
 
 /// <summary>
-/// Controller for JSON datasource artifacts
+/// Controller for PostgreSQL datasource artifacts
 /// </summary>
-public class JsonDatasourceController : ArtifactControllerBase<WorkspaceTreeViewController, JsonDatasourceArtifact>
+public class PostgreSqlDatasourceController : ArtifactControllerBase<WorkspaceTreeViewController, PostgreSqlDatasourceArtifact>
 {
-    private JsonDatasourceEditViewModel? _editViewModel;
+    private PostgreSqlDatasourceEditViewModel? _editViewModel;
 
-    public JsonDatasourceController(
+    public PostgreSqlDatasourceController(
         WorkspaceTreeViewController workspaceController,
-        ILogger<JsonDatasourceController> logger)
+        ILogger<PostgreSqlDatasourceController> logger)
         : base(workspaceController, logger)
     {
     }
@@ -24,12 +24,12 @@ public class JsonDatasourceController : ArtifactControllerBase<WorkspaceTreeView
     /// <summary>
     /// Handle Treeview EditLabel complete event
     /// </summary>
-    protected override void OnArtifactRenamedInternal(JsonDatasourceArtifact artifact, string oldName, string newName)
+    protected override void OnArtifactRenamedInternal(PostgreSqlDatasourceArtifact artifact, string oldName, string newName)
     {
         artifact.Name = newName;
     }
 
-    protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(JsonDatasourceArtifact artifact)
+    protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(PostgreSqlDatasourceArtifact artifact)
     {
         var commands = new List<ArtifactTreeNodeCommand>();
 
@@ -48,11 +48,43 @@ public class JsonDatasourceController : ArtifactControllerBase<WorkspaceTreeView
 
         commands.Add(ArtifactTreeNodeCommand.Separator);
 
-        // Refresh file command
+        // Add table command
         commands.Add(new ArtifactTreeNodeCommand
         {
-            Id = "refresh_file",
-            Text = "Refresh",
+            Id = "add_table",
+            Text = "Add Table",
+            IconKey = "table",
+            Execute = async (a) =>
+            {
+                var table = new TableArtifact("new_table", "public");
+                artifact.AddChild(table);
+                TreeViewController.OnArtifactAdded(artifact, table);
+                await Task.CompletedTask;
+            }
+        });
+
+        // Add view command
+        commands.Add(new ArtifactTreeNodeCommand
+        {
+            Id = "add_view",
+            Text = "Add View",
+            IconKey = "eye",
+            Execute = async (a) =>
+            {
+                var view = new ViewArtifact("new_view", "public");
+                artifact.AddChild(view);
+                TreeViewController.OnArtifactAdded(artifact, view);
+                await Task.CompletedTask;
+            }
+        });
+
+        commands.Add(ArtifactTreeNodeCommand.Separator);
+
+        // Refresh schema command
+        commands.Add(new ArtifactTreeNodeCommand
+        {
+            Id = "refresh_schema",
+            Text = "Refresh Schema",
             IconKey = "refresh-cw",
             Execute = async (a) =>
             {
@@ -93,18 +125,18 @@ public class JsonDatasourceController : ArtifactControllerBase<WorkspaceTreeView
         return commands;
     }
 
-    protected override Task OnSelectedInternalAsync(JsonDatasourceArtifact artifact, CancellationToken cancellationToken)
+    protected override Task OnSelectedInternalAsync(PostgreSqlDatasourceArtifact artifact, CancellationToken cancellationToken)
     {
         return ShowPropertiesAsync(artifact);
     }
 
-    private void EnsureEditViewModel(JsonDatasourceArtifact artifact)
+    private void EnsureEditViewModel(PostgreSqlDatasourceArtifact artifact)
     {
         if (_editViewModel == null)
         {
-            _editViewModel = new JsonDatasourceEditViewModel();
+            _editViewModel = new PostgreSqlDatasourceEditViewModel();
             _editViewModel.ValueChanged += OnEditViewModelValueChanged;
-            _editViewModel.AddTableRequested += OnAddTableRequested;
+            _editViewModel.AddObjectRequested += OnAddObjectRequested;
         }
 
         _editViewModel.Datasource = artifact;
@@ -118,22 +150,29 @@ public class JsonDatasourceController : ArtifactControllerBase<WorkspaceTreeView
         }
     }
 
-    private void OnAddTableRequested(object? sender, AddTableEventArgs e)
+    private void OnAddObjectRequested(object? sender, AddDatabaseObjectEventArgs e)
     {
         if (_editViewModel?.Datasource == null) return;
 
         var datasource = _editViewModel.Datasource;
 
-        if (e.Table is TableArtifact table)
+        if (e.DatabaseObject is TableArtifact table)
         {
             datasource.AddChild(table);
             TreeViewController.OnArtifactAdded(datasource, table);
             Logger.LogInformation("Added table {TableName} to datasource {DatasourceName}",
                 table.Name, datasource.Name);
         }
+        else if (e.DatabaseObject is ViewArtifact view)
+        {
+            datasource.AddChild(view);
+            TreeViewController.OnArtifactAdded(datasource, view);
+            Logger.LogInformation("Added view {ViewName} to datasource {DatasourceName}",
+                view.Name, datasource.Name);
+        }
     }
 
-    private Task ShowPropertiesAsync(JsonDatasourceArtifact datasource)
+    private Task ShowPropertiesAsync(PostgreSqlDatasourceArtifact datasource)
     {
         EnsureEditViewModel(datasource);
         TreeViewController.ShowArtifactDetailsView(_editViewModel!);

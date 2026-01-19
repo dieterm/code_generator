@@ -2,6 +2,7 @@ using CodeGenerator.Application.Controllers;
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Controllers.Template;
 using CodeGenerator.Application.Controllers.Workspace;
+using CodeGenerator.Application.Controllers.Workspace.Datasources;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Application.ViewModels.Template;
@@ -85,6 +86,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IndexArtifactController>();
 
         // Template Artifact Controllers
+        services.AddSingleton<RootArtifactController>();
         services.AddSingleton<TemplateArtifactController>();
         services.AddSingleton<ExistingFolderArtifactController>();
 

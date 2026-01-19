@@ -1,22 +1,22 @@
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
-using CodeGenerator.Core.Workspaces.Datasources.Yaml.Artifacts;
-using CodeGenerator.Core.Workspaces.Datasources.Yaml.ViewModels;
+using CodeGenerator.Core.Workspaces.Datasources.Json.Artifacts;
+using CodeGenerator.Core.Workspaces.Datasources.Json.ViewModels;
 using Microsoft.Extensions.Logging;
 
-namespace CodeGenerator.Application.Controllers.Workspace;
+namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
 
 /// <summary>
-/// Controller for YAML datasource artifacts
+/// Controller for JSON datasource artifacts
 /// </summary>
-public class YamlDatasourceController : ArtifactControllerBase<WorkspaceTreeViewController, YamlDatasourceArtifact>
+public class JsonDatasourceController : ArtifactControllerBase<WorkspaceTreeViewController, JsonDatasourceArtifact>
 {
-    private YamlDatasourceEditViewModel? _editViewModel;
+    private JsonDatasourceEditViewModel? _editViewModel;
 
-    public YamlDatasourceController(
+    public JsonDatasourceController(
         WorkspaceTreeViewController workspaceController,
-        ILogger<YamlDatasourceController> logger)
+        ILogger<JsonDatasourceController> logger)
         : base(workspaceController, logger)
     {
     }
@@ -24,12 +24,12 @@ public class YamlDatasourceController : ArtifactControllerBase<WorkspaceTreeView
     /// <summary>
     /// Handle Treeview EditLabel complete event
     /// </summary>
-    protected override void OnArtifactRenamedInternal(YamlDatasourceArtifact artifact, string oldName, string newName)
+    protected override void OnArtifactRenamedInternal(JsonDatasourceArtifact artifact, string oldName, string newName)
     {
         artifact.Name = newName;
     }
 
-    protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(YamlDatasourceArtifact artifact)
+    protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(JsonDatasourceArtifact artifact)
     {
         var commands = new List<ArtifactTreeNodeCommand>();
 
@@ -93,16 +93,16 @@ public class YamlDatasourceController : ArtifactControllerBase<WorkspaceTreeView
         return commands;
     }
 
-    protected override Task OnSelectedInternalAsync(YamlDatasourceArtifact artifact, CancellationToken cancellationToken)
+    protected override Task OnSelectedInternalAsync(JsonDatasourceArtifact artifact, CancellationToken cancellationToken)
     {
         return ShowPropertiesAsync(artifact);
     }
 
-    private void EnsureEditViewModel(YamlDatasourceArtifact artifact)
+    private void EnsureEditViewModel(JsonDatasourceArtifact artifact)
     {
         if (_editViewModel == null)
         {
-            _editViewModel = new YamlDatasourceEditViewModel();
+            _editViewModel = new JsonDatasourceEditViewModel();
             _editViewModel.ValueChanged += OnEditViewModelValueChanged;
             _editViewModel.AddTableRequested += OnAddTableRequested;
         }
@@ -133,7 +133,7 @@ public class YamlDatasourceController : ArtifactControllerBase<WorkspaceTreeView
         }
     }
 
-    private Task ShowPropertiesAsync(YamlDatasourceArtifact datasource)
+    private Task ShowPropertiesAsync(JsonDatasourceArtifact datasource)
     {
         EnsureEditViewModel(datasource);
         TreeViewController.ShowArtifactDetailsView(_editViewModel!);

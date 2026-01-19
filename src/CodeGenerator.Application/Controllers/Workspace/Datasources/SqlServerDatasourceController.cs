@@ -1,22 +1,22 @@
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
-using CodeGenerator.Core.Workspaces.Datasources.Csv.Artifacts;
-using CodeGenerator.Core.Workspaces.Datasources.Csv.ViewModels;
+using CodeGenerator.Core.Workspaces.Datasources.SqlServer.Artifacts;
+using CodeGenerator.Core.Workspaces.Datasources.SqlServer.ViewModels;
 using Microsoft.Extensions.Logging;
 
-namespace CodeGenerator.Application.Controllers.Workspace;
+namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
 
 /// <summary>
-/// Controller for CSV datasource artifacts
+/// Controller for SQL Server datasource artifacts
 /// </summary>
-public class CsvDatasourceController : ArtifactControllerBase<WorkspaceTreeViewController, CsvDatasourceArtifact>
+public class SqlServerDatasourceController : ArtifactControllerBase<WorkspaceTreeViewController, SqlServerDatasourceArtifact>
 {
-    private CsvDatasourceEditViewModel? _editViewModel;
+    private SqlServerDatasourceEditViewModel? _editViewModel;
 
-    public CsvDatasourceController(
+    public SqlServerDatasourceController(
         WorkspaceTreeViewController workspaceController,
-        ILogger<CsvDatasourceController> logger)
+        ILogger<SqlServerDatasourceController> logger)
         : base(workspaceController, logger)
     {
     }
@@ -24,12 +24,12 @@ public class CsvDatasourceController : ArtifactControllerBase<WorkspaceTreeViewC
     /// <summary>
     /// Handle Treeview EditLabel complete event
     /// </summary>
-    protected override void OnArtifactRenamedInternal(CsvDatasourceArtifact artifact, string oldName, string newName)
+    protected override void OnArtifactRenamedInternal(SqlServerDatasourceArtifact artifact, string oldName, string newName)
     {
         artifact.Name = newName;
     }
 
-    protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(CsvDatasourceArtifact artifact)
+    protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(SqlServerDatasourceArtifact artifact)
     {
         var commands = new List<ArtifactTreeNodeCommand>();
 
@@ -48,11 +48,43 @@ public class CsvDatasourceController : ArtifactControllerBase<WorkspaceTreeViewC
 
         commands.Add(ArtifactTreeNodeCommand.Separator);
 
-        // Refresh file command
+        // Add table command
         commands.Add(new ArtifactTreeNodeCommand
         {
-            Id = "refresh_file",
-            Text = "Refresh",
+            Id = "add_table",
+            Text = "Add Table",
+            IconKey = "table",
+            Execute = async (a) =>
+            {
+                var table = new TableArtifact("NewTable", "dbo");
+                artifact.AddChild(table);
+                TreeViewController.OnArtifactAdded(artifact, table);
+                await Task.CompletedTask;
+            }
+        });
+
+        // Add view command
+        commands.Add(new ArtifactTreeNodeCommand
+        {
+            Id = "add_view",
+            Text = "Add View",
+            IconKey = "eye",
+            Execute = async (a) =>
+            {
+                var view = new ViewArtifact("NewView", "dbo");
+                artifact.AddChild(view);
+                TreeViewController.OnArtifactAdded(artifact, view);
+                await Task.CompletedTask;
+            }
+        });
+
+        commands.Add(ArtifactTreeNodeCommand.Separator);
+
+        // Refresh schema command
+        commands.Add(new ArtifactTreeNodeCommand
+        {
+            Id = "refresh_schema",
+            Text = "Refresh Schema",
             IconKey = "refresh-cw",
             Execute = async (a) =>
             {
@@ -93,18 +125,18 @@ public class CsvDatasourceController : ArtifactControllerBase<WorkspaceTreeViewC
         return commands;
     }
 
-    protected override Task OnSelectedInternalAsync(CsvDatasourceArtifact artifact, CancellationToken cancellationToken)
+    protected override Task OnSelectedInternalAsync(SqlServerDatasourceArtifact artifact, CancellationToken cancellationToken)
     {
         return ShowPropertiesAsync(artifact);
     }
 
-    private void EnsureEditViewModel(CsvDatasourceArtifact artifact)
+    private void EnsureEditViewModel(SqlServerDatasourceArtifact artifact)
     {
         if (_editViewModel == null)
         {
-            _editViewModel = new CsvDatasourceEditViewModel();
+            _editViewModel = new SqlServerDatasourceEditViewModel();
             _editViewModel.ValueChanged += OnEditViewModelValueChanged;
-            _editViewModel.AddTableRequested += OnAddTableRequested;
+            _editViewModel.AddObjectRequested += OnAddObjectRequested;
         }
 
         _editViewModel.Datasource = artifact;
@@ -118,22 +150,29 @@ public class CsvDatasourceController : ArtifactControllerBase<WorkspaceTreeViewC
         }
     }
 
-    private void OnAddTableRequested(object? sender, AddTableEventArgs e)
+    private void OnAddObjectRequested(object? sender, AddDatabaseObjectEventArgs e)
     {
         if (_editViewModel?.Datasource == null) return;
 
         var datasource = _editViewModel.Datasource;
 
-        if (e.Table is TableArtifact table)
+        if (e.DatabaseObject is TableArtifact table)
         {
             datasource.AddChild(table);
             TreeViewController.OnArtifactAdded(datasource, table);
             Logger.LogInformation("Added table {TableName} to datasource {DatasourceName}",
                 table.Name, datasource.Name);
         }
+        else if (e.DatabaseObject is ViewArtifact view)
+        {
+            datasource.AddChild(view);
+            TreeViewController.OnArtifactAdded(datasource, view);
+            Logger.LogInformation("Added view {ViewName} to datasource {DatasourceName}",
+                view.Name, datasource.Name);
+        }
     }
 
-    private Task ShowPropertiesAsync(CsvDatasourceArtifact datasource)
+    private Task ShowPropertiesAsync(SqlServerDatasourceArtifact datasource)
     {
         EnsureEditViewModel(datasource);
         TreeViewController.ShowArtifactDetailsView(_editViewModel!);
