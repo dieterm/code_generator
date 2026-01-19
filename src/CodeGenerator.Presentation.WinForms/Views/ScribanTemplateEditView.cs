@@ -1,6 +1,7 @@
 using CodeGenerator.Application.ViewModels.Template;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Domain.DataTypes;
 using CodeGenerator.Domain.NamingConventions;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.ExtensionMethods;
@@ -13,6 +14,7 @@ using Scriban.Runtime;
 using Scriban.Syntax;
 using Syncfusion.Windows.Forms.Edit;
 using Syncfusion.Windows.Forms.Edit.Enums;
+using Syncfusion.Windows.Forms.Edit.Implementation.Parser;
 using Syncfusion.Windows.Forms.Edit.Interfaces;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -34,13 +36,94 @@ public partial class ScribanTemplateEditView : UserControl, IView<ScribanTemplat
         InitializeComponent();
         editControl.ContextChoiceBeforeOpen += EditControl_ContextChoiceBeforeOpen;
         editControl.ContextChoiceOpen += EditControl_ContextChoiceOpen;
+        editControl.UpdateContextToolTip += EditControl_UpdateContextToolTip;
         editControl.FilterAutoCompleteItems = false;
     }
+
+    private void EditControl_UpdateContextToolTip(object sender, UpdateTooltipEventArgs e)
+    {
+        if (e.Text == string.Empty)
+        {
+            Point pointVirtual = editControl.PointToVirtualPosition(new Point(e.X, e.Y));
+
+            if (pointVirtual.Y > 0)
+            {
+                // Get the current line
+                ILexemLine line = editControl.GetLine(pointVirtual.Y);
+
+                if (line != null)
+                {
+                    // Get tokens from the current line
+                    ILexem lexem = line.FindLexemByColumn(pointVirtual.X);
+
+                    if (lexem != null)
+                    {
+                        IConfigLexem configLexem = lexem.Config as IConfigLexem;
+                        if(_viewModel!=null &&_viewModel.TemplateInstance!=null && _viewModel.TemplateInstance.Parameters.ContainsKey(lexem.Text))
+                        {
+                            try
+                            {
+                                e.Text = $"Parameter: {_viewModel.TemplateInstance.Parameters[lexem.Text]?.GetType().Name}";
+                            }
+                            catch (Exception)
+                            {
+
+                                //throw;
+                            }
+                            
+                            return;
+                        }
+                        else if (ScribanIntellisenceSupport.Triggers.TryGetValue(lexem.Text, out var configLexemInfo))
+                        {
+                            e.Text = configLexemInfo.Tooltip;
+                        }
+                        else
+                        {
+                            var lexemBefore = FindLexemBefore(line, lexem, true, true);
+                            if (ScribanIntellisenceSupport.Triggers.TryGetValue(lexemBefore.Text, out var configLexemInfo2))
+                            {
+                                var toolTip = configLexemInfo2.Items.FirstOrDefault(i => i.Text == lexem.Text)?.Tooltip;
+                                if (toolTip != null)
+                                {
+                                    e.Text = toolTip;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private ILexem? FindLexemBefore(ILexemLine line, ILexem lexem)
+    {
+        
+        // find lexem before dot
+        int lexemIndex = line.LineLexems.IndexOf(lexem);
+        if (lexemIndex > 0)
+        {
+            return line.LineLexems[lexemIndex - 1] as ILexem;
+        }
+        return null;
+    }
+    private ILexem? FindLexemBefore(ILexemLine line, ILexem lexem, bool skipDot, bool skipWhitespace)
+    {
+        var foundLexem = FindLexemBefore(line, lexem);
+        if (foundLexem == null) return null;
+
+        while (foundLexem != null && ((skipDot && foundLexem.Text == ".") || (skipWhitespace && string.IsNullOrWhiteSpace(foundLexem.Text))))
+        {
+            foundLexem = FindLexemBefore(line, foundLexem);
+        }
+        return foundLexem;
+    }
+
+    
 
     /// <summary>
     ///
     /// </summary>
     /// <returns></returns>
+    
     private void GetScribanBuildinFunctions()
     {
         
@@ -84,10 +167,35 @@ public partial class ScribanTemplateEditView : UserControl, IView<ScribanTemplat
         }
     }
 
+    private string GetIconKey(GenericDataType dataType)
+    {
+        if (dataType == GenericDataTypes.Guid)
+            return "square-asterisk";
+        else if (dataType == GenericDataTypes.Xml)
+            return "code-xml";
+        else if (dataType == GenericDataTypes.Json)
+            return "braces";
+        else if (dataType == GenericDataTypes.Money)
+            return "dollar-sign";
+        else if (GenericDataTypes.IsTextBasedType(dataType.Id))
+            return "case-sensitive";
+        else if (GenericDataTypes.IsNumericType(dataType.Id))
+            return "hash";
+        else if (GenericDataTypes.IsDateType(dataType.Id))
+            return "calendar";
+        else if (GenericDataTypes.IsBinaryType(dataType.Id))
+            return "binary";
+        else if (GenericDataTypes.IsBooleanType(dataType.Id))
+            return "toggle-left";
+        else
+            return "circle-question-mark";
+    }
+
     private void EditControl_ContextChoiceOpen(IContextChoiceController controller)
     {
         controller.Items.Clear();
-        if (controller.LexemBeforeDropper == null)
+
+        if (controller.LexemBeforeDropper == null || string.IsNullOrWhiteSpace(controller.LexemBeforeDropper.Text))
         {
             // show all parameters, functions and buildin functions
             if(_viewModel?.TemplateInstance!=null)
@@ -97,6 +205,7 @@ public partial class ScribanTemplateEditView : UserControl, IView<ScribanTemplat
                 {
                     controller.Items.Add(paramKvp.Key, "Parameter", GetIcon("box"));
                 }
+                
                 // functions
                 foreach(var funcKvp in _viewModel.TemplateInstance.Functions)
                 {
@@ -105,19 +214,21 @@ public partial class ScribanTemplateEditView : UserControl, IView<ScribanTemplat
             }
 
             // buildin functions
-            foreach (var (member, memberObj) in _buildinfunctions)
+            foreach (var trigger in ScribanIntellisenceSupport.Triggers)
             {
-                controller.Items.Add(NamingConventions.Convert(member, NamingStyle.SnakeCase), "Built-in Function", GetIcon("square-function"));
+                controller.Items.Add(trigger.TriggerText, trigger.Tooltip??"Built-in Function", GetIcon("square-function"));
             }
             return;
         }
+
         var triggerText = controller.LexemBeforeDropper.Text;
-        if (controller.LexemBeforeDropper != null && _viewModel.TemplateInstance!=null)
+
+        if (_viewModel?.TemplateInstance!=null)
         {
             if(_viewModel.TemplateInstance.Parameters.TryGetValue(triggerText, out var param))
             {
                 if(param==null)
-                    return;
+                    return; // weird situation, should not get here
                 
                 var paramType = param.GetType();
                 foreach(var prop in paramType.GetProperties())
@@ -143,64 +254,15 @@ public partial class ScribanTemplateEditView : UserControl, IView<ScribanTemplat
                     controller.Items.Add(NamingConventions.Convert(p, NamingStyle.SnakeCase), "Parameter", GetIcon("parameter"));
                 });
             }
-            else if (_buildinfunctions.ContainsKey(triggerText))
-            {
-                var memberObj = _buildinfunctions[triggerText];
-                if (memberObj is ScriptObject scriptObj)
-                {
-                    foreach (var (functionName, functionBody) in scriptObj)
-                    {
-                        
-                        //Debug.WriteLine($"  Function: {functionName} - Body Type: {functionBody.GetType().Name}");
-                        var funcbod = functionBody as IScriptCustomFunction;
-                        if (funcbod != null)
-                        {
-                            StringBuilder paramList = new StringBuilder();
-                            for (int i = 0; i < funcbod.ParameterCount; i++)
-                            {
-                                var paparamInfo = funcbod.GetParameterInfo(i);
-                                paramList.Append($"<{paparamInfo.Name}> ");
-                                //Debug.WriteLine($"    Param {i}: {paparamInfo.Name} Type: {paparamInfo.ParameterType} DefaultValue: {paparamInfo.DefaultValue}");
-                            }
-                            controller.Items.Add(functionName, $"{functionName}({paramList.ToString().Trim()})", GetIcon("square-function"));
-                        }
-                        else
-                        {
-                            controller.Items.Add(functionName, functionName, GetIcon("square-function"));
-                            Debug.WriteLine($"    Not a custom function");
-                        }
-                    }
-                }
-                else if (memberObj is EmptyScriptObject emptyScriptObject)
-                {
-                    // eg: "empty", "blank"
-                    //Debug.WriteLine($"  Custom Function: {member} - Parameter Count: {emptyScriptObject.}");
+        }
 
-                }
-                else if (memberObj is IScriptCustomFunction includeFunction)
-                {
-                    // eg: "include" 
-                    //Debug.WriteLine($"  Include Function: {member} - Parameter Count: {includeFunction.ParameterCount}");
-                    //for (int i = 0; i < includeFunction.ParameterCount; i++)
-                    //{
-                    //    var paparamInfo = includeFunction.GetParameterInfo(i);
-                    //    //Debug.WriteLine($"    Param {i}: {paparamInfo.Name} Type: {paparamInfo.ParameterType} DefaultValue: {paparamInfo.DefaultValue}");
-                    //}
-                }
+        if(ScribanIntellisenceSupport.Triggers.TryGetValue(triggerText, out var trigger2))
+        {
+            foreach(var item in trigger2.Items)
+            {
+                controller.Items.Add(item.Text, item.Tooltip??"Built-in Function", GetIcon("square-function"));
             }
         }
-        //Debug.WriteLine(controller.LexemBeforeDropper);
-        //controller.Items.Add("data", "This is data");
-        //controller.Items.Add("columns", "This is columns");
-        //controller.Items.Add("target", "This is target");
-        //controller.Items.Add("datasource", "This is datasource");
-        //controller.Items.Add("Database", "This is Database", this.editControl1.ContextChoiceController.Images["Image1"]);
-        //controller.Items.Add("NewFile", "This is NewFile", this.editControl1.ContextChoiceController.Images["Image2"]);
-        //controller.Items.Add("Find", "This is Find", this.editControl1.ContextChoiceController.Images["Image3"]);
-        //controller.Items.Add("Home", "This is Home", this.editControl1.ContextChoiceController.Images["Image4"]);
-        //controller.Items.Add("PieChart", "This is PieChart", this.editControl1.ContextChoiceController.Images["Image6"]);
-        //controller.Items.Add("Tools", "This is Tools", this.editControl1.ContextChoiceController.Images["Image7"]);
-        
     }
 
     private INamedImage GetIcon(string imageKey)
@@ -392,20 +454,39 @@ public partial class ScribanTemplateEditView : UserControl, IView<ScribanTemplat
     {
         try
         {
-            // Generate XML configuration for Scriban syntax
-            var xmlConfig = GenerateScribanXmlConfig();
-            
-            // Save to temp file
-            _tempConfigPath = Path.Combine(Path.GetTempPath(), $"scriban_config_{Guid.NewGuid():N}.xml");
-            Debug.WriteLine($"Scriban Syntax Config file: {_tempConfigPath}");
-            File.WriteAllText(_tempConfigPath, xmlConfig);
+            //var parameters = new Dictionary<string, object?>();
+            //var functions = new Dictionary<string, Delegate>();
+            //if(_viewModel!=null && _viewModel.TemplateInstance!=null)
+            //{
+            //    parameters = _viewModel.TemplateInstance.Parameters;
+            //    functions = _viewModel.TemplateInstance.Functions;
+            //}
+            //var scribanConfig = new ScribanLanguageConfig(parameters, functions, _buildinfunctions);
 
-            // Load configuration from XML
-            editControl.Configurator.Open(_tempConfigPath);
+            //editControl.ApplyConfiguration(scribanConfig);
+
+
+
+
+
+            //// Generate XML configuration for Scriban syntax
+            //var xmlConfig = GenerateScribanXmlConfig();
+
+            //// Save to temp file
+            //_tempConfigPath = Path.Combine(Path.GetTempPath(), $"scriban_config_{Guid.NewGuid():N}.xml");
+            //Debug.WriteLine($"Scriban Syntax Config file: {_tempConfigPath}");
+            //File.WriteAllText(_tempConfigPath, xmlConfig);
+            //editControl.Configurator.Open(_tempConfigPath);
             
+            var scribanConfig = new EditControlScribanXmlConfig();
+            
+            var configStream = scribanConfig.GenerateScribanXmlConfigStream(_viewModel?.TemplateInstance);
+            // Load configuration from XML
+            editControl.Configurator.Open(configStream);
+
             // Apply the Scriban configuration
             editControl.ApplyConfiguration("Scriban");
-            
+
             // add code snippets
             var snippet = new Syncfusion.Windows.Forms.Edit.Utils.CodeSnippets.CodeSnippet();
             snippet.Literals.Add(new Syncfusion.Windows.Forms.Edit.Utils.CodeSnippets.Literal { ID = "ifdef", Default="id", ToolTip = "if condition" });
@@ -417,7 +498,7 @@ public partial class ScribanTemplateEditView : UserControl, IView<ScribanTemplat
             snippet.Shortcut = "sif";
 
             editControl.Language.SnippetsContainer.AddSnippet(snippet);
-            Debug.WriteLine($"Known languages: {string.Join(", ", editControl.Configurator.KnownLanguageNames)}");
+            Debug.WriteLine($"Known languages: {string.Join(", ", editControl.Configurator.KnownLanguageNames.OfType<string>())}");
         }
         catch (Exception ex)
         {
@@ -557,7 +638,7 @@ public partial class ScribanTemplateEditView : UserControl, IView<ScribanTemplat
         sb.AppendLine("      </lexem>");
         
         // Comments - Scriban uses ## for line comments
-        sb.AppendLine("      <lexem BeginBlock=\"#\" EndBlock=\"#\" Type=\"Comment\" />");
+        sb.AppendLine("      <lexem BeginBlock=\"##\" EndBlock=\"\\n\" IsEndRegex=\"true\" Type=\"Comment\" />");
         //sb.AppendLine("      <lexem BeginBlock=\"##\" EndBlock=\"\\n\" IsEndRegex=\"true\" Type=\"Comment\" IsComplex=\"true\" />");
         //sb.AppendLine("      <lexem BeginBlock=\"/*\" EndBlock=\"*/\" Type=\"Comment\" IsComplex=\"true\" IsCollapsable=\"true\" CollapseName=\"/*...*/\" />");
         //sb.AppendLine("         <SubLexems>");

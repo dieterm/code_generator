@@ -18,7 +18,7 @@ namespace CodeGenerator.TemplateEngines.Scriban;
 /// </summary>
 public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemplateInstance>
 {
-    private readonly ScriptObject _globalFunctions = new ScriptObject();
+    private static readonly ScriptObject _globalFunctions = new ScriptObject();
     private readonly ConcurrentDictionary<string, Template> _compiledTemplates = new ConcurrentDictionary<string, Template>();
     public ScriptObject GlobalFunctions { get { return _globalFunctions; } }
     public string TemplateRootFolder { get { return WorkspaceSettings.Instance.DefaultTemplateFolder; } }
@@ -26,9 +26,12 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
     public ScribanTemplateEngine(ILogger<ScribanTemplateEngine> logger)
         : base(logger, "scriban_template_engine", "Scriban Template Engine", TemplateType.Scriban, new[] { "scriban" })
     {
+        
+    }
+    static ScribanTemplateEngine()
+    {
         RegisterBuiltInFunctions();
     }
-
     public async Task<string> RenderAsync(string templateContent, object model, CancellationToken cancellationToken = default)
     {
         try
@@ -117,11 +120,11 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
         return result;
     }
 
-    public void RegisterFunction(string name, Delegate function)
-    {
-        _globalFunctions.Import(name, function);
-        Logger.LogDebug("Registered function {FunctionName}", name);
-    }
+    //public void RegisterFunction(string name, Delegate function)
+    //{
+    //    _globalFunctions.Import(name, function);
+    //    Logger.LogDebug("Registered function {FunctionName}", name);
+    //}
 
     private TemplateContext CreateContext(object model)
     {
@@ -129,7 +132,8 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
         {
             MemberRenamer = member => member.Name,
             LoopLimit = 10000,
-            RecursiveLimit = 100
+            RecursiveLimit = 100,
+            AutoIndent = false // see https://github.com/scriban/scriban/blob/master/doc/language.md#15-auto-indentation
         };
 
         var scriptObject = new ScriptObject();
@@ -145,26 +149,63 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
 
         return context;
     }
-
-    private void RegisterBuiltInFunctions()
+    public const string FUNCTION_PASCAL_CASE = "pascal_case";
+    public const string FUNCTION_CAMEL_CASE = "camel_case";
+    public const string FUNCTION_SNAKE_CASE = "snake_case";
+    public const string FUNCTION_KEBAB_CASE = "kebab_case";
+    public const string FUNCTION_PLURALIZE = "pluralize";
+    public const string FUNCTION_SINGULARIZE = "singularize";
+    public const string FUNCTION_NULLABLE_TYPE = "nullable_type";
+    public const string FUNCTION_IS_COLLECTION = "is_collection";
+    public const string FUNCTION_GET_COLLECTION_TYPE = "get_collection_type";
+    public const string FUNCTION_CSHARP_TYPE = "csharp_type";
+    public const string FUNCTION_SQL_TYPE = "sql_type";
+    public const string FUNCTION_NOW = "now";
+    public const string FUNCTION_UTC_NOW = "utc_now";
+    public const string FUNCTION_IF_EMPTY = "if_empty";
+    public static string[] BuildinFunctions { get; } = new[]
+    {
+        FUNCTION_PASCAL_CASE,
+        FUNCTION_CAMEL_CASE,
+        FUNCTION_SNAKE_CASE,
+        FUNCTION_KEBAB_CASE,
+        FUNCTION_PLURALIZE,
+        FUNCTION_SINGULARIZE,
+        FUNCTION_NULLABLE_TYPE,
+        FUNCTION_IS_COLLECTION,
+        FUNCTION_GET_COLLECTION_TYPE,
+        FUNCTION_CSHARP_TYPE,
+        FUNCTION_SQL_TYPE,
+        FUNCTION_NOW,
+        FUNCTION_UTC_NOW,
+        FUNCTION_IF_EMPTY
+    };
+    public static Dictionary<string, string> BuildinFunctionsTooltips { get; } = new Dictionary<string, string>();
+    private static void RegisterBuiltInFunctions()
     {
         // String manipulation
-        _globalFunctions.Import("pascal_case", _templateHelper.PascalCase);
-        _globalFunctions.Import("camel_case", _templateHelper.CamelCase);
-        _globalFunctions.Import("snake_case", _templateHelper.SnakeCase);
-        _globalFunctions.Import("kebab_case", _templateHelper.KebabCase);
-        _globalFunctions.Import("pluralize", _templateHelper.Pluralize);
-        _globalFunctions.Import("singularize", _templateHelper.Singularize);
+        _globalFunctions.Import(FUNCTION_PASCAL_CASE, _templateHelper.PascalCase);
+        BuildinFunctionsTooltips.Add(FUNCTION_PASCAL_CASE, $"<text> | {FUNCTION_PASCAL_CASE} -> eg. 'CustomerAccountNumber'");
+        _globalFunctions.Import(FUNCTION_CAMEL_CASE, _templateHelper.CamelCase);
+        BuildinFunctionsTooltips.Add(FUNCTION_CAMEL_CASE, $"<text> | {FUNCTION_CAMEL_CASE} -> eg. 'customerAccountNumber'");
+        _globalFunctions.Import(FUNCTION_SNAKE_CASE, _templateHelper.SnakeCase);
+        BuildinFunctionsTooltips.Add(FUNCTION_SNAKE_CASE, $"<text> | {FUNCTION_SNAKE_CASE} -> eg. 'customer_account_number'");
+        _globalFunctions.Import(FUNCTION_KEBAB_CASE, _templateHelper.KebabCase);
+        BuildinFunctionsTooltips.Add(FUNCTION_KEBAB_CASE, $"<text> | {FUNCTION_KEBAB_CASE} -> eg. 'customer-account-number'");
+        _globalFunctions.Import(FUNCTION_PLURALIZE, _templateHelper.Pluralize);
+        BuildinFunctionsTooltips.Add(FUNCTION_PLURALIZE, $"<text> | {FUNCTION_PLURALIZE} -> eg. 'Customer' becomes 'Customers'");
+        _globalFunctions.Import(FUNCTION_SINGULARIZE, _templateHelper.Singularize);
+        BuildinFunctionsTooltips.Add(FUNCTION_SINGULARIZE, $"<text> | {FUNCTION_SINGULARIZE} -> eg. 'Customers' becomes 'Customer'");
 
         // Type helpers
-        _globalFunctions.Import("nullable_type", new Func<string, bool, string>((type, nullable) =>
+        _globalFunctions.Import(FUNCTION_NULLABLE_TYPE, new Func<string, bool, string>((type, nullable) =>
             nullable && !type.EndsWith("?") ? $"{type}?" : type));
-
-        _globalFunctions.Import("is_collection", new Func<string, bool>(type =>
+        BuildinFunctionsTooltips.Add(FUNCTION_NULLABLE_TYPE, $"{FUNCTION_NULLABLE_TYPE} <text> <isNullable:bool> -> eg. 'int' becomes 'int?' if nullable is true");
+        _globalFunctions.Import(FUNCTION_IS_COLLECTION, new Func<string, bool>(type =>
             type?.StartsWith("List<") == true || type?.StartsWith("IList<") == true ||
             type?.StartsWith("IEnumerable<") == true || type?.StartsWith("ICollection<") == true));
-
-        _globalFunctions.Import("get_collection_type", new Func<string, string>(type =>
+        BuildinFunctionsTooltips.Add(FUNCTION_IS_COLLECTION, $"{FUNCTION_IS_COLLECTION} <text> -> eg. 'List<int>' returns true");
+        _globalFunctions.Import(FUNCTION_GET_COLLECTION_TYPE, new Func<string, string>(type =>
         {
             if (string.IsNullOrEmpty(type)) return "object";
             var start = type.IndexOf('<');
@@ -173,18 +214,26 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
                 return type.Substring(start + 1, end - start - 1);
             return type;
         }));
+        BuildinFunctionsTooltips.Add(FUNCTION_GET_COLLECTION_TYPE, $"{FUNCTION_GET_COLLECTION_TYPE} <text> -> eg. 'List<int>' returns 'int'");
 
         // C# specific
-        _globalFunctions.Import("csharp_type", new Func<string, string>(MapToCSharpType));
-        _globalFunctions.Import("sql_type", new Func<string, int?, string>(MapToSqlType));
+        _globalFunctions.Import(FUNCTION_CSHARP_TYPE, new Func<string, string>(MapToCSharpType));
+        BuildinFunctionsTooltips.Add(FUNCTION_CSHARP_TYPE, $"{FUNCTION_CSHARP_TYPE} <text> -> eg. 'string', 'integer', 'boolean' mapped to C# types");
+        _globalFunctions.Import(FUNCTION_SQL_TYPE, new Func<string, int?, string>(MapToSqlType));
+        BuildinFunctionsTooltips.Add(FUNCTION_SQL_TYPE, $"{FUNCTION_SQL_TYPE} <text> <maxLength:int?> -> eg. 'string', 50 mapped to NVARCHAR(50)");
 
         // Date/Time
-        _globalFunctions.Import("now", new Func<string>(() => DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
-        _globalFunctions.Import("utc_now", new Func<string>(() => DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")));
+        _globalFunctions.Import(FUNCTION_NOW, new Func<string>(() => DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
+        BuildinFunctionsTooltips.Add(FUNCTION_NOW, $"{FUNCTION_NOW} <text> -> returns current local date and time in 'yyyy-MM-dd HH:mm:ss' format");
+        _globalFunctions.Import(FUNCTION_UTC_NOW, new Func<string>(() => DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")));
+        BuildinFunctionsTooltips.Add(FUNCTION_UTC_NOW, $"{FUNCTION_UTC_NOW} <text> -> returns current UTC date and time in 'yyyy-MM-dd HH:mm:ss' format");
 
         // Conditional helpers
-        _globalFunctions.Import("if_empty", new Func<string, string, string>((value, defaultValue) =>
+        _globalFunctions.Import(FUNCTION_IF_EMPTY, new Func<string, string, string>((value, defaultValue) =>
             string.IsNullOrEmpty(value) ? defaultValue : value));
+        BuildinFunctionsTooltips.Add(FUNCTION_IF_EMPTY, $"{FUNCTION_IF_EMPTY} <value:text> <defaultValue:text> -> returns defaultValue if value is null or empty");
+
+        ScribanIntellisenceSupport.CreateGlobalFunctionStatements(BuildinFunctions, BuildinFunctionsTooltips);
     }
 
     private static TemplateHelpers _templateHelper = new TemplateHelpers();
@@ -252,6 +301,7 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
             if (!string.IsNullOrEmpty(templateInstance.Template.TemplateId) && _compiledTemplates.TryGetValue(templateInstance.Template.TemplateId, out var compiledTemplate))
             {
                 var context = new TemplateContext();
+                context.AutoIndent = false; // see https://github.com/scriban/scriban/blob/master/doc/language.md#15-auto-indentation
                 context.LoopLimit = 0;
                 context.LoopLimitQueryable = 0;
                 var templateLocations = new List<string>() { TemplateRootFolder };
