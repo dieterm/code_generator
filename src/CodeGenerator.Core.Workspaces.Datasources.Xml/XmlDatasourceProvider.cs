@@ -85,7 +85,7 @@ public class XmlDatasourceProvider : IDatasourceProvider
             GenericDataTypes.Boolean,
             GenericDataTypes.DateTime,
             GenericDataTypes.Guid,
-            GenericDataTypes.Json
+            GenericDataTypes.Xml
         };
     }
 }

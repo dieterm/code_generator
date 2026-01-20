@@ -1,8 +1,11 @@
 using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.Json.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.Json.ViewModels;
+using CodeGenerator.Shared;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
@@ -47,7 +50,28 @@ public class JsonDatasourceController : ArtifactControllerBase<WorkspaceTreeView
         });
 
         commands.Add(ArtifactTreeNodeCommand.Separator);
-
+        // View/Edit file command
+        if (System.IO.File.Exists(artifact.FilePath))
+        {
+            commands.Add(new ArtifactTreeNodeCommand
+            {
+                Id = "edit_datasource",
+                Text = "View/Edit file",
+                IconKey = "edit",
+                Execute = async (a) =>
+                {
+                    var windowService = ServiceProviderHolder.GetRequiredService<IWindowManagerService>();
+                    var previewViewModel = new ViewModels.ArtifactPreviewViewModel
+                    {
+                        TabLabel = Path.GetFileName(artifact.FilePath),
+                        FilePath = artifact.FilePath,
+                        TextLanguageSchema = ViewModels.ArtifactPreviewViewModel.KnownLanguages.Text
+                    };
+                    windowService.ShowArtifactPreview(previewViewModel);
+                    await Task.CompletedTask;
+                }
+            });
+        }
         // Refresh file command
         commands.Add(new ArtifactTreeNodeCommand
         {

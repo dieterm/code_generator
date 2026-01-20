@@ -220,7 +220,7 @@ public class XmlSchemaReader
                     propertyMap[name] = new XmlPropertyInfo
                     {
                         Name = name,
-                        InferredType = isComplex ? GenericDataTypes.Json.Id : InferTypeFromString(child.Value),
+                        InferredType = isComplex ? GenericDataTypes.Xml.Id : InferTypeFromString(child.Value),
                         IsNullable = string.IsNullOrEmpty(child.Value) && !child.HasElements,
                         IsAttribute = false,
                         IsComplex = isComplex,
@@ -271,7 +271,7 @@ public class XmlSchemaReader
             properties.Add(new XmlPropertyInfo
             {
                 Name = group.Key,
-                InferredType = isComplex ? GenericDataTypes.Json.Id : InferTypeFromString(firstChild.Value),
+                InferredType = isComplex ? GenericDataTypes.Xml.Id : InferTypeFromString(firstChild.Value),
                 IsNullable = string.IsNullOrEmpty(firstChild.Value) && !isComplex,
                 IsAttribute = false,
                 IsComplex = isComplex,
@@ -328,7 +328,7 @@ public class XmlSchemaReader
                     unionInfo = new XmlPropertyUnionInfo
                     {
                         Name = name,
-                        InferredType = isComplex ? GenericDataTypes.Json.Id : InferTypeFromString(child.Value),
+                        InferredType = isComplex ? GenericDataTypes.Xml.Id : InferTypeFromString(child.Value),
                         IsNullable = string.IsNullOrEmpty(child.Value) && !isComplex,
                         IsAttribute = false,
                         IsComplex = isComplex,
@@ -346,7 +346,7 @@ public class XmlSchemaReader
                     if (child.HasElements)
                     {
                         unionInfo.IsComplex = true;
-                        unionInfo.InferredType = GenericDataTypes.Json.Id;
+                        unionInfo.InferredType = GenericDataTypes.Xml.Id;
                     }
                 }
 
@@ -428,7 +428,7 @@ public class XmlSchemaReader
 
             var column = new ColumnArtifact(
                 group.Key,
-                isComplex ? GenericDataTypes.Json.Id : InferTypeFromString(firstChild.Value),
+                isComplex ? GenericDataTypes.Xml.Id : InferTypeFromString(firstChild.Value),
                 string.IsNullOrEmpty(firstChild.Value) && !isComplex)
             {
                 OrdinalPosition = ordinal++
