@@ -162,6 +162,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Datasources
             if (e.DatabaseObject is TableArtifact table)
             {
                 datasource.AddChild(table);
+                datasource.TryCompleteForeignKeys(table, Logger);
                 TreeViewController.OnArtifactAdded(datasource, table);
                 Logger.LogInformation("Added table {TableName} to datasource {DatasourceName}", 
                     table.Name, datasource.Name);
@@ -174,6 +175,46 @@ namespace CodeGenerator.Application.Controllers.Workspace.Datasources
                     view.Name, datasource.Name);
             }
         }
+
+        //private void TryCompleteForeignKeys(TableArtifact table, MysqlDatasourceArtifact datasource)
+        //{
+        //    table.GetForeignKeys().ToList().ForEach(fk =>
+        //    {
+        //        if (fk.ReferencedTableId == null)
+        //        {
+        //            var existingForeignKeyDecorator = fk.GetDecoratorOfType<ExistingForeignKeyDecorator>();
+        //            if (existingForeignKeyDecorator == null) return;
+
+        //            var referencedTable = datasource.FindTableByExistingTableName(existingForeignKeyDecorator.OriginalReferencedTableSchema, existingForeignKeyDecorator.OriginalReferencedTableName);
+        //            if (referencedTable != null)
+        //            {
+        //                fk.ReferencedTableId = referencedTable.Id;
+        //                Logger.LogInformation("Completed foreign key {ForeignKeyName} reference to table {ReferencedTableName} in datasource {DatasourceName}", fk.Name, referencedTable.Name, datasource.Name);
+
+        //                foreach (var columnPair in existingForeignKeyDecorator.OriginalColumnMappings)
+        //                {
+        //                    var fkColumn = table.FindColumnByExistingColumnName(columnPair.SourceColumnName);
+        //                    var pkColumn = referencedTable.FindColumnByExistingColumnName(columnPair.ReferencedColumnName);
+        //                    if (fkColumn != null && pkColumn != null)
+        //                    {
+        //                        var existingMapping = fk.ColumnMappings.FirstOrDefault(cm => cm.SourceColumnId == fkColumn.Id);
+        //                        if (existingMapping != null)
+        //                        {
+        //                            if(string.IsNullOrWhiteSpace(existingMapping.ReferencedColumnId))
+        //                            {
+        //                                existingMapping.ReferencedColumnId = pkColumn.Id;
+        //                            }
+                                    
+        //                        } else { 
+        //                            fk.AddColumnMapping(fkColumn.Id, pkColumn.Id);
+        //                            Logger.LogInformation("Mapped foreign key column {FkColumnName} to primary key column {PkColumnName} for foreign key {ForeignKeyName} in datasource {DatasourceName}",fkColumn.Name, pkColumn.Name, fk.Name, datasource.Name);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    });
+        //}
 
         private Task ShowPropertiesAsync(MysqlDatasourceArtifact datasource)
         {

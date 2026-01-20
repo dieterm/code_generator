@@ -2,6 +2,7 @@ using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.Templates;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Shared.Views.TreeNode;
+using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
 {
@@ -87,6 +88,56 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         public void RemoveView(ViewArtifact view)
         {
             RemoveChild(view);
+        }
+        public TableArtifact? FindTableByExistingTableName(string originalReferencedTableSchema, string originalReferencedTableName)
+        {
+            return FindDescendantDecorators<ExistingTableDecorator>()
+                .FirstOrDefault(decorator =>
+                    string.Equals(decorator.OriginalSchema, originalReferencedTableSchema, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(decorator.OriginalTableName, originalReferencedTableName, StringComparison.OrdinalIgnoreCase))
+                ?.Artifact as TableArtifact;
+        }
+
+        public void TryCompleteForeignKeys(TableArtifact table, ILogger? logger = null)
+        {
+            table.GetForeignKeys().ToList().ForEach(fk =>
+            {
+                if (fk.ReferencedTableId == null)
+                {
+                    var existingForeignKeyDecorator = fk.GetDecoratorOfType<ExistingForeignKeyDecorator>();
+                    if (existingForeignKeyDecorator == null) return;
+
+                    var referencedTable = this.FindTableByExistingTableName(existingForeignKeyDecorator.OriginalReferencedTableSchema, existingForeignKeyDecorator.OriginalReferencedTableName);
+                    if (referencedTable != null)
+                    {
+                        fk.ReferencedTableId = referencedTable.Id;
+                        logger?.LogInformation("Completed foreign key {ForeignKeyName} reference to table {ReferencedTableName} in datasource {DatasourceName}", fk.Name, referencedTable.Name, this.Name);
+
+                        foreach (var columnPair in existingForeignKeyDecorator.OriginalColumnMappings)
+                        {
+                            var fkColumn = table.FindColumnByExistingColumnName(columnPair.SourceColumnName);
+                            var pkColumn = referencedTable.FindColumnByExistingColumnName(columnPair.ReferencedColumnName);
+                            if (fkColumn != null && pkColumn != null)
+                            {
+                                var existingMapping = fk.ColumnMappings.FirstOrDefault(cm => cm.SourceColumnId == fkColumn.Id);
+                                if (existingMapping != null)
+                                {
+                                    if (string.IsNullOrWhiteSpace(existingMapping.ReferencedColumnId))
+                                    {
+                                        existingMapping.ReferencedColumnId = pkColumn.Id;
+                                    }
+
+                                }
+                                else
+                                {
+                                    fk.AddColumnMapping(fkColumn.Id, pkColumn.Id);
+                                    logger?.LogInformation("Mapped foreign key column {FkColumnName} to primary key column {PkColumnName} for foreign key {ForeignKeyName} in datasource {DatasourceName}", fkColumn.Name, pkColumn.Name, fk.Name, this.Name);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
     }
 }

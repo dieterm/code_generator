@@ -220,5 +220,13 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         {
             return GetDecoratorOfType<TemplateDatasourceProviderDecorator>();
         }
+
+        public ColumnArtifact? FindColumnByExistingColumnName(string originalColumnName)
+        {
+            return FindDescendantDecorators<ExistingColumnDecorator>()
+                .FirstOrDefault(decorator =>
+                    string.Equals(decorator.OriginalName, originalColumnName, StringComparison.OrdinalIgnoreCase))
+                ?.Artifact as ColumnArtifact;
+        }
     }
 }

@@ -85,25 +85,40 @@ namespace CodeGenerator.Presentation.WinForms.Views
                 return;
             }
 
-            RefreshObjectsList();
-        }
-
-        private void RefreshObjectsList()
-        {
-            lstObjects.Items.Clear();
-            
-            if (_viewModel == null) return;
-
-            foreach (var obj in _viewModel.AvailableObjects)
+            switch (e.Action)
             {
-                var item = new ListViewItem(obj.Name)
-                {
-                    Tag = obj,
-                    ImageKey = obj.TypeIcon
-                };
-                item.SubItems.Add(obj.Schema);
-                item.SubItems.Add(obj.ObjectType.ToString());
-                lstObjects.Items.Add(item);
+                case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
+                    e.NewItems?.Cast<DatabaseObjectViewModel>().ToList().ForEach(obj =>
+                    {
+                        var item = new ListViewItem(obj.Name)
+                        {
+                            Tag = obj,
+                            ImageKey = obj.TypeIcon
+                        };
+                        item.SubItems.Add(obj.Schema);
+                        item.SubItems.Add(obj.ObjectType.ToString());
+                        lstObjects.Items.Add(item);
+                    });
+                    break;
+                case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
+                    e.OldItems?.Cast<DatabaseObjectViewModel>().ToList().ForEach(obj =>
+                    {
+                        var itemToRemove = lstObjects.Items.Cast<ListViewItem>().FirstOrDefault(item => item.Tag == obj);
+                        if (itemToRemove != null)
+                        {
+                            lstObjects.Items.Remove(itemToRemove);
+                        }
+                    });
+                    break;
+                case System.Collections.Specialized.NotifyCollectionChangedAction.Replace:
+                    break;
+                case System.Collections.Specialized.NotifyCollectionChangedAction.Move:
+                    break;
+                case System.Collections.Specialized.NotifyCollectionChangedAction.Reset:
+                    lstObjects.Items.Clear();
+                    break;
+                default:
+                    break;
             }
         }
 

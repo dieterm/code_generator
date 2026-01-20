@@ -71,7 +71,7 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
         }
 
         /// <summary>
-        /// Import a table with its columns and indexes
+        /// Import a table with its columns, indexes, and foreign keys
         /// </summary>
         public async Task<TableArtifact> ImportTableAsync(
             string connectionString,
@@ -99,6 +99,9 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
 
             // Get indexes
             await ImportIndexesAsync(connection, table, tableName, schema, cancellationToken);
+
+            // Get foreign keys
+            await ImportForeignKeysAsync(connection, table, tableName, schema, datasourceName, cancellationToken);
 
             return table;
         }
@@ -341,6 +344,142 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
 
                 table.AddChild(index);
             }
+        }
+
+        private async Task ImportForeignKeysAsync(
+            MySqlConnection connection,
+            TableArtifact table,
+            string tableName,
+            string schema,
+            string datasourceName,
+            CancellationToken cancellationToken)
+        {
+            // Query to get foreign key information
+            var query = @"
+                SELECT 
+                    kcu.CONSTRAINT_NAME,
+                    kcu.COLUMN_NAME,
+                    kcu.REFERENCED_TABLE_SCHEMA,
+                    kcu.REFERENCED_TABLE_NAME,
+                    kcu.REFERENCED_COLUMN_NAME,
+                    kcu.ORDINAL_POSITION,
+                    rc.UPDATE_RULE,
+                    rc.DELETE_RULE
+                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
+                INNER JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc
+                    ON kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME
+                    AND kcu.CONSTRAINT_SCHEMA = rc.CONSTRAINT_SCHEMA
+                WHERE kcu.TABLE_SCHEMA = @schema 
+                    AND kcu.TABLE_NAME = @tableName
+                    AND kcu.REFERENCED_TABLE_NAME IS NOT NULL
+                ORDER BY kcu.CONSTRAINT_NAME, kcu.ORDINAL_POSITION";
+
+            var foreignKeyData = new Dictionary<string, ForeignKeyInfo>();
+
+            await using var cmd = new MySqlCommand(query, connection);
+            cmd.Parameters.AddWithValue("@schema", schema);
+            cmd.Parameters.AddWithValue("@tableName", tableName);
+
+            await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                var constraintName = reader.GetString("CONSTRAINT_NAME");
+                var columnName = reader.GetString("COLUMN_NAME");
+                var referencedTableSchema = reader.GetString("REFERENCED_TABLE_SCHEMA");
+                var referencedTableName = reader.GetString("REFERENCED_TABLE_NAME");
+                var referencedColumnName = reader.GetString("REFERENCED_COLUMN_NAME");
+                var updateRule = reader.GetString("UPDATE_RULE");
+                var deleteRule = reader.GetString("DELETE_RULE");
+
+                if (!foreignKeyData.TryGetValue(constraintName, out var fkInfo))
+                {
+                    fkInfo = new ForeignKeyInfo
+                    {
+                        ConstraintName = constraintName,
+                        ReferencedTableSchema = referencedTableSchema,
+                        ReferencedTableName = referencedTableName,
+                        OnUpdateAction = ParseForeignKeyAction(updateRule),
+                        OnDeleteAction = ParseForeignKeyAction(deleteRule),
+                        ColumnMappings = new List<(string SourceColumn, string ReferencedColumn)>()
+                    };
+                    foreignKeyData[constraintName] = fkInfo;
+                }
+
+                fkInfo.ColumnMappings.Add((columnName, referencedColumnName));
+            }
+
+            // Create ForeignKeyArtifact for each foreign key
+            foreach (var fkInfo in foreignKeyData.Values)
+            {
+                var foreignKey = new ForeignKeyArtifact(fkInfo.ConstraintName)
+                {
+                    OnDeleteAction = fkInfo.OnDeleteAction,
+                    OnUpdateAction = fkInfo.OnUpdateAction
+                };
+
+                // Note: ReferencedTableId will be set later when the referenced table is resolved
+                // For now, we store the table name in the decorator
+
+                // Add column mappings (by column ID - we need to find the column artifacts)
+                var columnMappings = new List<ForeignKeyColumnMapping>();
+                var originalColumnMappings = new List<ExistingForeignKeyColumnMapping>();
+
+                foreach (var (sourceColumnName, referencedColumnName) in fkInfo.ColumnMappings)
+                {
+                    // Find the source column in the table
+                    var sourceColumn = table.GetColumns().FirstOrDefault(c => c.Name == sourceColumnName);
+                    if (sourceColumn != null)
+                    {
+                        // We don't have the referenced column ID yet (referenced table may not be imported)
+                        // Store mapping with source column ID, referenced column ID will be empty for now
+                        columnMappings.Add(new ForeignKeyColumnMapping(sourceColumn.Id, string.Empty));
+                    }
+
+                    // Always store original column names in decorator
+                    originalColumnMappings.Add(new ExistingForeignKeyColumnMapping(sourceColumnName, referencedColumnName));
+                }
+
+                foreignKey.ColumnMappings = columnMappings;
+
+                // Add decorator to mark as existing
+                foreignKey.AddDecorator(new ExistingForeignKeyDecorator
+                {
+                    OriginalName = fkInfo.ConstraintName,
+                    OriginalSourceTableName = tableName,
+                    OriginalSourceTableSchema = schema,
+                    OriginalReferencedTableName = fkInfo.ReferencedTableName,
+                    OriginalReferencedTableSchema = fkInfo.ReferencedTableSchema,
+                    OriginalOnDeleteAction = fkInfo.OnDeleteAction,
+                    OriginalOnUpdateAction = fkInfo.OnUpdateAction,
+                    OriginalColumnMappings = originalColumnMappings,
+                    ImportedAt = DateTime.UtcNow,
+                    SourceDatasourceName = datasourceName
+                });
+
+                table.AddChild(foreignKey);
+            }
+        }
+
+        private static ForeignKeyAction ParseForeignKeyAction(string rule)
+        {
+            return rule.ToUpperInvariant() switch
+            {
+                "CASCADE" => ForeignKeyAction.Cascade,
+                "SET NULL" => ForeignKeyAction.SetNull,
+                "RESTRICT" => ForeignKeyAction.Restrict,
+                "NO ACTION" => ForeignKeyAction.NoAction,
+                _ => ForeignKeyAction.NoAction
+            };
+        }
+
+        private class ForeignKeyInfo
+        {
+            public string ConstraintName { get; set; } = string.Empty;
+            public string ReferencedTableSchema { get; set; } = string.Empty;
+            public string ReferencedTableName { get; set; } = string.Empty;
+            public ForeignKeyAction OnDeleteAction { get; set; }
+            public ForeignKeyAction OnUpdateAction { get; set; }
+            public List<(string SourceColumn, string ReferencedColumn)> ColumnMappings { get; set; } = new();
         }
     }
 }

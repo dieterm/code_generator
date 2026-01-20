@@ -160,6 +160,7 @@ public class SqlServerDatasourceController : ArtifactControllerBase<WorkspaceTre
         {
             datasource.AddChild(table);
             TreeViewController.OnArtifactAdded(datasource, table);
+            datasource.TryCompleteForeignKeys(table, Logger);
             Logger.LogInformation("Added table {TableName} to datasource {DatasourceName}",
                 table.Name, datasource.Name);
         }

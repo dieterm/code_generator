@@ -74,7 +74,7 @@ public class PostgreSqlSchemaReader
     }
 
     /// <summary>
-    /// Import a table with its columns and indexes
+    /// Import a table with its columns, indexes, and foreign keys
     /// </summary>
     public async Task<TableArtifact> ImportTableAsync(
         string connectionString,
@@ -102,6 +102,9 @@ public class PostgreSqlSchemaReader
 
         // Get indexes
         await ImportIndexesAsync(connection, table, tableName, schema, cancellationToken);
+
+        // Get foreign keys
+        await ImportForeignKeysAsync(connection, table, tableName, schema, datasourceName, cancellationToken);
 
         return table;
     }
@@ -343,5 +346,136 @@ public class PostgreSqlSchemaReader
 
             table.AddChild(index);
         }
+    }
+
+    private async Task ImportForeignKeysAsync(
+        NpgsqlConnection connection,
+        TableArtifact table,
+        string tableName,
+        string schema,
+        string datasourceName,
+        CancellationToken cancellationToken)
+    {
+        var query = @"
+            SELECT
+                con.conname AS constraint_name,
+                att.attname AS column_name,
+                ref_ns.nspname AS referenced_schema,
+                ref_cl.relname AS referenced_table,
+                ref_att.attname AS referenced_column,
+                con.confupdtype AS update_action,
+                con.confdeltype AS delete_action,
+                array_position(con.conkey, att.attnum) AS ordinal_position
+            FROM pg_constraint con
+            JOIN pg_class cl ON cl.oid = con.conrelid
+            JOIN pg_namespace ns ON ns.oid = cl.relnamespace
+            JOIN pg_class ref_cl ON ref_cl.oid = con.confrelid
+            JOIN pg_namespace ref_ns ON ref_ns.oid = ref_cl.relnamespace
+            JOIN pg_attribute att ON att.attrelid = con.conrelid AND att.attnum = ANY(con.conkey)
+            JOIN pg_attribute ref_att ON ref_att.attrelid = con.confrelid 
+                AND ref_att.attnum = con.confkey[array_position(con.conkey, att.attnum)]
+            WHERE con.contype = 'f'
+                AND ns.nspname = @schema
+                AND cl.relname = @tableName
+            ORDER BY con.conname, array_position(con.conkey, att.attnum)";
+
+        var foreignKeyData = new Dictionary<string, ForeignKeyInfo>();
+
+        await using var cmd = new NpgsqlCommand(query, connection);
+        cmd.Parameters.AddWithValue("@schema", schema);
+        cmd.Parameters.AddWithValue("@tableName", tableName);
+
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            var constraintName = reader.GetString(0);
+            var columnName = reader.GetString(1);
+            var referencedSchema = reader.GetString(2);
+            var referencedTable = reader.GetString(3);
+            var referencedColumn = reader.GetString(4);
+            var updateAction = reader.GetChar(5);
+            var deleteAction = reader.GetChar(6);
+
+            if (!foreignKeyData.TryGetValue(constraintName, out var fkInfo))
+            {
+                fkInfo = new ForeignKeyInfo
+                {
+                    ConstraintName = constraintName,
+                    ReferencedTableSchema = referencedSchema,
+                    ReferencedTableName = referencedTable,
+                    OnUpdateAction = ParsePostgreSqlForeignKeyAction(updateAction),
+                    OnDeleteAction = ParsePostgreSqlForeignKeyAction(deleteAction),
+                    ColumnMappings = new List<(string SourceColumn, string ReferencedColumn)>()
+                };
+                foreignKeyData[constraintName] = fkInfo;
+            }
+
+            fkInfo.ColumnMappings.Add((columnName, referencedColumn));
+        }
+
+        // Create ForeignKeyArtifact for each foreign key
+        foreach (var fkInfo in foreignKeyData.Values)
+        {
+            var foreignKey = new ForeignKeyArtifact(fkInfo.ConstraintName)
+            {
+                OnDeleteAction = fkInfo.OnDeleteAction,
+                OnUpdateAction = fkInfo.OnUpdateAction
+            };
+
+            var columnMappings = new List<ForeignKeyColumnMapping>();
+            var originalColumnMappings = new List<ExistingForeignKeyColumnMapping>();
+
+            foreach (var (sourceColumnName, referencedColumnName) in fkInfo.ColumnMappings)
+            {
+                var sourceColumn = table.GetColumns().FirstOrDefault(c => c.Name == sourceColumnName);
+                if (sourceColumn != null)
+                {
+                    columnMappings.Add(new ForeignKeyColumnMapping(sourceColumn.Id, string.Empty));
+                }
+
+                originalColumnMappings.Add(new ExistingForeignKeyColumnMapping(sourceColumnName, referencedColumnName));
+            }
+
+            foreignKey.ColumnMappings = columnMappings;
+
+            foreignKey.AddDecorator(new ExistingForeignKeyDecorator
+            {
+                OriginalName = fkInfo.ConstraintName,
+                OriginalSourceTableName = tableName,
+                OriginalSourceTableSchema = schema,
+                OriginalReferencedTableName = fkInfo.ReferencedTableName,
+                OriginalReferencedTableSchema = fkInfo.ReferencedTableSchema,
+                OriginalOnDeleteAction = fkInfo.OnDeleteAction,
+                OriginalOnUpdateAction = fkInfo.OnUpdateAction,
+                OriginalColumnMappings = originalColumnMappings,
+                ImportedAt = DateTime.UtcNow,
+                SourceDatasourceName = datasourceName
+            });
+
+            table.AddChild(foreignKey);
+        }
+    }
+
+    private static ForeignKeyAction ParsePostgreSqlForeignKeyAction(char action)
+    {
+        // PostgreSQL action codes: a = no action, r = restrict, c = cascade, n = set null, d = set default
+        return action switch
+        {
+            'c' => ForeignKeyAction.Cascade,
+            'n' => ForeignKeyAction.SetNull,
+            'r' => ForeignKeyAction.Restrict,
+            'a' => ForeignKeyAction.NoAction,
+            _ => ForeignKeyAction.NoAction
+        };
+    }
+
+    private class ForeignKeyInfo
+    {
+        public string ConstraintName { get; set; } = string.Empty;
+        public string ReferencedTableSchema { get; set; } = string.Empty;
+        public string ReferencedTableName { get; set; } = string.Empty;
+        public ForeignKeyAction OnDeleteAction { get; set; }
+        public ForeignKeyAction OnUpdateAction { get; set; }
+        public List<(string SourceColumn, string ReferencedColumn)> ColumnMappings { get; set; } = new();
     }
 }

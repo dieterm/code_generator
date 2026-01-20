@@ -222,5 +222,7 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts
         {
             return MysqlDatabase.Instance;
         }
+
+ 
     }
 }

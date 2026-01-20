@@ -86,25 +86,49 @@ public partial class PostgreSqlDatasourceEditView : UserControl, IView<PostgreSq
             return;
         }
 
-        RefreshObjectsList();
-    }
-
-    private void RefreshObjectsList()
-    {
-        lstObjects.Items.Clear();
-
-        if (_viewModel == null) return;
-
-        foreach (var obj in _viewModel.AvailableObjects)
+        //RefreshObjectsList();
+        switch (e.Action)
         {
-            var item = new ListViewItem(obj.Name)
-            {
-                Tag = obj,
-                ImageKey = obj.TypeIcon
-            };
-            item.SubItems.Add(obj.Schema);
-            item.SubItems.Add(obj.ObjectType.ToString());
-            lstObjects.Items.Add(item);
+            case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
+                foreach(var newItem in e.NewItems!)
+                {
+                    if (newItem is DatabaseObjectViewModel obj)
+                    {
+                        var item = new ListViewItem(obj.Name)
+                        {
+                            Tag = obj,
+                            ImageKey = obj.TypeIcon
+                        };
+                        item.SubItems.Add(obj.Schema);
+                        item.SubItems.Add(obj.ObjectType.ToString());
+                        lstObjects.Items.Add(item);
+                    }
+                }
+                break;
+            case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
+                foreach(var oldItem in e.OldItems!)
+                {
+                    if (oldItem is DatabaseObjectViewModel obj)
+                    {
+                        var itemToRemove = lstObjects.Items
+                            .Cast<ListViewItem>()
+                            .FirstOrDefault(i => i.Tag == obj);
+                        if (itemToRemove != null)
+                        {
+                            lstObjects.Items.Remove(itemToRemove);
+                        }
+                    }
+                }
+                break;
+            case System.Collections.Specialized.NotifyCollectionChangedAction.Replace:
+                break;
+            case System.Collections.Specialized.NotifyCollectionChangedAction.Move:
+                break;
+            case System.Collections.Specialized.NotifyCollectionChangedAction.Reset:
+                lstObjects.Items.Clear();
+                break;
+            default:
+                break;
         }
     }
 

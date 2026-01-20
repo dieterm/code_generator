@@ -11,6 +11,7 @@ using CodeGenerator.Generators.CodeArchitectureLayers.InfrastructureLayer;
 using CodeGenerator.Generators.CodeArchitectureLayers.PresentationLayer;
 using CodeGenerator.Generators.DotNet.Generators;
 using CodeGenerator.Shared.Models;
+using CodeGenerator.UserControls.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,7 +75,7 @@ namespace CodeGenerator.Generators.DotNet
             settingsDescription.ParameterDefinitions.Add(new ParameterDefinition
             {
                 Name = nameof(ProjectType),
-                PossibleValues = DotNetProjectType.AllTypes.Select(t => (object)new { DisplayName = t, Id = t }).ToList(),
+                PossibleValues = DotNetProjectType.AllTypes.Select(t => (object)new ComboboxItem { DisplayName = t, Value = t }).ToList(),
                 Description = "The type of .NET project to generate (e.g., Class Library, Console App, Web API).",
                 Type = ParameterDefinitionTypes.String,
                 DefaultValue = GetProjectTypeDefaultValue(generator.Layer),
@@ -84,7 +85,7 @@ namespace CodeGenerator.Generators.DotNet
             settingsDescription.ParameterDefinitions.Add(new ParameterDefinition
             {
                 Name = nameof(TargetFramework),
-                PossibleValues = TargetFrameworks.AllFrameworks.Select(t => (object)new { DisplayName = t, Id = t }).ToList(),
+                PossibleValues = TargetFrameworks.AllFrameworks.Select(t => (object)new ComboboxItem { DisplayName = t, Value = t }).ToList(),
                 Description = "The target framework for the .NET project (e.g., net8.0, net7.0).",
                 Type = ParameterDefinitionTypes.String,
                 DefaultValue = TargetFrameworks.Net8,
@@ -94,7 +95,7 @@ namespace CodeGenerator.Generators.DotNet
             settingsDescription.ParameterDefinitions.Add(new ParameterDefinition
             {
                 Name = nameof(Language),
-                PossibleValues = DotNetLanguages.AllLanguages.Select(language => (object)new { DisplayName = $"{language.DotNetCommandLineArgument} (*.{language.ProjectFileExtension})", Id = language.DotNetCommandLineArgument }).ToList(),
+                PossibleValues = DotNetLanguages.AllLanguages.Select(language => (object)new ComboboxItem { DisplayName = $"{language.DotNetCommandLineArgument} (*.{language.ProjectFileExtension})", Value = language.DotNetCommandLineArgument }).ToList(),
                 Description = "The programming language for the .NET project (e.g., C#, VB.NET).",
                 Type = ParameterDefinitionTypes.String,
                 DefaultValue = DotNetLanguages.CSharp.DotNetCommandLineArgument,

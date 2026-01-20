@@ -375,16 +375,34 @@ namespace CodeGenerator.Core.Settings.Generators
 
             foreach (var parameterDefinition in generatorSettingsProvider.ParameterDefinitions)
             {
-                var parameterValue = generatorSettings.GetParameter<object>(parameterDefinition.Name, parameterDefinition.DefaultValue);
+                object parameterValue = generatorSettings.GetParameter<object>(parameterDefinition.Name, parameterDefinition.DefaultValue);
+                if( parameterValue is System.Text.Json.JsonElement jsonParameterValue)
+                {
+                    if(jsonParameterValue.ValueKind == JsonValueKind.String)
+                    {
+                        parameterValue = jsonParameterValue.GetString() ?? string.Empty;
+                    } else if (jsonParameterValue.ValueKind == JsonValueKind.Number)
+                    {
+                        parameterValue = jsonParameterValue.GetInt32();
+                    } else if (jsonParameterValue.ValueKind == JsonValueKind.True || jsonParameterValue.ValueKind == JsonValueKind.False)
+                    {
+                        parameterValue = jsonParameterValue.GetBoolean();
+                    }else
+                    {
+                        throw new InvalidOperationException("Unsupported JsonElement value kind for parameter");
+                    }
+                }
                 if (parameterDefinition.Type!= ParameterDefinitionTypes.ParameterisedString &&  parameterDefinition.PossibleValues != null && parameterDefinition.PossibleValues.Count > 0)
                 {
                     var possibleValues = parameterDefinition.PossibleValues;
-                    var isStringList = possibleValues.All(v => v is string);
-                    List<ComboboxItem> items;// = new List<object>();
-                    if (isStringList)
+                    List<ComboboxItem> items;
+                    if (possibleValues.All(v => v is string))
                         items = parameterDefinition.PossibleValues.Select(stringValue => new ComboboxItem { Value = stringValue, DisplayName = (string)stringValue }).ToList();
+                    else if(possibleValues.All(obj => obj is ComboboxItem))
+                        items = parameterDefinition.PossibleValues.Cast<ComboboxItem>().ToList();
                     else
                         items = parameterDefinition.PossibleValues.Select(objV => new ComboboxItem { Value = objV, DisplayName = objV.ToString() }).ToList();
+
                     var comboBoxField = new ComboboxFieldModel
                     {
                         Label = parameterDefinition.Name,
