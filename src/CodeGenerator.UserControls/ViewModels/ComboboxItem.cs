@@ -14,6 +14,8 @@ namespace CodeGenerator.UserControls.ViewModels
         /// Value of the item
         /// </summary>
         public virtual object? Value { get; set; }
+        
+        public virtual string Tooltip { get; set; } = string.Empty;
 
         public override string ToString() => DisplayName;
     }

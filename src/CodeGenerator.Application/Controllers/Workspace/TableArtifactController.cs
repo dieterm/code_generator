@@ -318,6 +318,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 templateInstance.Parameters["Database"] = db;
                 templateInstance.Parameters["Columns"] = artifact.GetColumns().ToList();
                 templateInstance.Parameters["Indexes"] = artifact.GetIndexes().ToList();
+                templateInstance.Parameters["ForeignKeys"] = artifact.GetForeignKeys().ToList();
                 templateInstance.Parameters["PrimaryKeyColumns"] = artifact.GetPrimaryKeyColumns().ToList();
                 templateInstance.Parameters["NewColumns"] = artifact.GetNewColumns().ToList();
                 templateInstance.Parameters["ExistingColumns"] = artifact.GetExistingColumns().ToList();

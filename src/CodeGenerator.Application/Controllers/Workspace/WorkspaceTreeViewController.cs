@@ -17,7 +17,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// Main controller for workspace operations
     /// Coordinates between artifact controllers and the UI
     /// </summary>
-    public class WorkspaceTreeViewController : ArtifactTreeViewController<WorkspaceTreeViewModel>
+    public class WorkspaceTreeViewController : ArtifactTreeViewController<WorkspaceTreeViewModel>, IWorkspaceContextProvider
     {
         private readonly IDatasourceFactory _datasourceFactory;
         private readonly WorkspaceFileService _workspaceFileService;

@@ -91,6 +91,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mysql", "Mysql", "{99D3A0D9
 	ProjectSection(SolutionItems) = preProject
 		Templates\SQL\Mysql\table_alter_table.sql.scriban = Templates\SQL\Mysql\table_alter_table.sql.scriban
 		Templates\SQL\Mysql\table_create_table.sql.scriban = Templates\SQL\Mysql\table_create_table.sql.scriban
+		Templates\SQL\Mysql\table_create_table.sql.scriban.def = Templates\SQL\Mysql\table_create_table.sql.scriban.def
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sqlserver", "Sqlserver", "{5A03ABF0-085B-4AB6-8056-015FF6869436}"

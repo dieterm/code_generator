@@ -221,9 +221,9 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
         var current = Parent;
         while (current != null)
         {
-            var decorator = current as T;
-            if (decorator != null)
-                return decorator;
+            var artifact = current as T;
+            if (artifact != null)
+                return artifact;
             current = current.Parent;
         }
         return null;
@@ -278,7 +278,11 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
                 yield return descendant;
         }
     }
-
+    public T? FindDescendantById<T>(string? id) where T: class, IArtifact
+    {
+        if (string.IsNullOrWhiteSpace(id)) return null;
+        return GetAllDescendants().FirstOrDefault(d => d.Id == id) as T;
+    }
     public IEnumerable<IArtifact> GetAllDescendants()
     {
         foreach (var child in Children)

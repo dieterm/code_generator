@@ -65,6 +65,7 @@ public static class ServiceCollectionExtensions
         
         // Register Workspace Controllers
         services.AddSingleton<WorkspaceTreeViewController>();
+        services.AddSingleton<IWorkspaceContextProvider>(sp => sp.GetRequiredService<WorkspaceTreeViewController>());
         services.AddSingleton<IDatasourceFactory, DatasourceFactory>();
         services.AddSingleton<WorkspaceFileService>();
 

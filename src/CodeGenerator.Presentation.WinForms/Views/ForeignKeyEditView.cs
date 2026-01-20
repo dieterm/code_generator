@@ -12,6 +12,8 @@ namespace CodeGenerator.Presentation.WinForms.Views
     public partial class ForeignKeyEditView : UserControl, IView<ForeignKeyEditViewModel>
     {
         private ForeignKeyEditViewModel? _viewModel;
+        private static readonly Color DataTypeMismatchColor = Color.FromArgb(255, 200, 200);
+        private static readonly Color DefaultRowColor = Color.White;
 
         public ForeignKeyEditView()
         {
@@ -33,6 +35,8 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // Bind fields
             txtName.BindViewModel(_viewModel.NameField);
             cmbReferencedTable.BindViewModel(_viewModel.ReferencedTableField);
+            cmbOnDeleteAction.BindViewModel(_viewModel.OnDeleteActionField);
+            cmbOnUpdateAction.BindViewModel(_viewModel.OnUpdateActionField);
 
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
             _viewModel.ColumnMappings.CollectionChanged += ColumnMappings_CollectionChanged;
@@ -52,12 +56,15 @@ namespace CodeGenerator.Presentation.WinForms.Views
         {
             RefreshColumnMappingsGrid();
         }
+
         private bool _isRefreshingColumnMapptingsGrid = false;
+
         private void RefreshColumnMappingsGrid()
         {
             if (_viewModel == null) return;
-            if(_isRefreshingColumnMapptingsGrid) return;
+            if (_isRefreshingColumnMapptingsGrid) return;
             _isRefreshingColumnMapptingsGrid = true;
+
             dgvColumnMappings.Rows.Clear();
 
             foreach (var mapping in _viewModel.ColumnMappings)
@@ -85,8 +92,32 @@ namespace CodeGenerator.Presentation.WinForms.Views
                 {
                     refCell.Value = mapping.ReferencedColumnId;
                 }
+
+                // Update data type columns and row color
+                UpdateDataTypeColumnsAndRowColor(row, mapping);
             }
             _isRefreshingColumnMapptingsGrid = false;
+        }
+
+        private void UpdateDataTypeColumnsAndRowColor(DataGridViewRow row, ForeignKeyColumnMappingViewModel mapping)
+        {
+            if (_viewModel == null) return;
+
+            // Get data types
+            var sourceDataType = mapping.SourceColumnDataType ?? string.Empty;
+            var referencedDataType = mapping.ReferencedColumnDataType ?? string.Empty;
+
+            // Set data type cell values
+            row.Cells[colSourceDataType.Index].Value = sourceDataType;
+            row.Cells[colReferencedDataType.Index].Value = referencedDataType;
+
+            // Check if both columns are selected and have different data types
+            bool hasDataTypeMismatch = !string.IsNullOrEmpty(sourceDataType) &&
+                                       !string.IsNullOrEmpty(referencedDataType) &&
+                                       !string.Equals(sourceDataType, referencedDataType, StringComparison.OrdinalIgnoreCase);
+
+            // Set row background color
+            row.DefaultCellStyle.BackColor = hasDataTypeMismatch ? DataTypeMismatchColor : DefaultRowColor;
         }
 
         private void btnAddMapping_Click(object sender, EventArgs e)
@@ -109,6 +140,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
         {
             if (_viewModel == null || e.RowIndex < 0) return;
             if (_isRefreshingColumnMapptingsGrid) return;
+
             var row = dgvColumnMappings.Rows[e.RowIndex];
             if (row.Tag is not ForeignKeyColumnMappingViewModel mapping) return;
 
@@ -116,6 +148,9 @@ namespace CodeGenerator.Presentation.WinForms.Views
             var referencedColumnId = row.Cells[colReferencedColumn.Index].Value?.ToString();
 
             _viewModel.UpdateColumnMapping(mapping, sourceColumnId, referencedColumnId);
+
+            // Update data type columns and row color after the mapping is updated
+            UpdateDataTypeColumnsAndRowColor(row, mapping);
         }
 
         private void dgvColumnMappings_CurrentCellDirtyStateChanged(object sender, EventArgs e)

@@ -120,7 +120,7 @@ namespace CodeGenerator.Presentation.WinForms.Services
 
                 dockingManager.DockControl(_workspaceDetailsView, mainView, DockingStyle.Left, 4);
                 dockingManager.SetEnableDocking(_workspaceDetailsView, true);
-                dockingManager.SetControlSize(_workspaceDetailsView, new Size(300, mainView.Height - 50));
+                dockingManager.SetControlSize(_workspaceDetailsView, new Size(500, mainView.Height - 50));
                 dockingManager.SetDockLabel(_workspaceDetailsView, "Workspace Details");
             }
             else
@@ -207,7 +207,7 @@ namespace CodeGenerator.Presentation.WinForms.Services
 
                 dockingManager.DockControl(_templateDetailsView, mainView, DockingStyle.Left, 4);
                 dockingManager.SetEnableDocking(_templateDetailsView, true);
-                dockingManager.SetControlSize(_templateDetailsView, new Size(300, mainView.Height - 50));
+                dockingManager.SetControlSize(_templateDetailsView, new Size(500, mainView.Height - 50));
                 dockingManager.SetDockLabel(_templateDetailsView, "Template Details");
             }
             else

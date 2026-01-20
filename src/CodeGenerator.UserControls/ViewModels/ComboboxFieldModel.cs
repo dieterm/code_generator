@@ -28,10 +28,12 @@ namespace CodeGenerator.UserControls.ViewModels
                     if (value == null)
                     {
                         Value = null;
+                        Tooltip = string.Empty;
                     }
                     else
                     {
                         Value = value.Value;
+                        Tooltip = value.Tooltip;
                     }
 
                     _isChangingValues = false;

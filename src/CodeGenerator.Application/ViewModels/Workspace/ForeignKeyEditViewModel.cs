@@ -23,12 +23,36 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         {
             NameField = new SingleLineTextFieldModel { Label = "Foreign Key Name", Name = "Name" };
             ReferencedTableField = new ComboboxFieldModel { Label = "Referenced Table", Name = "ReferencedTable" };
+            OnDeleteActionField = new ComboboxFieldModel { Label = "On Delete", Name = "OnDeleteAction" };
+            OnUpdateActionField = new ComboboxFieldModel { Label = "On Update", Name = "OnUpdateAction" };
             ColumnMappings = new ObservableCollection<ForeignKeyColumnMappingViewModel>();
             AvailableSourceColumns = new ObservableCollection<ColumnItem>();
             AvailableReferencedColumns = new ObservableCollection<ColumnItem>();
 
+            // Initialize action combobox items
+            InitializeForeignKeyActionOnDeleteItems(OnDeleteActionField);
+            InitializeForeignKeyActionOnUpdateItems(OnUpdateActionField);
+
             NameField.PropertyChanged += OnFieldChanged;
             ReferencedTableField.PropertyChanged += OnReferencedTableChanged;
+            OnDeleteActionField.PropertyChanged += OnActionFieldChanged;
+            OnUpdateActionField.PropertyChanged += OnActionFieldChanged;
+        }
+
+        private void InitializeForeignKeyActionOnDeleteItems(ComboboxFieldModel field)
+        {
+            field.Items.Add(new ComboboxItem { DisplayName = "No Action", Value = ForeignKeyAction.NoAction, Tooltip = "No action specified (database default behavior)" });
+            field.Items.Add(new ComboboxItem { DisplayName = "Cascade", Value = ForeignKeyAction.Cascade, Tooltip = "Automatically delete rows in the child table" });
+            field.Items.Add(new ComboboxItem { DisplayName = "Set Null", Value = ForeignKeyAction.SetNull, Tooltip = "Set the foreign key column to NULL" });
+            field.Items.Add(new ComboboxItem { DisplayName = "Restrict", Value = ForeignKeyAction.Restrict, Tooltip = "Prevent the delete if there are referencing rows" });
+        }
+
+        private void InitializeForeignKeyActionOnUpdateItems(ComboboxFieldModel field)
+        {
+            field.Items.Add(new ComboboxItem { DisplayName = "No Action", Value = ForeignKeyAction.NoAction, Tooltip = "No action specified (database default behavior)" });
+            field.Items.Add(new ComboboxItem { DisplayName = "Cascade", Value = ForeignKeyAction.Cascade, Tooltip = "Automatically update rows in the child table" });
+            field.Items.Add(new ComboboxItem { DisplayName = "Set Null", Value = ForeignKeyAction.SetNull, Tooltip = "Set the foreign key column to NULL" });
+            field.Items.Add(new ComboboxItem { DisplayName = "Restrict", Value = ForeignKeyAction.Restrict, Tooltip = "Prevent the update if there are referencing rows" });
         }
 
         /// <summary>
@@ -68,6 +92,8 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         // Field ViewModels
         public SingleLineTextFieldModel NameField { get; }
         public ComboboxFieldModel ReferencedTableField { get; }
+        public ComboboxFieldModel OnDeleteActionField { get; }
+        public ComboboxFieldModel OnUpdateActionField { get; }
         public ObservableCollection<ForeignKeyColumnMappingViewModel> ColumnMappings { get; }
         public ObservableCollection<ColumnItem> AvailableSourceColumns { get; }
         public ObservableCollection<ColumnItem> AvailableReferencedColumns { get; }
@@ -109,6 +135,15 @@ namespace CodeGenerator.Application.ViewModels.Workspace
                     .FirstOrDefault(t => t.Value?.ToString() == _foreignKey.ReferencedTableId);
                 ReferencedTableField.SelectedItem = selectedTable;
 
+                // Set selected actions
+                var selectedOnDelete = OnDeleteActionField.Items
+                    .FirstOrDefault(i => i.Value is ForeignKeyAction action && action == _foreignKey.OnDeleteAction);
+                OnDeleteActionField.SelectedItem = selectedOnDelete;
+
+                var selectedOnUpdate = OnUpdateActionField.Items
+                    .FirstOrDefault(i => i.Value is ForeignKeyAction action && action == _foreignKey.OnUpdateAction);
+                OnUpdateActionField.SelectedItem = selectedOnUpdate;
+
                 LoadAvailableColumns();
                 LoadColumnMappings();
             }
@@ -128,7 +163,12 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             {
                 foreach (var column in _parentTable.GetColumns().OrderBy(c => c.Name))
                 {
-                    AvailableSourceColumns.Add(new ColumnItem { Id = column.Id, Name = column.Name });
+                    AvailableSourceColumns.Add(new ColumnItem 
+                    { 
+                        Id = column.Id, 
+                        Name = column.Name,
+                        DataType = column.DataType
+                    });
                 }
             }
 
@@ -144,7 +184,12 @@ namespace CodeGenerator.Application.ViewModels.Workspace
                 {
                     foreach (var column in referencedTable.GetColumns().OrderBy(c => c.Name))
                     {
-                        AvailableReferencedColumns.Add(new ColumnItem { Id = column.Id, Name = column.Name });
+                        AvailableReferencedColumns.Add(new ColumnItem 
+                        { 
+                            Id = column.Id, 
+                            Name = column.Name,
+                            DataType = column.DataType
+                        });
                     }
                 }
             }
@@ -158,12 +203,17 @@ namespace CodeGenerator.Application.ViewModels.Workspace
 
             foreach (var mapping in _foreignKey.ColumnMappings)
             {
+                var sourceColumn = AvailableSourceColumns.FirstOrDefault(c => c.Id == mapping.SourceColumnId);
+                var referencedColumn = AvailableReferencedColumns.FirstOrDefault(c => c.Id == mapping.ReferencedColumnId);
+
                 var vm = new ForeignKeyColumnMappingViewModel
                 {
                     SourceColumnId = mapping.SourceColumnId,
                     ReferencedColumnId = mapping.ReferencedColumnId,
-                    SourceColumnName = AvailableSourceColumns.FirstOrDefault(c => c.Id == mapping.SourceColumnId)?.Name ?? "(Unknown)",
-                    ReferencedColumnName = AvailableReferencedColumns.FirstOrDefault(c => c.Id == mapping.ReferencedColumnId)?.Name ?? "(Unknown)"
+                    SourceColumnName = sourceColumn?.Name ?? "(Unknown)",
+                    ReferencedColumnName = referencedColumn?.Name ?? "(Unknown)",
+                    SourceColumnDataType = sourceColumn?.DataType,
+                    ReferencedColumnDataType = referencedColumn?.DataType
                 };
                 vm.PropertyChanged += ColumnMapping_PropertyChanged;
                 ColumnMappings.Add(vm);
@@ -206,6 +256,25 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             }
         }
 
+        private void OnActionFieldChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (_isLoading || _foreignKey == null) return;
+
+            if (e.PropertyName == nameof(ComboboxFieldModel.SelectedItem) && sender is ComboboxFieldModel field)
+            {
+                if (field == OnDeleteActionField && OnDeleteActionField.SelectedItem?.Value is ForeignKeyAction deleteAction)
+                {
+                    _foreignKey.OnDeleteAction = deleteAction;
+                    ValueChanged?.Invoke(this, new ArtifactPropertyChangedEventArgs(_foreignKey, "OnDeleteAction", deleteAction));
+                }
+                else if (field == OnUpdateActionField && OnUpdateActionField.SelectedItem?.Value is ForeignKeyAction updateAction)
+                {
+                    _foreignKey.OnUpdateAction = updateAction;
+                    ValueChanged?.Invoke(this, new ArtifactPropertyChangedEventArgs(_foreignKey, "OnUpdateAction", updateAction));
+                }
+            }
+        }
+
         private void SaveToForeignKey()
         {
             if (_foreignKey == null) return;
@@ -217,14 +286,16 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         {
             if (_foreignKey == null) return;
 
-            _foreignKey.ColumnMappings.Clear();
+            var newMappings = new List<ForeignKeyColumnMapping>();
             foreach (var mapping in ColumnMappings)
             {
                 if (!string.IsNullOrEmpty(mapping.SourceColumnId) && !string.IsNullOrEmpty(mapping.ReferencedColumnId))
                 {
-                    _foreignKey.ColumnMappings.Add(new ForeignKeyColumnMapping(mapping.SourceColumnId, mapping.ReferencedColumnId));
+                    newMappings.Add(new ForeignKeyColumnMapping(mapping.SourceColumnId, mapping.ReferencedColumnId));
                 }
             }
+            // Assign a new list to trigger the property setter and state update
+            _foreignKey.ColumnMappings = newMappings;
         }
 
         /// <summary>
@@ -257,10 +328,15 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         /// </summary>
         public void UpdateColumnMapping(ForeignKeyColumnMappingViewModel mapping, string? sourceColumnId, string? referencedColumnId)
         {
+            var sourceColumn = AvailableSourceColumns.FirstOrDefault(c => c.Id == sourceColumnId);
+            var referencedColumn = AvailableReferencedColumns.FirstOrDefault(c => c.Id == referencedColumnId);
+
             mapping.SourceColumnId = sourceColumnId ?? string.Empty;
             mapping.ReferencedColumnId = referencedColumnId ?? string.Empty;
-            mapping.SourceColumnName = AvailableSourceColumns.FirstOrDefault(c => c.Id == sourceColumnId)?.Name ?? "";
-            mapping.ReferencedColumnName = AvailableReferencedColumns.FirstOrDefault(c => c.Id == referencedColumnId)?.Name ?? "";
+            mapping.SourceColumnName = sourceColumn?.Name ?? "";
+            mapping.ReferencedColumnName = referencedColumn?.Name ?? "";
+            mapping.SourceColumnDataType = sourceColumn?.DataType;
+            mapping.ReferencedColumnDataType = referencedColumn?.DataType;
 
             SaveColumnMappings();
 
@@ -280,6 +356,8 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         private string _referencedColumnId = string.Empty;
         private string _sourceColumnName = string.Empty;
         private string _referencedColumnName = string.Empty;
+        private string? _sourceColumnDataType;
+        private string? _referencedColumnDataType;
 
         public string SourceColumnId
         {
@@ -304,6 +382,18 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             get => _referencedColumnName;
             set => SetProperty(ref _referencedColumnName, value);
         }
+
+        public string? SourceColumnDataType
+        {
+            get => _sourceColumnDataType;
+            set => SetProperty(ref _sourceColumnDataType, value);
+        }
+
+        public string? ReferencedColumnDataType
+        {
+            get => _referencedColumnDataType;
+            set => SetProperty(ref _referencedColumnDataType, value);
+        }
     }
 
     /// <summary>
@@ -313,6 +403,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
     {
         public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
+        public string? DataType { get; set; }
 
         public override string ToString() => Name;
     }

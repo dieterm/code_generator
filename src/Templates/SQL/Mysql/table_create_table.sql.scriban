@@ -11,3 +11,32 @@ CREATE TABLE {{ if Table.schema }}{{ Table.schema }}.{{ end }}{{ GetIdentifier T
 {{- end }}
 {{- end }}
 );
+
+{{- for foreignkey in ForeignKeys }}
+ALTER TABLE {{ if Table.schema }}{{ Table.schema }}.{{ end }}{{ GetIdentifier Table.name }}
+ADD CONSTRAINT {{ foreignkey.name }}
+	FOREIGN KEY ({{ for columnmapping in foreignkey.column_mappings }}{{ GetIdentifier columnmapping.source_column.name }}{{ if !for.last }},{{ end }}{{ end }})
+	REFERENCES {{ if foreignkey.referenced_table.schema }}{{ foreignkey.referenced_table.schema }}.{{ end }}{{ GetIdentifier foreignkey.referenced_table.name }}({{ for columnmapping in foreignkey.column_mappings }}{{ GetIdentifier columnmapping.referenced_column.name }}{{ if !for.last }},{{ end }}{{ end }})
+    ON DELETE {{ 
+case foreignkey.on_delete_action 
+when 0 
+"NO ACTION" 
+when 1 
+"CASCADE" 
+when 2 
+"SET NULL" 
+when 3 
+"RESTRICT" 
+end }}
+    ON UPDATE {{ 
+case foreignkey.on_update_action 
+when 0 
+"NO ACTION" 
+when 1 
+"CASCADE" 
+when 2 
+"SET NULL" 
+when 3 
+"RESTRICT" 
+end }};
+{{- end }}

@@ -76,6 +76,23 @@
       "isTemplateDatasourceArtifactData": false
     },
     {
+      "name": "ForeignKeys",
+      "description": "Parameter \u0027ForeignKeys\u0027 of type \u0027List\u00601\u0027",
+      "fullyQualifiedAssemblyTypeName": "System.Collections.Generic.List\u00601[[CodeGenerator.Core.Workspaces.Artifacts.Relational.ForeignKeyArtifact, CodeGenerator.Core.Workspaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
+      "required": false,
+      "defaultValue": null,
+      "allowedValues": null,
+      "label": "ForeignKeys",
+      "tooltip": null,
+      "displayOrder": 0,
+      "validationPattern": null,
+      "minValue": null,
+      "maxValue": null,
+      "tableDataFilter": null,
+      "tableDataMaxRows": null,
+      "isTemplateDatasourceArtifactData": false
+    },
+    {
       "name": "PrimaryKeyColumns",
       "description": "Parameter \u0027PrimaryKeyColumns\u0027 of type \u0027List\u00601\u0027",
       "fullyQualifiedAssemblyTypeName": "System.Collections.Generic.List\u00601[[CodeGenerator.Core.Workspaces.Artifacts.Relational.ColumnArtifact, CodeGenerator.Core.Workspaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",

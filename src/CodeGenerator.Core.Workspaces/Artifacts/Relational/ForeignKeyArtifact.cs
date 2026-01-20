@@ -6,6 +6,32 @@ using CodeGenerator.Shared.Views.TreeNode;
 namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
 {
     /// <summary>
+    /// Specifies the action to take when a referenced row is deleted or updated
+    /// </summary>
+    public enum ForeignKeyAction
+    {
+        /// <summary>
+        /// No action specified (database default behavior)
+        /// </summary>
+        NoAction = 0,
+
+        /// <summary>
+        /// Automatically delete/update rows in the child table
+        /// </summary>
+        Cascade = 1,
+
+        /// <summary>
+        /// Set the foreign key column to NULL
+        /// </summary>
+        SetNull = 2,
+
+        /// <summary>
+        /// Prevent the delete/update if there are referencing rows
+        /// </summary>
+        Restrict = 3
+    }
+
+    /// <summary>
     /// Represents a database foreign key constraint
     /// </summary>
     public class ForeignKeyArtifact : Artifact, IEditableTreeNode
@@ -14,6 +40,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         {
             Name = name;
             ColumnMappings = new List<ForeignKeyColumnMapping>();
+            OnDeleteAction = ForeignKeyAction.NoAction;
+            OnUpdateAction = ForeignKeyAction.NoAction;
         }
 
         public ForeignKeyArtifact(ArtifactState state)
@@ -43,6 +71,11 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         }
 
         /// <summary>
+        /// Helper property, usefull in templates
+        /// </summary>
+        public TableArtifact? ReferencedTable { get { return FindAncesterOfType<DatasourceArtifact>()?.FindDescendantById<TableArtifact>(ReferencedTableId); } }
+
+        /// <summary>
         /// The Id of the referenced table
         /// </summary>
         public string? ReferencedTableId
@@ -58,6 +91,24 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         {
             get => GetValue<List<ForeignKeyColumnMapping>>(nameof(ColumnMappings));
             set => SetValue(nameof(ColumnMappings), value);
+        }
+
+        /// <summary>
+        /// Action to take when a referenced row is deleted
+        /// </summary>
+        public ForeignKeyAction OnDeleteAction
+        {
+            get => GetValue<ForeignKeyAction>(nameof(OnDeleteAction));
+            set => SetValue(nameof(OnDeleteAction), value);
+        }
+
+        /// <summary>
+        /// Action to take when a referenced row is updated
+        /// </summary>
+        public ForeignKeyAction OnUpdateAction
+        {
+            get => GetValue<ForeignKeyAction>(nameof(OnUpdateAction));
+            set => SetValue(nameof(OnUpdateAction), value);
         }
 
         /// <summary>
@@ -133,33 +184,5 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         {
             Name = newName;
         }
-    }
-
-    /// <summary>
-    /// Represents a column mapping in a foreign key
-    /// </summary>
-    public class ForeignKeyColumnMapping
-    {
-        public ForeignKeyColumnMapping()
-        {
-            SourceColumnId = string.Empty;
-            ReferencedColumnId = string.Empty;
-        }
-
-        public ForeignKeyColumnMapping(string sourceColumnId, string referencedColumnId)
-        {
-            SourceColumnId = sourceColumnId;
-            ReferencedColumnId = referencedColumnId;
-        }
-
-        /// <summary>
-        /// The Id of the source column (in the table that owns the foreign key)
-        /// </summary>
-        public string SourceColumnId { get; set; }
-
-        /// <summary>
-        /// The Id of the referenced column (in the referenced table)
-        /// </summary>
-        public string ReferencedColumnId { get; set; }
     }
 }
