@@ -115,6 +115,11 @@ namespace CodeGenerator.Presentation.WinForms.Views
                 detailsControl = new IndexEditView();
                 ((IndexEditView)detailsControl).BindViewModel(indexViewModel);
             }
+            else if (_viewModel?.DetailsViewModel is ForeignKeyEditViewModel foreignKeyViewModel)
+            {
+                detailsControl = new ForeignKeyEditView();
+                ((ForeignKeyEditView)detailsControl).BindViewModel(foreignKeyViewModel);
+            }
             else if (_viewModel?.DetailsViewModel is TableEditViewModel tableViewModel)
             {
                 detailsControl = new TableEditView();

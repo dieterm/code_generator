@@ -65,7 +65,37 @@ namespace CodeGenerator.Shared.Memento
                         var isObjectType = oldValue is IEnumerable<object>;
                         if (isObjectType)
                         {
-                            Properties[name] = ((IEnumerable<object>)oldValue).Cast<T>().ToList();
+                            try
+                            {
+                                Properties[name] = ((IEnumerable<object>)oldValue).Cast<T>().ToList();
+                            }
+                            catch (InvalidCastException)
+                            {
+                                var firstChildObject = ((IEnumerable<object>)oldValue).FirstOrDefault();
+                                if(firstChildObject is IDictionary<string, object> dict)
+                                {
+                                    foreach(var item in (IEnumerable<object>)oldValue)
+                                    {
+                                        if(item is IDictionary<string, object> itemDict)
+                                        {
+                                            var instance = Activator.CreateInstance<T>();
+                                            foreach(var kvp in itemDict)
+                                            {
+                                                var propInfo = typeof(T).GetProperties().FirstOrDefault(p => string.Equals(p.Name, kvp.Key, StringComparison.OrdinalIgnoreCase));
+                                                if(propInfo != null && propInfo.CanWrite)
+                                                {
+                                                    propInfo.SetValue(instance, kvp.Value);
+                                                }
+                                            }
+                                            if(Properties[name] == null || Properties[name] is List<object>)
+                                                Properties[name] = new List<T>();
+                                            ((List<T>)Properties[name]).Add(instance);
+                                        }
+                                    }
+                                }
+
+                            }
+                            
                         }
                         else
                         {

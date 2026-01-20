@@ -57,6 +57,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<ViewArtifactController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<ColumnArtifactController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<IndexArtifactController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<ForeignKeyArtifactController>(),
                 // Add other controllers here as needed
             };
         }

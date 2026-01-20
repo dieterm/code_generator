@@ -5,9 +5,11 @@ using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.Databases.RelationalDatabases;
+using CodeGenerator.Shared;
 using CodeGenerator.TemplateEngines.Scriban;
 using Microsoft.Extensions.Logging;
 
@@ -106,6 +108,22 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 }
             });
 
+            // Add Foreign Key command
+            commands.Add(new ArtifactTreeNodeCommand
+            {
+                Id = "add_foreignkey",
+                Text = "Add Foreign Key",
+                IconKey = "link",
+                Execute = async (a) =>
+                {
+                    var foreignKey = new ForeignKeyArtifact($"FK_{artifact.Name}_New");
+                    artifact.AddChild(foreignKey);
+                    TreeViewController.OnArtifactAdded(artifact, foreignKey);
+                    TreeViewController.RequestBeginRename(foreignKey);
+                    await Task.CompletedTask;
+                }
+            });
+
             commands.Add(ArtifactTreeNodeCommand.Separator);
 
             // Rename command
@@ -145,17 +163,76 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 IconKey = "trash",
                 Execute = async (a) =>
                 {
-                    var parent = artifact.Parent;
-                    if (parent != null)
-                    {
-                        parent.RemoveChild(artifact);
-                        TreeViewController.OnArtifactRemoved(parent, artifact);
-                    }
-                    await Task.CompletedTask;
+                    await DeleteTableAsync(artifact);
                 }
             });
 
             return commands;
+        }
+
+        private async Task DeleteTableAsync(TableArtifact artifact)
+        {
+            var parent = artifact.Parent;
+            if (parent == null) return;
+
+            // Find the datasource to check for foreign key references
+            var datasource = artifact.FindAncesterOfType<DatasourceArtifact>();
+            if (datasource != null)
+            {
+                // Find all foreign keys that reference this table
+                var referencingForeignKeys = FindForeignKeysReferencingTable(datasource, artifact.Id);
+
+                if (referencingForeignKeys.Any())
+                {
+                    // Build warning message
+                    var referencingTables = referencingForeignKeys
+                        .Select(fk => fk.Parent as TableArtifact)
+                        .Where(t => t != null)
+                        .Select(t => t!.Name)
+                        .Distinct()
+                        .ToList();
+
+                    var message = $"The table '{artifact.Name}' is referenced by foreign keys in the following tables:\n\n" +
+                                  string.Join("\n", referencingTables.Select(t => $"• {t}")) +
+                                  "\n\nDo you want to delete this table and remove all referencing foreign key columns?";
+
+                    var messageBoxService = ServiceProviderHolder.GetRequiredService<IMessageBoxService>();
+                    if (!messageBoxService.AskYesNo(message, "Delete Table"))
+                    {
+                        return; // User cancelled
+                    }
+
+                    // Remove column mappings from referencing foreign keys
+                    foreach (var foreignKey in referencingForeignKeys)
+                    {
+                        foreignKey.RemoveColumnMappingsForTable(artifact.Id);
+
+                        // If foreign key has no more column mappings, remove it entirely
+                        if (!foreignKey.ColumnMappings.Any())
+                        {
+                            var fkParent = foreignKey.Parent;
+                            if (fkParent != null)
+                            {
+                                fkParent.RemoveChild(foreignKey);
+                                TreeViewController.OnArtifactRemoved(fkParent, foreignKey);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Delete the table
+            parent.RemoveChild(artifact);
+            TreeViewController.OnArtifactRemoved(parent, artifact);
+
+            await Task.CompletedTask;
+        }
+
+        private IEnumerable<ForeignKeyArtifact> FindForeignKeysReferencingTable(DatasourceArtifact datasource, string tableId)
+        {
+            return datasource.GetAllDescendants()
+                .OfType<ForeignKeyArtifact>()
+                .Where(fk => fk.ReferencesTable(tableId));
         }
 
         protected override Task OnSelectedInternalAsync(TableArtifact artifact, CancellationToken cancellationToken)

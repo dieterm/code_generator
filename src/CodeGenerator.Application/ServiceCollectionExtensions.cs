@@ -86,6 +86,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ViewArtifactController>();
         services.AddSingleton<ColumnArtifactController>();
         services.AddSingleton<IndexArtifactController>();
+        services.AddSingleton<ForeignKeyArtifactController>();
 
         // Template Artifact Controllers
         services.AddSingleton<RootArtifactController>();

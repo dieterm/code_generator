@@ -30,11 +30,11 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // 
             lblTitle.AutoSize = true;
             lblTitle.Dock = DockStyle.Top;
-            lblTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            lblTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             lblTitle.Location = new Point(10, 10);
             lblTitle.Name = "lblTitle";
             lblTitle.Padding = new Padding(0, 0, 0, 10);
-            lblTitle.Size = new Size(136, 31);
+            lblTitle.Size = new Size(108, 31);
             lblTitle.TabIndex = 0;
             lblTitle.Text = "Table Details";
             // 
@@ -60,14 +60,15 @@ namespace CodeGenerator.Presentation.WinForms.Views
             tableLayoutGeneral.Location = new Point(6, 22);
             tableLayoutGeneral.Name = "tableLayoutGeneral";
             tableLayoutGeneral.RowCount = 2;
-            tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tableLayoutGeneral.RowStyles.Add(new RowStyle());
+            tableLayoutGeneral.RowStyles.Add(new RowStyle());
             tableLayoutGeneral.Size = new Size(368, 86);
             tableLayoutGeneral.TabIndex = 0;
             // 
             // txtName
             // 
             txtName.Dock = DockStyle.Top;
+            txtName.ErrorMessageVisible = true;
             txtName.Label = "Table Name:";
             txtName.Location = new Point(3, 3);
             txtName.Name = "txtName";
@@ -77,6 +78,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // txtSchema
             // 
             txtSchema.Dock = DockStyle.Top;
+            txtSchema.ErrorMessageVisible = true;
             txtSchema.Label = "Schema:";
             txtSchema.Location = new Point(3, 45);
             txtSchema.Name = "txtSchema";

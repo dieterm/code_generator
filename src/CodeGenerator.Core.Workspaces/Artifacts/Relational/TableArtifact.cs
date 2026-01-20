@@ -86,6 +86,12 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             Children.OfType<IndexArtifact>();
 
         /// <summary>
+        /// Get all foreign keys
+        /// </summary>
+        public IEnumerable<ForeignKeyArtifact> GetForeignKeys() =>
+            Children.OfType<ForeignKeyArtifact>();
+
+        /// <summary>
         /// Get the primary key columns
         /// </summary>
         public IEnumerable<ColumnArtifact> GetPrimaryKeyColumns() => 
@@ -110,6 +116,17 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             AddChild(index);
             return index;
         }
+
+        /// <summary>
+        /// Add a foreign key to the table
+        /// </summary>
+        public ForeignKeyArtifact AddForeignKey(string foreignKeyName)
+        {
+            var foreignKey = new ForeignKeyArtifact(foreignKeyName);
+            AddChild(foreignKey);
+            return foreignKey;
+        }
+
         public override void RemoveChild(IArtifact child)
         {
             base.RemoveChild(child);
@@ -138,6 +155,14 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         public void RemoveIndex(IndexArtifact index)
         {
             RemoveChild(index);
+        }
+
+        /// <summary>
+        /// Remove a foreign key from the table
+        /// </summary>
+        public void RemoveForeignKey(ForeignKeyArtifact foreignKey)
+        {
+            RemoveChild(foreignKey);
         }
 
         public IEnumerable<ColumnArtifact> GetForeignKeyColumns()
