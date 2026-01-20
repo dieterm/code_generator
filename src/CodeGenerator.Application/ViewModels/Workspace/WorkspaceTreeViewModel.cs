@@ -102,7 +102,11 @@ namespace CodeGenerator.Application.ViewModels.Workspace
 
         public override void Cleanup()
         {
+            Workspace = null;
             TreeViewController.WorkspaceChanged -= OnWorkspaceChanged;
+
+            base.Cleanup();
+            
            // _workspaceController.BeginRenameRequested -= OnBeginRenameRequested;
             //_workspaceController.ArtifactPropertyChanged -= OnArtifactPropertyChanged;
         }

@@ -67,7 +67,13 @@ namespace CodeGenerator.Application.Controllers
                             .WithSize(RibbonButtonSize.Large)
                             .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
                             .WithImage("save")
-                            .OnClick((e) => OnSaveRequested(null, e)).Build();
+                            .OnClick((e) => OnSaveRequested(null, e))
+                        .AddButton("btnClose", "Close")
+                            .WithSize(RibbonButtonSize.Large)
+                            .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
+                            .WithImage("x")
+                            .OnClick((e) => OnCloseRequested(null, e))
+                            .Build();
 
             _ribbonBuilder.AddTab("tabGeneration", "Generation")
                     .AddToolStrip("toolstripGeneration", "Generation")
@@ -85,7 +91,13 @@ namespace CodeGenerator.Application.Controllers
                             .WithSize(RibbonButtonSize.Large)
                             .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
                             .WithImage("x")
-                            .OnClick((e) => OnCancelGenerationRequested(null, e)).Build();
+                            .OnClick((e) => OnCancelGenerationRequested(null, e))
+                            .Build();
+        }
+
+        private void OnCloseRequested(object? sender, EventArgs e)
+        {
+            _workspaceController.CloseWorkspace();
         }
 
         private void OnSettingsRequested(object value, EventArgs e)
