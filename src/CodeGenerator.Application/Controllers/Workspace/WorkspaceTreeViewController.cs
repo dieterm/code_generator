@@ -1,5 +1,6 @@
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Controllers.Workspace.Datasources;
+using CodeGenerator.Application.Controllers.Workspace.Domains;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
@@ -58,6 +59,9 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<ColumnArtifactController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<IndexArtifactController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<ForeignKeyArtifactController>(),
+
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<DomainsContainerController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<DomainController>(),
                 // Add other controllers here as needed
             };
         }
@@ -149,6 +153,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             CurrentWorkspace = null;
             TreeViewModel?.Cleanup();
             TreeViewModel = null;
+            ShowArtifactDetailsView(null);
             WorkspaceChanged?.Invoke(this, null);
         }
 
@@ -268,6 +273,13 @@ namespace CodeGenerator.Application.Controllers.Workspace
             }
             _workspaceDetailsViewModel.DetailsViewModel = detailsModel;
             WindowManagerService.ShowWorkspaceDetailsView(_workspaceDetailsViewModel);
+        }
+
+        public DomainArtifact AddDomain(string domainName)
+        {
+            var domainArtifact = new DomainArtifact(domainName);
+            CurrentWorkspace?.Domains.AddDomain(domainArtifact);
+            return domainArtifact;
         }
     }
 }

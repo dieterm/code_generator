@@ -16,9 +16,9 @@ namespace CodeGenerator.TemplateEngines.Scriban
         {
             var xmlContent = GenerateScribanXmlConfig(templateInstance);
             //File.WriteAllText(@"D:\Cloud\GitHub\code_generator\src\CodeGenerator.Core\IntellicenseSupport\Example_Config.xml", xmlContent);
-            Debug.WriteLine("");
-            Debug.WriteLine(xmlContent);
-            Debug.WriteLine("");
+            //Debug.WriteLine("");
+            //Debug.WriteLine(xmlContent);
+            //Debug.WriteLine("");
             var byteArray = Encoding.UTF8.GetBytes(xmlContent);
             return new MemoryStream(byteArray);
         }

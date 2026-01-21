@@ -61,6 +61,7 @@ namespace CodeGenerator.UserControls.ViewModels
             {
                 _parameterizedString.Parameters.Add(parameter);
             }
+            OnPropertyChanged(nameof(Preview));
         }
         public void AddParameterToValue(ParameterizedStringParameter parameter, int caretPosition)
         {

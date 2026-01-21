@@ -3,6 +3,7 @@ using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Controllers.Template;
 using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Application.Controllers.Workspace.Datasources;
+using CodeGenerator.Application.Controllers.Workspace.Domains;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Application.ViewModels.Template;
@@ -74,6 +75,7 @@ public static class ServiceCollectionExtensions
 
         // Workspace Artifact Controllers
         services.AddSingleton<WorkspaceArtifactController>();
+
         services.AddSingleton<DatasourcesContainerController>();
         services.AddSingleton<MysqlDatasourceController>();
         services.AddSingleton<SqlServerDatasourceController>();
@@ -88,6 +90,9 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ColumnArtifactController>();
         services.AddSingleton<IndexArtifactController>();
         services.AddSingleton<ForeignKeyArtifactController>();
+
+        services.AddSingleton<DomainsContainerController>();
+        services.AddSingleton<DomainController>();
 
         // Template Artifact Controllers
         services.AddSingleton<RootArtifactController>();

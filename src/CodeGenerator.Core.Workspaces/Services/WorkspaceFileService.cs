@@ -115,8 +115,6 @@ namespace CodeGenerator.Core.Workspaces.Services
                 DefaultTargetFramework = workspaceSettings.DefaultTargetFramework,
                 DefaultLanguage = workspaceSettings.DefaultLanguage
             };
-            var datasourcesContainer= new DatasourcesContainerArtifact();
-            workspace.AddChild(datasourcesContainer);
 
             await SaveAsync(workspace, filePath, cancellationToken);
 
