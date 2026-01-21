@@ -89,6 +89,13 @@ namespace CodeGenerator.TemplateEngines.Scriban
             Triggers.Add(new ContextChoiseTrigger("/=", "<variable> /= <expression> - Divides <variable> by <expression> and assigns the result to <variable>.", FormatOperator) { UseSplitter = true });
             Triggers.Add(new ContextChoiseTrigger("//=", "<variable> //= <expression> - divide <variable> by <expression> number and round to an integer, and assigns the result to <variable>.", FormatOperator) { UseSplitter = true });
             Triggers.Add(new ContextChoiseTrigger("%=", "<variable> %= <expression> - calculates the modulus of <variable> by <expression>, and assigns the result to <variable>.", FormatOperator) { UseSplitter = true });
+
+            // Whitespace contol operators
+            Triggers.Add(new ContextChoiseTrigger("~", "Used to trim (non-greedy) whitespace (but no newlines) in template tags. e.g {{~ variable }} or {{ variable ~}}", FormatOperator) { UseSplitter = true });
+            //Triggers.Add(new ContextChoiseTrigger("{{-", "Used to trim whitespace greedy in template tags. e.g {{- variable }} or {{ variable -}}", FormatOperator) { UseSplitter = true });
+            //Triggers.Add(new ContextChoiseTrigger("-}}", "Used to trim whitespace greedy in template tags. e.g {{- variable }} or {{ variable -}}", FormatOperator) { UseSplitter = true });
+            //Triggers.Add(new ContextChoiseTrigger("{{~", "will remove any preceeding whitespace until it reaches a non whitespace character such as a newline or letter", FormatOperator) { UseSplitter = true });
+            //Triggers.Add(new ContextChoiseTrigger("~}}", "will remove any following whitespace including the first newline until it reaches a non whitespace character or a second newline", FormatOperator) { UseSplitter = true });
         }
 
         private static void CreateKeywordsStatements()

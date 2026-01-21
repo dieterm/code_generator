@@ -7,3 +7,6 @@
 /**/obj/*
 *.csproj.user
 /src/CodeGenerator.Presentation.WinForms/Resources/lucide-icons
+/src/Templates/Yaml/scriban_template_support_problem.zip
+/src/Templates/Yaml/example_output_screenshot.png
+/src/Templates/Yaml/Example_Config.xml
