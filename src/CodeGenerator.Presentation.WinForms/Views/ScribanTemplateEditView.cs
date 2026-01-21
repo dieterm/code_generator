@@ -456,7 +456,8 @@ Options...
                     if (lexem != null)
                     {
                         IConfigLexem configLexem = lexem.Config as IConfigLexem;
-                        if(_viewModel!=null &&_viewModel.TemplateInstance!=null && _viewModel.TemplateInstance.Parameters.ContainsKey(lexem.Text))
+
+                        if (_viewModel!=null &&_viewModel.TemplateInstance!=null && _viewModel.TemplateInstance.Parameters.ContainsKey(lexem.Text))
                         {
                             try
                             {

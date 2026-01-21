@@ -30,14 +30,18 @@ namespace CodeGenerator.TemplateEngines.Scriban
 
             // Formats
             sb.AppendLine("    <formats>");
-            sb.AppendLine("      <format name=\"Text\" Font=\"Consolas, 10pt\" FontColor=\"Black\" />");
-            sb.AppendLine("      <format name=\"KeyWord\" Font=\"Consolas, 10pt, style=Bold\" FontColor=\"Blue\" />");
-            sb.AppendLine("      <format name=\"String\" Font=\"Consolas, 10pt\" FontColor=\"#A31515\" />");
-            sb.AppendLine("      <format name=\"Comment\" Font=\"Consolas, 10pt, style=Italic\" FontColor=\"Green\" />");
-            sb.AppendLine("      <format name=\"Operator\" Font=\"Consolas, 10pt, style=Bold\" FontColor=\"#FF6600\" />");
-            sb.AppendLine("      <format name=\"Parameter\" Font=\"Consolas, 10pt, style=Bold\" FontColor=\"Purple\" />");
-            sb.AppendLine("      <format name=\"Function\" Font=\"Consolas, 10pt\" FontColor=\"#8B4513\" />");
-            sb.AppendLine("      <format name=\"Number\" Font=\"Consolas, 10pt\" FontColor=\"DarkCyan\" />");
+            foreach(var format in ScribanIntellisenceSupport.Formats)
+            {
+                sb.AppendLine("      " + format.ToXml());
+            }
+            //sb.AppendLine("      <format name=\"Text\" Font=\"Consolas, 10pt\" FontColor=\"Black\" />");
+            //sb.AppendLine("      <format name=\"KeyWord\" Font=\"Consolas, 10pt, style=Bold\" FontColor=\"Blue\" />");
+            //sb.AppendLine("      <format name=\"String\" Font=\"Consolas, 10pt\" FontColor=\"#A31515\" />");
+            //sb.AppendLine("      <format name=\"Comment\" Font=\"Consolas, 10pt, style=Italic\" FontColor=\"Green\" />");
+            //sb.AppendLine("      <format name=\"Operator\" Font=\"Consolas, 10pt, style=Bold\" FontColor=\"#FF6600\" />");
+            //sb.AppendLine("      <format name=\"Parameter\" Font=\"Consolas, 10pt, style=Bold\" FontColor=\"Purple\" />");
+            //sb.AppendLine("      <format name=\"Function\" Font=\"Consolas, 10pt\" FontColor=\"#8B4513\" />");
+            //sb.AppendLine("      <format name=\"Number\" Font=\"Consolas, 10pt\" FontColor=\"DarkCyan\" />");
             sb.AppendLine("    </formats>");
 
             // Extensions
@@ -54,37 +58,50 @@ namespace CodeGenerator.TemplateEngines.Scriban
             sb.AppendLine("      <lexem BeginBlock=\"\\n\" IsBeginRegex=\"true\" />");
             sb.AppendLine("      <lexem BeginBlock=\"{\" EndBlock=\"}\" Type=\"Operator\" OnlyLocalSublexems=\"false\" IsComplex=\"true\">");
             sb.AppendLine("        <SubLexems>");
-            sb.AppendLine("          <!-- support for comments block (single line) -->");
 
-            sb.AppendLine("             <lexem BeginBlock=\"#\" Type=\"Comment\" IsComplex=\"true\" OnlyLocalSublexems=\"true\" >");
-            sb.AppendLine("                 <SubLexems>");
-            sb.AppendLine("                     <lexem BeginBlock=\"[^#]+\" EndBlock=\"[^}\\r\\n]+\" IsBeginRegex=\"true\" IsEndRegex=\"true\"  Type=\"Comment\" />");
-            sb.AppendLine("                 </SubLexems>");
-            sb.AppendLine("             </lexem>");
+            sb.AppendLine("          <!-- support for comments block (single line) -->");
+            sb.AppendLine("          <lexem BeginBlock=\"#\" Type=\"Comment\" IsComplex=\"true\" OnlyLocalSublexems=\"true\" >");
+            sb.AppendLine("              <SubLexems>");
+            sb.AppendLine("                   <lexem BeginBlock=\"[^#]+\" EndBlock=\"[^}\\r\\n]+\" IsBeginRegex=\"true\" IsEndRegex=\"true\"  Type=\"Comment\" />");
+            sb.AppendLine("              </SubLexems>");
+            sb.AppendLine("          </lexem>");
+
+            sb.AppendLine("          <!-- support for comments block (multi line) -->");
+            sb.AppendLine("          <lexem BeginBlock=\"##\" EndBlock=\"##\" Type=\"Comment\" IsComplex=\"true\" OnlyLocalSublexems=\"true\" >");
+            sb.AppendLine("              <SubLexems>");
+            sb.AppendLine("                   <lexem BeginBlock=\"[^#]+\" EndBlock=\"[^}\\r\\n]+\" IsBeginRegex=\"true\" IsEndRegex=\"true\"  Type=\"Comment\" />");
+            sb.AppendLine("              </SubLexems>");
+            sb.AppendLine("          </lexem>");
 
             sb.AppendLine("          <!-- support for dot and pipe operators -->");
             sb.AppendLine("          <lexem BeginBlock=\".\" Type=\"Operator\" DropContextChoiceList=\"true\"/>");
             sb.AppendLine("          <lexem BeginBlock=\"|\" Type=\"Operator\" DropContextChoiceList=\"true\"/>");
 
-            // Scriban keywords
-            var keywords = new[] {
-                "if", "else", "elseif", "end",  "in", "while", "break",
-                "continue", "func", "ret", "capture", "readonly", "import",
-                "with", "wrap", "include", "true", "false", "null", "empty",
-                "blank", "this", "tablerow", "case", "when"
-            };
+            //var operators = new[] { "!", "+","^", "-", "*", "/", "%", "==", "!=", ">", "<", ">=", "<=", "&&", "||", "??" };
 
-            foreach (var keyword in keywords)
-            {
-                sb.AppendLine($"      <lexem BeginBlock=\"{keyword}\" Type=\"KeyWord\" DropContextChoiceList=\"false\" />");
-            }
+            //// Scriban keywords
+            //var keywords = new[] {
+            //    "if", "else", "elseif", "end",  "in", "while", "break",
+            //    "continue", "func", "ret", "capture", "readonly", "import",
+            //    "with", "wrap", "include", "true", "false", "null", "empty",
+            //    "blank", "this", "tablerow", "case", "when"
+            //};
+
+            //foreach (var keyword in keywords)
+            //{
+            //    sb.AppendLine($"      <lexem BeginBlock=\"{keyword}\" Type=\"KeyWord\" DropContextChoiceList=\"false\" />");
+            //}
 
             foreach(var trigger in ScribanIntellisenceSupport.Triggers)
             {
-                sb.AppendLine($"      <!-- Context trigger: {EscapeXml(trigger.TriggerText)} -->");
-                if(trigger.Items.Count == 0)
+                // for some reason "--" gives an xml error inside the commend block <!-- Context trigger: -- -->
+                if (trigger.TriggerText != "--")
+                { 
+                    sb.AppendLine($"      <!-- Context trigger: {EscapeXml(trigger.TriggerText)} -->");
+                }
+                if (trigger.Items.Count == 0)
                 {
-                    sb.AppendLine($"      <lexem BeginBlock=\"{EscapeXml(trigger.TriggerText)}\" Type=\"{(trigger.TriggerText=="for" || trigger.TriggerText=="while" ? "KeyWord" : "Function")}\" DropContextChoiceList=\"false\" />");
+                    sb.AppendLine($"      <lexem BeginBlock=\"{EscapeXml(trigger.TriggerText)}\" Type=\"{trigger.FormatStyle.Name}\" DropContextChoiceList=\"false\" />");
                 } 
                 else
                 {
@@ -116,7 +133,11 @@ namespace CodeGenerator.TemplateEngines.Scriban
             sb.AppendLine("    </lexems>");
 
             sb.AppendLine("     <splits>");
-            //sb.AppendLine("         <split>##</split>");
+            foreach (var trigger in ScribanIntellisenceSupport.Triggers.Where(t => t.UseSplitter))
+            {
+                // <split>&&</split>
+                sb.AppendLine($"      <split>{EscapeXml(trigger.TriggerText)}</split>");
+            }
             sb.AppendLine("     </splits>");
             sb.AppendLine("  </ConfigLanguage>");
             sb.AppendLine("</ArrayOfConfigLanguage>");
