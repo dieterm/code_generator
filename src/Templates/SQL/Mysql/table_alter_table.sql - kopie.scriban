@@ -1,0 +1,1675 @@
+# Template parameters:
+# Table (TableArtifact) properties:
+{{ Table.CanPreview }} # Boolean
+# Collection: IEnumerable`1
+{{- for item in Table.Children }}
+	Index: {{ for.index }} (0-based)
+    # item (ColumnArtifact) properties:
+    {{ item.CanPreview }} # Boolean
+    # item.Children (Recursive: IEnumerable`1)
+    {{ item.DataType }} # String
+    # Collection: IEnumerable`1
+    {{- for item in item.Decorators }}
+    	Index: {{ for.index }} (0-based)
+        # item (ExistingColumnDecorator) properties:
+        # item.Artifact (Artifact) properties:
+        {{ item.Artifact.CanPreview }} # Boolean
+        # item.Artifact.Children (Recursive: IEnumerable`1)
+        # item.Artifact.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Id }} # String
+        {{ item.Artifact.IsStateChanged }} # Boolean
+        # item.Artifact.Parent (IArtifact) properties:
+        {{ item.Artifact.Parent.CanPreview }} # Boolean
+        # item.Artifact.Parent.Children (Recursive: IEnumerable`1)
+        # item.Artifact.Parent.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Parent.Id }} # String
+        # item.Artifact.Parent.Parent (Recursive: IArtifact)
+        # item.Artifact.Parent.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.Parent.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.Parent.TreeNodeText }} # String
+        # Collection: Dictionary`2
+        {{- for item in item.Artifact.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.TreeNodeText }} # String
+        {{ item.IsStateChanged }} # Boolean
+        {{ item.Key }} # String
+        {{ item.OriginalDataType }} # String
+        {{ item.OriginalDefaultValue }} # String
+        {{ item.OriginalForeignKeyColumn }} # String
+        {{ item.OriginalForeignKeyTable }} # String
+        {{ item.OriginalIsAutoIncrement }} # Boolean
+        {{ item.OriginalIsForeignKey }} # Boolean
+        {{ item.OriginalIsNullable }} # Boolean
+        {{ item.OriginalIsPrimaryKey }} # Boolean
+        # item.OriginalMaxLength (Nullable`1) properties:
+        {{ item.OriginalMaxLength.HasValue }} # Boolean
+        {{ item.OriginalMaxLength.Value }} # Int32
+        {{ item.OriginalName }} # String
+        {{ item.OriginalOrdinalPosition }} # Int32
+        # item.OriginalPrecision (Nullable`1) properties:
+        {{ item.OriginalPrecision.HasValue }} # Boolean
+        {{ item.OriginalPrecision.Value }} # Int32
+        # item.OriginalScale (Nullable`1) properties:
+        {{ item.OriginalScale.HasValue }} # Boolean
+        {{ item.OriginalScale.Value }} # Int32
+        # Collection: Dictionary`2
+        {{- for item in item.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+    {{- end }}
+    {{ item.DefaultValue }} # String
+    {{ item.ForeignKeyColumn }} # String
+    {{ item.ForeignKeyTable }} # String
+    {{ item.Id }} # String
+    {{ item.IsAutoIncrement }} # Boolean
+    {{ item.IsForeignKey }} # Boolean
+    {{ item.IsNullable }} # Boolean
+    {{ item.IsPrimaryKey }} # Boolean
+    {{ item.IsStateChanged }} # Boolean
+    # item.MaxLength (Nullable`1) properties:
+    {{ item.MaxLength.HasValue }} # Boolean
+    {{ item.MaxLength.Value }} # Int32
+    {{ item.Name }} # String
+    {{ item.OrdinalPosition }} # Int32
+    # item.Parent (IArtifact) properties:
+    {{ item.Parent.CanPreview }} # Boolean
+    # item.Parent.Children (Recursive: IEnumerable`1)
+    # Collection: IEnumerable`1
+    {{- for item in item.Parent.Decorators }}
+    	Index: {{ for.index }} (0-based)
+        # item (ExistingTableDecorator) properties:
+        # item.Artifact (Artifact) properties:
+        {{ item.Artifact.CanPreview }} # Boolean
+        # item.Artifact.Children (Recursive: IEnumerable`1)
+        # item.Artifact.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Id }} # String
+        {{ item.Artifact.IsStateChanged }} # Boolean
+        # item.Artifact.Parent (Recursive: IArtifact)
+        # Collection: Dictionary`2
+        {{- for item in item.Artifact.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.TreeNodeText }} # String
+        {{ item.ImportedAt }} # DateTime
+        {{ item.IsStateChanged }} # Boolean
+        {{ item.Key }} # String
+        {{ item.OriginalSchema }} # String
+        {{ item.OriginalTableName }} # String
+        # Collection: Dictionary`2
+        {{- for item in item.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        {{ item.SourceDatasourceName }} # String
+    {{- end }}
+    {{ item.Parent.Id }} # String
+    # item.Parent.Parent (Recursive: IArtifact)
+    # item.Parent.TreeNodeIcon (ITreeNodeIcon) properties:
+    {{ item.Parent.TreeNodeIcon.IconKey }} # String
+    {{ item.Parent.TreeNodeText }} # String
+    # item.Precision (Nullable`1) properties:
+    {{ item.Precision.HasValue }} # Boolean
+    {{ item.Precision.Value }} # Int32
+    # Collection: Dictionary`2
+    {{- for item in item.Properties }}
+    	Index: {{ for.index }} (0-based)
+        # item (KeyValuePair`2) properties:
+        {{ item.Key }} # String
+        # item.Value (Object) properties:
+    {{- end }}
+    # item.Scale (Nullable`1) properties:
+    {{ item.Scale.HasValue }} # Boolean
+    {{ item.Scale.Value }} # Int32
+    # item.TreeNodeIcon (ITreeNodeIcon) properties:
+    {{ item.TreeNodeIcon.IconKey }} # String
+    {{ item.TreeNodeText }} # String
+{{- end }}
+# Collection: IEnumerable`1
+{{- for item in Table.Decorators }}
+	Index: {{ for.index }} (0-based)
+    # item (ExistingTableDecorator) properties:
+    # item.Artifact (Artifact) properties:
+    {{ item.Artifact.CanPreview }} # Boolean
+    # Collection: IEnumerable`1
+    {{- for item in item.Artifact.Children }}
+    	Index: {{ for.index }} (0-based)
+        # item (ColumnArtifact) properties:
+        {{ item.CanPreview }} # Boolean
+        # item.Children (Recursive: IEnumerable`1)
+        {{ item.DataType }} # String
+        # item.Decorators (Recursive: IEnumerable`1)
+        {{ item.DefaultValue }} # String
+        {{ item.ForeignKeyColumn }} # String
+        {{ item.ForeignKeyTable }} # String
+        {{ item.Id }} # String
+        {{ item.IsAutoIncrement }} # Boolean
+        {{ item.IsForeignKey }} # Boolean
+        {{ item.IsNullable }} # Boolean
+        {{ item.IsPrimaryKey }} # Boolean
+        {{ item.IsStateChanged }} # Boolean
+        # item.MaxLength (Nullable`1) properties:
+        {{ item.MaxLength.HasValue }} # Boolean
+        {{ item.MaxLength.Value }} # Int32
+        {{ item.Name }} # String
+        {{ item.OrdinalPosition }} # Int32
+        # item.Parent (IArtifact) properties:
+        {{ item.Parent.CanPreview }} # Boolean
+        # item.Parent.Children (Recursive: IEnumerable`1)
+        # item.Parent.Decorators (Recursive: IEnumerable`1)
+        {{ item.Parent.Id }} # String
+        # item.Parent.Parent (Recursive: IArtifact)
+        # item.Parent.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Parent.TreeNodeIcon.IconKey }} # String
+        {{ item.Parent.TreeNodeText }} # String
+        # item.Precision (Nullable`1) properties:
+        {{ item.Precision.HasValue }} # Boolean
+        {{ item.Precision.Value }} # Int32
+        # Collection: Dictionary`2
+        {{- for item in item.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        # item.Scale (Nullable`1) properties:
+        {{ item.Scale.HasValue }} # Boolean
+        {{ item.Scale.Value }} # Int32
+        # item.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.TreeNodeIcon.IconKey }} # String
+        {{ item.TreeNodeText }} # String
+    {{- end }}
+    # item.Artifact.Decorators (Recursive: IEnumerable`1)
+    {{ item.Artifact.Id }} # String
+    {{ item.Artifact.IsStateChanged }} # Boolean
+    # item.Artifact.Parent (IArtifact) properties:
+    {{ item.Artifact.Parent.CanPreview }} # Boolean
+    # Collection: IEnumerable`1
+    {{- for item in item.Artifact.Parent.Children }}
+    	Index: {{ for.index }} (0-based)
+        # item (Recursive: TableArtifact)
+    {{- end }}
+    # item.Artifact.Parent.Decorators (Recursive: IEnumerable`1)
+    {{ item.Artifact.Parent.Id }} # String
+    # item.Artifact.Parent.Parent (Recursive: IArtifact)
+    # item.Artifact.Parent.TreeNodeIcon (ITreeNodeIcon) properties:
+    {{ item.Artifact.Parent.TreeNodeIcon.IconKey }} # String
+    {{ item.Artifact.Parent.TreeNodeText }} # String
+    # Collection: Dictionary`2
+    {{- for item in item.Artifact.Properties }}
+    	Index: {{ for.index }} (0-based)
+        # item (KeyValuePair`2) properties:
+        {{ item.Key }} # String
+        # item.Value (Object) properties:
+    {{- end }}
+    # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+    {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+    {{ item.Artifact.TreeNodeText }} # String
+    {{ item.ImportedAt }} # DateTime
+    {{ item.IsStateChanged }} # Boolean
+    {{ item.Key }} # String
+    {{ item.OriginalSchema }} # String
+    {{ item.OriginalTableName }} # String
+    # Collection: Dictionary`2
+    {{- for item in item.Properties }}
+    	Index: {{ for.index }} (0-based)
+        # item (KeyValuePair`2) properties:
+        {{ item.Key }} # String
+        # item.Value (Object) properties:
+    {{- end }}
+    {{ item.SourceDatasourceName }} # String
+{{- end }}
+{{ Table.Id }} # String
+{{ Table.IsStateChanged }} # Boolean
+{{ Table.Name }} # String
+# Table.Parent (IArtifact) properties:
+{{ Table.Parent.CanPreview }} # Boolean
+# Collection: IEnumerable`1
+{{- for item in Table.Parent.Children }}
+	Index: {{ for.index }} (0-based)
+    # item (Recursive: TableArtifact)
+{{- end }}
+# Collection: IEnumerable`1
+{{- for item in Table.Parent.Decorators }}
+	Index: {{ for.index }} (0-based)
+    # item (IArtifactDecorator) properties:
+    # item.Artifact (Artifact) properties:
+    {{ item.Artifact.CanPreview }} # Boolean
+    # Collection: IEnumerable`1
+    {{- for item in item.Artifact.Children }}
+    	Index: {{ for.index }} (0-based)
+        # item (Recursive: IArtifact)
+    {{- end }}
+    # item.Artifact.Decorators (Recursive: IEnumerable`1)
+    {{ item.Artifact.Id }} # String
+    {{ item.Artifact.IsStateChanged }} # Boolean
+    # item.Artifact.Parent (Recursive: IArtifact)
+    # Collection: Dictionary`2
+    {{- for item in item.Artifact.Properties }}
+    	Index: {{ for.index }} (0-based)
+        # item (KeyValuePair`2) properties:
+        {{ item.Key }} # String
+        # item.Value (Object) properties:
+    {{- end }}
+    # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+    {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+    {{ item.Artifact.TreeNodeText }} # String
+    {{ item.Key }} # String
+{{- end }}
+{{ Table.Parent.Id }} # String
+# Table.Parent.Parent (Recursive: IArtifact)
+# Table.Parent.TreeNodeIcon (ITreeNodeIcon) properties:
+{{ Table.Parent.TreeNodeIcon.IconKey }} # String
+{{ Table.Parent.TreeNodeText }} # String
+# Collection: Dictionary`2
+{{- for item in Table.Properties }}
+	Index: {{ for.index }} (0-based)
+    # item (KeyValuePair`2) properties:
+    {{ item.Key }} # String
+    # item.Value (Object) properties:
+{{- end }}
+{{ Table.Schema }} # String
+# Table.TreeNodeIcon (ITreeNodeIcon) properties:
+{{ Table.TreeNodeIcon.IconKey }} # String
+{{ Table.TreeNodeText }} # String
+
+# Database (MysqlDatabase) properties:
+# Collection: DataTypeMappings
+{{- for item in Database.DataTypeMappings }}
+	Index: {{ for.index }} (0-based)
+    # item (DataTypeMapping) properties:
+    # Collection: IReadOnlyList`1
+    {{- for item in item.Aliases }}
+    	Index: {{ for.index }} (0-based)
+        {{ item }} # String
+    {{- end }}
+    {{ item.FormatString }} # String
+    # item.GenericType (GenericDataType) properties:
+    {{ item.GenericType.Category }} # DataTypeCategory
+    # item.GenericType.DefaultMaxLength (Nullable`1) properties:
+    {{ item.GenericType.DefaultMaxLength.HasValue }} # Boolean
+    {{ item.GenericType.DefaultMaxLength.Value }} # Int32
+    # item.GenericType.DefaultPrecision (Nullable`1) properties:
+    {{ item.GenericType.DefaultPrecision.HasValue }} # Boolean
+    {{ item.GenericType.DefaultPrecision.Value }} # Int32
+    # item.GenericType.DefaultScale (Nullable`1) properties:
+    {{ item.GenericType.DefaultScale.HasValue }} # Boolean
+    {{ item.GenericType.DefaultScale.Value }} # Int32
+    {{ item.GenericType.Description }} # String
+    {{ item.GenericType.Id }} # String
+    {{ item.GenericType.Name }} # String
+    {{ item.GenericType.SupportsMaxLength }} # Boolean
+    {{ item.GenericType.SupportsPrecision }} # Boolean
+    {{ item.GenericType.SupportsScale }} # Boolean
+    # item.MaxMaxLength (Nullable`1) properties:
+    {{ item.MaxMaxLength.HasValue }} # Boolean
+    {{ item.MaxMaxLength.Value }} # Int32
+    # item.MaxPrecision (Nullable`1) properties:
+    {{ item.MaxPrecision.HasValue }} # Boolean
+    {{ item.MaxPrecision.Value }} # Int32
+    # item.MaxScale (Nullable`1) properties:
+    {{ item.MaxScale.HasValue }} # Boolean
+    {{ item.MaxScale.Value }} # Int32
+    # item.MinMaxLength (Nullable`1) properties:
+    {{ item.MinMaxLength.HasValue }} # Boolean
+    {{ item.MinMaxLength.Value }} # Int32
+    {{ item.NativeTypeName }} # String
+    {{ item.Notes }} # String
+    {{ item.UnlimitedLengthKeyword }} # String
+{{- end }}
+{{ Database.DefaultCharacterSet }} # String
+{{ Database.DefaultCollation }} # String
+{{ Database.DefaultSchema }} # String
+# Database.DefaultVersion (DatabaseVersion) properties:
+{{ Database.DefaultVersion.DisplayName }} # String
+# Collection: IList`1
+{{- for item in Database.DefaultVersion.Features }}
+	Index: {{ for.index }} (0-based)
+    {{ item }} # String
+{{- end }}
+{{ Database.DefaultVersion.IsSupported }} # Boolean
+# Database.DefaultVersion.ReleaseDate (Nullable`1) properties:
+{{ Database.DefaultVersion.ReleaseDate.HasValue }} # Boolean
+{{ Database.DefaultVersion.ReleaseDate.Value }} # DateTime
+{{ Database.DefaultVersion.Version }} # String
+{{ Database.Id }} # String
+{{ Database.IdentifierFormat }} # String
+{{ Database.MaxColumnNameLength }} # Int32
+{{ Database.MaxIdentifierLength }} # Int32
+{{ Database.MaxTableNameLength }} # Int32
+{{ Database.Name }} # String
+{{ Database.SupportsCheckConstraints }} # Boolean
+{{ Database.SupportsCTE }} # Boolean
+{{ Database.SupportsForeignKeyConstraints }} # Boolean
+{{ Database.SupportsGeneratedColumns }} # Boolean
+{{ Database.SupportsJsonDataType }} # Boolean
+{{ Database.SupportsSchemas }} # Boolean
+{{ Database.SupportsUniqueConstraints }} # Boolean
+{{ Database.SupportsWindowFunctions }} # Boolean
+{{ Database.SupportsXmlDataType }} # Boolean
+{{ Database.Vendor }} # String
+# Collection: IReadOnlyList`1
+{{- for item in Database.Versions }}
+	Index: {{ for.index }} (0-based)
+    # item (DatabaseVersion) properties:
+    {{ item.DisplayName }} # String
+    # Collection: IList`1
+    {{- for item in item.Features }}
+    	Index: {{ for.index }} (0-based)
+        {{ item }} # String
+    {{- end }}
+    {{ item.IsSupported }} # Boolean
+    # item.ReleaseDate (Nullable`1) properties:
+    {{ item.ReleaseDate.HasValue }} # Boolean
+    {{ item.ReleaseDate.Value }} # DateTime
+    {{ item.Version }} # String
+{{- end }}
+
+# Collection: List`1
+{{- for item in Columns }}
+	Index: {{ for.index }} (0-based)
+    # item (ColumnArtifact) properties:
+    {{ item.CanPreview }} # Boolean
+    # Collection: IEnumerable`1
+    {{- for item in item.Children }}
+    	Index: {{ for.index }} (0-based)
+        # item (IArtifact) properties:
+        {{ item.CanPreview }} # Boolean
+        # item.Children (Recursive: IEnumerable`1)
+        # Collection: IEnumerable`1
+        {{- for item in item.Decorators }}
+        	Index: {{ for.index }} (0-based)
+            # item (IArtifactDecorator) properties:
+            # item.Artifact (Artifact) properties:
+            {{ item.Artifact.CanPreview }} # Boolean
+            # item.Artifact.Children (Recursive: IEnumerable`1)
+            # item.Artifact.Decorators (Recursive: IEnumerable`1)
+            {{ item.Artifact.Id }} # String
+            {{ item.Artifact.IsStateChanged }} # Boolean
+            # item.Artifact.Parent (Recursive: IArtifact)
+            # Collection: Dictionary`2
+            {{- for item in item.Artifact.Properties }}
+            	Index: {{ for.index }} (0-based)
+                # item (KeyValuePair`2) properties:
+                {{ item.Key }} # String
+                # item.Value (Object) properties:
+            {{- end }}
+            # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+            {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+            {{ item.Artifact.TreeNodeText }} # String
+            {{ item.Key }} # String
+        {{- end }}
+        {{ item.Id }} # String
+        # item.Parent (Recursive: IArtifact)
+        # item.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.TreeNodeIcon.IconKey }} # String
+        {{ item.TreeNodeText }} # String
+    {{- end }}
+    {{ item.DataType }} # String
+    # Collection: IEnumerable`1
+    {{- for item in item.Decorators }}
+    	Index: {{ for.index }} (0-based)
+        # item (ExistingColumnDecorator) properties:
+        # item.Artifact (Artifact) properties:
+        {{ item.Artifact.CanPreview }} # Boolean
+        # Collection: IEnumerable`1
+        {{- for item in item.Artifact.Children }}
+        	Index: {{ for.index }} (0-based)
+            # item (IArtifact) properties:
+            {{ item.CanPreview }} # Boolean
+            # item.Children (Recursive: IEnumerable`1)
+            # item.Decorators (Recursive: IEnumerable`1)
+            {{ item.Id }} # String
+            # item.Parent (Recursive: IArtifact)
+            # item.TreeNodeIcon (ITreeNodeIcon) properties:
+            {{ item.TreeNodeIcon.IconKey }} # String
+            {{ item.TreeNodeText }} # String
+        {{- end }}
+        # item.Artifact.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Id }} # String
+        {{ item.Artifact.IsStateChanged }} # Boolean
+        # item.Artifact.Parent (IArtifact) properties:
+        {{ item.Artifact.Parent.CanPreview }} # Boolean
+        # Collection: IEnumerable`1
+        {{- for item in item.Artifact.Parent.Children }}
+        	Index: {{ for.index }} (0-based)
+            # item (Recursive: ColumnArtifact)
+        {{- end }}
+        # item.Artifact.Parent.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Parent.Id }} # String
+        # item.Artifact.Parent.Parent (Recursive: IArtifact)
+        # item.Artifact.Parent.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.Parent.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.Parent.TreeNodeText }} # String
+        # Collection: Dictionary`2
+        {{- for item in item.Artifact.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.TreeNodeText }} # String
+        {{ item.IsStateChanged }} # Boolean
+        {{ item.Key }} # String
+        {{ item.OriginalDataType }} # String
+        {{ item.OriginalDefaultValue }} # String
+        {{ item.OriginalForeignKeyColumn }} # String
+        {{ item.OriginalForeignKeyTable }} # String
+        {{ item.OriginalIsAutoIncrement }} # Boolean
+        {{ item.OriginalIsForeignKey }} # Boolean
+        {{ item.OriginalIsNullable }} # Boolean
+        {{ item.OriginalIsPrimaryKey }} # Boolean
+        # item.OriginalMaxLength (Nullable`1) properties:
+        {{ item.OriginalMaxLength.HasValue }} # Boolean
+        {{ item.OriginalMaxLength.Value }} # Int32
+        {{ item.OriginalName }} # String
+        {{ item.OriginalOrdinalPosition }} # Int32
+        # item.OriginalPrecision (Nullable`1) properties:
+        {{ item.OriginalPrecision.HasValue }} # Boolean
+        {{ item.OriginalPrecision.Value }} # Int32
+        # item.OriginalScale (Nullable`1) properties:
+        {{ item.OriginalScale.HasValue }} # Boolean
+        {{ item.OriginalScale.Value }} # Int32
+        # Collection: Dictionary`2
+        {{- for item in item.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+    {{- end }}
+    {{ item.DefaultValue }} # String
+    {{ item.ForeignKeyColumn }} # String
+    {{ item.ForeignKeyTable }} # String
+    {{ item.Id }} # String
+    {{ item.IsAutoIncrement }} # Boolean
+    {{ item.IsForeignKey }} # Boolean
+    {{ item.IsNullable }} # Boolean
+    {{ item.IsPrimaryKey }} # Boolean
+    {{ item.IsStateChanged }} # Boolean
+    # item.MaxLength (Nullable`1) properties:
+    {{ item.MaxLength.HasValue }} # Boolean
+    {{ item.MaxLength.Value }} # Int32
+    {{ item.Name }} # String
+    {{ item.OrdinalPosition }} # Int32
+    # item.Parent (IArtifact) properties:
+    {{ item.Parent.CanPreview }} # Boolean
+    # Collection: IEnumerable`1
+    {{- for item in item.Parent.Children }}
+    	Index: {{ for.index }} (0-based)
+        # item (Recursive: ColumnArtifact)
+    {{- end }}
+    # Collection: IEnumerable`1
+    {{- for item in item.Parent.Decorators }}
+    	Index: {{ for.index }} (0-based)
+        # item (ExistingTableDecorator) properties:
+        # item.Artifact (Artifact) properties:
+        {{ item.Artifact.CanPreview }} # Boolean
+        # Collection: IEnumerable`1
+        {{- for item in item.Artifact.Children }}
+        	Index: {{ for.index }} (0-based)
+            # item (Recursive: ColumnArtifact)
+        {{- end }}
+        # item.Artifact.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Id }} # String
+        {{ item.Artifact.IsStateChanged }} # Boolean
+        # item.Artifact.Parent (Recursive: IArtifact)
+        # Collection: Dictionary`2
+        {{- for item in item.Artifact.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.TreeNodeText }} # String
+        {{ item.ImportedAt }} # DateTime
+        {{ item.IsStateChanged }} # Boolean
+        {{ item.Key }} # String
+        {{ item.OriginalSchema }} # String
+        {{ item.OriginalTableName }} # String
+        # Collection: Dictionary`2
+        {{- for item in item.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        {{ item.SourceDatasourceName }} # String
+    {{- end }}
+    {{ item.Parent.Id }} # String
+    # item.Parent.Parent (Recursive: IArtifact)
+    # item.Parent.TreeNodeIcon (ITreeNodeIcon) properties:
+    {{ item.Parent.TreeNodeIcon.IconKey }} # String
+    {{ item.Parent.TreeNodeText }} # String
+    # item.Precision (Nullable`1) properties:
+    {{ item.Precision.HasValue }} # Boolean
+    {{ item.Precision.Value }} # Int32
+    # Collection: Dictionary`2
+    {{- for item in item.Properties }}
+    	Index: {{ for.index }} (0-based)
+        # item (KeyValuePair`2) properties:
+        {{ item.Key }} # String
+        # item.Value (Object) properties:
+    {{- end }}
+    # item.Scale (Nullable`1) properties:
+    {{ item.Scale.HasValue }} # Boolean
+    {{ item.Scale.Value }} # Int32
+    # item.TreeNodeIcon (ITreeNodeIcon) properties:
+    {{ item.TreeNodeIcon.IconKey }} # String
+    {{ item.TreeNodeText }} # String
+{{- end }}
+
+# Collection: List`1
+{{- for item in Indexes }}
+	Index: {{ for.index }} (0-based)
+    # item (IndexArtifact) properties:
+    {{ item.CanPreview }} # Boolean
+    # Collection: IEnumerable`1
+    {{- for item in item.Children }}
+    	Index: {{ for.index }} (0-based)
+        # item (IArtifact) properties:
+        {{ item.CanPreview }} # Boolean
+        # item.Children (Recursive: IEnumerable`1)
+        # Collection: IEnumerable`1
+        {{- for item in item.Decorators }}
+        	Index: {{ for.index }} (0-based)
+            # item (IArtifactDecorator) properties:
+            # item.Artifact (Artifact) properties:
+            {{ item.Artifact.CanPreview }} # Boolean
+            # item.Artifact.Children (Recursive: IEnumerable`1)
+            # item.Artifact.Decorators (Recursive: IEnumerable`1)
+            {{ item.Artifact.Id }} # String
+            {{ item.Artifact.IsStateChanged }} # Boolean
+            # item.Artifact.Parent (Recursive: IArtifact)
+            # Collection: Dictionary`2
+            {{- for item in item.Artifact.Properties }}
+            	Index: {{ for.index }} (0-based)
+                # item (KeyValuePair`2) properties:
+                {{ item.Key }} # String
+                # item.Value (Object) properties:
+            {{- end }}
+            # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+            {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+            {{ item.Artifact.TreeNodeText }} # String
+            {{ item.Key }} # String
+        {{- end }}
+        {{ item.Id }} # String
+        # item.Parent (Recursive: IArtifact)
+        # item.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.TreeNodeIcon.IconKey }} # String
+        {{ item.TreeNodeText }} # String
+    {{- end }}
+    # Collection: List`1
+    {{- for item in item.ColumnNames }}
+    	Index: {{ for.index }} (0-based)
+        {{ item }} # String
+    {{- end }}
+    # Collection: IEnumerable`1
+    {{- for item in item.Decorators }}
+    	Index: {{ for.index }} (0-based)
+        # item (ExistingMysqlIndexDecorator) properties:
+        # item.Artifact (Artifact) properties:
+        {{ item.Artifact.CanPreview }} # Boolean
+        # Collection: IEnumerable`1
+        {{- for item in item.Artifact.Children }}
+        	Index: {{ for.index }} (0-based)
+            # item (IArtifact) properties:
+            {{ item.CanPreview }} # Boolean
+            # item.Children (Recursive: IEnumerable`1)
+            # item.Decorators (Recursive: IEnumerable`1)
+            {{ item.Id }} # String
+            # item.Parent (Recursive: IArtifact)
+            # item.TreeNodeIcon (ITreeNodeIcon) properties:
+            {{ item.TreeNodeIcon.IconKey }} # String
+            {{ item.TreeNodeText }} # String
+        {{- end }}
+        # item.Artifact.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Id }} # String
+        {{ item.Artifact.IsStateChanged }} # Boolean
+        # item.Artifact.Parent (IArtifact) properties:
+        {{ item.Artifact.Parent.CanPreview }} # Boolean
+        # Collection: IEnumerable`1
+        {{- for item in item.Artifact.Parent.Children }}
+        	Index: {{ for.index }} (0-based)
+            # item (ColumnArtifact) properties:
+            {{ item.CanPreview }} # Boolean
+            # item.Children (Recursive: IEnumerable`1)
+            {{ item.DataType }} # String
+            # item.Decorators (Recursive: IEnumerable`1)
+            {{ item.DefaultValue }} # String
+            {{ item.ForeignKeyColumn }} # String
+            {{ item.ForeignKeyTable }} # String
+            {{ item.Id }} # String
+            {{ item.IsAutoIncrement }} # Boolean
+            {{ item.IsForeignKey }} # Boolean
+            {{ item.IsNullable }} # Boolean
+            {{ item.IsPrimaryKey }} # Boolean
+            {{ item.IsStateChanged }} # Boolean
+            # item.MaxLength (Nullable`1) properties:
+            {{ item.MaxLength.HasValue }} # Boolean
+            {{ item.MaxLength.Value }} # Int32
+            {{ item.Name }} # String
+            {{ item.OrdinalPosition }} # Int32
+            # item.Parent (Recursive: IArtifact)
+            # item.Precision (Nullable`1) properties:
+            {{ item.Precision.HasValue }} # Boolean
+            {{ item.Precision.Value }} # Int32
+            # Collection: Dictionary`2
+            {{- for item in item.Properties }}
+            	Index: {{ for.index }} (0-based)
+                # item (KeyValuePair`2) properties:
+                {{ item.Key }} # String
+                # item.Value (Object) properties:
+            {{- end }}
+            # item.Scale (Nullable`1) properties:
+            {{ item.Scale.HasValue }} # Boolean
+            {{ item.Scale.Value }} # Int32
+            # item.TreeNodeIcon (ITreeNodeIcon) properties:
+            {{ item.TreeNodeIcon.IconKey }} # String
+            {{ item.TreeNodeText }} # String
+        {{- end }}
+        # item.Artifact.Parent.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Parent.Id }} # String
+        # item.Artifact.Parent.Parent (Recursive: IArtifact)
+        # item.Artifact.Parent.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.Parent.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.Parent.TreeNodeText }} # String
+        # Collection: Dictionary`2
+        {{- for item in item.Artifact.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.TreeNodeText }} # String
+        {{ item.IsStateChanged }} # Boolean
+        {{ item.Key }} # String
+        {{ item.OriginalIndexName }} # String
+        {{ item.OriginalIndexType }} # String
+        # Collection: Dictionary`2
+        {{- for item in item.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+    {{- end }}
+    {{ item.Id }} # String
+    {{ item.IsClustered }} # Boolean
+    {{ item.IsStateChanged }} # Boolean
+    {{ item.IsUnique }} # Boolean
+    {{ item.Name }} # String
+    # item.Parent (IArtifact) properties:
+    {{ item.Parent.CanPreview }} # Boolean
+    # Collection: IEnumerable`1
+    {{- for item in item.Parent.Children }}
+    	Index: {{ for.index }} (0-based)
+        # item (ColumnArtifact) properties:
+        {{ item.CanPreview }} # Boolean
+        # item.Children (Recursive: IEnumerable`1)
+        {{ item.DataType }} # String
+        # Collection: IEnumerable`1
+        {{- for item in item.Decorators }}
+        	Index: {{ for.index }} (0-based)
+            # item (ExistingColumnDecorator) properties:
+            # item.Artifact (Artifact) properties:
+            {{ item.Artifact.CanPreview }} # Boolean
+            # item.Artifact.Children (Recursive: IEnumerable`1)
+            # item.Artifact.Decorators (Recursive: IEnumerable`1)
+            {{ item.Artifact.Id }} # String
+            {{ item.Artifact.IsStateChanged }} # Boolean
+            # item.Artifact.Parent (Recursive: IArtifact)
+            # Collection: Dictionary`2
+            {{- for item in item.Artifact.Properties }}
+            	Index: {{ for.index }} (0-based)
+                # item (KeyValuePair`2) properties:
+                {{ item.Key }} # String
+                # item.Value (Object) properties:
+            {{- end }}
+            # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+            {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+            {{ item.Artifact.TreeNodeText }} # String
+            {{ item.IsStateChanged }} # Boolean
+            {{ item.Key }} # String
+            {{ item.OriginalDataType }} # String
+            {{ item.OriginalDefaultValue }} # String
+            {{ item.OriginalForeignKeyColumn }} # String
+            {{ item.OriginalForeignKeyTable }} # String
+            {{ item.OriginalIsAutoIncrement }} # Boolean
+            {{ item.OriginalIsForeignKey }} # Boolean
+            {{ item.OriginalIsNullable }} # Boolean
+            {{ item.OriginalIsPrimaryKey }} # Boolean
+            # item.OriginalMaxLength (Nullable`1) properties:
+            {{ item.OriginalMaxLength.HasValue }} # Boolean
+            {{ item.OriginalMaxLength.Value }} # Int32
+            {{ item.OriginalName }} # String
+            {{ item.OriginalOrdinalPosition }} # Int32
+            # item.OriginalPrecision (Nullable`1) properties:
+            {{ item.OriginalPrecision.HasValue }} # Boolean
+            {{ item.OriginalPrecision.Value }} # Int32
+            # item.OriginalScale (Nullable`1) properties:
+            {{ item.OriginalScale.HasValue }} # Boolean
+            {{ item.OriginalScale.Value }} # Int32
+            # Collection: Dictionary`2
+            {{- for item in item.Properties }}
+            	Index: {{ for.index }} (0-based)
+                # item (KeyValuePair`2) properties:
+                {{ item.Key }} # String
+                # item.Value (Object) properties:
+            {{- end }}
+        {{- end }}
+        {{ item.DefaultValue }} # String
+        {{ item.ForeignKeyColumn }} # String
+        {{ item.ForeignKeyTable }} # String
+        {{ item.Id }} # String
+        {{ item.IsAutoIncrement }} # Boolean
+        {{ item.IsForeignKey }} # Boolean
+        {{ item.IsNullable }} # Boolean
+        {{ item.IsPrimaryKey }} # Boolean
+        {{ item.IsStateChanged }} # Boolean
+        # item.MaxLength (Nullable`1) properties:
+        {{ item.MaxLength.HasValue }} # Boolean
+        {{ item.MaxLength.Value }} # Int32
+        {{ item.Name }} # String
+        {{ item.OrdinalPosition }} # Int32
+        # item.Parent (Recursive: IArtifact)
+        # item.Precision (Nullable`1) properties:
+        {{ item.Precision.HasValue }} # Boolean
+        {{ item.Precision.Value }} # Int32
+        # Collection: Dictionary`2
+        {{- for item in item.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        # item.Scale (Nullable`1) properties:
+        {{ item.Scale.HasValue }} # Boolean
+        {{ item.Scale.Value }} # Int32
+        # item.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.TreeNodeIcon.IconKey }} # String
+        {{ item.TreeNodeText }} # String
+    {{- end }}
+    # Collection: IEnumerable`1
+    {{- for item in item.Parent.Decorators }}
+    	Index: {{ for.index }} (0-based)
+        # item (ExistingTableDecorator) properties:
+        # item.Artifact (Artifact) properties:
+        {{ item.Artifact.CanPreview }} # Boolean
+        # Collection: IEnumerable`1
+        {{- for item in item.Artifact.Children }}
+        	Index: {{ for.index }} (0-based)
+            # item (ColumnArtifact) properties:
+            {{ item.CanPreview }} # Boolean
+            # item.Children (Recursive: IEnumerable`1)
+            {{ item.DataType }} # String
+            # item.Decorators (Recursive: IEnumerable`1)
+            {{ item.DefaultValue }} # String
+            {{ item.ForeignKeyColumn }} # String
+            {{ item.ForeignKeyTable }} # String
+            {{ item.Id }} # String
+            {{ item.IsAutoIncrement }} # Boolean
+            {{ item.IsForeignKey }} # Boolean
+            {{ item.IsNullable }} # Boolean
+            {{ item.IsPrimaryKey }} # Boolean
+            {{ item.IsStateChanged }} # Boolean
+            # item.MaxLength (Nullable`1) properties:
+            {{ item.MaxLength.HasValue }} # Boolean
+            {{ item.MaxLength.Value }} # Int32
+            {{ item.Name }} # String
+            {{ item.OrdinalPosition }} # Int32
+            # item.Parent (Recursive: IArtifact)
+            # item.Precision (Nullable`1) properties:
+            {{ item.Precision.HasValue }} # Boolean
+            {{ item.Precision.Value }} # Int32
+            # Collection: Dictionary`2
+            {{- for item in item.Properties }}
+            	Index: {{ for.index }} (0-based)
+                # item (KeyValuePair`2) properties:
+                {{ item.Key }} # String
+                # item.Value (Object) properties:
+            {{- end }}
+            # item.Scale (Nullable`1) properties:
+            {{ item.Scale.HasValue }} # Boolean
+            {{ item.Scale.Value }} # Int32
+            # item.TreeNodeIcon (ITreeNodeIcon) properties:
+            {{ item.TreeNodeIcon.IconKey }} # String
+            {{ item.TreeNodeText }} # String
+        {{- end }}
+        # item.Artifact.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Id }} # String
+        {{ item.Artifact.IsStateChanged }} # Boolean
+        # item.Artifact.Parent (Recursive: IArtifact)
+        # Collection: Dictionary`2
+        {{- for item in item.Artifact.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.TreeNodeText }} # String
+        {{ item.ImportedAt }} # DateTime
+        {{ item.IsStateChanged }} # Boolean
+        {{ item.Key }} # String
+        {{ item.OriginalSchema }} # String
+        {{ item.OriginalTableName }} # String
+        # Collection: Dictionary`2
+        {{- for item in item.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        {{ item.SourceDatasourceName }} # String
+    {{- end }}
+    {{ item.Parent.Id }} # String
+    # item.Parent.Parent (Recursive: IArtifact)
+    # item.Parent.TreeNodeIcon (ITreeNodeIcon) properties:
+    {{ item.Parent.TreeNodeIcon.IconKey }} # String
+    {{ item.Parent.TreeNodeText }} # String
+    # Collection: Dictionary`2
+    {{- for item in item.Properties }}
+    	Index: {{ for.index }} (0-based)
+        # item (KeyValuePair`2) properties:
+        {{ item.Key }} # String
+        # item.Value (Object) properties:
+    {{- end }}
+    # item.TreeNodeIcon (ITreeNodeIcon) properties:
+    {{ item.TreeNodeIcon.IconKey }} # String
+    {{ item.TreeNodeText }} # String
+{{- end }}
+
+# Collection: List`1
+{{- for item in PrimaryKeyColumns }}
+	Index: {{ for.index }} (0-based)
+    # item (ColumnArtifact) properties:
+    {{ item.CanPreview }} # Boolean
+    # Collection: IEnumerable`1
+    {{- for item in item.Children }}
+    	Index: {{ for.index }} (0-based)
+        # item (IArtifact) properties:
+        {{ item.CanPreview }} # Boolean
+        # item.Children (Recursive: IEnumerable`1)
+        # Collection: IEnumerable`1
+        {{- for item in item.Decorators }}
+        	Index: {{ for.index }} (0-based)
+            # item (IArtifactDecorator) properties:
+            # item.Artifact (Artifact) properties:
+            {{ item.Artifact.CanPreview }} # Boolean
+            # item.Artifact.Children (Recursive: IEnumerable`1)
+            # item.Artifact.Decorators (Recursive: IEnumerable`1)
+            {{ item.Artifact.Id }} # String
+            {{ item.Artifact.IsStateChanged }} # Boolean
+            # item.Artifact.Parent (Recursive: IArtifact)
+            # Collection: Dictionary`2
+            {{- for item in item.Artifact.Properties }}
+            	Index: {{ for.index }} (0-based)
+                # item (KeyValuePair`2) properties:
+                {{ item.Key }} # String
+                # item.Value (Object) properties:
+            {{- end }}
+            # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+            {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+            {{ item.Artifact.TreeNodeText }} # String
+            {{ item.Key }} # String
+        {{- end }}
+        {{ item.Id }} # String
+        # item.Parent (Recursive: IArtifact)
+        # item.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.TreeNodeIcon.IconKey }} # String
+        {{ item.TreeNodeText }} # String
+    {{- end }}
+    {{ item.DataType }} # String
+    # Collection: IEnumerable`1
+    {{- for item in item.Decorators }}
+    	Index: {{ for.index }} (0-based)
+        # item (ExistingColumnDecorator) properties:
+        # item.Artifact (Artifact) properties:
+        {{ item.Artifact.CanPreview }} # Boolean
+        # Collection: IEnumerable`1
+        {{- for item in item.Artifact.Children }}
+        	Index: {{ for.index }} (0-based)
+            # item (IArtifact) properties:
+            {{ item.CanPreview }} # Boolean
+            # item.Children (Recursive: IEnumerable`1)
+            # item.Decorators (Recursive: IEnumerable`1)
+            {{ item.Id }} # String
+            # item.Parent (Recursive: IArtifact)
+            # item.TreeNodeIcon (ITreeNodeIcon) properties:
+            {{ item.TreeNodeIcon.IconKey }} # String
+            {{ item.TreeNodeText }} # String
+        {{- end }}
+        # item.Artifact.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Id }} # String
+        {{ item.Artifact.IsStateChanged }} # Boolean
+        # item.Artifact.Parent (IArtifact) properties:
+        {{ item.Artifact.Parent.CanPreview }} # Boolean
+        # Collection: IEnumerable`1
+        {{- for item in item.Artifact.Parent.Children }}
+        	Index: {{ for.index }} (0-based)
+            # item (Recursive: ColumnArtifact)
+        {{- end }}
+        # item.Artifact.Parent.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Parent.Id }} # String
+        # item.Artifact.Parent.Parent (Recursive: IArtifact)
+        # item.Artifact.Parent.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.Parent.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.Parent.TreeNodeText }} # String
+        # Collection: Dictionary`2
+        {{- for item in item.Artifact.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.TreeNodeText }} # String
+        {{ item.IsStateChanged }} # Boolean
+        {{ item.Key }} # String
+        {{ item.OriginalDataType }} # String
+        {{ item.OriginalDefaultValue }} # String
+        {{ item.OriginalForeignKeyColumn }} # String
+        {{ item.OriginalForeignKeyTable }} # String
+        {{ item.OriginalIsAutoIncrement }} # Boolean
+        {{ item.OriginalIsForeignKey }} # Boolean
+        {{ item.OriginalIsNullable }} # Boolean
+        {{ item.OriginalIsPrimaryKey }} # Boolean
+        # item.OriginalMaxLength (Nullable`1) properties:
+        {{ item.OriginalMaxLength.HasValue }} # Boolean
+        {{ item.OriginalMaxLength.Value }} # Int32
+        {{ item.OriginalName }} # String
+        {{ item.OriginalOrdinalPosition }} # Int32
+        # item.OriginalPrecision (Nullable`1) properties:
+        {{ item.OriginalPrecision.HasValue }} # Boolean
+        {{ item.OriginalPrecision.Value }} # Int32
+        # item.OriginalScale (Nullable`1) properties:
+        {{ item.OriginalScale.HasValue }} # Boolean
+        {{ item.OriginalScale.Value }} # Int32
+        # Collection: Dictionary`2
+        {{- for item in item.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+    {{- end }}
+    {{ item.DefaultValue }} # String
+    {{ item.ForeignKeyColumn }} # String
+    {{ item.ForeignKeyTable }} # String
+    {{ item.Id }} # String
+    {{ item.IsAutoIncrement }} # Boolean
+    {{ item.IsForeignKey }} # Boolean
+    {{ item.IsNullable }} # Boolean
+    {{ item.IsPrimaryKey }} # Boolean
+    {{ item.IsStateChanged }} # Boolean
+    # item.MaxLength (Nullable`1) properties:
+    {{ item.MaxLength.HasValue }} # Boolean
+    {{ item.MaxLength.Value }} # Int32
+    {{ item.Name }} # String
+    {{ item.OrdinalPosition }} # Int32
+    # item.Parent (IArtifact) properties:
+    {{ item.Parent.CanPreview }} # Boolean
+    # Collection: IEnumerable`1
+    {{- for item in item.Parent.Children }}
+    	Index: {{ for.index }} (0-based)
+        # item (Recursive: ColumnArtifact)
+    {{- end }}
+    # Collection: IEnumerable`1
+    {{- for item in item.Parent.Decorators }}
+    	Index: {{ for.index }} (0-based)
+        # item (ExistingTableDecorator) properties:
+        # item.Artifact (Artifact) properties:
+        {{ item.Artifact.CanPreview }} # Boolean
+        # Collection: IEnumerable`1
+        {{- for item in item.Artifact.Children }}
+        	Index: {{ for.index }} (0-based)
+            # item (Recursive: ColumnArtifact)
+        {{- end }}
+        # item.Artifact.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Id }} # String
+        {{ item.Artifact.IsStateChanged }} # Boolean
+        # item.Artifact.Parent (Recursive: IArtifact)
+        # Collection: Dictionary`2
+        {{- for item in item.Artifact.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.TreeNodeText }} # String
+        {{ item.ImportedAt }} # DateTime
+        {{ item.IsStateChanged }} # Boolean
+        {{ item.Key }} # String
+        {{ item.OriginalSchema }} # String
+        {{ item.OriginalTableName }} # String
+        # Collection: Dictionary`2
+        {{- for item in item.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        {{ item.SourceDatasourceName }} # String
+    {{- end }}
+    {{ item.Parent.Id }} # String
+    # item.Parent.Parent (Recursive: IArtifact)
+    # item.Parent.TreeNodeIcon (ITreeNodeIcon) properties:
+    {{ item.Parent.TreeNodeIcon.IconKey }} # String
+    {{ item.Parent.TreeNodeText }} # String
+    # item.Precision (Nullable`1) properties:
+    {{ item.Precision.HasValue }} # Boolean
+    {{ item.Precision.Value }} # Int32
+    # Collection: Dictionary`2
+    {{- for item in item.Properties }}
+    	Index: {{ for.index }} (0-based)
+        # item (KeyValuePair`2) properties:
+        {{ item.Key }} # String
+        # item.Value (Object) properties:
+    {{- end }}
+    # item.Scale (Nullable`1) properties:
+    {{ item.Scale.HasValue }} # Boolean
+    {{ item.Scale.Value }} # Int32
+    # item.TreeNodeIcon (ITreeNodeIcon) properties:
+    {{ item.TreeNodeIcon.IconKey }} # String
+    {{ item.TreeNodeText }} # String
+{{- end }}
+
+# Collection: List`1
+{{- for item in NewColumns }}
+	Index: {{ for.index }} (0-based)
+    # item (ColumnArtifact) properties:
+    {{ item.CanPreview }} # Boolean
+    # Collection: IEnumerable`1
+    {{- for item in item.Children }}
+    	Index: {{ for.index }} (0-based)
+        # item (IArtifact) properties:
+        {{ item.CanPreview }} # Boolean
+        # item.Children (Recursive: IEnumerable`1)
+        # Collection: IEnumerable`1
+        {{- for item in item.Decorators }}
+        	Index: {{ for.index }} (0-based)
+            # item (IArtifactDecorator) properties:
+            # item.Artifact (Artifact) properties:
+            {{ item.Artifact.CanPreview }} # Boolean
+            # item.Artifact.Children (Recursive: IEnumerable`1)
+            # item.Artifact.Decorators (Recursive: IEnumerable`1)
+            {{ item.Artifact.Id }} # String
+            {{ item.Artifact.IsStateChanged }} # Boolean
+            # item.Artifact.Parent (Recursive: IArtifact)
+            # Collection: Dictionary`2
+            {{- for item in item.Artifact.Properties }}
+            	Index: {{ for.index }} (0-based)
+                # item (KeyValuePair`2) properties:
+                {{ item.Key }} # String
+                # item.Value (Object) properties:
+            {{- end }}
+            # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+            {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+            {{ item.Artifact.TreeNodeText }} # String
+            {{ item.Key }} # String
+        {{- end }}
+        {{ item.Id }} # String
+        # item.Parent (Recursive: IArtifact)
+        # item.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.TreeNodeIcon.IconKey }} # String
+        {{ item.TreeNodeText }} # String
+    {{- end }}
+    {{ item.DataType }} # String
+    # Collection: IEnumerable`1
+    {{- for item in item.Decorators }}
+    	Index: {{ for.index }} (0-based)
+        # item (IArtifactDecorator) properties:
+        # item.Artifact (Artifact) properties:
+        {{ item.Artifact.CanPreview }} # Boolean
+        # Collection: IEnumerable`1
+        {{- for item in item.Artifact.Children }}
+        	Index: {{ for.index }} (0-based)
+            # item (IArtifact) properties:
+            {{ item.CanPreview }} # Boolean
+            # item.Children (Recursive: IEnumerable`1)
+            # item.Decorators (Recursive: IEnumerable`1)
+            {{ item.Id }} # String
+            # item.Parent (Recursive: IArtifact)
+            # item.TreeNodeIcon (ITreeNodeIcon) properties:
+            {{ item.TreeNodeIcon.IconKey }} # String
+            {{ item.TreeNodeText }} # String
+        {{- end }}
+        # item.Artifact.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Id }} # String
+        {{ item.Artifact.IsStateChanged }} # Boolean
+        # item.Artifact.Parent (IArtifact) properties:
+        {{ item.Artifact.Parent.CanPreview }} # Boolean
+        # Collection: IEnumerable`1
+        {{- for item in item.Artifact.Parent.Children }}
+        	Index: {{ for.index }} (0-based)
+            # item (Recursive: IArtifact)
+        {{- end }}
+        # item.Artifact.Parent.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Parent.Id }} # String
+        # item.Artifact.Parent.Parent (Recursive: IArtifact)
+        # item.Artifact.Parent.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.Parent.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.Parent.TreeNodeText }} # String
+        # Collection: Dictionary`2
+        {{- for item in item.Artifact.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.TreeNodeText }} # String
+        {{ item.Key }} # String
+    {{- end }}
+    {{ item.DefaultValue }} # String
+    {{ item.ForeignKeyColumn }} # String
+    {{ item.ForeignKeyTable }} # String
+    {{ item.Id }} # String
+    {{ item.IsAutoIncrement }} # Boolean
+    {{ item.IsForeignKey }} # Boolean
+    {{ item.IsNullable }} # Boolean
+    {{ item.IsPrimaryKey }} # Boolean
+    {{ item.IsStateChanged }} # Boolean
+    # item.MaxLength (Nullable`1) properties:
+    {{ item.MaxLength.HasValue }} # Boolean
+    {{ item.MaxLength.Value }} # Int32
+    {{ item.Name }} # String
+    {{ item.OrdinalPosition }} # Int32
+    # item.Parent (IArtifact) properties:
+    {{ item.Parent.CanPreview }} # Boolean
+    # Collection: IEnumerable`1
+    {{- for item in item.Parent.Children }}
+    	Index: {{ for.index }} (0-based)
+        # item (Recursive: IArtifact)
+    {{- end }}
+    # Collection: IEnumerable`1
+    {{- for item in item.Parent.Decorators }}
+    	Index: {{ for.index }} (0-based)
+        # item (IArtifactDecorator) properties:
+        # item.Artifact (Artifact) properties:
+        {{ item.Artifact.CanPreview }} # Boolean
+        # Collection: IEnumerable`1
+        {{- for item in item.Artifact.Children }}
+        	Index: {{ for.index }} (0-based)
+            # item (Recursive: IArtifact)
+        {{- end }}
+        # item.Artifact.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Id }} # String
+        {{ item.Artifact.IsStateChanged }} # Boolean
+        # item.Artifact.Parent (Recursive: IArtifact)
+        # Collection: Dictionary`2
+        {{- for item in item.Artifact.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.TreeNodeText }} # String
+        {{ item.Key }} # String
+    {{- end }}
+    {{ item.Parent.Id }} # String
+    # item.Parent.Parent (Recursive: IArtifact)
+    # item.Parent.TreeNodeIcon (ITreeNodeIcon) properties:
+    {{ item.Parent.TreeNodeIcon.IconKey }} # String
+    {{ item.Parent.TreeNodeText }} # String
+    # item.Precision (Nullable`1) properties:
+    {{ item.Precision.HasValue }} # Boolean
+    {{ item.Precision.Value }} # Int32
+    # Collection: Dictionary`2
+    {{- for item in item.Properties }}
+    	Index: {{ for.index }} (0-based)
+        # item (KeyValuePair`2) properties:
+        {{ item.Key }} # String
+        # item.Value (Object) properties:
+    {{- end }}
+    # item.Scale (Nullable`1) properties:
+    {{ item.Scale.HasValue }} # Boolean
+    {{ item.Scale.Value }} # Int32
+    # item.TreeNodeIcon (ITreeNodeIcon) properties:
+    {{ item.TreeNodeIcon.IconKey }} # String
+    {{ item.TreeNodeText }} # String
+{{- end }}
+
+# Collection: List`1
+{{- for item in ExistingColumns }}
+	Index: {{ for.index }} (0-based)
+    # item (ColumnArtifact) properties:
+    {{ item.CanPreview }} # Boolean
+    # Collection: IEnumerable`1
+    {{- for item in item.Children }}
+    	Index: {{ for.index }} (0-based)
+        # item (IArtifact) properties:
+        {{ item.CanPreview }} # Boolean
+        # item.Children (Recursive: IEnumerable`1)
+        # Collection: IEnumerable`1
+        {{- for item in item.Decorators }}
+        	Index: {{ for.index }} (0-based)
+            # item (IArtifactDecorator) properties:
+            # item.Artifact (Artifact) properties:
+            {{ item.Artifact.CanPreview }} # Boolean
+            # item.Artifact.Children (Recursive: IEnumerable`1)
+            # item.Artifact.Decorators (Recursive: IEnumerable`1)
+            {{ item.Artifact.Id }} # String
+            {{ item.Artifact.IsStateChanged }} # Boolean
+            # item.Artifact.Parent (Recursive: IArtifact)
+            # Collection: Dictionary`2
+            {{- for item in item.Artifact.Properties }}
+            	Index: {{ for.index }} (0-based)
+                # item (KeyValuePair`2) properties:
+                {{ item.Key }} # String
+                # item.Value (Object) properties:
+            {{- end }}
+            # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+            {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+            {{ item.Artifact.TreeNodeText }} # String
+            {{ item.Key }} # String
+        {{- end }}
+        {{ item.Id }} # String
+        # item.Parent (Recursive: IArtifact)
+        # item.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.TreeNodeIcon.IconKey }} # String
+        {{ item.TreeNodeText }} # String
+    {{- end }}
+    {{ item.DataType }} # String
+    # Collection: IEnumerable`1
+    {{- for item in item.Decorators }}
+    	Index: {{ for.index }} (0-based)
+        # item (ExistingColumnDecorator) properties:
+        # item.Artifact (Artifact) properties:
+        {{ item.Artifact.CanPreview }} # Boolean
+        # Collection: IEnumerable`1
+        {{- for item in item.Artifact.Children }}
+        	Index: {{ for.index }} (0-based)
+            # item (IArtifact) properties:
+            {{ item.CanPreview }} # Boolean
+            # item.Children (Recursive: IEnumerable`1)
+            # item.Decorators (Recursive: IEnumerable`1)
+            {{ item.Id }} # String
+            # item.Parent (Recursive: IArtifact)
+            # item.TreeNodeIcon (ITreeNodeIcon) properties:
+            {{ item.TreeNodeIcon.IconKey }} # String
+            {{ item.TreeNodeText }} # String
+        {{- end }}
+        # item.Artifact.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Id }} # String
+        {{ item.Artifact.IsStateChanged }} # Boolean
+        # item.Artifact.Parent (IArtifact) properties:
+        {{ item.Artifact.Parent.CanPreview }} # Boolean
+        # Collection: IEnumerable`1
+        {{- for item in item.Artifact.Parent.Children }}
+        	Index: {{ for.index }} (0-based)
+            # item (Recursive: ColumnArtifact)
+        {{- end }}
+        # item.Artifact.Parent.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Parent.Id }} # String
+        # item.Artifact.Parent.Parent (Recursive: IArtifact)
+        # item.Artifact.Parent.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.Parent.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.Parent.TreeNodeText }} # String
+        # Collection: Dictionary`2
+        {{- for item in item.Artifact.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.TreeNodeText }} # String
+        {{ item.IsStateChanged }} # Boolean
+        {{ item.Key }} # String
+        {{ item.OriginalDataType }} # String
+        {{ item.OriginalDefaultValue }} # String
+        {{ item.OriginalForeignKeyColumn }} # String
+        {{ item.OriginalForeignKeyTable }} # String
+        {{ item.OriginalIsAutoIncrement }} # Boolean
+        {{ item.OriginalIsForeignKey }} # Boolean
+        {{ item.OriginalIsNullable }} # Boolean
+        {{ item.OriginalIsPrimaryKey }} # Boolean
+        # item.OriginalMaxLength (Nullable`1) properties:
+        {{ item.OriginalMaxLength.HasValue }} # Boolean
+        {{ item.OriginalMaxLength.Value }} # Int32
+        {{ item.OriginalName }} # String
+        {{ item.OriginalOrdinalPosition }} # Int32
+        # item.OriginalPrecision (Nullable`1) properties:
+        {{ item.OriginalPrecision.HasValue }} # Boolean
+        {{ item.OriginalPrecision.Value }} # Int32
+        # item.OriginalScale (Nullable`1) properties:
+        {{ item.OriginalScale.HasValue }} # Boolean
+        {{ item.OriginalScale.Value }} # Int32
+        # Collection: Dictionary`2
+        {{- for item in item.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+    {{- end }}
+    {{ item.DefaultValue }} # String
+    {{ item.ForeignKeyColumn }} # String
+    {{ item.ForeignKeyTable }} # String
+    {{ item.Id }} # String
+    {{ item.IsAutoIncrement }} # Boolean
+    {{ item.IsForeignKey }} # Boolean
+    {{ item.IsNullable }} # Boolean
+    {{ item.IsPrimaryKey }} # Boolean
+    {{ item.IsStateChanged }} # Boolean
+    # item.MaxLength (Nullable`1) properties:
+    {{ item.MaxLength.HasValue }} # Boolean
+    {{ item.MaxLength.Value }} # Int32
+    {{ item.Name }} # String
+    {{ item.OrdinalPosition }} # Int32
+    # item.Parent (IArtifact) properties:
+    {{ item.Parent.CanPreview }} # Boolean
+    # Collection: IEnumerable`1
+    {{- for item in item.Parent.Children }}
+    	Index: {{ for.index }} (0-based)
+        # item (Recursive: ColumnArtifact)
+    {{- end }}
+    # Collection: IEnumerable`1
+    {{- for item in item.Parent.Decorators }}
+    	Index: {{ for.index }} (0-based)
+        # item (ExistingTableDecorator) properties:
+        # item.Artifact (Artifact) properties:
+        {{ item.Artifact.CanPreview }} # Boolean
+        # Collection: IEnumerable`1
+        {{- for item in item.Artifact.Children }}
+        	Index: {{ for.index }} (0-based)
+            # item (Recursive: ColumnArtifact)
+        {{- end }}
+        # item.Artifact.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Id }} # String
+        {{ item.Artifact.IsStateChanged }} # Boolean
+        # item.Artifact.Parent (Recursive: IArtifact)
+        # Collection: Dictionary`2
+        {{- for item in item.Artifact.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.TreeNodeText }} # String
+        {{ item.ImportedAt }} # DateTime
+        {{ item.IsStateChanged }} # Boolean
+        {{ item.Key }} # String
+        {{ item.OriginalSchema }} # String
+        {{ item.OriginalTableName }} # String
+        # Collection: Dictionary`2
+        {{- for item in item.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        {{ item.SourceDatasourceName }} # String
+    {{- end }}
+    {{ item.Parent.Id }} # String
+    # item.Parent.Parent (Recursive: IArtifact)
+    # item.Parent.TreeNodeIcon (ITreeNodeIcon) properties:
+    {{ item.Parent.TreeNodeIcon.IconKey }} # String
+    {{ item.Parent.TreeNodeText }} # String
+    # item.Precision (Nullable`1) properties:
+    {{ item.Precision.HasValue }} # Boolean
+    {{ item.Precision.Value }} # Int32
+    # Collection: Dictionary`2
+    {{- for item in item.Properties }}
+    	Index: {{ for.index }} (0-based)
+        # item (KeyValuePair`2) properties:
+        {{ item.Key }} # String
+        # item.Value (Object) properties:
+    {{- end }}
+    # item.Scale (Nullable`1) properties:
+    {{ item.Scale.HasValue }} # Boolean
+    {{ item.Scale.Value }} # Int32
+    # item.TreeNodeIcon (ITreeNodeIcon) properties:
+    {{ item.TreeNodeIcon.IconKey }} # String
+    {{ item.TreeNodeText }} # String
+{{- end }}
+
+# Collection: List`1
+{{- for item in ModifiedExistingColumns }}
+	Index: {{ for.index }} (0-based)
+    # item (ColumnArtifact) properties:
+    {{ item.CanPreview }} # Boolean
+    # Collection: IEnumerable`1
+    {{- for item in item.Children }}
+    	Index: {{ for.index }} (0-based)
+        # item (IArtifact) properties:
+        {{ item.CanPreview }} # Boolean
+        # item.Children (Recursive: IEnumerable`1)
+        # Collection: IEnumerable`1
+        {{- for item in item.Decorators }}
+        	Index: {{ for.index }} (0-based)
+            # item (IArtifactDecorator) properties:
+            # item.Artifact (Artifact) properties:
+            {{ item.Artifact.CanPreview }} # Boolean
+            # item.Artifact.Children (Recursive: IEnumerable`1)
+            # item.Artifact.Decorators (Recursive: IEnumerable`1)
+            {{ item.Artifact.Id }} # String
+            {{ item.Artifact.IsStateChanged }} # Boolean
+            # item.Artifact.Parent (Recursive: IArtifact)
+            # Collection: Dictionary`2
+            {{- for item in item.Artifact.Properties }}
+            	Index: {{ for.index }} (0-based)
+                # item (KeyValuePair`2) properties:
+                {{ item.Key }} # String
+                # item.Value (Object) properties:
+            {{- end }}
+            # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+            {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+            {{ item.Artifact.TreeNodeText }} # String
+            {{ item.Key }} # String
+        {{- end }}
+        {{ item.Id }} # String
+        # item.Parent (Recursive: IArtifact)
+        # item.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.TreeNodeIcon.IconKey }} # String
+        {{ item.TreeNodeText }} # String
+    {{- end }}
+    {{ item.DataType }} # String
+    # Collection: IEnumerable`1
+    {{- for item in item.Decorators }}
+    	Index: {{ for.index }} (0-based)
+        # item (ExistingColumnDecorator) properties:
+        # item.Artifact (Artifact) properties:
+        {{ item.Artifact.CanPreview }} # Boolean
+        # Collection: IEnumerable`1
+        {{- for item in item.Artifact.Children }}
+        	Index: {{ for.index }} (0-based)
+            # item (IArtifact) properties:
+            {{ item.CanPreview }} # Boolean
+            # item.Children (Recursive: IEnumerable`1)
+            # item.Decorators (Recursive: IEnumerable`1)
+            {{ item.Id }} # String
+            # item.Parent (Recursive: IArtifact)
+            # item.TreeNodeIcon (ITreeNodeIcon) properties:
+            {{ item.TreeNodeIcon.IconKey }} # String
+            {{ item.TreeNodeText }} # String
+        {{- end }}
+        # item.Artifact.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Id }} # String
+        {{ item.Artifact.IsStateChanged }} # Boolean
+        # item.Artifact.Parent (IArtifact) properties:
+        {{ item.Artifact.Parent.CanPreview }} # Boolean
+        # Collection: IEnumerable`1
+        {{- for item in item.Artifact.Parent.Children }}
+        	Index: {{ for.index }} (0-based)
+            # item (Recursive: ColumnArtifact)
+        {{- end }}
+        # item.Artifact.Parent.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Parent.Id }} # String
+        # item.Artifact.Parent.Parent (Recursive: IArtifact)
+        # item.Artifact.Parent.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.Parent.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.Parent.TreeNodeText }} # String
+        # Collection: Dictionary`2
+        {{- for item in item.Artifact.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.TreeNodeText }} # String
+        {{ item.IsStateChanged }} # Boolean
+        {{ item.Key }} # String
+        {{ item.OriginalDataType }} # String
+        {{ item.OriginalDefaultValue }} # String
+        {{ item.OriginalForeignKeyColumn }} # String
+        {{ item.OriginalForeignKeyTable }} # String
+        {{ item.OriginalIsAutoIncrement }} # Boolean
+        {{ item.OriginalIsForeignKey }} # Boolean
+        {{ item.OriginalIsNullable }} # Boolean
+        {{ item.OriginalIsPrimaryKey }} # Boolean
+        # item.OriginalMaxLength (Nullable`1) properties:
+        {{ item.OriginalMaxLength.HasValue }} # Boolean
+        {{ item.OriginalMaxLength.Value }} # Int32
+        {{ item.OriginalName }} # String
+        {{ item.OriginalOrdinalPosition }} # Int32
+        # item.OriginalPrecision (Nullable`1) properties:
+        {{ item.OriginalPrecision.HasValue }} # Boolean
+        {{ item.OriginalPrecision.Value }} # Int32
+        # item.OriginalScale (Nullable`1) properties:
+        {{ item.OriginalScale.HasValue }} # Boolean
+        {{ item.OriginalScale.Value }} # Int32
+        # Collection: Dictionary`2
+        {{- for item in item.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+    {{- end }}
+    {{ item.DefaultValue }} # String
+    {{ item.ForeignKeyColumn }} # String
+    {{ item.ForeignKeyTable }} # String
+    {{ item.Id }} # String
+    {{ item.IsAutoIncrement }} # Boolean
+    {{ item.IsForeignKey }} # Boolean
+    {{ item.IsNullable }} # Boolean
+    {{ item.IsPrimaryKey }} # Boolean
+    {{ item.IsStateChanged }} # Boolean
+    # item.MaxLength (Nullable`1) properties:
+    {{ item.MaxLength.HasValue }} # Boolean
+    {{ item.MaxLength.Value }} # Int32
+    {{ item.Name }} # String
+    {{ item.OrdinalPosition }} # Int32
+    # item.Parent (IArtifact) properties:
+    {{ item.Parent.CanPreview }} # Boolean
+    # Collection: IEnumerable`1
+    {{- for item in item.Parent.Children }}
+    	Index: {{ for.index }} (0-based)
+        # item (Recursive: ColumnArtifact)
+    {{- end }}
+    # Collection: IEnumerable`1
+    {{- for item in item.Parent.Decorators }}
+    	Index: {{ for.index }} (0-based)
+        # item (ExistingTableDecorator) properties:
+        # item.Artifact (Artifact) properties:
+        {{ item.Artifact.CanPreview }} # Boolean
+        # Collection: IEnumerable`1
+        {{- for item in item.Artifact.Children }}
+        	Index: {{ for.index }} (0-based)
+            # item (Recursive: ColumnArtifact)
+        {{- end }}
+        # item.Artifact.Decorators (Recursive: IEnumerable`1)
+        {{ item.Artifact.Id }} # String
+        {{ item.Artifact.IsStateChanged }} # Boolean
+        # item.Artifact.Parent (Recursive: IArtifact)
+        # Collection: Dictionary`2
+        {{- for item in item.Artifact.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        # item.Artifact.TreeNodeIcon (ITreeNodeIcon) properties:
+        {{ item.Artifact.TreeNodeIcon.IconKey }} # String
+        {{ item.Artifact.TreeNodeText }} # String
+        {{ item.ImportedAt }} # DateTime
+        {{ item.IsStateChanged }} # Boolean
+        {{ item.Key }} # String
+        {{ item.OriginalSchema }} # String
+        {{ item.OriginalTableName }} # String
+        # Collection: Dictionary`2
+        {{- for item in item.Properties }}
+        	Index: {{ for.index }} (0-based)
+            # item (KeyValuePair`2) properties:
+            {{ item.Key }} # String
+            # item.Value (Object) properties:
+        {{- end }}
+        {{ item.SourceDatasourceName }} # String
+    {{- end }}
+    {{ item.Parent.Id }} # String
+    # item.Parent.Parent (Recursive: IArtifact)
+    # item.Parent.TreeNodeIcon (ITreeNodeIcon) properties:
+    {{ item.Parent.TreeNodeIcon.IconKey }} # String
+    {{ item.Parent.TreeNodeText }} # String
+    # item.Precision (Nullable`1) properties:
+    {{ item.Precision.HasValue }} # Boolean
+    {{ item.Precision.Value }} # Int32
+    # Collection: Dictionary`2
+    {{- for item in item.Properties }}
+    	Index: {{ for.index }} (0-based)
+        # item (KeyValuePair`2) properties:
+        {{ item.Key }} # String
+        # item.Value (Object) properties:
+    {{- end }}
+    # item.Scale (Nullable`1) properties:
+    {{ item.Scale.HasValue }} # Boolean
+    {{ item.Scale.Value }} # Int32
+    # item.TreeNodeIcon (ITreeNodeIcon) properties:
+    {{ item.TreeNodeIcon.IconKey }} # String
+    {{ item.TreeNodeText }} # String
+{{- end }}
+
+{{ CanAlterTable }} # Boolean
+
+# Function: GetTypeDef()
+# Function: GetIdentifier()
+# Global Function: pascal_case()
+# Global Function: camel_case()
+# Global Function: snake_case()
+# Global Function: kebab_case()
+# Global Function: pluralize()
+# Global Function: singularize()
+# Global Function: nullable_type()
+# Global Function: is_collection()
+# Global Function: get_collection_type()
+# Global Function: csharp_type()
+# Global Function: sql_type()
+# Global Function: now()
+# Global Function: utc_now()
+# Global Function: if_empty()

@@ -1,0 +1,14 @@
+Implementeer in project CodeGenerator.Core.Workspaces.Datasources.Xml de ondersteuning voor een xml-bestand (*.xml) datasource.
+Voeg indien nodig nog een nugetpackage toe voor xml-lees/schrijf ondersteuning.
+Probeer het op dezelfde manier te implementeren als een Json datasource.
+
+Je kan het project CodeGenerator.Core.Workspaces.Datasources.Json als voorbeeld nemen voor een Json datasource.
+
+Maak ook een XmlDatasourceController aan.
+Je kan de gelijkaardige controller voor Json als voorbeeld vinden in D:\Cloud\GitHub\code_generator\src\CodeGenerator.Application\Controllers\Workspace\JsonDatasourceController.cs.
+Voeg de XmlDatasourceController in functie WorkspaceTeeViewControler.LoadArtifactControllers() toe. 
+En ook in de dependency injection configuratie: D:\Cloud\GitHub\code_generator\src\CodeGenerator.Application\ServiceCollectionExtensions.cs.
+
+Genereer in project "CodeGenerator.Presentation.WinForms" ook een XmlDatasourceEditView gelijkaardig aan JsonDatasourceEditView 
+Voeg die nieuwe XmlDatasourceEditView daarna toe in functie WorkspaceDetailsView.ShowDetailsControl()
+Gebruik een CodeGenerator.UserControls.Views.FileField control om een json-file te selecteren.

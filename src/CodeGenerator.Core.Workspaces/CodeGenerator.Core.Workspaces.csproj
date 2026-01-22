@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Models\ColumnDefinition.cs" />
+    <Compile Remove="Models\IndexDefinition.cs" />
+    <Compile Remove="Models\TableDefinition.cs" />
+    <Compile Remove="Models\ViewDefinition.cs" />
+    <Compile Remove="Models\WorkspaceFile.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeGenerator.Core.Settings\CodeGenerator.Core.Settings.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Domain\CodeGenerator.Domain.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Shared\CodeGenerator.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,15 @@
+{{ # some singleline comment }}
+{{ ## some multiline 
+comment ## }}
+{{~ for kingdom in LivingOrganisms.data[0].kingdoms}}
+# {{ kingdom.name }}
+{{- for division in kingdom.divisions }}
+## Division: {{ division.name }}
+{{- for family in division.families }}
+### Family: {{ family.name }}
+{{ end #yrdy yrd }}
+{{ end }}fg
+{{- for group in kingdom.groups }}
+## Group: {{ group.name }}
+{{ end }}
+{{ end ~}}

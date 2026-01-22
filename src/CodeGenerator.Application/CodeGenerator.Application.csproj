@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\Template\TemplateController.cs" />
+    <Compile Remove="ViewModels\UserControls\TableArtifactFieldModel.cs" />
+    <Compile Remove="ViewModels\Workspace\WorkspaceDetailsViewModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeGenerator.Core.Artifacts\CodeGenerator.Core.Artifacts.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.DomainSchema\CodeGenerator.Core.DomainSchema.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Generators\CodeGenerator.Core.Generators.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.MessageBus\CodeGenerator.Core.MessageBus.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Settings\CodeGenerator.Core.Settings.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Templates\CodeGenerator.Core.Templates.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Csv\CodeGenerator.Core.Workspaces.Datasources.Csv.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Json\CodeGenerator.Core.Workspaces.Datasources.Json.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Xml\CodeGenerator.Core.Workspaces.Datasources.Xml.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Yaml\CodeGenerator.Core.Workspaces.Datasources.Yaml.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Workspaces\CodeGenerator.Core.Workspaces.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Excel\CodeGenerator.Core.Workspaces.Datasources.Excel.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Mysql\CodeGenerator.Core.Workspaces.Datasources.Mysql.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.PostgreServer\CodeGenerator.Core.Workspaces.Datasources.PostgreServer.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.SqlServer\CodeGenerator.Core.Workspaces.Datasources.SqlServer.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Generators.CodeArchitectureLayers\CodeGenerator.Generators.CodeArchitectureLayers.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Generators.DotNet\CodeGenerator.Generators.DotNet.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Shared\CodeGenerator.Shared.csproj" />
+    <ProjectReference Include="..\CodeGenerator.TemplateEngines.DotNetProject\CodeGenerator.TemplateEngines.DotNetProject.csproj" />
+    <ProjectReference Include="..\CodeGenerator.TemplateEngines.PlantUML\CodeGenerator.TemplateEngines.PlantUML.csproj" />
+    <ProjectReference Include="..\CodeGenerator.TemplateEngines.Scriban\CodeGenerator.TemplateEngines.Scriban.csproj" />
+    <ProjectReference Include="..\CodeGenerator.TemplateEngines.T4\CodeGenerator.TemplateEngines.T4.csproj" />
+    <ProjectReference Include="..\CodeGenerator.UserControls\CodeGenerator.UserControls.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Settings\" />
+  </ItemGroup>
+
+</Project>

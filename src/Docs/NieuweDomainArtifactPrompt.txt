@@ -1,0 +1,35 @@
+Ik heb vanalles gewijzigd, dus bekijk eerst de voorbeelden aandachtig, om de nieuwe patronen te herkennen.
+
+Genereer een EntitiyRelationsContainerArtifact (gelijkaardig aan EntityStatesContainerArtifact in folder D:\Cloud\GitHub\code_generator\src\CodeGenerator.Core.Workspaces\Artifacts\Domains\):
+TreeNodeText = "Relations" (fixed)
+TreeNodeIcon = new ResourceManagerTreeNodeIcon("link");
+
+Voeg aan EntityArtifact de property Relations toe (gelijkaardig aan property States).
+Maak dus ook een methode EnsureEntitiyRelationsContainerExists() en voeg die toe aan de twee constructors van EntityArtifact.
+
+Genereer een EntityRelationsContainerController in D:\Cloud\GitHub\code_generator\src\CodeGenerator.Application\Controllers\Workspace\Domains\ (gelijkaardig aan EntityStatesContainerController)
+
+Registreer deze in de DI-container in D:\Cloud\GitHub\code_generator\src\CodeGenerator.Application\ServiceCollectionExtensions.cs.
+Voeg deze ook toe aan functie LoadArtifactControllers() in D:\Cloud\GitHub\code_generator\src\CodeGenerator.Application\Controllers\Workspace\WorkspaceTreeViewController.cs.
+
+Genereer een EntityRelationArtifact in folder D:\Cloud\GitHub\code_generator\src\CodeGenerator.Core.Workspaces\Artifacts\Domains\.
+Deze moet het mogelijk maken om een relatie met een andere EntityArtifact te kunnen definieren.
+De relatie is van het type:
+- 1 (exact 1) 
+- 0-1 (0 of één)
+- 0-* (0 of meerdere)
+- 1-* (minstens 1)
+
+Genereer een EntityRelationEditView in folder D:\Cloud\GitHub\code_generator\src\CodeGenerator.Presentation.WinForms\Views\Domains\.
+Genereer een bijhorend EntityRelationEditViewModel in folder D:\Cloud\GitHub\code_generator\src\CodeGenerator.Core.Workspaces\ViewModels\.
+
+Genereer een EntityRelationController in D:\Cloud\GitHub\code_generator\src\CodeGenerator.Application\Controllers\Workspace\Domains\.
+Registreer deze in de DI-conteiner in D:\Cloud\GitHub\code_generator\src\CodeGenerator.Application\ServiceCollectionExtensions.cs.
+Voeg deze ook toe aan functie LoadArtifactControllers() in D:\Cloud\GitHub\code_generator\src\CodeGenerator.Application\Controllers\Workspace\WorkspaceTreeViewController.cs.
+
+De EntitiyRelationsContainerController moet volgende ArtifacCommands hebben:
+- Add Relation
+
+De EntityRelationController moet volgende ArtifactCommands hebben:
+- Rename
+- Delete

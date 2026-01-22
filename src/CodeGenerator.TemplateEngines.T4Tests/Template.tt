@@ -1,0 +1,38 @@
+﻿<#@ template language="C#" hostspecific="true" #>
+<#@ parameter name="EntityName" type="System.String" #>
+<#@ parameter name="Namespace" type="System.String" #>
+namespace <#= Namespace #>
+{
+    public class <#= EntityName #>
+    {
+        public int Id { get; set; }
+
+<#= GetAdditionalPropertiesCode() #>
+<#= GetValidationMethodCode(EntityName) #>
+    }
+}
+<#+
+private string GetAdditionalPropertiesCode()
+{
+    return @"        // Auto-generated additional properties
+        public string Name { get; set; } = string.Empty;
+        
+        public string Description { get; set; } = string.Empty;
+        
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        
+        public DateTime? UpdatedAt { get; set; }";
+}
+
+private string GetValidationMethodCode(string entityName)
+{
+    return @"
+        /// <summary>
+        /// Validates the " + entityName + @" entity
+        /// </summary>
+        public bool Validate()
+        {
+            return !string.IsNullOrEmpty(Name);
+        }";
+}
+#>

@@ -1,0 +1,26 @@
+using System.Drawing;
+
+namespace CodeGenerator.Shared.Ribbon;
+
+/// <summary>
+/// Renders a RibbonViewModel to a ribbon control
+/// This interface should be implemented in platform-specific projects (WinForms, WPF, etc.)
+/// </summary>
+public interface IRibbonRenderer
+{
+    IRibbonRenderer SetResourceManager(global::System.Resources.ResourceManager resourceManager);
+    /// <summary>
+    /// Applies the RibbonViewModel configuration to a ribbon control
+    /// </summary>
+    void Render(RibbonViewModel viewModel, object ribbonControl);
+
+    /// <summary>
+    /// Adds a tab to the ribbon control
+    /// </summary>
+    void AddTab(RibbonTabViewModel tabViewModel, object ribbonControl);
+
+    /// <summary>
+    /// Removes a tab from the ribbon control
+    /// </summary>
+    void RemoveTab(string tabName, object ribbonControl);
+}

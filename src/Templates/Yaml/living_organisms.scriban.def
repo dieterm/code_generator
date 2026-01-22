@@ -1,0 +1,45 @@
+{
+  "templateId": "living_organisms",
+  "displayName": "living_organisms.scriban",
+  "description": null,
+  "category": null,
+  "tags": null,
+  "version": null,
+  "author": null,
+  "parameters": [
+    {
+      "name": "LivingOrganisms",
+      "description": null,
+      "fullyQualifiedAssemblyTypeName": "CodeGenerator.TemplateDatasourceArtifactData",
+      "required": true,
+      "defaultValue": null,
+      "allowedValues": null,
+      "label": null,
+      "tooltip": null,
+      "displayOrder": 0,
+      "validationPattern": null,
+      "minValue": null,
+      "maxValue": null,
+      "tableDataFilter": null,
+      "tableDataMaxRows": null,
+      "isTemplateDatasourceArtifactData": true
+    },
+    {
+      "name": "Parameter2",
+      "description": null,
+      "fullyQualifiedAssemblyTypeName": "System.String",
+      "required": false,
+      "defaultValue": null,
+      "allowedValues": null,
+      "label": null,
+      "tooltip": null,
+      "displayOrder": 1,
+      "validationPattern": null,
+      "minValue": null,
+      "maxValue": null,
+      "tableDataFilter": null,
+      "tableDataMaxRows": null,
+      "isTemplateDatasourceArtifactData": false
+    }
+  ]
+}

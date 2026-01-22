@@ -1,0 +1,28 @@
+{
+  "templateId": "TestCountries23",
+  "displayName": "TestCountries2.scriban",
+  "description": null,
+  "category": null,
+  "tags": null,
+  "version": null,
+  "author": null,
+  "parameters": [
+    {
+      "name": "WorldRegion",
+      "description": null,
+      "fullyQualifiedAssemblyTypeName": "CodeGenerator.TemplateDatasourceArtifactData",
+      "required": true,
+      "defaultValue": null,
+      "allowedValues": null,
+      "label": null,
+      "tooltip": null,
+      "displayOrder": 0,
+      "validationPattern": null,
+      "minValue": null,
+      "maxValue": null,
+      "tableDataFilter": null,
+      "tableDataMaxRows": null,
+      "isTemplateDatasourceArtifactData": true
+    }
+  ]
+}

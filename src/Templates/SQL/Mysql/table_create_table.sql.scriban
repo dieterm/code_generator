@@ -1,0 +1,42 @@
+CREATE TABLE {{ if Table.schema }}{{ Table.schema }}.{{ end }}{{ GetIdentifier Table.name }} (
+{{- for column in Columns }}
+	{{ GetIdentifier column.name }} {{ GetTypeDef column }}{{ if column.is_nullable == false }} NOT NULL{{ end }}{{ if column.default_value != null }} DEFAULT {{ column.default_value }}{{ end }}{{ if !for.last || PrimaryKeyColumns.size > 0 || Indexes.size > 0 }},{{ end }}
+{{- end }}
+{{- if PrimaryKeyColumns.size > 0 }}
+	PRIMARY KEY pk_{{ if Table.schema }}{{ Table.schema }}_{{ end }}{{ Table.name }} ({{ for pk_column in PrimaryKeyColumns }}{{ GetIdentifier pk_column.name }}{{ if !for.last }}, {{ end }}{{ end }}){{ if Indexes.size > 0 }},{{ end }}
+{{- end }}
+{{- for index in Indexes }}
+{{- if Indexes.size > 0 }}
+	{{ if index.is_unique }}UNIQUE {{ end }}KEY idx_{{ if Table.schema }}{{ Table.schema }}_{{ end }}{{ Table.name }}_{{ index.name }} ({{ for index_column in index.column_names }}{{ GetIdentifier index_column }}{{ if for.last == false }}, {{ end }}{{ end }}){{ if for.last == false }},{{ end }}
+{{- end }}
+{{- end }}
+);
+
+{{- for foreignkey in ForeignKeys }}
+ALTER TABLE {{ if Table.schema }}{{ Table.schema }}.{{ end }}{{ GetIdentifier Table.name }}
+ADD CONSTRAINT {{ foreignkey.name }}
+	FOREIGN KEY ({{ for columnmapping in foreignkey.column_mappings }}{{ GetIdentifier columnmapping.source_column.name }}{{ if !for.last }},{{ end }}{{ end }})
+	REFERENCES {{ if foreignkey.referenced_table.schema }}{{ foreignkey.referenced_table.schema }}.{{ end }}{{ GetIdentifier foreignkey.referenced_table.name }}({{ for columnmapping in foreignkey.column_mappings }}{{ GetIdentifier columnmapping.referenced_column.name }}{{ if !for.last }},{{ end }}{{ end }})
+    ON DELETE {{ 
+case foreignkey.on_delete_action 
+when 0 
+"NO ACTION" 
+when 1 
+"CASCADE" 
+when 2 
+"SET NULL" 
+when 3 
+"RESTRICT" 
+end }}
+    ON UPDATE {{ 
+case foreignkey.on_update_action 
+when 0 
+"NO ACTION" 
+when 1 
+"CASCADE" 
+when 2 
+"SET NULL" 
+when 3 
+"RESTRICT" 
+end }};
+{{- end }}

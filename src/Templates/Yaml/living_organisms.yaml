@@ -1,0 +1,387 @@
+# Hiërarchie van Levende Wezens op Aarde
+# Dit is een vereenvoudigde taxonomische structuur voor testdoeleinden
+
+kingdoms:
+  - name: Animalia
+    description: Dierenrijk - meercellige organismen die zich voeden met andere organismen
+    characteristics:
+      - multicellular: true
+      - heterotrophic: true
+      - motile: true
+    phyla:
+      - name: Chordata
+        description: Gewervelde dieren en verwanten
+        classes:
+          - name: Mammalia
+            description: Zoogdieren
+            characteristics:
+              warmBlooded: true
+              hasFur: true
+              producesMilk: true
+            orders:
+              - name: Primates
+                families:
+                  - name: Hominidae
+                    commonName: Mensapen
+                    genera:
+                      - name: Homo
+                        species:
+                          - scientificName: Homo sapiens
+                            commonName: Mens
+                            population: 8000000000
+                            conservationStatus: Least Concern
+                            habitats:
+                              - type: Urban
+                                regions: [Europe, Asia, Americas, Africa, Oceania]
+                              - type: Rural
+                                regions: [Worldwide]
+                      - name: Pan
+                        species:
+                          - scientificName: Pan troglodytes
+                            commonName: Chimpansee
+                            population: 300000
+                            conservationStatus: Endangered
+                            habitats:
+                              - type: Tropical Forest
+                                regions: [Central Africa, West Africa]
+                          - scientificName: Pan paniscus
+                            commonName: Bonobo
+                            population: 50000
+                            conservationStatus: Endangered
+                  - name: Pongidae
+                    commonName: Orang-oetans
+                    genera:
+                      - name: Pongo
+                        species:
+                          - scientificName: Pongo pygmaeus
+                            commonName: Borneose orang-oetan
+                            population: 104000
+                            conservationStatus: Critically Endangered
+              - name: Carnivora
+                families:
+                  - name: Felidae
+                    commonName: Katachtigen
+                    genera:
+                      - name: Panthera
+                        species:
+                          - scientificName: Panthera leo
+                            commonName: Leeuw
+                            population: 23000
+                            conservationStatus: Vulnerable
+                            diet:
+                              type: Carnivore
+                              preyAnimals: [Zebra, Wildebeest, Buffalo, Antelope]
+                          - scientificName: Panthera tigris
+                            commonName: Tijger
+                            population: 4500
+                            conservationStatus: Endangered
+                      - name: Felis
+                        species:
+                          - scientificName: Felis catus
+                            commonName: Huiskat
+                            population: 600000000
+                            conservationStatus: Domesticated
+                  - name: Canidae
+                    commonName: Hondachtigen
+                    genera:
+                      - name: Canis
+                        species:
+                          - scientificName: Canis lupus
+                            commonName: Wolf
+                            population: 300000
+                            conservationStatus: Least Concern
+                          - scientificName: Canis familiaris
+                            commonName: Hond
+                            population: 900000000
+                            conservationStatus: Domesticated
+              - name: Cetacea
+                families:
+                  - name: Delphinidae
+                    commonName: Dolfijnen
+                    genera:
+                      - name: Tursiops
+                        species:
+                          - scientificName: Tursiops truncatus
+                            commonName: Tuimelaar
+                            population: 600000
+                            conservationStatus: Least Concern
+                            aquatic: true
+                            breathesAir: true
+          - name: Aves
+            description: Vogels
+            characteristics:
+              warmBlooded: true
+              hasFeathers: true
+              laysEggs: true
+            orders:
+              - name: Passeriformes
+                commonName: Zangvogels
+                speciesCount: 6500
+                examples:
+                  - name: Merel
+                    scientificName: Turdus merula
+                  - name: Huismus
+                    scientificName: Passer domesticus
+              - name: Accipitriformes
+                commonName: Roofvogels
+                families:
+                  - name: Accipitridae
+                    genera:
+                      - name: Aquila
+                        species:
+                          - scientificName: Aquila chrysaetos
+                            commonName: Steenarend
+                            wingspan: 2.3
+                            wingspanUnit: meters
+          - name: Reptilia
+            description: Reptielen
+            characteristics:
+              coldBlooded: true
+              hasScales: true
+              laysEggs: true
+            orders:
+              - name: Squamata
+                suborders:
+                  - name: Serpentes
+                    commonName: Slangen
+                    venomous: 
+                      percentage: 15
+                      examples:
+                        - name: Koningscobra
+                          scientificName: Ophiophagus hannah
+                          venomType: Neurotoxic
+                        - name: Zwarte mamba
+                          scientificName: Dendroaspis polylepis
+                          venomType: Neurotoxic
+                  - name: Lacertilia
+                    commonName: Hagedissen
+                    speciesCount: 6000
+              - name: Testudines
+                commonName: Schildpadden
+                families:
+                  - name: Cheloniidae
+                    commonName: Zeeschildpadden
+                    species:
+                      - scientificName: Chelonia mydas
+                        commonName: Groene zeeschildpad
+                        maxAge: 80
+                        conservationStatus: Endangered
+      - name: Arthropoda
+        description: Geleedpotigen
+        classes:
+          - name: Insecta
+            description: Insecten
+            estimatedSpecies: 1000000
+            characteristics:
+              legs: 6
+              bodySegments: 3
+              hasExoskeleton: true
+            orders:
+              - name: Coleoptera
+                commonName: Kevers
+                speciesCount: 400000
+              - name: Lepidoptera
+                commonName: Vlinders en motten
+                speciesCount: 180000
+                metamorphosis:
+                  stages:
+                    - name: Egg
+                      duration: "1-2 weeks"
+                    - name: Larva
+                      duration: "2-4 weeks"
+                    - name: Pupa
+                      duration: "1-2 weeks"
+                    - name: Adult
+                      duration: "2-6 weeks"
+              - name: Hymenoptera
+                commonName: Vliesvleugeligen
+                examples:
+                  - name: Honingbij
+                    scientificName: Apis mellifera
+                    socialStructure:
+                      queen: 1
+                      workers: 60000
+                      drones: 2000
+                    products:
+                      - Honey
+                      - Beeswax
+                      - Propolis
+          - name: Arachnida
+            description: Spinachtigen
+            characteristics:
+              legs: 8
+              bodySegments: 2
+            orders:
+              - name: Araneae
+                commonName: Spinnen
+                speciesCount: 48000
+                venomous: true
+              - name: Scorpiones
+                commonName: Schorpioenen
+                speciesCount: 2500
+
+  - name: Plantae
+    description: Plantenrijk - fotosynthetische organismen
+    characteristics:
+      - autotrophic: true
+      - hasChlorophyll: true
+      - cellWall: cellulose
+    divisions:
+      - name: Magnoliophyta
+        commonName: Bloemplanten
+        classes:
+          - name: Magnoliopsida
+            commonName: Tweezaadlobbigen
+            examples:
+              - family: Rosaceae
+                commonName: Rozenfamilie
+                species:
+                  - Rosa gallica
+                  - Malus domestica
+                  - Prunus avium
+              - family: Fabaceae
+                commonName: Vlinderbloemenfamilie
+                economicImportance:
+                  - Nitrogen fixation
+                  - Food crops
+                  - Timber
+          - name: Liliopsida
+            commonName: Eenzaadlobbigen
+            examples:
+              - family: Poaceae
+                commonName: Grassenfamilie
+                economicSpecies:
+                  - name: Triticum aestivum
+                    commonName: Tarwe
+                    annualProduction: 750000000
+                    productionUnit: tonnes
+                  - name: Oryza sativa
+                    commonName: Rijst
+                    annualProduction: 500000000
+                  - name: Zea mays
+                    commonName: Maïs
+                    annualProduction: 1100000000
+      - name: Coniferophyta
+        commonName: Naaldbomen
+        characteristics:
+          evergreen: true
+          produceCones: true
+        families:
+          - name: Pinaceae
+            genera:
+              - Pinus
+              - Picea
+              - Abies
+          - name: Cupressaceae
+            genera:
+              - Juniperus
+              - Cupressus
+
+  - name: Fungi
+    description: Schimmelrijk
+    characteristics:
+      - heterotrophic: true
+      - hasChitin: true
+      - decomposers: true
+    phyla:
+      - name: Basidiomycota
+        commonName: Steeltjesschimmels
+        examples:
+          - name: Champignon
+            scientificName: Agaricus bisporus
+            edible: true
+            cultivated: true
+          - name: Vliegenzwam
+            scientificName: Amanita muscaria
+            edible: false
+            poisonous: true
+            psychoactive: true
+      - name: Ascomycota
+        commonName: Zakjeszwammen
+        economicImportance:
+          - Yeast for brewing
+          - Penicillin production
+          - Truffle cultivation
+
+  - name: Bacteria
+    description: Bacteriën - eencellige prokaryoten
+    characteristics:
+      - prokaryotic: true
+      - unicellular: true
+      - sizeRange: "0.2-10 micrometers"
+    phyla:
+      - name: Proteobacteria
+        examples:
+          - genus: Escherichia
+            species: E. coli
+            habitat: Intestinal tract
+            pathogenic: 
+              mostStrains: false
+              someStrains: true
+          - genus: Salmonella
+            pathogenic: true
+            diseases:
+              - Typhoid fever
+              - Food poisoning
+      - name: Firmicutes
+        examples:
+          - genus: Lactobacillus
+            beneficial: true
+            uses:
+              - Yogurt production
+              - Probiotics
+              - Cheese making
+          - genus: Clostridium
+            mixedEffects:
+              beneficial:
+                - C. butyricum (probiotics)
+              harmful:
+                - C. botulinum (botulism)
+                - C. tetani (tetanus)
+
+  - name: Protista
+    description: Protisten - diverse eencellige eukaryoten
+    characteristics:
+      - eukaryotic: true
+      - mostlyUnicellular: true
+    groups:
+      - name: Protozoa
+        examples:
+          - name: Amoeba
+            locomotion: Pseudopodia
+          - name: Paramecium
+            locomotion: Cilia
+          - name: Plasmodium
+            pathogenic: true
+            disease: Malaria
+            vectorOrganism: Anopheles mosquito
+      - name: Algae
+        photosynthetic: true
+        examples:
+          - name: Chlorella
+            uses:
+              - Dietary supplement
+              - Biofuel research
+          - name: Spirulina
+            uses:
+              - Superfood
+              - Protein source
+
+# Metadata over dit bestand
+metadata:
+  version: 1.0
+  createdFor: Testing YAML datasource parsing
+  lastUpdated: 2024-01-15
+  author: Test Generator
+  notes:
+    - This is a simplified taxonomic hierarchy
+    - Not scientifically accurate
+    - Created for testing nested YAML structures
+  testFeatures:
+    - Deeply nested objects
+    - Arrays of objects
+    - Mixed data types
+    - Optional properties
+    - Numeric values
+    - Boolean values
+    - String arrays

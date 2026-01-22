@@ -1,0 +1,22 @@
+namespace CodeGenerator.UserControls.ViewModels
+{
+    /// <summary>
+    /// Represents an item in a combobox
+    /// </summary>
+    public class ComboboxItem
+    {
+        /// <summary>
+        /// Display name shown in the combobox
+        /// </summary>
+        public virtual string DisplayName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Value of the item
+        /// </summary>
+        public virtual object? Value { get; set; }
+        
+        public virtual string Tooltip { get; set; } = string.Empty;
+
+        public override string ToString() => DisplayName;
+    }
+}

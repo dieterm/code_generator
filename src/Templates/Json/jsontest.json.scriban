@@ -1,0 +1,5 @@
+{{ Schema.data[0].namespace }}
+
+{{ for table in Schema.data[0].tables }}
+{{ table.name.singular }}
+{{ end }}

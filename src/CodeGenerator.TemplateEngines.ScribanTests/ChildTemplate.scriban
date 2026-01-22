@@ -1,0 +1,3 @@
+﻿I'm a child template.
+
+{{ include "ChildFolder/SubChildTemplate.scriban" }}

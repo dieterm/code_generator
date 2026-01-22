@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeGenerator.Core.Artifacts\CodeGenerator.Core.Artifacts.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Generators\CodeGenerator.Core.Generators.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Templates\CodeGenerator.Core.Templates.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Workspaces\CodeGenerator.Core.Workspaces.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core\CodeGenerator.Core.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Domain\CodeGenerator.Domain.csproj" />
+    <ProjectReference Include="..\CodeGenerator.TemplateEngines.DotNetProject\CodeGenerator.TemplateEngines.DotNetProject.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Generators.CodeArchitectureLayers\CodeGenerator.Generators.CodeArchitectureLayers.csproj" />
+    <ProjectReference Include="..\CodeGenerator.TemplateEngines.Scriban\CodeGenerator.TemplateEngines.Scriban.csproj" />
+  </ItemGroup>
+
+</Project>

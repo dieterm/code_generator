@@ -1,0 +1,12 @@
+{{ Landen.data.size }} rows
+
+{{- for column in Landen.columns }}
+{{column.Name}}
+{{ for property in column.properties }}
+{{property.key}} : {{property.value}}
+{{- end }}
+{{- end }}
+
+{{- for municipality in Landen.data }}
+- {{municipality.iso2_code}} / {{municipality.name_nl}}
+{{- end }}

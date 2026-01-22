@@ -1,0 +1,111 @@
+using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Application.ViewModels.Workspace;
+using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains;
+using CodeGenerator.Core.Workspaces.ViewModels;
+using Microsoft.Extensions.Logging;
+
+namespace CodeGenerator.Application.Controllers.Workspace.Domains
+{
+    /// <summary>
+    /// Controller for DomainArtifact
+    /// </summary>
+    public class DomainController : ArtifactControllerBase<WorkspaceTreeViewController, DomainArtifact>
+    {
+        private DomainEditViewModel? _editViewModel;
+
+        public DomainController(
+            WorkspaceTreeViewController workspaceController,
+            ILogger<DomainController> logger)
+            : base(workspaceController, logger)
+        {
+        }
+
+        /// <summary>
+        /// Handle Treeview EditLabel complete event
+        /// </summary>
+        protected override void OnArtifactRenamedInternal(DomainArtifact artifact, string oldName, string newName)
+        {
+            artifact.Name = newName;
+        }
+
+        protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(DomainArtifact artifact)
+        {
+            var commands = new List<ArtifactTreeNodeCommand>();
+
+            // Rename command
+            commands.Add(new ArtifactTreeNodeCommand
+            {
+                Id = "rename_domain",
+                Text = "Rename",
+                IconKey = "edit",
+                Execute = async (a) =>
+                {
+                    TreeViewController.RequestBeginRename(artifact);
+                    await Task.CompletedTask;
+                }
+            });
+
+            commands.Add(ArtifactTreeNodeCommand.Separator);
+
+            // Delete command
+            commands.Add(new ArtifactTreeNodeCommand
+            {
+                Id = "delete_domain",
+                Text = "Delete",
+                IconKey = "trash",
+                Execute = async (a) =>
+                {
+                    var parent = artifact.Parent;
+                    if (parent != null)
+                    {
+                        parent.RemoveChild(artifact);
+                        TreeViewController.OnArtifactRemoved(parent, artifact);
+                    }
+                    await Task.CompletedTask;
+                }
+            });
+
+            commands.Add(ArtifactTreeNodeCommand.Separator);
+
+            // Properties command
+            commands.Add(new ArtifactTreeNodeCommand
+            {
+                Id = "domain_properties",
+                Text = "Properties",
+                IconKey = "settings",
+                Execute = async (a) => await ShowPropertiesAsync(artifact)
+            });
+
+            return commands;
+        }
+
+        protected override Task OnSelectedInternalAsync(DomainArtifact artifact, CancellationToken cancellationToken)
+        {
+            return ShowPropertiesAsync(artifact);
+        }
+
+        private void EnsureEditViewModel(DomainArtifact artifact)
+        {
+            if (_editViewModel == null)
+            {
+                _editViewModel = new DomainEditViewModel();
+                _editViewModel.ValueChanged += OnEditViewModelValueChanged;
+            }
+
+            _editViewModel.Domain = artifact;
+        }
+
+        private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
+        {
+            TreeViewController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
+        }
+
+        private Task ShowPropertiesAsync(DomainArtifact domain)
+        {
+            EnsureEditViewModel(domain);
+            TreeViewController.ShowArtifactDetailsView(_editViewModel!);
+            return Task.CompletedTask;
+        }
+    }
+}
