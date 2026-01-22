@@ -1,0 +1,14 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+.vs
+/**/bin/*
+/**/obj/*
+*.csproj.user
+/src/CodeGenerator.Presentation.WinForms/Resources/lucide-icons
+/src/Templates/Yaml/scriban_template_support_problem.zip
+/src/Templates/Yaml/example_output_screenshot.png
+/src/Templates/Yaml/Example_Config.xml
+/src/Templates/CSharp/ProjectXYZ.Shared
+/src/Templates/CSharp/WinForms/ProjectXYZ.UserControls
