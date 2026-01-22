@@ -4,7 +4,10 @@ using CodeGenerator.Application.Controllers.Workspace.Domains;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains;
+using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.ViewModels;
@@ -22,10 +25,11 @@ namespace CodeGenerator.Application.Controllers.Workspace
     {
         private readonly IDatasourceFactory _datasourceFactory;
         private readonly WorkspaceFileService _workspaceFileService;
-        
+        private readonly TemplateManager _templateManager;
         private ArtifactDetailsViewModel? _workspaceDetailsViewModel;
 
         public WorkspaceTreeViewController(
+            TemplateManager templateManager,
             IDatasourceFactory datasourceFactory,
             WorkspaceFileService workspaceFileService,
             IWindowManagerService windowManagerService,
@@ -35,6 +39,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
         {
             _datasourceFactory = datasourceFactory;
             _workspaceFileService = workspaceFileService;
+            _templateManager = templateManager;
         }
 
         /// <summary>
@@ -62,6 +67,14 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<DomainsContainerController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<DomainController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntitiesContainerController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityStatesContainerController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityStateController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<PropertyController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityRelationsContainerController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityRelationController>(),
+
                 // Add other controllers here as needed
             };
         }
@@ -105,6 +118,11 @@ namespace CodeGenerator.Application.Controllers.Workspace
             
             CurrentWorkspace = await _workspaceFileService.LoadAsync(filePath, cancellationToken);
             
+            if(CurrentWorkspace != null )
+            { 
+                _templateManager.RegisterTemplateFolder(CurrentWorkspace.WorkspaceDirectory);
+            }
+            
             ShowWorkspaceTreeView();
             WorkspaceChanged?.Invoke(this, CurrentWorkspace);
             
@@ -119,7 +137,9 @@ namespace CodeGenerator.Application.Controllers.Workspace
             Logger.LogInformation("Creating new workspace '{Name}' in {Directory}", name, directory);
             
             CurrentWorkspace = await _workspaceFileService.CreateNewAsync(directory, name, cancellationToken);
-            
+
+            _templateManager.RegisterTemplateFolder(CurrentWorkspace.WorkspaceDirectory);
+
             ShowWorkspaceTreeView();
             WorkspaceChanged?.Invoke(this, CurrentWorkspace);
             
@@ -148,6 +168,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             if (CurrentWorkspace != null)
             {
                 Logger.LogInformation("Closing workspace '{Name}'", CurrentWorkspace.Name);
+                _templateManager.UnregisterTemplateFolder(CurrentWorkspace.WorkspaceDirectory);
             }
             
             CurrentWorkspace = null;
@@ -280,6 +301,21 @@ namespace CodeGenerator.Application.Controllers.Workspace
             var domainArtifact = new DomainArtifact(domainName);
             CurrentWorkspace?.Domains.AddDomain(domainArtifact);
             return domainArtifact;
+        }
+
+        public void CreateEntityFromTableInDomain(TableArtifact table, DomainArtifact domain)
+        {
+            var entityArtifact = new EntityArtifact(table.Name);
+            var entityState = entityArtifact.AddEntityState(table.Name);
+            foreach (var column in table.GetColumns())
+            {
+                entityState.AddProperty(new PropertyArtifact(column.Name, column.DataType, column.IsNullable) { 
+                    MaxLength = column.MaxLength, 
+                    Precision = column.Precision, 
+                    Scale = column.Scale 
+                });
+            }
+            domain.AddEntity(entityArtifact);
         }
     }
 }

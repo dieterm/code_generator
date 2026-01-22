@@ -47,6 +47,8 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IMessageBusAwareGenerator, InfrastructureLayerSharedScopeDotNetProjectGenerator>();
         services.AddTransient<IMessageBusAwareGenerator, InfrastructureLayerDomainScopeDotNetProjectGenerator>();
 
+        services.AddTransient<IMessageBusAwareGenerator, EntitiesClassGenerator>();
+
         return services;
     }
 }

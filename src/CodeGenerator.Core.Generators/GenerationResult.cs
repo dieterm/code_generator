@@ -1,4 +1,5 @@
 using CodeGenerator.Core.Artifacts.CodeGeneration;
+using CodeGenerator.Core.Workspaces.Artifacts;
 
 namespace CodeGenerator.Core.Generators;
 
@@ -7,10 +8,10 @@ namespace CodeGenerator.Core.Generators;
 /// </summary>
 public class GenerationResult
 {
-    public GenerationResult(RootArtifact RootArtifact, DomainSchema.Schema.DomainSchema? DomainSchema)
+    public GenerationResult(RootArtifact rootArtifact, WorkspaceArtifact workspace)
     {
-        this.RootArtifact = RootArtifact;
-        this.DomainSchema = DomainSchema;
+        this.RootArtifact = rootArtifact;
+        this.Workspace = workspace;
     }
     /// <summary>
     /// Whether the generation was successful
@@ -25,7 +26,8 @@ public class GenerationResult
     /// <summary>
     /// If domain schema context is provided, generated code is based on this schema
     /// </summary>
-    public DomainSchema.Schema.DomainSchema? DomainSchema { get; }
+    //public DomainSchema.Schema.DomainSchema? DomainSchema { get; }
+    public WorkspaceArtifact Workspace { get; }
 
     /// <summary>
     /// Error messages if any

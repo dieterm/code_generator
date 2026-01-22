@@ -16,6 +16,7 @@ namespace CodeGenerator.Generators.CodeArchitectureLayers
         public const string FolderNamePattern_LayerParameter = "Layer";
         public const string FolderNamePattern_ScopeParameter = "Scope";
         public const string FolderNamePattern_DefaultValue = "{WorkspaceNamespace}.{Layer}.{Scope}";
+        public const string FolderNamePattern_DomainNamespaceParameter = "DomainNamespace";
 
         private readonly GeneratorSettings _settings;
 
@@ -43,7 +44,8 @@ namespace CodeGenerator.Generators.CodeArchitectureLayers
                 {
                     new ParameterizedStringParameter{ Description = "Use {Layer} for the layer name.", Parameter=FolderNamePattern_LayerParameter, ExampleValue=layerName },
                     new ParameterizedStringParameter{ Description = "Use {Scope} for the scope name.", Parameter=FolderNamePattern_ScopeParameter, ExampleValue="Shared" },
-                    new ParameterizedStringParameter{ Description = "Use {WorkspaceNamespace} for the root namespace.", Parameter=FolderNamePattern_WorkspaceNamespaceParameter, ExampleValue=WorkspaceSettings.Instance.RootNamespace }
+                    new ParameterizedStringParameter{ Description = "Use {WorkspaceNamespace} for the root namespace.", Parameter=FolderNamePattern_WorkspaceNamespaceParameter, ExampleValue=WorkspaceSettings.Instance.RootNamespace },
+                    new ParameterizedStringParameter{ Description = "Use {DomainNamespace} for the domain namespace. Only applicable for domain scopes.", Parameter=FolderNamePattern_DomainNamespaceParameter, ExampleValue=$"MyAppDomainA" },
                 },
             });
             return settingsDescription;

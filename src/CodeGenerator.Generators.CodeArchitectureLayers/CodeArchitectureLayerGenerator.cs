@@ -3,8 +3,11 @@ using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Generators.MessageBus;
 using CodeGenerator.Core.Generators.Settings;
+using CodeGenerator.Core.Workspaces.Generators;
+using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.CodeArchitecture;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.Models;
 using System;
 using System.Collections.Generic;
@@ -32,20 +35,17 @@ namespace CodeGenerator.Generators.CodeArchitectureLayers
                 CodeArchitectureLayerArtifact.SHARED_SCOPE,
                 CodeArchitectureLayerArtifact.APPLICATION_SCOPE
             };
-            // TODO: Get domain-specific scopes from workspace context
-            var domainName = args.Result?.DomainSchema?.DomainDrivenDesignMetadata?.BoundedContext;
-            var domainScopes = domainName!=null ? new string[] { domainName } : new string[] { "ProjectA", "ProjectB" };
-            var domainNamespace = args.Result?.DomainSchema?.CodeGenMetadata?.Namespace;
-
-            var allScopes = commonScopes.Concat(domainScopes).ToArray();
-            foreach (var scope in allScopes)
+            
+            
+            foreach (var scope in commonScopes)
             {
                 var folderNamePattern = new ParameterizedString(settings.FolderNamePattern);
                 var parameters = new Dictionary<string, string>
                 {
-                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_WorkspaceNamespaceParameter, domainNamespace ?? WorkspaceSettings.Instance.RootNamespace },
+                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_WorkspaceNamespaceParameter, args.Result.Workspace.RootNamespace },
                     { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_LayerParameter, LayerName },
-                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_ScopeParameter, scope }
+                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_ScopeParameter, scope },
+                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_DomainNamespaceParameter, scope }
                 };
                 var folderName = folderNamePattern.GetOutput(parameters);
                 
@@ -53,6 +53,28 @@ namespace CodeGenerator.Generators.CodeArchitectureLayers
                 AddChildArtifactToParent(args.Result.RootArtifact, scopeFolderArtifact, args.Result);
                 
                 var layerArtifact = CreateLayerArtifact(scope);
+                AddChildArtifactToParent(scopeFolderArtifact, layerArtifact, args.Result);
+            }
+
+            // Get domains from workspace
+            var domains = args.Result.Workspace.Domains.GetDomains().ToArray();
+            
+            foreach (var domain in domains)
+            {
+                var folderNamePattern = new ParameterizedString(settings.FolderNamePattern);
+                var parameters = new Dictionary<string, string>
+                {
+                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_WorkspaceNamespaceParameter, args.Result.Workspace.RootNamespace },
+                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_LayerParameter, LayerName },
+                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_ScopeParameter, domain.Name },
+                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_DomainNamespaceParameter, domain.DefaultNamespacePattern }
+                };
+                var folderName = folderNamePattern.GetOutput(parameters);
+                var scopeFolderArtifact = new FolderArtifact(folderName);
+                AddChildArtifactToParent(args.Result.RootArtifact, scopeFolderArtifact, args.Result);
+                var layerArtifact = CreateLayerArtifact(domain.Name);
+                // attach a reference to the domain artifact which is being used here
+                layerArtifact.AddDecorator(new DomainArtifactRefDecorator(domain));
                 AddChildArtifactToParent(scopeFolderArtifact, layerArtifact, args.Result);
             }
         }

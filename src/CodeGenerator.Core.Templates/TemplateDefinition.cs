@@ -107,6 +107,32 @@ public class TemplateDefinition
         var defPath = GetDefinitionFilePath(templateFilePath);
         SaveToFile(defPath);
     }
+    public void SaveForTemplate(TemplateArtifact template)
+    {
+        var defPath = GetDefinitionFilePath(template.FilePath);
+        SaveToFile(defPath);
+        template.RenameTemplate(TemplateId);
+    }
+
+    public void RenameDefinitionFile(string oldTemplateFilePath, string newTemplateFilePath)
+    {
+        if(string.IsNullOrWhiteSpace(oldTemplateFilePath))
+            throw new ArgumentNullException(nameof(oldTemplateFilePath));
+        if(string.IsNullOrWhiteSpace(newTemplateFilePath))
+            throw new ArgumentNullException(nameof(newTemplateFilePath));
+
+        var oldDefinitionFilePath = GetDefinitionFilePath(oldTemplateFilePath);
+        var newDefinitionFilePath = GetDefinitionFilePath(newTemplateFilePath);
+
+        if (File.Exists(oldDefinitionFilePath))
+        {
+            File.Move(oldDefinitionFilePath, newDefinitionFilePath);
+        } 
+        else
+        {
+            SaveToFile(newDefinitionFilePath);
+        }
+    }
 
     /// <summary>
     /// Creates a default/empty definition for a template file

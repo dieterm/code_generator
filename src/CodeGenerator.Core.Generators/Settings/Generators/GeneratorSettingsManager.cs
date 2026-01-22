@@ -392,13 +392,37 @@ namespace CodeGenerator.Core.Settings.Generators
                         throw new InvalidOperationException("Unsupported JsonElement value kind for parameter");
                     }
                 }
-                if (parameterDefinition.Type!= ParameterDefinitionTypes.ParameterisedString &&  parameterDefinition.PossibleValues != null && parameterDefinition.PossibleValues.Count > 0)
+                if(parameterDefinition.Type == ParameterDefinitionTypes.Template)
+                {
+                    var templateManager = ServiceProviderHolder.GetRequiredService<TemplateManager>();
+                    var allowedEngines = parameterDefinition.PossibleValues?
+                        .OfType<TemplateType>()
+                        .ToList() ?? new List<TemplateType>();
+                    var templates = templateManager.GetTemplatesByType(allowedEngines);
+                    var items = templates.Select(t => new ComboboxItem
+                    {
+                        Value = t.TemplateId,
+                        DisplayName = $"{t.TemplateId} ({t.TemplateType})"
+                    }).ToList();
+                    var comboBoxField = new ComboboxFieldModel
+                    {
+                        Label = parameterDefinition.Name,
+                        Name = parameterDefinition.Name,
+                        IsRequired = parameterDefinition.Required,
+                        Items = items,
+                        Value = parameterValue
+                    };
+                    comboBoxField.PropertyChanged += fieldViewModelPropertyChangedValueSetter;
+                    var comboBoxSettingsItem = new SettingsItem<ComboboxFieldModel>(comboBoxField, parameterDefinition.Name, parameterDefinition.Name, $"Parameter: {parameterDefinition.Name} : {parameterDefinition.Type}");
+                    generatorSection.Items.Add(comboBoxSettingsItem);
+                }
+                else if (parameterDefinition.Type != ParameterDefinitionTypes.ParameterisedString && parameterDefinition.PossibleValues != null && parameterDefinition.PossibleValues.Count > 0)
                 {
                     var possibleValues = parameterDefinition.PossibleValues;
                     List<ComboboxItem> items;
                     if (possibleValues.All(v => v is string))
                         items = parameterDefinition.PossibleValues.Select(stringValue => new ComboboxItem { Value = stringValue, DisplayName = (string)stringValue }).ToList();
-                    else if(possibleValues.All(obj => obj is ComboboxItem))
+                    else if (possibleValues.All(obj => obj is ComboboxItem))
                         items = parameterDefinition.PossibleValues.Cast<ComboboxItem>().ToList();
                     else
                         items = parameterDefinition.PossibleValues.Select(objV => new ComboboxItem { Value = objV, DisplayName = objV.ToString() }).ToList();
@@ -459,19 +483,20 @@ namespace CodeGenerator.Core.Settings.Generators
                             break;
                         case ParameterDefinitionTypes.ParameterisedString:
                             var parameterizedStringField = new ParameterizedStringFieldModel();
-                            
+
                             if (parameterValue is string stringValue)
                             {
                                 parameterizedStringField.Value = stringValue;
-                            } 
-                            else if(parameterValue is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.String)
+                            }
+                            else if (parameterValue is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.String)
                             {
                                 parameterizedStringField.Value = jsonElement.GetString();// ?? string.Empty;
-                            } else
+                            }
+                            else
                             {
                                 throw new InvalidOperationException("Invalid parameter value type for ParameterisedString");
                             }
-                                parameterizedStringField.Label = parameterDefinition.Name;
+                            parameterizedStringField.Label = parameterDefinition.Name;
                             parameterizedStringField.Name = parameterDefinition.Name;
                             parameterizedStringField.IsRequired = parameterDefinition.Required;
                             if (parameterDefinition.PossibleValues != null)

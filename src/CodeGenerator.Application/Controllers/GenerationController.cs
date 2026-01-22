@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Core.Workspaces.Services;
 
 namespace CodeGenerator.Application.Controllers
 {
@@ -92,10 +93,10 @@ namespace CodeGenerator.Application.Controllers
                     }
                     else
                         throw new NotImplementedException("Cannot preview Artifact");
+
+                    _windowManagerService.ShowArtifactPreview(_artifactPreviewViewModel);
                 }
             }
-
-            _windowManagerService.ShowArtifactPreview(_artifactPreviewViewModel);
         }
 
         public async Task GenerateAsync(IProgress<GenerationProgress> progress, CancellationToken cancellationToken)
@@ -103,9 +104,9 @@ namespace CodeGenerator.Application.Controllers
             try
             {
                 var generatorOrchestrator = ServiceProviderHolder.GetRequiredService<GeneratorOrchestrator>();
+                var workspaceContextProvider = ServiceProviderHolder.GetRequiredService<IWorkspaceContextProvider>();
                 _logger.LogInformation("Starting code generation process...");
-                var domainSchema = _domainSchemaController.DomainSchema;
-                var generationResult = await generatorOrchestrator.GenerateAsync(domainSchema, false, progress, cancellationToken);
+                var generationResult = await generatorOrchestrator.GenerateAsync(workspaceContextProvider.CurrentWorkspace, false, progress, cancellationToken);
                 _treeViewModel.GenerationResult = generationResult;
                 _windowManagerService.ShowGenerationTreeView(_treeViewModel);
                 _logger.LogInformation("Code generation process completed successfully.");
@@ -122,9 +123,9 @@ namespace CodeGenerator.Application.Controllers
             try
             {
                 var generatorOrchestrator = ServiceProviderHolder.GetRequiredService<GeneratorOrchestrator>();
+                var workspaceContextProvider = ServiceProviderHolder.GetRequiredService<IWorkspaceContextProvider>();
                 _logger.LogInformation("Starting code generation preview process...");
-                var domainSchema = _domainSchemaController.DomainSchema;
-                var generationResult = await generatorOrchestrator.GenerateAsync(domainSchema, true, progress, cancellationToken);
+                var generationResult = await generatorOrchestrator.GenerateAsync(workspaceContextProvider.CurrentWorkspace, true, progress, cancellationToken);
                 _treeViewModel.GenerationResult = generationResult;
                 _windowManagerService.ShowGenerationTreeView(_treeViewModel);
                 _logger.LogInformation("Code generation preview process completed successfully.");

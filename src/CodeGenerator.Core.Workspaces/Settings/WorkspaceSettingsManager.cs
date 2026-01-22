@@ -20,6 +20,7 @@ namespace CodeGenerator.Core.Workspaces.Settings
             _viewModelGenerator = new WorkspaceSettingsViewModelGenerator(_settings);
         }
 
+        public WorkspaceSettings Settings { get { return _settings; } }
 
 
         #region Load & Save

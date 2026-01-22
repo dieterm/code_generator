@@ -11,7 +11,7 @@ namespace CodeGenerator.Core.Templates
     {
         string TemplateId { get; }
         TemplateType TemplateType { get; }
-        bool UseCaching { get; }
+        bool UseCaching { get; set; }
         /// <summary>
         /// The icon used to represent this template in tree views
         /// </summary>

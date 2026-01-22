@@ -1,4 +1,5 @@
 using CodeGenerator.Application.ViewModels.Workspace;
+using CodeGenerator.Core.Workspaces.ViewModels;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
 using CodeGenerator.UserControls.Views;

@@ -1,5 +1,6 @@
 ﻿using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,11 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         public void AddDomain(DomainArtifact domainArtifact)
         {
            AddChild(domainArtifact);
+        }
+
+        public IEnumerable<DomainArtifact> GetDomains()
+        {
+            return Children.OfType<DomainArtifact>().ToArray();
         }
 
         /// <summary>

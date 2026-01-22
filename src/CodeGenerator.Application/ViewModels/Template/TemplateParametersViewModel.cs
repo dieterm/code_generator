@@ -9,6 +9,7 @@ using CodeGenerator.Shared;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
 using System.Collections.ObjectModel;
+using CodeGenerator.Shared.ExtensionMethods;
 
 namespace CodeGenerator.Application.ViewModels.Template;
 
@@ -153,6 +154,17 @@ public class TemplateParametersViewModel : ViewModelBase
     public void SaveParameterDefinitions()
     {
         if (_templateArtifact == null) return;
+        if(string.IsNullOrWhiteSpace(EditViewModel.EditableTemplateId))
+        {
+            ServiceProviderHolder.GetRequiredService<IMessageBoxService>().ShowError("Template ID cannot be empty. This field is used for the filename and definition file.");
+            return;
+        }
+        // check if EditViewModel.EditableTemplateId contains invalid filename characters
+        if (!EditViewModel.EditableTemplateId.IsValidFileName())
+        {
+            ServiceProviderHolder.GetRequiredService<IMessageBoxService>().ShowError("Template ID contains invalid characters. Please remove any invalid characters and try again.");
+            return;
+        }
 
         // Get or create the definition
         var definition = _templateArtifact.GetOrCreateDefinition();
@@ -168,7 +180,7 @@ public class TemplateParametersViewModel : ViewModelBase
         definition.Parameters = EditViewModel.GetTemplateParameters();
 
         // Save to file
-        definition.SaveForTemplate(_templateArtifact.FilePath);
+        definition.SaveForTemplate(_templateArtifact);
         
         EditViewModel.HasUnsavedChanges = false;
 

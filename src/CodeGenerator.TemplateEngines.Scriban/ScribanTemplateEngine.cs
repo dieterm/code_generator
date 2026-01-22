@@ -598,8 +598,11 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
 
     public override ITemplate CreateTemplateFromFile(string filePath)
     {
-        // TODO: try to detect a .scriban.def file alongside and load id and other settings from there
-        return new ScribanFileTemplate(filePath, filePath);
+        var templateId = Path.GetFileNameWithoutExtension(filePath);
+        var templateDefinition = TemplateDefinition.LoadForTemplate(filePath);
+        if(templateDefinition != null)
+            templateId = templateDefinition.TemplateId;
+        return new ScribanFileTemplate(templateId, filePath);
     }
 
     public override ITemplateInstance CreateTemplateInstance(ITemplate template)

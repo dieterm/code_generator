@@ -266,6 +266,7 @@ namespace CodeGenerator.Application.Controllers
             {
                 _logger.LogError(ex, "Failed to load workspace from {FilePath}", filePath);
                 _messageBoxService.ShowError($"Failed to load workspace: {ex.Message}", "Error");
+                throw;
             }
         }
 

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D7910082-A77F-495F-ACBF-7DAEFBCB29D6}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Templates</RootNamespace>
+    <AssemblyName>Templates</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="CSharp\Controller.scriban" />
+    <None Include="CSharp\DbContext.scriban" />
+    <None Include="CSharp\EntitiesClassTemplate.scriban" />
+    <None Include="CSharp\Entity.scriban" />
+    <None Include="CSharp\IRepository.scriban" />
+    <None Include="CSharp\ProjectXYZ.Shared\bin\Debug\net8.0\ProjectXYZ.Shared.deps.json" />
+    <None Include="CSharp\ProjectXYZ.Shared\bin\Debug\net8.0\VzwWijzer.Core.Common.deps.json" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ProjectXYZ..Shared.AssemblyInfoInputs.cache" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ProjectXYZ..Shared.assets.cache" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ProjectXYZ..Shared.csproj.AssemblyReference.cache" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ProjectXYZ..Shared.GeneratedMSBuildEditorConfig.editorconfig" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ProjectXYZ.Shared.AssemblyInfoInputs.cache" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ProjectXYZ.Shared.assets.cache" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ProjectXYZ.Shared.csproj.AssemblyReference.cache" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ProjectXYZ.Shared.csproj.CoreCompileInputs.cache" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ProjectXYZ.Shared.GeneratedMSBuildEditorConfig.editorconfig" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ProjectXYZ.Shared.sourcelink.json" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\VzwWijze.CDA0F356.Up2Date" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\VzwWijzer.Core.Common.AssemblyInfoInputs.cache" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\VzwWijzer.Core.Common.assets.cache" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\VzwWijzer.Core.Common.csproj.AssemblyReference.cache" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\VzwWijzer.Core.Common.csproj.BuildWithSkipAnalyzers" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\VzwWijzer.Core.Common.csproj.CoreCompileInputs.cache" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\VzwWijzer.Core.Common.GeneratedMSBuildEditorConfig.editorconfig" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\VzwWijzer.Core.Common.sourcelink.json" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\project.assets.json" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\project.nuget.cache" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\ProjectXYZ..Shared.csproj.nuget.dgspec.json" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\ProjectXYZ..Shared.csproj.nuget.g.props" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\ProjectXYZ..Shared.csproj.nuget.g.targets" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\ProjectXYZ.Shared.csproj.nuget.dgspec.json" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\ProjectXYZ.Shared.csproj.nuget.g.props" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\ProjectXYZ.Shared.csproj.nuget.g.targets" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\VzwWijzer.Core.Common.csproj.nuget.dgspec.json" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\VzwWijzer.Core.Common.csproj.nuget.g.props" />
+    <None Include="CSharp\ProjectXYZ.Shared\obj\VzwWijzer.Core.Common.csproj.nuget.g.targets" />
+    <None Include="CSharp\ProjectXYZ.Shared\ProjectXYZ.Shared.csproj" />
+    <None Include="CSharp\Repository.scriban" />
+    <None Include="CSharp\ViewModel.scriban" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\bin\Debug\net8.0-windows\ProjectXYZ.UserControls.deps.json" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectX.510E265A.Up2Date" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectXYZ.UserControls.AssemblyInfoInputs.cache" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectXYZ.UserControls.assets.cache" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectXYZ.UserControls.csproj.AssemblyReference.cache" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectXYZ.UserControls.csproj.CoreCompileInputs.cache" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectXYZ.UserControls.csproj.GenerateResource.cache" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectXYZ.UserControls.GeneratedMSBuildEditorConfig.editorconfig" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectXYZ.UserControls.sourcelink.json" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\VzwWijzer.Core.WinForms.UserControls.AssemblyInfoInputs.cache" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\VzwWijzer.Core.WinForms.UserControls.assets.cache" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\VzwWijzer.Core.WinForms.UserControls.csproj.AssemblyReference.cache" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\VzwWijzer.Core.WinForms.UserControls.designer.deps.json" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\VzwWijzer.Core.WinForms.UserControls.designer.runtimeconfig.json" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\VzwWijzer.Core.WinForms.UserControls.GeneratedMSBuildEditorConfig.editorconfig" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\project.assets.json" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\project.nuget.cache" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\ProjectXYZ.UserControls.csproj.nuget.dgspec.json" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\ProjectXYZ.UserControls.csproj.nuget.g.props" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\ProjectXYZ.UserControls.csproj.nuget.g.targets" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\VzwWijzer.Core.WinForms.UserControls.csproj.nuget.dgspec.json" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\VzwWijzer.Core.WinForms.UserControls.csproj.nuget.g.props" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\VzwWijzer.Core.WinForms.UserControls.csproj.nuget.g.targets" />
+    <None Include="CSharp\WinForms\ProjectXYZ.UserControls\ProjectXYZ.UserControls.csproj" />
+    <None Include="CSharp\WinForms\View.Designer.scriban" />
+    <None Include="CSharp\WinForms\View.scriban" />
+    <None Include="Json\jsontest.json.scriban" />
+    <None Include="PlantUml\diagram.plantuml" />
+    <None Include="PlantUml\diagram.plantuml.bak" />
+    <None Include="PlantUml\loginform.plantuml" />
+    <None Include="PlantUml\loginform.plantuml.bak" />
+    <None Include="SQL\Mysql\table_alter_table.sql - kopie.scriban" />
+    <None Include="SQL\Mysql\table_alter_table.sql.scriban" />
+    <None Include="SQL\Mysql\table_create_table.sql.scriban" />
+    <None Include="SQL\SqlServer\CreateTable.scriban" />
+    <None Include="SQL\SqlServer\test.scriban" />
+    <None Include="SQL\SqlServer\test2.scriban" />
+    <None Include="SQL\SqlServer\test2.scriban.bak" />
+    <None Include="Xml\TestCountries.scriban" />
+    <None Include="Xml\TestCountries23.scriban" />
+    <None Include="Yaml\living_organisms.scriban" />
+    <None Include="Yaml\living_organisms.yaml" />
+    <None Include="Yaml\scriban_template_support_problem.zip" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="CSharp\EntitiesClassTemplate.scriban.def" />
+    <Content Include="CSharp\NewTemplate.scriban.def" />
+    <Content Include="CSharp\ProjectXYZ.Shared\bin\Debug\net8.0\ProjectXYZ.Shared.dll" />
+    <Content Include="CSharp\ProjectXYZ.Shared\bin\Debug\net8.0\ProjectXYZ.Shared.pdb" />
+    <Content Include="CSharp\ProjectXYZ.Shared\bin\Debug\net8.0\VzwWijzer.Core.Common.dll" />
+    <Content Include="CSharp\ProjectXYZ.Shared\bin\Debug\net8.0\VzwWijzer.Core.Common.pdb" />
+    <Content Include="CSharp\ProjectXYZ.Shared\bin\Debug\net8.0\VzwWijzer.Core.Identity.dll" />
+    <Content Include="CSharp\ProjectXYZ.Shared\bin\Debug\net8.0\VzwWijzer.Core.Identity.pdb" />
+    <Content Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ProjectXYZ.Shared.csproj.FileListAbsolute.txt" />
+    <Content Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ProjectXYZ.Shared.dll" />
+    <Content Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ProjectXYZ.Shared.pdb" />
+    <Content Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\refint\ProjectXYZ.Shared.dll" />
+    <Content Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\refint\VzwWijzer.Core.Common.dll" />
+    <Content Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ref\ProjectXYZ.Shared.dll" />
+    <Content Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ref\VzwWijzer.Core.Common.dll" />
+    <Content Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\VzwWijzer.Core.Common.csproj.FileListAbsolute.txt" />
+    <Content Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\VzwWijzer.Core.Common.dll" />
+    <Content Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\VzwWijzer.Core.Common.pdb" />
+    <Content Include="CSharp\WinForms\ProjectXYZ.UserControls\bin\Debug\net8.0-windows\ProjectXYZ.Shared.dll" />
+    <Content Include="CSharp\WinForms\ProjectXYZ.UserControls\bin\Debug\net8.0-windows\ProjectXYZ.Shared.pdb" />
+    <Content Include="CSharp\WinForms\ProjectXYZ.UserControls\bin\Debug\net8.0-windows\ProjectXYZ.UserControls.dll" />
+    <Content Include="CSharp\WinForms\ProjectXYZ.UserControls\bin\Debug\net8.0-windows\ProjectXYZ.UserControls.pdb" />
+    <Content Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectXYZ.UserControls.csproj.FileListAbsolute.txt" />
+    <Content Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectXYZ.UserControls.dll" />
+    <Content Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectXYZ.UserControls.pdb" />
+    <Content Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\refint\ProjectXYZ.UserControls.dll" />
+    <Content Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ref\ProjectXYZ.UserControls.dll" />
+    <Content Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\VzwWijzer.Core.WinForms.UserControls.csproj.FileListAbsolute.txt" />
+    <Content Include="CSharp\WinForms\ProjectXYZ.UserControls\ProjectXYZ.UserControls.csproj.user" />
+    <Content Include="CSharp\WinForms\ProjectXYZ.UserControls\Resources\file.svg" />
+    <Content Include="CSharp\WinForms\ProjectXYZ.UserControls\Resources\folder-input.svg" />
+    <Content Include="CSharp\WinForms\ProjectXYZ.UserControls\Resources\folder-open.svg" />
+    <Content Include="CSharp\WinForms\ProjectXYZ.UserControls\Resources\save.svg" />
+    <Content Include="CSharp\WinForms\ProjectXYZ.UserControls\VzwWijzer.Core.WinForms.UserControls.csproj.user" />
+    <Content Include="Json\jsontest.json.scriban.def" />
+    <Content Include="SQL\Mysql\table_create_table.sql.scriban.def" />
+    <Content Include="SQL\SqlServer\test.scriban.def" />
+    <Content Include="SQL\SqlServer\test2.scriban.def" />
+    <Content Include="Xml\TestCountries.scriban.def" />
+    <Content Include="Xml\TestCountries23.scriban.def" />
+    <Content Include="Yaml\Example_Config.xml" />
+    <Content Include="Yaml\example_output_screenshot.png" />
+    <Content Include="Yaml\living_organisms.scriban.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CSharp\ProjectXYZ.Shared\Audit\BusinessOperationContext.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\Audit\UnitOfWorkBase.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\Commands\AsyncRelayCommand.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\Commands\RelayCommand.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\CurrentUser.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\Models\Denomination.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\Models\Languages.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\.NETCoreApp,Version=v8.0.AssemblyAttributes.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ProjectXYZ..Shared.AssemblyInfo.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ProjectXYZ..Shared.GlobalUsings.g.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ProjectXYZ.Shared.AssemblyInfo.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\ProjectXYZ.Shared.GlobalUsings.g.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\VzwWijzer.Core.Common.AssemblyInfo.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\obj\Debug\net8.0\VzwWijzer.Core.Common.GlobalUsings.g.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\Ribbon\IRibbonRenderer.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\Ribbon\RibbonBuilder.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\Ribbon\RibbonButtonBuilder.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\Ribbon\RibbonButtonViewModel.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\Ribbon\RibbonItemViewModel.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\Ribbon\RibbonTabBuilder.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\Ribbon\RibbonTabViewModel.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\Ribbon\RibbonToolStripBuilder.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\Ribbon\RibbonToolStripViewModel.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\Ribbon\RibbonViewModel.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\ServiceProviderHolder.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\Settings\ApplicationOptions.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\ViewModels\FieldViewModelBase.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\ViewModels\IFieldViewModel.cs" />
+    <Compile Include="CSharp\ProjectXYZ.Shared\ViewModels\ViewModelBase.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\.NETCoreApp,Version=v8.0.AssemblyAttributes.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectXYZ.UserControls.AssemblyInfo.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectXYZ.UserControls.GlobalUsings.g.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\VzwWijzer.Core.WinForms.UserControls.AssemblyInfo.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\VzwWijzer.Core.WinForms.UserControls.GlobalUsings.g.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\ServiceCollectionExtensions.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\ViewModels\BooleanFieldModel.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\ViewModels\ComboboxFieldModel.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\ViewModels\DateOnlyFieldModel.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\ViewModels\DenominationFieldModel.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\ViewModels\FileFieldModel.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\ViewModels\FolderFieldModel.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\ViewModels\IntegerFieldModel.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\ViewModels\SingleLineTextFieldModel.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\BooleanField.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\BooleanField.Designer.cs">
+      <DependentUpon>BooleanField.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\ComboboxField.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\ComboboxField.Designer.cs">
+      <DependentUpon>ComboboxField.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\DateOnlyField.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\DateOnlyField.Designer.cs">
+      <DependentUpon>DateOnlyField.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\DenominationField.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\DenominationField.Designer.cs">
+      <DependentUpon>DenominationField.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\FileField.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\FileField.Designer.cs">
+      <DependentUpon>FileField.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\FolderField.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\FolderField.Designer.cs">
+      <DependentUpon>FolderField.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\IntegerField.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\IntegerField.Designer.cs">
+      <DependentUpon>IntegerField.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\SingleLineTextField.cs" />
+    <Compile Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\SingleLineTextField.Designer.cs">
+      <DependentUpon>SingleLineTextField.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectXYZ.UserControls.Views.ComboboxField.resources" />
+    <EmbeddedResource Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectXYZ.UserControls.Views.DateOnlyField.resources" />
+    <EmbeddedResource Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectXYZ.UserControls.Views.DenominationField.resources" />
+    <EmbeddedResource Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectXYZ.UserControls.Views.FileField.resources" />
+    <EmbeddedResource Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectXYZ.UserControls.Views.IntegerField.resources" />
+    <EmbeddedResource Include="CSharp\WinForms\ProjectXYZ.UserControls\obj\Debug\net8.0-windows\ProjectXYZ.UserControls.Views.SingleLineTextField.resources" />
+    <EmbeddedResource Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\ComboboxField.resx">
+      <DependentUpon>ComboboxField.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\DateOnlyField.resx">
+      <DependentUpon>DateOnlyField.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\DenominationField.resx">
+      <DependentUpon>DenominationField.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\FileField.resx">
+      <DependentUpon>FileField.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\IntegerField.resx">
+      <DependentUpon>IntegerField.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CSharp\WinForms\ProjectXYZ.UserControls\Views\SingleLineTextField.resx">
+      <DependentUpon>SingleLineTextField.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

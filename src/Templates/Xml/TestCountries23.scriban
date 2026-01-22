@@ -1,0 +1,21 @@
+{{~ ## Test XML Countries Data ##~}}
+
+{{~ for region in WorldRegion.data ~}}
+# {{ region.name }} ({{ region.code }})
+
+{{~ for subregion in region.SubWorldRegion ~}}
+## {{ subregion.name }} ({{ subregion.code }})
+
+{{~ if subregion.Country ~}}
+Countries: {{ subregion.Country | array.size }}
+{{~ for country in subregion.Country ~}}
+- {{ country.name }} ({{ country.code }}) - Capital: {{ country.capital }}, Population: {{ country.population }}
+{{~ end ~}}
+{{~ end ~}}
+
+{{~ end ~}}
+{{~ end ~}}
+
+---
+
+Total Regions: {{ WorldRegion.data | array.size }}

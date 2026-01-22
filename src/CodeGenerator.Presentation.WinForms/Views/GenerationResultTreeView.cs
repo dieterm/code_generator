@@ -155,11 +155,6 @@ namespace CodeGenerator.Presentation.WinForms.Views
                             var subitem1 = new Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.TreeNodeAdvSubItem();
                             subitem1.Text = $"{artifactValue.TreeNodeText} ({value.GetType().Name})";
                             propertyNode.SubItems.Add(subitem1);
-                            //propertyNode.Nodes.Add(new Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.TreeNodeAdv
-                            //{
-                            //    Text = artifactValue.TreeNodeText,
-                            //    Tag = artifactValue
-                            //});
                         }
                         else if (value is ResourceManagerTreeNodeIcon iconValue)
                         {
@@ -172,11 +167,6 @@ namespace CodeGenerator.Presentation.WinForms.Views
                             var subitem1 = new Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.TreeNodeAdvSubItem();
                             subitem1.Text = value.ToString();
                             propertyNode.SubItems.Add(subitem1);
-                            //propertyNode.Nodes.Add(new Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.TreeNodeAdv
-                            //{
-                            //    Text = value.ToString() ?? "null",
-                            //    Tag = value
-                            //});
                         }
                     }
                     else
@@ -184,11 +174,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
                         var subitem1 = new Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.TreeNodeAdvSubItem();
                         subitem1.Text = "null";
                         propertyNode.SubItems.Add(subitem1);
-                        //propertyNode.Nodes.Add(new Syncfusion.Windows.Forms.Tools.MultiColumnTreeView.TreeNodeAdv
-                        //{
-                        //    Text = "null",
-                        //    Tag = null
-                        //});
+                        
                     }
                     artifactDetailsTreeView.Nodes.Add(propertyNode);
                 }

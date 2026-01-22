@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Application.ViewModels.Workspace;
+using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Core.Workspaces.Datasources.Csv.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Excel.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Json.ViewModels;
@@ -7,6 +8,8 @@ using CodeGenerator.Core.Workspaces.Datasources.PostgreSql.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.SqlServer.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Xml.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Yaml.ViewModels;
+using CodeGenerator.Core.Workspaces.ViewModels;
+using CodeGenerator.Presentation.WinForms.Views.Domains;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
 using System.ComponentModel;
@@ -124,6 +127,26 @@ namespace CodeGenerator.Presentation.WinForms.Views
             {
                 detailsControl = new DomainEditView();
                 ((DomainEditView)detailsControl).BindViewModel(domainViewModel);
+            }
+            else if (_viewModel?.DetailsViewModel is EntityEditViewModel entityViewModel)
+            {
+                detailsControl = new EntityEditView();
+                ((EntityEditView)detailsControl).BindViewModel(entityViewModel);
+            }
+            else if (_viewModel?.DetailsViewModel is EntityStateEditViewModel entityStateViewModel)
+            {
+                detailsControl = new EntityStateEditView();
+                ((EntityStateEditView)detailsControl).BindViewModel(entityStateViewModel);
+            }
+            else if (_viewModel?.DetailsViewModel is PropertyEditViewModel propertyViewModel)
+            {
+                detailsControl = new PropertyEditView();
+                ((PropertyEditView)detailsControl).BindViewModel(propertyViewModel);
+            }
+            else if (_viewModel?.DetailsViewModel is EntityRelationEditViewModel entityRelationViewModel)
+            {
+                detailsControl = new EntityRelationEditView();
+                ((EntityRelationEditView)detailsControl).BindViewModel(entityRelationViewModel);
             }
             else if (_viewModel?.DetailsViewModel is TableEditViewModel tableViewModel)
             {

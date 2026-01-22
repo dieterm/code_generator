@@ -9,6 +9,19 @@ namespace CodeGenerator.Shared.ExtensionMethods
 {
     public static class FileSystemExtensions
     {
+        public static bool IsValidFileName(this string? fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName)) return false;
+            // Check for invalid characters
+            var invalidChars = System.IO.Path.GetInvalidFileNameChars();
+            if (fileName.Any(c => invalidChars.Contains(c)))
+            {
+                return false;
+            }
+            // Additional checks can be added here (e.g., reserved names)
+            return true;
+        }
+
         /// <summary>
         /// Creates a new file with a unique indexed name in the specified directory path.
         /// Will append an index to the base file name if a file with that name already exists.

@@ -1,0 +1,39 @@
+namespace {{ Domain.default_namespace }};
+
+{{~ if Entity.description ~}}
+/// <summary>
+/// {{ Entity.description }}
+/// </summary>
+{{~ end ~}}
+public class {{ Entity.name }} : {{ BaseClassName }}
+{
+	public {{ Entity.name }}() {
+
+	}
+
+{{~ for relation in Entity.relations ~}}
+	public {{ relation.target_entity.name }} {{ relation.source_property_name }} { get; set; }
+{{~ end ~}}
+
+{{~ for relation in Entity.reverse_relations ~}}
+	public {{ relation.parent.name }} {{ relation.target_property_name }} { get; set; }
+{{~ end ~}}
+
+}
+
+{{~ for state in Entity.states ~}}
+public class {{ state.name }}State : EntityState
+{
+{{~ for property in state.properties ~}}
+{{~ if property.description ~}}
+	/// <summary>
+	/// {{ property.description }}
+{{~ if property.example_value ~}}
+	/// eg. {{ property.example_value }}
+{{~ end ~}}
+	/// </summary>
+{{~ end ~}}
+	public {{ csharp_type property.data_type }} {{ property.name | pascal_case }} { get; set; }
+{{~ end ~}}
+}
+{{~ end ~}}

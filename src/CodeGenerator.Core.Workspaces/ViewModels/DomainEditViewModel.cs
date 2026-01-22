@@ -1,6 +1,6 @@
 using CodeGenerator.Application.Controllers.Base;
-using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Models;
@@ -8,7 +8,7 @@ using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
 using System.ComponentModel;
 
-namespace CodeGenerator.Application.ViewModels.Workspace
+namespace CodeGenerator.Core.Workspaces.ViewModels
 {
     /// <summary>
     /// ViewModel for editing domain properties
@@ -28,7 +28,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             DefaultNamespaceField = new ParameterizedStringFieldModel
             {
                 Label = "Default Namespace",
-                Name = nameof(DomainArtifact.DefaultNamespace)
+                Name = nameof(DomainArtifact.DefaultNamespacePattern)
             };
 
             // Add workspace root namespace parameter
@@ -51,7 +51,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             DefaultNamespaceField.PropertyChanged += OnFieldChanged;
 
             // Observe Workspace.RootNamespace property for changes
-            var workspaceTreeViewController = ServiceProviderHolder.GetRequiredService<WorkspaceTreeViewController>();
+            var workspaceTreeViewController = ServiceProviderHolder.GetRequiredService<IWorkspaceContextProvider>();
             workspaceTreeViewController.WorkspaceChanged += WorkspaceTreeViewController_WorkspaceChanged;
             WorkspaceTreeViewController_WorkspaceChanged(null, workspaceTreeViewController.CurrentWorkspace);
         }
@@ -151,7 +151,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             {
                 NameField.Value = _domain.Name;
                 DescriptionField.Value = _domain.Description;
-                DefaultNamespaceField.Value = _domain.DefaultNamespace;
+                DefaultNamespaceField.Value = _domain.DefaultNamespacePattern;
 
                 // Refresh the domain name parameter
                 UpdateDomainNameParameter();
@@ -194,11 +194,6 @@ namespace CodeGenerator.Application.ViewModels.Workspace
                 var newValue = GetDomainPropertyValue(field.Name);
                 ValueChanged?.Invoke(this, new ArtifactPropertyChangedEventArgs(_domain, field.Name, newValue));
             }
-
-            //if(e.PropertyName == nameof(ParameterizedStringFieldModel.Value) && sender == NameField)
-            //{
-            //    UpdateDomainNameParameter();
-            //}
         }
 
         private object? GetDomainPropertyValue(string propertyName)
@@ -208,7 +203,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             {
                 nameof(DomainArtifact.Name) => _domain.Name,
                 nameof(DomainArtifact.Description) => _domain.Description,
-                nameof(DomainArtifact.DefaultNamespace) => _domain.DefaultNamespace,
+                nameof(DomainArtifact.DefaultNamespacePattern) => _domain.DefaultNamespacePattern,
                 _ => null
             };
         }
@@ -219,7 +214,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
 
             _domain.Name = !string.IsNullOrWhiteSpace(NameField.Value as string) ? NameField.Value as string : "Domain";
             _domain.Description = DescriptionField.Value?.ToString() ?? string.Empty;
-            _domain.DefaultNamespace = DefaultNamespaceField.Value?.ToString() ?? string.Empty;
+            _domain.DefaultNamespacePattern = DefaultNamespaceField.Value?.ToString() ?? string.Empty;
         }
     }
 }

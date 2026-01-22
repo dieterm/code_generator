@@ -15,7 +15,7 @@ public class TemplateArtifact : Artifact
     public TemplateArtifact(string filePath, ITemplateEngine? templateEngine = null)
     {
         FilePath = filePath;
-        FileName = Path.GetFileName(filePath);
+        //FileName = Path.GetFileName(filePath);
         
         // Try to create template from file if engine is provided
         if (templateEngine != null)
@@ -38,7 +38,7 @@ public class TemplateArtifact : Artifact
     public TemplateArtifact(ArtifactState state) : base(state)
     {
         FilePath = GetValue<string>(nameof(FilePath)) ?? string.Empty;
-        FileName = Path.GetFileName(FilePath);
+        //FileName = Path.GetFileName(FilePath);
         _definition = TemplateDefinition.LoadForTemplate(FilePath);
     }
 
@@ -48,13 +48,18 @@ public class TemplateArtifact : Artifact
     public string FilePath
     {
         get => GetValue<string>(nameof(FilePath)) ?? string.Empty;
-        private set => SetValue(nameof(FilePath), value);
+        private set { 
+            if (SetValue(nameof(FilePath), value)) { 
+                RaisePropertyChangedEvent(nameof(FileName));
+                RaisePropertyChangedEvent(nameof(TreeNodeText));
+            }
+        }
     }
 
     /// <summary>
     /// Name of the template file
     /// </summary>
-    public string FileName { get; }
+    public string FileName { get { return Path.GetFileName(FilePath); } }
 
     /// <summary>
     /// The loaded template instance (null if loading failed)
@@ -92,7 +97,7 @@ public class TemplateArtifact : Artifact
     public IReadOnlyList<TemplateParameter> Parameters => 
         _definition?.Parameters ?? new List<TemplateParameter>();
 
-    public override string TreeNodeText => DisplayName;
+    public override string TreeNodeText => FileName;
 
     public override ITreeNodeIcon TreeNodeIcon => Template?.Icon;
 
@@ -112,7 +117,7 @@ public class TemplateArtifact : Artifact
     /// </summary>
     public void SaveDefinition(TemplateDefinition definition)
     {
-        definition.SaveForTemplate(FilePath);
+        definition.SaveForTemplate(this);
         _definition = definition;
         RaisePropertyChangedEvent(nameof(Definition));
         RaisePropertyChangedEvent(nameof(Parameters));
@@ -134,5 +139,24 @@ public class TemplateArtifact : Artifact
         RaisePropertyChangedEvent(nameof(Description));
         RaisePropertyChangedEvent(nameof(Category));
         RaisePropertyChangedEvent(nameof(TreeNodeText));
+    }
+
+    public void RenameTemplate(string templateId)
+    {
+        var oldFilePath = FilePath;
+        var newFilePath = Path.Combine(Path.GetDirectoryName(oldFilePath) ?? string.Empty, templateId + Path.GetExtension(oldFilePath));
+        if (File.Exists(newFilePath))
+            return;
+
+        if (File.Exists(oldFilePath))
+        {
+            File.Move(oldFilePath, newFilePath);
+            FilePath = newFilePath;
+        }
+        if (_definition != null)
+        {
+            _definition.RenameDefinitionFile(oldFilePath, newFilePath);
+            RaisePropertyChangedEvent(nameof(Definition));
+        }
     }
 }

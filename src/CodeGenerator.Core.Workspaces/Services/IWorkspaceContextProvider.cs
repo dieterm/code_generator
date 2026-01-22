@@ -9,6 +9,14 @@ namespace CodeGenerator.Core.Workspaces.Services
 {
     public interface IWorkspaceContextProvider
     {
+        /// <summary>
+        /// Event raised when the workspace changes
+        /// </summary>
+        event EventHandler<WorkspaceArtifact?>? WorkspaceChanged;
+
+        /// <summary>
+        /// The currently active workspace
+        /// </summary>
         WorkspaceArtifact? CurrentWorkspace { get; }
     }
 }

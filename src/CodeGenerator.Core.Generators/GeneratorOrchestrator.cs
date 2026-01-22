@@ -3,6 +3,7 @@ using CodeGenerator.Core.Artifacts.CodeGeneration;
 using CodeGenerator.Core.DomainSchema.Services;
 using CodeGenerator.Core.Generators.MessageBus;
 using CodeGenerator.Core.Settings.Generators;
+using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Shared;
 using Microsoft.Extensions.Logging;
@@ -52,11 +53,19 @@ public class GeneratorOrchestrator
         }
     }
 
+    private void UnsubscribeGenerators()
+    {
+        foreach (var generator in _messageBusAwareGenerators)
+        {
+            generator.UnsubscribeFromEvents(_messageBus);
+        }
+    }
+
     /// <summary>
     /// Run all enabled generators
     /// </summary>
     public async Task<GenerationResult> GenerateAsync(
-        DomainSchema.Schema.DomainSchema? domainSchema, 
+        WorkspaceArtifact workspaceArtifact, 
         bool previewOnly,
         IProgress<GenerationProgress>? progress = null,
         CancellationToken cancellationToken = default)
@@ -65,7 +74,7 @@ public class GeneratorOrchestrator
         var startTime = DateTime.UtcNow;
         // create root artifact
         var rootArtifact = new RootArtifact("Output", WorkspaceSettings.Instance.DefaultOutputDirectory);
-        var result = new GenerationResult(rootArtifact, domainSchema);
+        var result = new GenerationResult(rootArtifact, workspaceArtifact);
         
         try
         {
@@ -116,7 +125,9 @@ public class GeneratorOrchestrator
 
         var endTime = DateTime.UtcNow;
         result.Duration = endTime - startTime;
-
+        
+        UnsubscribeGenerators();
+        
         progress.Report(new GenerationProgress
         {
             CurrentStep = "Completed",

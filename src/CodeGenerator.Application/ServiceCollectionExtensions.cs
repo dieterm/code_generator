@@ -93,6 +93,13 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<DomainsContainerController>();
         services.AddSingleton<DomainController>();
+        services.AddSingleton<EntitiesContainerController>();
+        services.AddSingleton<EntityController>();
+        services.AddSingleton<EntityStatesContainerController>();
+        services.AddSingleton<EntityStateController>();
+        services.AddSingleton<PropertyController>();
+        services.AddSingleton<EntityRelationsContainerController>();
+        services.AddSingleton<EntityRelationController>();
 
         // Template Artifact Controllers
         services.AddSingleton<RootArtifactController>();
@@ -132,6 +139,7 @@ public static class ServiceCollectionExtensions
         // Register Generator Descriptors
         // IMPORTANT: Ensure that all generators are registered here
 
+        services.AddSingleton<TemplateManager>();
         services.AddSingleton<TemplateEngineManager>();
         // Register Template Engines
         services.AddSingleton<DotNetProjectTemplateEngine>();

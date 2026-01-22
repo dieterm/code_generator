@@ -20,8 +20,4 @@
     <ProjectReference Include="..\CodeGenerator.Shared\CodeGenerator.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Artifacts\Domains\" />
-  </ItemGroup>
-
 </Project>

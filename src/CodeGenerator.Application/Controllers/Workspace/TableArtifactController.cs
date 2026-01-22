@@ -6,6 +6,7 @@ using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.Databases.RelationalDatabases;
@@ -38,7 +39,42 @@ namespace CodeGenerator.Application.Controllers.Workspace
         protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(TableArtifact artifact)
         {
             var commands = new List<ArtifactTreeNodeCommand>();
-            
+
+            var createObjectCommand = new ArtifactTreeNodeCommand
+            {
+                Id = "create_object",
+                Text = "Create object",
+                IconKey = "script",
+                SubCommands = new List<ArtifactTreeNodeCommand>()
+            };
+
+            var newEntityCommand = new ArtifactTreeNodeCommand
+            {
+                Id = "new_entity",
+                Text = "New Entity",
+                IconKey = "script",
+                SubCommands = new List<ArtifactTreeNodeCommand>()
+            };
+            createObjectCommand.SubCommands.Add(newEntityCommand);
+
+            foreach(var domain in TreeViewController.CurrentWorkspace.Domains.GetDomains())
+            {
+                var domainCommand = new ArtifactTreeNodeCommand
+                {
+                    Id = $"new_entity_{domain.Id}",
+                    Text = domain.Name,
+                    IconKey = "domain",
+                    Execute = async (a) =>
+                    {
+                        TreeViewController.CreateEntityFromTableInDomain(artifact, domain);
+                        await Task.CompletedTask;
+                    }
+                };
+                newEntityCommand.SubCommands.Add(domainCommand);
+            }
+
+            commands.Add(createObjectCommand);
+
             // Generate Script command
             var generateScriptCommand = new ArtifactTreeNodeCommand
             {
