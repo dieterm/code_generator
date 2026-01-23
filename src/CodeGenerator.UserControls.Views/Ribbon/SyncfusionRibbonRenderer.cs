@@ -208,6 +208,21 @@ public class SyncfusionRibbonRenderer : IRibbonRenderer
             ImageTransparentColor = Color.Magenta
         };
 
+        if (viewModel.HiddenWhenDisabled) { 
+            button.EnabledChanged += (s, e) =>
+            {
+                // When enabled state changes, update visibility if needed
+                button.Visible = button.Enabled;
+            };
+        }
+
+        if (viewModel.Command != null)
+        {
+            // set this after the EnabledChanged event to avoid overwriting visibility
+            button.Command = viewModel.Command;
+            button.CommandParameter = viewModel.CommandParameter;
+        }
+
         if (viewModel.ImageData != null)
         {
             SetImageFromModel(() => viewModel.ImageData, img => button.Image = img, viewModel.Name);

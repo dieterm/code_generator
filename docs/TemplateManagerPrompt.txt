@@ -1,0 +1,70 @@
+Ik wil de TemplateManager als volgt aanpassen:
+
+Voor de default Workspace settings kan momenteel een DefaultTemplateFolder definiëren:
+- WorkspaceSettings.Instance.DefaultTemplateFolder
+
+Wanneer de gebruiker een nieuwe worspace aanmaakt of opent, dan kan hij de default templates overschrijven door in zijn workspace-directory in een folder "Templates" op de juiste plaats een eigen template toe te voegen.
+Wanneer de TemplateManager.GetTemplateById(..) wordt aangeroepen, zal deze eerst zoeken in de speciale "Templates" folder van de huidige geopende workspace.
+Indien daar geen template met de specifieke id gevonden wordt, gaat hij als fallback zoeken in de WorkspaceSettings.Instance.DefaultTemplateFolder .
+
+Verder wil ik ook een bepaalde folderstructuur in de Templates-folder afdwingen aan de gebruiker.
+In de Templates-folder (en ook in de WorkspaceSettings.Instance.DefaultTemplateFolder) moeten 3 folders aanwezig zijn:
+- Workspace (folder)
+	- <artifactname> (folder)
+		- (eventuele subfolders)
+			- <templateid> (folder)
+				- <templatefile> (de eigenlijke template file(s))
+				- <templatefile.def> (de template definition file)
+- Generators (folder)
+	- <generator_id>
+		- (eventuele subfolders)
+			- <templateid> (folder)
+				- <templatefile> (de eigenlijke template file(s))
+				- <templatefile.def> (de template definition file)
+- TemplateEngines (folder)
+	- <template_engine_id>
+		- (eventuele subfolders)
+			- <templateid> (folder)
+				- <templatefile> (de eigenlijke template file(s))
+				- <templatefile.def> (de template definition file)
+
+- UserDefined  (folder)
+	- (eventuele subfolders)
+			- <templateid>  (folder)
+				- <templatefile> (de eigenlijke template file(s))
+				- <templatefile.def> (de template definition file)
+
+De betekenis van een TemplateId wordt een beetje uitgebreid.
+De TemplateId is opgebouwd uit een TemplatePath, dat de speciale foldernamen markeert met een @-teken, en een TemplateName.
+Dus bijvoorbeeld: 
+TemplateId: "@Workspace/@TableArtifact/scripts/mysql/create_table" 
+-> TemplatePath = "@Workspace/@TableArtifact/scripts/mysql/"
+-> TemplateName = "create_table"
+TemplateId: "@Generators/DotNet.DomainLayer.DomainScope.EntitiesClassGenerator/EntitiesClassTemplate"
+-> TemplatePath = "@Generators/DotNet.DomainLayer.DomainScope.EntitiesClassGenerator/"
+-> TemplateName = "EntitiesClassTemplate"
+TemplateId: "@TemplateEngines/plantuml_template_engine/create_new_template/NewSequenceDiagram"
+-> TemplatePath = "@TemplateEngines/plantuml_template_engine/create_new_template/"
+-> TemplateName = "NewSequenceDiagram"
+TemplateId: "@UserDefined/SubFolderA/SubFolderB/CustomTemplateA"
+-> TemplatePath = "@UserDefined/SubFolderA/SubFolderB/"
+-> TemplateName = "CustomTemplateA"
+
+De logica om een templateid om te zetten naar het effectieve file/folder path moet in de TemplateManager toegevoegd worden.
+Voeg ook een aantal hulpfuncties toe, zoals RegisterSpecialFolder(string <foldernamewithout@>, string <parentspecialfolderwithout@>=null) en RegisterRequiredTemplate(<templateId>).
+In de toekomst kunnen er mogelijk nog speciale folders bijkomen.
+Het gebruik van het @-teken impliceerd dat in de templatename dus geen @-karakter en /-karakter mag gebruikt worden.
+Zorg ervoor dat wanneer een workspace wordt geopent, of een nieuwe workspace wordt aangemaakt, automatisch de speciale folder "Templates" wordt aangemaakt en daarin alle  geregistreerde 'speciale' template-folders worden aangemaakt.
+Zorg ervoor dat bij het inladen of wijzigen van de WorkspaceSettings.Instance.DefaultTemplateFolder (bv. bij het opstarten van de applicatie of wanneer de gebruiker in het Settings-venster een andere DefaultTemplateFolder instelt) ook daar de 'Templates' folder en alle geregistreerde special folders aangemaakt worden.
+Iedere generator moet zelf zijn benodigde templates definieren in de GeneratorSettingsDescription.Templates property (en die moeten automatisch geregistreerd worden bij de TemplateManager-> door de folders met een @-tekens in de TemplateId te detecteren).
+Iedere artifactcontroller moet zelf zijn benodigede templates registreren door de virtual functie List<TemplateDefinitionAndLocation> RegisterRequiredTemplates() in class ArtifactControllerBase te overschrijven en de lijst met templates terug te geven die hij bijvoorbeeld gebruikt bij bepaalde context-menuitems.
+
+Alle template engines die subtemplates in externe bestanden ondersteunen, zouden dus ook de speciale syntax van de TemplateId moeten begrijpen.
+
+Bijvoorbeeld bij de Scriban-engine:
+In de CodeGenerator.TemplateEngines.Scriban.DefaultTemplateLoader moet het mogelijk zijn om deze speciale TemplateId-syntax te kunnen gebruiken via het 'include <templateid>' statement-> hetwelke automatisch door de DefaultTemplateLoader wordt afgehandeld. 
+
+Bijvoorbeeld bij de Plantuml-engine:
+via het !include en !include_once keyword moet gedecteerd worden of er verwezen wordt naar een TemplateId (via een regex als een regel vb. !include @... bevat).
+En vervangen worden door het effectieve filepath, vooraleer hij door de UmlPlant-library wordt gerendert.
+

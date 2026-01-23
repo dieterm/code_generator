@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Syncfusion.Windows.Forms;
 using System.Configuration;
+using System.Diagnostics;
 
 namespace CodeGenerator.Presentation.WinForms
 {
@@ -18,7 +19,22 @@ namespace CodeGenerator.Presentation.WinForms
         [STAThread]
         static void Main()
         {
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1JGaF5cXGpCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWH1cc3VURmlZVkRxXUpWYEs=");
+            var currentFolder = Path.GetDirectoryName(typeof(Program).Assembly.Location);
+            var licensesPath = Path.Combine(currentFolder!, "SyncfusionLicenseKey.txt");
+            Debug.WriteLine(licensesPath);
+            if (!File.Exists(licensesPath))
+            {
+                // Show input prompt to enter license key
+                string licenseKey = Microsoft.VisualBasic.Interaction.InputBox("No licence key found at " + licensesPath + ".\r\nEnter Syncfusion License Key:", "License Key Required", "");
+                if(string.IsNullOrWhiteSpace(licenseKey))
+                {
+                    MessageBox.Show("A valid Syncfusion license key is required to run this application.", "License Key Missing", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                    return;
+                }
+                File.WriteAllText(licensesPath, licenseKey);
+            }
+            
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(File.ReadAllText(licensesPath));
             SkinManager.LoadAssembly(typeof(Syncfusion.WinForms.Themes.Office2019Theme).Assembly);
             
             // Build configuration

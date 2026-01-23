@@ -85,4 +85,9 @@
       <LastGenOutput>LucideIcons_#ffffff.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <None Update="SyncfusionLicenseKey.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

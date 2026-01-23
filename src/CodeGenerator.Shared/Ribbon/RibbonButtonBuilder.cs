@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Windows.Input;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace CodeGenerator.Shared.Ribbon;
@@ -27,6 +28,21 @@ public class RibbonButtonBuilder
     public RibbonButtonBuilder OnClick(Action<EventArgs> handler)
     {
         _viewModel.ClickHandler = handler;
+        return this;
+    }
+
+    public RibbonButtonBuilder WithCommand(ICommand command, object? commandParameter = null)
+    {
+        _viewModel.Command = command;
+        _viewModel.CommandParameter = commandParameter;
+        return this;
+    }
+    /// <summary>
+    /// Default is false. If set to true, the button will be hidden when disabled
+    /// </summary>
+    public RibbonButtonBuilder HideWhenDisabled(bool hiddenWhenDisabled = true )
+    {
+        _viewModel.HiddenWhenDisabled = hiddenWhenDisabled;
         return this;
     }
 

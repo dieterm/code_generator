@@ -8,7 +8,11 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
         private readonly DotNetProjectTemplate _template;
         public ITemplate Template { get { return _template; } }
         public string ProjectName { get; private set; }
-        
+        /// <summary>
+        /// If set, specifies the output directory for the project.
+        /// If null, a temporary directory will be used.
+        /// </summary>
+        public string? OutputDirectory { get; set; } = null;
         /// <summary>
         /// NuGet packages included
         /// </summary>

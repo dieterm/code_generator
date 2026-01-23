@@ -325,4 +325,9 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
         state.Children.AddRange(Children.Select(c => (ArtifactState)c.CaptureState()));
         return state;
     }
+
+    public override string ToString()
+    {
+        return TreeNodeText;
+    }
 }

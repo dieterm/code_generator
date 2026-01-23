@@ -8,16 +8,21 @@ namespace CodeGenerator.Core.Generators;
 /// </summary>
 public class GenerationResult
 {
-    public GenerationResult(RootArtifact rootArtifact, WorkspaceArtifact workspace)
+    public GenerationResult(RootArtifact rootArtifact, WorkspaceArtifact workspace, bool previewOnly)
     {
         this.RootArtifact = rootArtifact;
         this.Workspace = workspace;
+        this.PreviewOnly = previewOnly;
     }
     /// <summary>
     /// Whether the generation was successful
     /// </summary>
     public bool Success { get; set; } = false;
-
+    
+    /// <summary>
+    /// Indiciate if generation is in preview mode
+    /// </summary>
+    public bool PreviewOnly { get; }
     /// <summary>
     /// The Root artifact representing all generated artifacts
     /// </summary>

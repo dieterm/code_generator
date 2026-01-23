@@ -47,8 +47,8 @@ namespace CodeGenerator.Core.Generators
             MessageBus.Publish(new CreatingArtifactEventArgs(result, child));
             parent.AddChild(child);
             MessageBus.Publish(new CreatedArtifactEventArgs(result, child));
-            VisitArtifactChildrenAndPublishCreatingEvents(child, result);
-            VisitArtifactChildrenAndPublishCreatedEvents(child, result);
+            //VisitArtifactChildrenAndPublishCreatingEvents(child, result);
+            //VisitArtifactChildrenAndPublishCreatedEvents(child, result);
         }
 
         protected void VisitArtifactChildrenAndPublishCreatingEvents(IArtifact artifact, GenerationResult result)

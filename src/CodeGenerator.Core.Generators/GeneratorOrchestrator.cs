@@ -31,8 +31,53 @@ public class GeneratorOrchestrator
         _messageBusAwareGenerators = messageBusAwareGenerators;
         _schemaparser = schemaparser;
         InitializeGenerators();
+        _messageBus.BeforeEventPublished += _messageBus_BeforeEventPublished;
+        _messageBus.AfterEventPublished += _messageBus_AfterEventPublished;
     }
 
+    private void _messageBus_AfterEventPublished(object? sender, GeneratorContextEventArgs e)
+    {
+        if(e is CreatedArtifactEventArgs createdArtifactEventArgs)
+        {
+            _logger.LogInformation("AfterEventPublished: Artifact created: '{ArtifactId}' of type {ArtifactType} - {ArtifactContent}", 
+                createdArtifactEventArgs.Artifact.Id, 
+                createdArtifactEventArgs.Artifact.GetType().Name,
+                createdArtifactEventArgs.Artifact.ToString());
+        } 
+        else if(e is CreatingArtifactEventArgs creatingArtifactEventArgs)
+        {
+            _logger.LogInformation("AfterEventPublished: Creating artifact: '{ArtifactId}' of type {ArtifactType} - {ArtifactContent}", 
+                creatingArtifactEventArgs.Artifact.Id, 
+                creatingArtifactEventArgs.Artifact.GetType().Name,
+                creatingArtifactEventArgs.Artifact.ToString());
+        } 
+        else
+        {
+            _logger.LogInformation("AfterEventPublished: Published event of type {EventType}", e.GetType().Name);
+        }
+    }
+
+    private void _messageBus_BeforeEventPublished(object? sender, GeneratorContextEventArgs e)
+    {
+        if (e is CreatedArtifactEventArgs createdArtifactEventArgs)
+        {
+            _logger.LogInformation("BeforeEventPublished:Artifact created: '{ArtifactId}' of type {ArtifactType} - {ArtifactContent}",
+                createdArtifactEventArgs.Artifact.Id,
+                createdArtifactEventArgs.Artifact.GetType().Name,
+                createdArtifactEventArgs.Artifact.ToString());
+        }
+        else if (e is CreatingArtifactEventArgs creatingArtifactEventArgs)
+        {
+            _logger.LogInformation("BeforeEventPublished: Creating artifact: '{ArtifactId}' of type {ArtifactType} - {ArtifactContent}",
+                creatingArtifactEventArgs.Artifact.Id,
+                creatingArtifactEventArgs.Artifact.GetType().Name,
+                creatingArtifactEventArgs.Artifact.ToString());
+        }
+        else
+        {
+            _logger.LogInformation("BeforeEventPublished: Publishing event of type {EventType}", e.GetType().Name);
+        }
+    }
     /// <summary>
     /// The message bus for event communication
     /// </summary>
@@ -74,7 +119,7 @@ public class GeneratorOrchestrator
         var startTime = DateTime.UtcNow;
         // create root artifact
         var rootArtifact = new RootArtifact("Output", WorkspaceSettings.Instance.DefaultOutputDirectory);
-        var result = new GenerationResult(rootArtifact, workspaceArtifact);
+        var result = new GenerationResult(rootArtifact, workspaceArtifact, previewOnly);
         
         try
         {

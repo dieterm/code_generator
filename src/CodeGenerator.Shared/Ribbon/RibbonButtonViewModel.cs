@@ -7,6 +7,7 @@ public class RibbonButtonViewModel : RibbonItemViewModel
 {
     public RibbonButtonDisplayStyle DisplayStyle { get; set; } = RibbonButtonDisplayStyle.ImageAndText;
     public RibbonButtonSize Size { get; set; } = RibbonButtonSize.Large;
+
 }
 
 public enum RibbonButtonDisplayStyle

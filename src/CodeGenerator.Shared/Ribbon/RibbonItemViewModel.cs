@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Windows.Input;
 
 namespace CodeGenerator.Shared.Ribbon;
 
@@ -18,5 +19,8 @@ public abstract class RibbonItemViewModel
     public bool Enabled { get; set; } = true;
     public bool Visible { get; set; } = true;
     public Action<EventArgs>? ClickHandler { get; set; }
+    public ICommand? Command { get; set; }
+    public object? CommandParameter { get; set; }
+    public bool HiddenWhenDisabled { get; set; } = false;
     public string? ToolTipText { get; set; }
 }

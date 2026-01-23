@@ -43,16 +43,35 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
 
         public override async Task<TemplateOutput> RenderAsync(DotNetProjectTemplateInstance templateInstance, CancellationToken cancellationToken)
         {
-            using var tempDir = new TemporaryDirectory();
+            string? outputDir = templateInstance.OutputDirectory;
+            if(outputDir != null && !Directory.Exists(outputDir))
+            {
+                try
+                {
+                    Directory.CreateDirectory(outputDir);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError(ex, "Failed to create output directory at {OutputDir}", outputDir);
+                    outputDir = null;
+                }
+                
+            }
+            if (outputDir == null)
+            {
+                using var tempDir = new TemporaryDirectory();
+                outputDir = tempDir.Path;
+            }
+            
             var dotNetTemplate = (DotNetProjectTemplate)templateInstance.Template;
-            var project = await _dotNetProjectService.CreateProjectAsync(templateInstance.ProjectName, tempDir.Path, dotNetTemplate.DotNetProjectType, dotNetTemplate.DotNetTargetFramework, dotNetTemplate.DotNetLanguage.DotNetCommandLineArgument, cancellationToken);
+            var project = await _dotNetProjectService.CreateProjectAsync(templateInstance.ProjectName, outputDir, dotNetTemplate.DotNetProjectType, dotNetTemplate.DotNetTargetFramework, dotNetTemplate.DotNetLanguage.DotNetCommandLineArgument, cancellationToken);
             
             foreach (var package in templateInstance.Packages)
             {
                 await _dotNetProjectService.AddPackageAsync(project.Directory, package.PackageId, package.Version, cancellationToken);
             }
 
-            var fileAndFolderArtifacts = BuildFilesAndFoldersArtifact(tempDir.Path);
+            var fileAndFolderArtifacts = BuildFilesAndFoldersArtifact(outputDir);
             return new TemplateOutput(fileAndFolderArtifacts);
         }
 

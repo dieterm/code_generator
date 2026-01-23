@@ -12,6 +12,9 @@ public class MessageBus<TEventArgs> where TEventArgs : EventArgs
     private readonly object _lock = new();
     private readonly ILogger<MessageBus<TEventArgs>>? _logger;
 
+    public event EventHandler<TEventArgs>? BeforeEventPublished;
+    public event EventHandler<TEventArgs>? AfterEventPublished;
+
     public MessageBus(ILogger<MessageBus<TEventArgs>>? logger = null)
     {
         _logger = logger;
@@ -157,6 +160,8 @@ public class MessageBus<TEventArgs> where TEventArgs : EventArgs
     {
         if (eventArgs == null) throw new ArgumentNullException(nameof(eventArgs));
 
+        BeforeEventPublished?.Invoke(this, eventArgs);
+
         List<Delegate> syncHandlersCopy;
         List<Delegate> asyncHandlersCopy;
 
@@ -197,11 +202,15 @@ public class MessageBus<TEventArgs> where TEventArgs : EventArgs
                 _logger?.LogError(ex, "Error in async event handler for {EventType}", typeof(TEvent).Name);
             }
         }
+
+        AfterEventPublished?.Invoke(this, eventArgs);
     }
 
     public async Task PublishAsync<TEvent>(TEvent eventArgs, CancellationToken cancellationToken = default) where TEvent : TEventArgs
     {
         if (eventArgs == null) throw new ArgumentNullException(nameof(eventArgs));
+        
+        BeforeEventPublished?.Invoke(this, eventArgs);
 
         List<Delegate> syncHandlersCopy;
         List<Delegate> asyncHandlersCopy;
@@ -245,6 +254,8 @@ public class MessageBus<TEventArgs> where TEventArgs : EventArgs
                 _logger?.LogError(ex, "Error in async event handler for {EventType}", typeof(TEvent).Name);
             }
         }
+
+        AfterEventPublished?.Invoke(this, eventArgs);
     }
 
     public void ClearSubscriptions()

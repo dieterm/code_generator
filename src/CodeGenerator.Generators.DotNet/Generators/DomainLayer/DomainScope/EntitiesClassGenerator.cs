@@ -41,7 +41,8 @@ namespace CodeGenerator.Generators.DotNet.Generators.DomainLayer.DomainScope
             if(domainProjectArtifact== null) return false;
             var domainLayerArtifact = domainProjectArtifact.Parent as DomainLayerArtifact;
             if(domainLayerArtifact == null) return false;
-            return domainLayerArtifact.HasDecorator<DomainArtifactRefDecorator>();
+            var hasDecorator = domainLayerArtifact.HasDecorator<DomainArtifactRefDecorator>();
+            return hasDecorator;
         }
 
         private async Task OnDotNetDomainProjectCreated(CreatedArtifactEventArgs e)
@@ -65,6 +66,7 @@ namespace CodeGenerator.Generators.DotNet.Generators.DomainLayer.DomainScope
                 _logger.LogError("DomainArtifactRefDecorator not found on layer artifact.");
                 throw new InvalidOperationException("DomainArtifactRefDecorator not found on layer artifact.");
             }
+            _logger.LogInformation("Generating entity classes for domain {DomainName} on layer {LayerName} scope {Scope}.", domainArtifactRefDecorator.DomainArtifact.Name, layerArtifact.Layer, layerArtifact.Scope);
             var domainArtifact = domainArtifactRefDecorator.DomainArtifact;
 
             var settings = GetSettings();

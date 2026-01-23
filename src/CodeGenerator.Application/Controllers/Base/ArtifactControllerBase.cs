@@ -1,5 +1,6 @@
 using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Templates;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Base
@@ -76,6 +77,15 @@ namespace CodeGenerator.Application.Controllers.Base
             {
                 OnArtifactRenamedInternal(typedArtifact, oldName, newName);
             }
+        }
+
+        /// <summary>
+        /// Return a list of required template IDs for this controller
+        /// </summary>
+        /// <returns></returns>
+        public virtual List<TemplateDefinitionAndLocation> RegisterRequiredTemplates()
+        {
+            return new List<TemplateDefinitionAndLocation>();
         }
     }
 }

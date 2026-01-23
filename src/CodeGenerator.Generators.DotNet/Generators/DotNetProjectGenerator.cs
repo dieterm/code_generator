@@ -1,10 +1,12 @@
-﻿using CodeGenerator.Core.MessageBus;
+﻿using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Events.Application;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Generators.MessageBus;
 using CodeGenerator.Core.Generators.Settings;
+using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.DotNet;
@@ -64,13 +66,16 @@ namespace CodeGenerator.Generators.DotNet.Generators
             var targetFramework = settings.TargetFramework;
             var projectType = settings.ProjectType;
             
+            var workspaceContextProvider = ServiceProviderHolder.GetRequiredService<IWorkspaceContextProvider>();
+            var workspace = workspaceContextProvider.CurrentWorkspace!;
+
             var projectNameTemplate = new ParameterizedString(settings.ProjectNamePattern);
             var paramters = new Dictionary<string, string>
             {
                 { DotNetProjectGeneratorSettings<TLayer>.ProjectNamePattern_LayerParameter, appLayerArtifact.Layer },
                 { DotNetProjectGeneratorSettings<TLayer>.ProjectNamePattern_ScopeParameter, appLayerArtifact.Scope },
                 { DotNetProjectGeneratorSettings<TLayer>.ProjectNamePattern_LanguageParameter, language.DotNetCommandLineArgument },
-                { DotNetProjectGeneratorSettings<TLayer>.ProjectNamePattern_WorkspaceNamespaceParameter, WorkspaceSettings.Instance.RootNamespace }
+                { DotNetProjectGeneratorSettings<TLayer>.ProjectNamePattern_WorkspaceNamespaceParameter, workspace.RootNamespace ?? WorkspaceSettings.Instance.RootNamespace }
             };
             // eg. $"{Layer}.{Scope}" -> "Application.Shared"
             var projectName = projectNameTemplate.GetOutput(paramters);
@@ -80,7 +85,10 @@ namespace CodeGenerator.Generators.DotNet.Generators
 
             var dotNetProjectTemplate = new DotNetProjectTemplate(projectType, language, targetFramework);
             var dotNetProjectTemplateInstance = new DotNetProjectTemplateInstance(dotNetProjectTemplate, projectName);
-
+            if (!args.Result.PreviewOnly)
+            {
+                dotNetProjectTemplateInstance.OutputDirectory = dotNetProjectArtifact.FindAncesterOfType<FolderArtifact>()?.FullPath;
+            }
             var messageBus = ServiceProviderHolder.GetRequiredService<ApplicationMessageBus>();
 
             messageBus.Publish(new ReportTaskProgressEvent($"Generating {projectName} .NET project...", null));
@@ -91,10 +99,13 @@ namespace CodeGenerator.Generators.DotNet.Generators
             messageBus.Publish(new ReportTaskProgressEvent($"Finished generating {projectName} .NET project.", null));
             if (result.Succeeded)
             {
-                foreach(var artifact in result.Artifacts)
-                {
-                    AddChildArtifactToParent(dotNetProjectArtifact, artifact, args.Result);
-                }
+                // for now, only add the project file as child artifact
+                var projectFileArtifact = result.Artifacts.OfType<FileArtifact>().FirstOrDefault(f => f.FileName.EndsWith(language.ProjectFileExtension));
+                AddChildArtifactToParent(dotNetProjectArtifact, projectFileArtifact, args.Result);
+                //foreach (var artifact in result.Artifacts)
+                //{
+                //    AddChildArtifactToParent(dotNetProjectArtifact, artifact, args.Result);
+                //}
             }
             else
             {

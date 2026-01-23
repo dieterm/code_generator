@@ -1,7 +1,9 @@
 ﻿using CodeGenerator.Core.Generators.Settings;
 using CodeGenerator.Core.Settings.Generators;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.DotNet;
+using CodeGenerator.Generators.CodeArchitectureLayers.PresentationLayer;
 using CodeGenerator.UserControls.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -57,6 +59,10 @@ namespace CodeGenerator.Generators.DotNet.Generators.DomainLayer.DomainScope
                 DefaultValue = ENTITIES_CLASS_TEMPLATE_ID,
                 Required = true
             });
+            settingsDescription.DependingGeneratorIds.Add($"{CodeArchitectureLayerArtifact.DOMAIN_LAYER}Layer.{CodeArchitectureLayerArtifact.DOMAIN_SCOPE}Scope.DotNetProject");
+            var templateDescription = new TemplateRequirement(ENTITIES_CLASS_TEMPLATE_ID, "some information about the entities class template", "{EntityName}.cs", TemplateType.Scriban);
+            //templateDescription.TemplateType
+            settingsDescription.Templates.Add(templateDescription);
             return settingsDescription;
             
         }
