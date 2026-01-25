@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace CodeGenerator.Application.ViewModels
+namespace CodeGenerator.Application.ViewModels.Generation
 {
     public class GenerationResultTreeViewModel : ViewModelBase
     {

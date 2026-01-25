@@ -6,7 +6,9 @@ using CodeGenerator.Application.Controllers.Workspace.Datasources;
 using CodeGenerator.Application.Controllers.Workspace.Domains;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
+using CodeGenerator.Application.ViewModels.Generation;
 using CodeGenerator.Application.ViewModels.Template;
+using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.DomainSchema.Services;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Interfaces;
@@ -60,16 +62,20 @@ public static class ServiceCollectionExtensions
         // Register Controllers
         services.AddSingleton<ApplicationController>();
         services.AddSingleton<DomainSchemaController>();
+        
         services.AddSingleton<GenerationController>();
+        services.AddSingleton<GenerationRibbonViewModel>();
+        
         services.AddSingleton<SettingsController>();
-        //services.AddSingleton<TemplateController>();
+        
         
         // Register Workspace Controllers
+        services.AddSingleton<WorkspaceController>();
         services.AddSingleton<WorkspaceTreeViewController>();
         services.AddSingleton<IWorkspaceContextProvider>(sp => sp.GetRequiredService<WorkspaceTreeViewController>());
         services.AddSingleton<IDatasourceFactory, DatasourceFactory>();
         services.AddSingleton<WorkspaceFileService>();
-
+        services.AddSingleton<WorkspaceRibbonViewModel>();
         // Register Template Controllers
         services.AddSingleton<TemplateTreeViewController>();
 

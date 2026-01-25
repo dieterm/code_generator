@@ -35,10 +35,12 @@ namespace CodeGenerator.Application.Controllers.Template
         
         private readonly WorkspaceTreeViewController _workspaceController = ServiceProviderHolder.GetRequiredService<WorkspaceTreeViewController>();
         private readonly TemplateEngineManager _templateEngineManager;
-        private ArtifactDetailsViewModel _artifactDetailsViewModel;
+        private ArtifactDetailsViewModel? _artifactDetailsViewModel;
+        private readonly TemplateManager _templateManager;
 
-        public TemplateTreeViewController(TemplateEngineManager templateEngineManager, WorkspaceTreeViewController workspaceController, RibbonBuilder ribbonBuilder, IWindowManagerService windowManagerService, IMessageBoxService messageBoxService, ILogger<TemplateTreeViewController> logger) : base(windowManagerService, messageBoxService, logger)
+        public TemplateTreeViewController(TemplateManager templateManager, TemplateEngineManager templateEngineManager, WorkspaceTreeViewController workspaceController, RibbonBuilder ribbonBuilder, IWindowManagerService windowManagerService, IMessageBoxService messageBoxService, ILogger<TemplateTreeViewController> logger) : base(windowManagerService, messageBoxService, logger)
         {
+            _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
             _ribbonBuilder = ribbonBuilder ?? throw new ArgumentNullException(nameof(ribbonBuilder));
             _workspaceController = workspaceController ?? throw new ArgumentNullException(nameof(workspaceController));
             _templateEngineManager = templateEngineManager ?? throw new ArgumentNullException(nameof(templateEngineManager));
@@ -57,10 +59,35 @@ namespace CodeGenerator.Application.Controllers.Template
 
         public void Initialize()
         {
-            CreateRibbon();
+            // Initialize default template folder from settings
+            InitializeDefaultTemplateFolder();
+
+            // Subscribe to settings changes
+            WorkspaceSettings.DefaultTemplateFolderChanged += OnDefaultTemplateFolderChanged;
         }
 
-        private void CreateRibbon()
+        /// <summary>
+        /// Handle changes to the default template folder setting
+        /// </summary>
+        private void OnDefaultTemplateFolderChanged(object? sender, string? newFolder)
+        {
+            _templateManager.SetDefaultTemplateFolder(newFolder);
+            Logger.LogInformation("Default template folder changed to: {Folder}", newFolder ?? "(none)");
+        }
+
+        /// <summary>
+        /// Initialize the default template folder from WorkspaceSettings
+        /// </summary>
+        private void InitializeDefaultTemplateFolder()
+        {
+            var defaultFolder = WorkspaceSettings.Instance.DefaultTemplateFolder;
+            if (!string.IsNullOrEmpty(defaultFolder))
+            {
+                _templateManager.SetDefaultTemplateFolder(defaultFolder);
+                Logger.LogInformation("Initialized default template folder: {Folder}", defaultFolder);
+            }
+        }
+        public void CreateRibbon()
         {
             _ribbonBuilder
                 .AddTab("tabTemplates", "Templates")
@@ -102,7 +129,7 @@ namespace CodeGenerator.Application.Controllers.Template
             if (TreeViewModel == null)
             {
                 // this code below will not work. all code in this class needs to be moved to TemplateTreeViewController
-                TreeViewModel = new TemplateTreeViewModel((TemplateTreeViewController)(object)this);
+                TreeViewModel = new TemplateTreeViewModel(this);
                 TreeViewModel.PropertyChanged += TreeViewModel_PropertyChanged;
                 //TreeViewModel.TemplateSelected += TreeViewModel_TemplateSelected;
             }
@@ -454,6 +481,8 @@ namespace CodeGenerator.Application.Controllers.Template
             {
                 TreeViewModel.PropertyChanged -= TreeViewModel_PropertyChanged;
             }
+            WorkspaceSettings.DefaultTemplateFolderChanged -= OnDefaultTemplateFolderChanged;
+
         }
 
         public override void ShowArtifactDetailsView(ViewModelBase? detailsModel)

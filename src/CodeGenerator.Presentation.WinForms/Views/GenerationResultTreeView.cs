@@ -1,4 +1,4 @@
-﻿using CodeGenerator.Application.ViewModels;
+﻿using CodeGenerator.Application.ViewModels.Generation;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.CodeGeneration;
 using CodeGenerator.Core.Artifacts.TreeNode;

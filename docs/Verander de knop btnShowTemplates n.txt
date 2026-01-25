@@ -1,0 +1,6 @@
+Verander de knop btnShowTemplates naar btnDefaultTemplates (met tekst "Default Templates").
+Voeg ernaast een knop toe btnShowWorkspaceTemplates (met tekst "Workspace Templates").
+Gebruik voor beide de functie WithCommand(...)
+Zorg ervoor dat de btnShowWorkspaceTemplates enkel zichtbaar is als er momenteel een workspace open is.
+Als de gebruiker op de btnDefaultTemplates klikt moeten alle acties van de TemplateTreeViewController van toepassing zijn op de WorkspaceSettings.Instance.DefaultTemplateFolder folder.
+Als de gebruiker op de btnShowWorkspaceTemplates 

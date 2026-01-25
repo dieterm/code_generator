@@ -15,13 +15,12 @@ namespace CodeGenerator.Presentation.WinForms.ViewModels
 {
     public class MainViewModel : ViewModelBase, IProgress<GenerationProgress>
     {
-        private readonly IMessageBoxService _messageBoxService;
         private bool _isDirty;
 
         // Events
         public event EventHandler? NewRequested;
         public event EventHandler? OpenRequested;
-        public event EventHandler<OpenRecentFileRequestedEventArgs> OpenRecentFileRequested;
+        public event EventHandler<OpenRecentFileRequestedEventArgs>? OpenRecentFileRequested;
         public event EventHandler? SaveRequested;
         public event EventHandler? SaveAsRequested;
         public event EventHandler? GenerateRequested;
@@ -41,14 +40,14 @@ namespace CodeGenerator.Presentation.WinForms.ViewModels
         public RelayCommand GenerateCommand { get; }
         public RelayCommand ExitCommand { get; }
         
-        private string _statusLabel;
-        public string StatusLabel{
+        private string? _statusLabel;
+        public string? StatusLabel{
             get => _statusLabel;
             set => SetProperty(ref _statusLabel, value);
         }
 
-        private string _progressLabel;
-        public string ProgressLabel
+        private string? _progressLabel;
+        public string? ProgressLabel
         {
             get => _progressLabel;
             set => SetProperty(ref _progressLabel, value);
@@ -71,17 +70,17 @@ namespace CodeGenerator.Presentation.WinForms.ViewModels
         }
         public bool IsClosing { get; internal set; }
 
-        private RibbonViewModel _ribbonViewModel;
-        public RibbonViewModel RibbonViewModel { 
+        private RibbonViewModel? _ribbonViewModel;
+        public RibbonViewModel? RibbonViewModel { 
             get => _ribbonViewModel;
             set => SetProperty(ref _ribbonViewModel, value);
         }
+
         public IEnumerable<string> RecentFiles { get { return ApplicationSettings.Instance.RecentFiles.Cast<string>().ToArray(); } } 
+
         // Constructor
-        public MainViewModel(IMessageBoxService messageBoxService)
+        public MainViewModel()
         {
-            _messageBoxService = messageBoxService ?? throw new ArgumentNullException(nameof(messageBoxService));
-            
             NewCommand = new RelayCommand(_ => NewRequested?.Invoke(this, EventArgs.Empty));
             OpenCommand = new RelayCommand(_ => OpenRequested?.Invoke(this, EventArgs.Empty));
             OpenRecentFileCommand = new RelayCommand((object? file) => OpenRecentFileRequested?.Invoke(this, new OpenRecentFileRequestedEventArgs(file as string)));

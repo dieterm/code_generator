@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Application.ViewModels;
+using CodeGenerator.Application.ViewModels.Generation;
 using CodeGenerator.Application.ViewModels.Template;
 using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;

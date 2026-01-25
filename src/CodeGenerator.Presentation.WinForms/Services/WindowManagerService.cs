@@ -7,6 +7,7 @@ using CodeGenerator.Core.Settings.Views;
 using CodeGenerator.Shared.ExtensionMethods;
 using CodeGenerator.Presentation.WinForms.Views;
 using Syncfusion.Windows.Forms.Tools;
+using CodeGenerator.Application.ViewModels.Generation;
 
 
 namespace CodeGenerator.Presentation.WinForms.Services

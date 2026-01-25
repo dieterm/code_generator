@@ -4,15 +4,19 @@ using CodeGenerator.Application.Controllers.Workspace.Domains;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.Events;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.ViewModels;
+using DocumentFormat.OpenXml.Office2013.Drawing.Chart;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace CodeGenerator.Application.Controllers.Workspace
@@ -32,6 +36,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             TemplateManager templateManager,
             IDatasourceFactory datasourceFactory,
             WorkspaceFileService workspaceFileService,
+            RibbonBuilder ribbonBuilder,
             IWindowManagerService windowManagerService,
             IMessageBoxService messageBoxService,
             ILogger<WorkspaceTreeViewController> logger)
@@ -97,26 +102,27 @@ namespace CodeGenerator.Application.Controllers.Workspace
         /// Event raised when the workspace changes
         /// </summary>
         public event EventHandler<WorkspaceArtifact?>? WorkspaceChanged;
-
+        public event EventHandler? WorkspaceHasUnsavedChangesChanged;
+        private bool _hasUnsavedChanges = false;
         /// <summary>
-        /// Event raised when a rename edit should be started for an artifact
+        /// TODO: Subscribe to all events of all artifacts recursively.
+        /// Also keep track of unsubscribing when artifacts are removed or when workspace is closed.
         /// </summary>
-        //public event EventHandler<IArtifact>? BeginRenameRequested;
+        public bool HasUnsavedChanges {
+            get {return _hasUnsavedChanges; } 
+            private set { 
+                if (_hasUnsavedChanges != value) {
+                    _hasUnsavedChanges = value;
+                    WorkspaceHasUnsavedChangesChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
 
-        ///// <summary>
-        ///// Event raised when an artifact property changes (e.g., from edit view)
-        ///// </summary>
-        //public event EventHandler<ArtifactPropertyChangedEventArgs>? ArtifactPropertyChanged;
+        public void Initialize()
+        {
+           
+        }
 
-        ///// <summary>
-        ///// Event raised when a child artifact is added
-        ///// </summary>
-        //public event EventHandler<ArtifactChildChangedEventArgs>? ArtifactAdded;
-
-        ///// <summary>
-        ///// Event raised when a child artifact is removed
-        ///// </summary>
-        //public event EventHandler<ArtifactChildChangedEventArgs>? ArtifactRemoved;
 
         /// <summary>
         /// Load a workspace from a file
@@ -135,7 +141,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
             
             ShowWorkspaceTreeView();
             WorkspaceChanged?.Invoke(this, CurrentWorkspace);
-            
+            HasUnsavedChanges = false;
+            ObserveWorkspaceChanges(CurrentWorkspace);
             return CurrentWorkspace;
         }
 
@@ -153,8 +160,58 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
             ShowWorkspaceTreeView();
             WorkspaceChanged?.Invoke(this, CurrentWorkspace);
-            
+            HasUnsavedChanges = false;
+            ObserveWorkspaceChanges(CurrentWorkspace);
             return CurrentWorkspace;
+        }
+
+        private void ObserveWorkspaceChanges(WorkspaceArtifact workspace)
+        {
+            // Clear previous subscriptions
+            foreach (var artifact in _observedArtifacts)
+            {
+                artifact.PropertyChanged -= OnArtifactPropertyChanged;
+                artifact.ChildAdded -= OnArtifactChildAdded;
+                artifact.ChildRemoved -= OnArtifactRemoved;
+            }
+            _observedArtifacts.Clear();
+            
+            ObserveArtifactChanges(workspace);
+        }
+        private List<IArtifact> _observedArtifacts = new List<IArtifact>();
+        private void ObserveArtifactChanges(IArtifact artifact)
+        {
+            _observedArtifacts.Add(artifact);
+            artifact.PropertyChanged += OnArtifactPropertyChanged;
+
+            artifact.ChildAdded += OnArtifactChildAdded;
+
+            artifact.ChildRemoved += OnArtifactRemoved; 
+
+            foreach(var child in artifact.Children)
+            {
+                ObserveArtifactChanges(child);
+            }
+        }
+
+        private void OnArtifactRemoved(object? sender, ChildRemovedEventArgs e)
+        {
+            var childArtifact = e.ChildArtifact;
+            childArtifact.PropertyChanged -= OnArtifactPropertyChanged;
+            _observedArtifacts.Remove(childArtifact);
+            HasUnsavedChanges = true;
+        }
+
+        private void OnArtifactChildAdded(object? sender, ChildAddedEventArgs e)
+        {
+            ObserveArtifactChanges(e.ChildArtifact);
+            HasUnsavedChanges = true;
+        }
+
+        private void OnArtifactPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            //Logger.LogDebug("Artifact property changed: {Artifact} - {PropertyName}", (sender as IArtifact)?.TreeNodeText, e.PropertyName);
+            HasUnsavedChanges = true;
         }
 
         /// <summary>
@@ -169,6 +226,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             
             Logger.LogInformation("Saving workspace '{Name}'", CurrentWorkspace.Name);
             await _workspaceFileService.SaveAsync(CurrentWorkspace, cancellationToken: cancellationToken);
+            HasUnsavedChanges = false;
         }
 
         /// <summary>
