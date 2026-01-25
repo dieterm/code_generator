@@ -121,7 +121,7 @@ namespace CodeGenerator.Application.Controllers.Template
                             .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
                             .WithImage("refresh_cw")
                             .WithToolTip("Refresh template list")
-                            .OnClick((e) => OnRefreshTemplatesRequested())
+                            .OnClick((e) => RefreshTemplates())
                     .EndToolStrip()
                 .Build();
         }
@@ -131,7 +131,8 @@ namespace CodeGenerator.Application.Controllers.Template
             ShowTemplateTreeView(TargetTemplateFolder.Default);
         }
 
-        private void OnRefreshTemplatesRequested()
+
+        public void RefreshTemplates()
         {
             if (TreeViewModel != null)
             {

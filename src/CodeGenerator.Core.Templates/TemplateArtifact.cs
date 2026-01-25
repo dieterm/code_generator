@@ -1,6 +1,7 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Core.Interfaces;
+using CodeGenerator.Shared;
 
 namespace CodeGenerator.Core.Templates;
 
@@ -38,8 +39,11 @@ public class TemplateArtifact : Artifact
     public TemplateArtifact(ArtifactState state) : base(state)
     {
         FilePath = GetValue<string>(nameof(FilePath)) ?? string.Empty;
-        //FileName = Path.GetFileName(FilePath);
         _definition = TemplateDefinition.LoadForTemplate(FilePath);
+        var fileExtention = Path.GetExtension(FilePath);
+        var templateEngineManager = ServiceProviderHolder.GetRequiredService<TemplateEngineManager>();
+        var templateEngine = templateEngineManager.GetTemplateEngineByFileExtension(fileExtention);
+        _template = templateEngine!.CreateTemplateFromFile(FilePath);
     }
 
     /// <summary>
@@ -159,4 +163,5 @@ public class TemplateArtifact : Artifact
             RaisePropertyChangedEvent(nameof(Definition));
         }
     }
+
 }

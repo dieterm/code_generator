@@ -16,14 +16,16 @@ namespace CodeGenerator.Application.Controllers.Template
 {
     public class ExistingFolderArtifactController : ArtifactControllerBase<TemplateTreeViewController, ExistingFolderArtifact>
     {
-        public ExistingFolderArtifactController(TemplateTreeViewController treeViewController, ILogger<ExistingFolderArtifactController> logger)
+        private readonly IMessageBoxService _messageBoxService;
+        public ExistingFolderArtifactController(IMessageBoxService messageBoxService, TemplateTreeViewController treeViewController, ILogger<ExistingFolderArtifactController> logger)
             : base(treeViewController, logger)
         {
+            _messageBoxService = messageBoxService ?? throw new ArgumentNullException(nameof(messageBoxService));
         }
 
         protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(ExistingFolderArtifact folderArtifact)
         {
-            var createTemplateCommand =  new ArtifactTreeNodeCommand
+            var createTemplateCommand = new ArtifactTreeNodeCommand
             {
                 Id = "create_template",
                 Text = "Create Template",
@@ -33,7 +35,7 @@ namespace CodeGenerator.Application.Controllers.Template
             // get template engines
             var templateEngineManager = ServiceProviderHolder.GetRequiredService<TemplateEngineManager>();
             var templateEngines = templateEngineManager.TemplateEngines.Where(t => !string.IsNullOrEmpty(t.DefaultFileExtension)).ToArray();
-            foreach(var engine in templateEngines)
+            foreach (var engine in templateEngines)
             {
                 createTemplateCommand.SubCommands.Add(new ArtifactTreeNodeCommand
                 {
@@ -43,7 +45,7 @@ namespace CodeGenerator.Application.Controllers.Template
                     Execute = async (a) =>
                     {
                         var templateFile = folderArtifact.ExistingFolderPath.CreateIndexedFile("NewTemplate", engine.DefaultFileExtension);
-                        if(templateFile == null) return;
+                        if (templateFile == null) return;
                         var templateArtifact = new TemplateArtifact(templateFile.FullName, engine);
                         folderArtifact.AddChild(templateArtifact);
                         TreeViewController.OnArtifactAdded(folderArtifact, templateArtifact);
@@ -55,7 +57,7 @@ namespace CodeGenerator.Application.Controllers.Template
             yield return createTemplateCommand;
             // add seperator
             yield return ArtifactTreeNodeCommand.Separator;
-            
+
             yield return new ArtifactTreeNodeCommand
             {
                 Id = "create_folder",
@@ -113,6 +115,129 @@ namespace CodeGenerator.Application.Controllers.Template
                     messageService.ShowError($"An error occurred while deleting the folder: {ex.Message}", "Error Deleting Folder");
                 }
             }
+        }
+
+        public override bool CanPaste(IArtifact artifactToPaste, ExistingFolderArtifact targetArtifact)
+        {
+            // TODO: add support for folders
+            var canPasteFolder = artifactToPaste is ExistingFolderArtifact existingFolderArtifact && existingFolderArtifact.Parent != targetArtifact && existingFolderArtifact != targetArtifact;
+
+            // FOR now, only allow pasting templates
+            var canPasteTemplate = artifactToPaste is TemplateArtifact templateArtifact && templateArtifact.Parent != targetArtifact;
+            return canPasteTemplate || canPasteFolder;
+        }
+
+        override public void Paste(IArtifact artifactToPaste, ExistingFolderArtifact targetFolderArtifact)
+        {
+            if (artifactToPaste is TemplateArtifact templateArtifact)
+            {
+                // move the template file to the new folder
+                var sourceFilePath = templateArtifact.FilePath;
+                var fileName = Path.GetFileName(sourceFilePath);
+                var targetFilePath = Path.Combine(targetFolderArtifact.ExistingFolderPath, fileName);
+                var targetFileExists = File.Exists(targetFilePath);
+                // move template definition file (.def) if exists
+                var sourceDefFilePath = TemplateDefinition.GetDefinitionFilePath(sourceFilePath);
+                var sourceDefFileExists = File.Exists(sourceDefFilePath);
+
+                var targetDefFilePath = TemplateDefinition.GetDefinitionFilePath(targetFilePath);
+                var targetDefFileExists = File.Exists(targetDefFilePath);
+
+                if (targetFileExists || targetDefFileExists)
+                {
+                    var msgboxResult = _messageBoxService.AskYesNoCancel($"A template with the name '{fileName}' or its definition file already exists in the target folder. Do you want to overwrite it?", "Paste Template");
+                    if (msgboxResult == MessageBoxResult.Cancel || msgboxResult == MessageBoxResult.No)
+                    {
+                        return;
+                    }
+                }
+
+                if (ArtifactClipboardService.Instance.IsCutOperation)
+                {
+                    // if cut operation, we can just move the files
+                    File.Move(sourceFilePath, targetFilePath, true);
+
+                    if (sourceDefFileExists)
+                    {
+                        File.Move(sourceDefFilePath, targetDefFilePath, true);
+                    }
+
+                    // remove from old parent
+                    var oldParent = templateArtifact.Parent;
+                    oldParent.RemoveChild(templateArtifact);
+                    TreeViewController.OnArtifactRemoved(oldParent, templateArtifact);
+
+                    // paste to new parent
+                    // create new template artifact
+                    var fileExtension = Path.GetExtension(targetFilePath).Replace(".", "");
+                    var templateEngineManager = ServiceProviderHolder.GetRequiredService<TemplateEngineManager>();
+                    var templateEngine = templateEngineManager.GetTemplateEngineByFileExtension(fileExtension);
+                    var newTemplateArtifact = new TemplateArtifact(targetFilePath, templateEngine);
+
+                    targetFolderArtifact.AddChild(newTemplateArtifact);
+                    TreeViewController.OnArtifactAdded(targetFolderArtifact, newTemplateArtifact);
+
+                    // clear clipboard
+                    ArtifactClipboardService.Instance.Clear();
+                }
+                else
+                {
+                    // if copy operation, we need to copy the files first
+                    File.Copy(sourceFilePath, targetFilePath, true);
+                    if (sourceDefFileExists)
+                    {
+                        File.Copy(sourceDefFilePath, targetDefFilePath, true);
+                    }
+
+                    // create new template artifact
+                    var fileExtension = Path.GetExtension(targetFilePath).Replace(".", "");
+                    var templateEngineManager = ServiceProviderHolder.GetRequiredService<TemplateEngineManager>();
+                    var templateEngine = templateEngineManager.GetTemplateEngineByFileExtension(fileExtension);
+                    var newTemplateArtifact = new TemplateArtifact(targetFilePath, templateEngine);
+
+                    // paste to new parent
+                    targetFolderArtifact.AddChild(newTemplateArtifact);
+                    TreeViewController.OnArtifactAdded(targetFolderArtifact, newTemplateArtifact);
+                }
+            }
+            else if (artifactToPaste is ExistingFolderArtifact sourceFolderArtifact)
+            {
+                var targetFolderPath = Path.Combine(targetFolderArtifact.ExistingFolderPath, sourceFolderArtifact.FolderName);
+                if (Directory.Exists(targetFolderPath))
+                {
+                    var msgboxResult = _messageBoxService.AskYesNoCancel($"A folder with the name '{sourceFolderArtifact.FolderName}' already exists in the target folder. Do you want to overwrite it?", "Paste Folder");
+                    if (msgboxResult == MessageBoxResult.Cancel || msgboxResult == MessageBoxResult.No)
+                    {
+                        return;
+                    }
+                }
+                if (ArtifactClipboardService.Instance.IsCutOperation)
+                {
+                    // move the folder
+                    Directory.Move(sourceFolderArtifact.ExistingFolderPath, targetFolderPath);
+                    TreeViewController.RefreshTemplates();
+
+                    ArtifactClipboardService.Instance.Clear();
+                }
+                else
+                {
+                    
+                    // copy the folder
+                    sourceFolderArtifact.ExistingFolderPath.CopyDirectory(targetFolderPath, true);
+                    
+                    TreeViewController.RefreshTemplates();
+                }
+            }
+        }
+
+        public override bool CanCopy(ExistingFolderArtifact artifact)
+        {
+            return true;
+        }
+
+        public override bool CanCut(ExistingFolderArtifact artifact)
+        {
+            return true;
         }
     }
 }

@@ -113,19 +113,6 @@ namespace CodeGenerator.Application.Controllers.Template
 
             yield return ArtifactTreeNodeCommand.Separator;
 
-            //yield return new ArtifactTreeNodeCommand
-            //{
-            //    Id = "delete_template",
-            //    Text = "Delete Template",
-            //    IconKey = "trash",
-            //    Execute = async (a) =>
-            //    {
-                    
-            //    }
-            //};
-
-            //yield return ArtifactTreeNodeCommand.Separator;
-
             yield return new ArtifactTreeNodeCommand
             {
                 Id = "open_template_folder",
@@ -186,6 +173,18 @@ namespace CodeGenerator.Application.Controllers.Template
                 }
             }
         }
+
+        public override bool CanCut(TemplateArtifact artifact)
+        {
+            return true;
+        }
+
+        public override bool CanCopy(TemplateArtifact artifact)
+        {
+            return true;
+        }
+
+
 
         protected override Task OnSelectedInternalAsync(TemplateArtifact artifact, CancellationToken cancellationToken)
         {
