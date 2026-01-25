@@ -1,10 +1,12 @@
 ﻿using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Application.Controllers.Template;
 using CodeGenerator.Application.Events.Application;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Settings.Application;
 using CodeGenerator.Presentation.WinForms.ViewModels;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.Ribbon;
 using Microsoft.Extensions.Logging;
 using System;
@@ -43,7 +45,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
         private void OnRequestShowTemplates(object? sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            ServiceProviderHolder.GetRequiredService<TemplateTreeViewController>().ShowTemplateTreeView(TargetTemplateFolder.Workspace);
         }
 
         private async void OnRequestNewWorkspace(object? sender, EventArgs e)
@@ -121,6 +123,18 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
         private void OnRequestCloseWorkspace(object? sender, EventArgs e)
         {
+            if (_workspaceTreeViewController.HasUnsavedChanges)
+            {
+                var result = _messageBoxService.AskYesNoCancel(
+                    "You have unsaved changes. Do you want to save before closing the workspace?",
+                    "Unsaved Changes");
+                if (result == MessageBoxResult.Cancel)
+                    return;
+                if (result == MessageBoxResult.Yes)
+                {
+                    OnRequestSaveWorkspace(sender, e);
+                }
+            }
             _workspaceTreeViewController.CloseWorkspace();
         }
 

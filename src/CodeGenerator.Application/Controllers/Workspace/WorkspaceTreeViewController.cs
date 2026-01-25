@@ -245,6 +245,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             TreeViewModel?.Cleanup();
             TreeViewModel = null;
             ShowArtifactDetailsView(null);
+            HasUnsavedChanges = false;
             WorkspaceChanged?.Invoke(this, null);
         }
 

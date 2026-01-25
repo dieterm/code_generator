@@ -56,6 +56,24 @@ namespace CodeGenerator.Application.Controllers.Template
                 ServiceProviderHolder.GetRequiredService<ExistingFolderArtifactController>(),
             };
         }
+        private TargetTemplateFolder _targetTemplateFolder;
+        public TargetTemplateFolder TargetTemplateFolder {
+            get { return _targetTemplateFolder; }
+            set { 
+                if (_targetTemplateFolder != value) 
+                {
+                    _targetTemplateFolder = value;
+                    
+                }
+            }
+        }
+
+        public string? GetCurrentTemplateFolder()
+        {
+            return TargetTemplateFolder == TargetTemplateFolder.Default
+                ? WorkspaceSettings.Instance.DefaultTemplateFolder
+                : _workspaceController.CurrentWorkspace?.WorkspaceDirectory;
+        }
 
         public void Initialize()
         {
@@ -110,7 +128,7 @@ namespace CodeGenerator.Application.Controllers.Template
 
         private void OnShowTemplatesRequested()
         {
-            ShowTemplateTreeView();
+            ShowTemplateTreeView(TargetTemplateFolder.Default);
         }
 
         private void OnRefreshTemplatesRequested()
@@ -124,7 +142,7 @@ namespace CodeGenerator.Application.Controllers.Template
         /// <summary>
         /// Show or refresh the template tree view
         /// </summary>
-        public void ShowTemplateTreeView()
+        public void ShowTemplateTreeView(TargetTemplateFolder targetTemplateFolder)
         {
             if (TreeViewModel == null)
             {
@@ -133,7 +151,7 @@ namespace CodeGenerator.Application.Controllers.Template
                 TreeViewModel.PropertyChanged += TreeViewModel_PropertyChanged;
                 //TreeViewModel.TemplateSelected += TreeViewModel_TemplateSelected;
             }
-
+            TargetTemplateFolder = targetTemplateFolder;
             LoadTemplates(TreeViewModel);
             WindowManagerService.ShowTemplateTreeView(TreeViewModel);
         }
@@ -149,14 +167,12 @@ namespace CodeGenerator.Application.Controllers.Template
             }
         }
 
-       
-
         /// <summary>
         /// Load templates from the configured template folder
         /// </summary>
         private void LoadTemplates(TemplateTreeViewModel viewModel)
         {
-            var templateFolder = WorkspaceSettings.Instance.DefaultTemplateFolder;
+            var templateFolder = GetCurrentTemplateFolder();
 
             if (string.IsNullOrEmpty(templateFolder) || !Directory.Exists(templateFolder))
             {
@@ -165,8 +181,6 @@ namespace CodeGenerator.Application.Controllers.Template
                 viewModel.RootArtifact = null;
                 return;
             }
-
-            //viewModel.TemplateFolder = templateFolder;
 
             // Create root artifact for the template folder
             var rootArtifact = new RootArtifact("Templates", templateFolder);
