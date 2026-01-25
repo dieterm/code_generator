@@ -41,5 +41,49 @@ namespace CodeGenerator.Application.Controllers.Base
         /// Returns a list of template definitions with their expected locations.
         /// </summary>
         List<TemplateDefinitionAndLocation> RegisterRequiredTemplates();
+
+        #region Clipboard Operations
+
+        /// <summary>
+        /// Check if the artifact can be copied
+        /// </summary>
+        bool CanCopy(IArtifact artifact);
+
+        /// <summary>
+        /// Check if the artifact can be cut
+        /// </summary>
+        bool CanCut(IArtifact artifact);
+
+        /// <summary>
+        /// Check if the artifact can be deleted
+        /// </summary>
+        bool CanDelete(IArtifact artifact);
+
+        /// <summary>
+        /// Check if an artifact can be pasted onto the target artifact
+        /// </summary>
+        bool CanPaste(IArtifact artifactToPaste, IArtifact targetArtifact);
+
+        /// <summary>
+        /// Copy the artifact to the clipboard
+        /// </summary>
+        void Copy(IArtifact artifact);
+
+        /// <summary>
+        /// Cut the artifact to the clipboard
+        /// </summary>
+        void Cut(IArtifact artifact);
+
+        /// <summary>
+        /// Delete the artifact
+        /// </summary>
+        void Delete(IArtifact artifact);
+
+        /// <summary>
+        /// Paste the artifact onto the target artifact
+        /// </summary>
+        void Paste(IArtifact artifactToPaste, IArtifact targetArtifact);
+
+        #endregion
     }
 }

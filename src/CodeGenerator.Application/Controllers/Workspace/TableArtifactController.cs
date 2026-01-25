@@ -99,15 +99,6 @@ namespace CodeGenerator.Application.Controllers.Workspace
                     Text = db.Name,
                     IconKey = "database",
                     SubCommands = new List<ArtifactTreeNodeCommand>()
-                    //{
-                    //    CreateScriptCommand(db, artifact, "Create Table", "create_table"),
-                    //    CreateScriptCommand(db, artifact, "Drop Table", "drop_table"),
-                    //    ArtifactTreeNodeCommand.Separator,
-                    //    CreateScriptCommand(db, artifact, "Select row", "select_row"),
-                    //    CreateScriptCommand(db, artifact, "Insert row", "insert_row"),
-                    //    CreateScriptCommand(db, artifact, "Update row", "update_row"),
-                    //    CreateScriptCommand(db, artifact, "Delete row", "delete_row")
-                    //}
                 };
 
                 foreach (var commandInfo in _createScriptCommands!)
@@ -121,10 +112,6 @@ namespace CodeGenerator.Application.Controllers.Workspace
                     }
                 }
 
-                //if (artifact.CanAlterTable())
-                //{
-                //    dbCommand.SubCommands.Insert(1, CreateScriptCommand(db, artifact, "Alter Table", "alter_table"));
-                //}
                 generateScriptCommand.SubCommands.Add(dbCommand);
             }
             commands.Add(generateScriptCommand);
@@ -208,24 +195,24 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 }
             });
 
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
-            // Delete command
-            commands.Add(new ArtifactTreeNodeCommand
-            {
-                Id = "delete_table",
-                Text = "Delete",
-                IconKey = "trash",
-                Execute = async (a) =>
-                {
-                    await DeleteTableAsync(artifact);
-                }
-            });
+            // Note: Delete command is now added automatically by base class via GetClipboardCommands()
 
             return commands;
         }
 
+        #region Clipboard Operations
 
+        public override bool CanDelete(TableArtifact artifact)
+        {
+            return artifact.Parent != null;
+        }
+
+        public override void Delete(TableArtifact artifact)
+        {
+            if (!CanDelete(artifact)) return;
+
+            DeleteTableAsync(artifact).GetAwaiter().GetResult();
+        }
 
         private async Task DeleteTableAsync(TableArtifact artifact)
         {
@@ -284,6 +271,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
             await Task.CompletedTask;
         }
+
+        #endregion
 
         private IEnumerable<ForeignKeyArtifact> FindForeignKeysReferencingTable(DatasourceArtifact datasource, string tableId)
         {
@@ -349,19 +338,6 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 }
             };
         }
-        //private ArtifactTreeNodeCommand CreateScriptCommand(RelationalDatabase db, TableArtifact artifact, string text, string action)
-        //{
-        //    return new ArtifactTreeNodeCommand
-        //    {
-        //        Id = $"generate_script_{db.Id}_{action}",
-        //        Text = text,
-        //        IconKey = "script",
-        //        Execute = async (a) =>
-        //        {
-        //            await GenerateScriptAsync(db, artifact, action);
-        //        }
-        //    };
-        //}
 
         private async Task GenerateScriptAsync(RelationalDatabase db, TableArtifact artifact, string action)
         {
@@ -370,7 +346,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 var commandInfo = _createScriptCommands!.Single(cmd => cmd.Action == action && cmd.Database == db);
                 var requiredTemplate = _requiredTemplates!.Single(rt => rt.TemplateFolderPath[2] == SUBFOLDER_GENERATE_SCRIPT && rt.TemplateFolderPath[3] == db.Id && rt.TemplateDefinition.TemplateName==commandInfo.GetTemplateName());
                 var templateManager = ServiceProviderHolder.GetRequiredService<TemplateManager>();
-                var scribanTemplate = templateManager.GetTemplateById(requiredTemplate.TemplateId) as ScribanFileTemplate; // ensure template is loaded
+                var scribanTemplate = templateManager.GetTemplateById(requiredTemplate.TemplateId) as ScribanFileTemplate;
                 if(scribanTemplate == null)
                 {
                     var templateFolderPath = templateManager.ResolveTemplateIdToFolderPath(requiredTemplate.TemplateId);
@@ -460,7 +436,6 @@ namespace CodeGenerator.Application.Controllers.Workspace
             foreach (var commandInfo in _createScriptCommands!)
             {
                 var dbFolderName = commandInfo.Database.Id;
-                // full templateid will be: @Workspacee/TableArtifact/SQL/<database_id>/table_<action>_sql
                 var subFolders = new string[] { SUBFOLDER_GENERATE_SCRIPT, dbFolderName };
 
                 var templateDefinition = TemplateDefinitionAndLocation.ForWorkspaceArtifact(
@@ -472,7 +447,6 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 requiredTemplates.Add(templateDefinition);
             }
             
-            // keep a local copy for lookup
             _requiredTemplates = requiredTemplates;
             
             return requiredTemplates;

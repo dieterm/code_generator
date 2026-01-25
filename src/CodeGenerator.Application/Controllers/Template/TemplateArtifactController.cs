@@ -113,52 +113,18 @@ namespace CodeGenerator.Application.Controllers.Template
 
             yield return ArtifactTreeNodeCommand.Separator;
 
-            yield return new ArtifactTreeNodeCommand
-            {
-                Id = "delete_template",
-                Text = "Delete Template",
-                IconKey = "trash",
-                Execute = async (a) =>
-                {
-                    var messageService = ServiceProviderHolder.GetRequiredService<IMessageBoxService>();
-                    var confirm = messageService.Confirm($"Are you sure you want to delete the template '{templateArtifact.FileName}'?");
-                    if (confirm)
-                    {
-                        var templateFilePath = templateArtifact.FilePath;
-                        if (File.Exists(templateFilePath))
-                        {
-                            try
-                            {
-                                File.Delete(templateFilePath);
-                            }
-                            catch (Exception ex)
-                            {
-                                messageService.ShowError($"Failed to delete template file.\n\n{ex.Message}");
-                            }
-                        }
-                        var templateDefinitionFilePath = TemplateDefinition.GetDefinitionFilePath(templateFilePath);
-                        if (File.Exists(templateDefinitionFilePath))
-                        {
-                            try
-                            {
-                                File.Delete(templateDefinitionFilePath);
-                            }
-                            catch (Exception ex)
-                            {
-                                messageService.ShowError($"Failed to delete template definition file.\n\n{ex.Message}");
-                            }
-                        }
-                        var parent = templateArtifact.Parent;
-                        if (parent != null)
-                        {
-                            parent.RemoveChild(templateArtifact);
-                            TreeViewController.OnArtifactRemoved(parent, templateArtifact);
-                        }
-                    }
-                }
-            };
+            //yield return new ArtifactTreeNodeCommand
+            //{
+            //    Id = "delete_template",
+            //    Text = "Delete Template",
+            //    IconKey = "trash",
+            //    Execute = async (a) =>
+            //    {
+                    
+            //    }
+            //};
 
-            yield return ArtifactTreeNodeCommand.Separator;
+            //yield return ArtifactTreeNodeCommand.Separator;
 
             yield return new ArtifactTreeNodeCommand
             {
@@ -175,6 +141,50 @@ namespace CodeGenerator.Application.Controllers.Template
                     await Task.CompletedTask;
                 }
             };
+        }
+
+        public override bool CanDelete(TemplateArtifact artifact)
+        {
+            return true;
+        }
+
+        public override void Delete(TemplateArtifact templateArtifact)
+        {
+            var messageService = ServiceProviderHolder.GetRequiredService<IMessageBoxService>();
+            var confirm = messageService.Confirm($"Are you sure you want to delete the template '{templateArtifact.FileName}'?");
+            if (confirm)
+            {
+                var templateFilePath = templateArtifact.FilePath;
+                if (File.Exists(templateFilePath))
+                {
+                    try
+                    {
+                        File.Delete(templateFilePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        messageService.ShowError($"Failed to delete template file.\n\n{ex.Message}");
+                    }
+                }
+                var templateDefinitionFilePath = TemplateDefinition.GetDefinitionFilePath(templateFilePath);
+                if (File.Exists(templateDefinitionFilePath))
+                {
+                    try
+                    {
+                        File.Delete(templateDefinitionFilePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        messageService.ShowError($"Failed to delete template definition file.\n\n{ex.Message}");
+                    }
+                }
+                var parent = templateArtifact.Parent;
+                if (parent != null)
+                {
+                    parent.RemoveChild(templateArtifact);
+                    TreeViewController.OnArtifactRemoved(parent, templateArtifact);
+                }
+            }
         }
 
         protected override Task OnSelectedInternalAsync(TemplateArtifact artifact, CancellationToken cancellationToken)

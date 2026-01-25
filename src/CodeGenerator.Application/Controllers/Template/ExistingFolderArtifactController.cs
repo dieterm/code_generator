@@ -73,39 +73,6 @@ namespace CodeGenerator.Application.Controllers.Template
             };
             yield return new ArtifactTreeNodeCommand
             {
-                Id = "delete_folder",
-                Text = "Delete Folder",
-                IconKey = "folder",
-                Execute = async (a) =>
-                {
-                    var messageService = ServiceProviderHolder.GetRequiredService<IMessageBoxService>();
-                    var result = messageService.AskYesNoCancel($"Are you sure you want to delete the folder '{folderArtifact.TreeNodeText}'?", "Delete Folder");
-                    if (result == CodeGenerator.Application.Services.MessageBoxResult.Yes)
-                    {
-                        try
-                        {
-                            if (Directory.Exists(folderArtifact.ExistingFolderPath))
-                            {
-                                Directory.Delete(folderArtifact.ExistingFolderPath, true);
-                            }
-                            var parentArtifact = folderArtifact.Parent;
-                            parentArtifact.RemoveChild(folderArtifact);
-                            TreeViewController.OnArtifactRemoved(parentArtifact, folderArtifact);
-                        }
-                        catch (Exception ex)
-                        {
-                            messageService.ShowError($"An error occurred while deleting the folder: {ex.Message}", "Error Deleting Folder");
-                        }
-                    }
-                    //var dirInfo = folderArtifact.ExistingFolderPath.CreateDirectory("New Folder");
-                    //if (dirInfo == null) return;
-                    //var newFolderArtifact = new ExistingFolderArtifact(dirInfo.FullName, dirInfo.Name);
-                    //folderArtifact.AddChild(newFolderArtifact);
-                    //TreeViewController.RequestBeginRename(newFolderArtifact);
-                }
-            };
-            yield return new ArtifactTreeNodeCommand
-            {
                 Id = "open_folder",
                 Text = "Open in Explorer",
                 IconKey = "folder",
@@ -118,6 +85,34 @@ namespace CodeGenerator.Application.Controllers.Template
                     await Task.CompletedTask;
                 }
             };
+        }
+
+        override public bool CanDelete(ExistingFolderArtifact artifact)
+        {
+            return true;
+        }
+
+        public override void Delete(ExistingFolderArtifact folderArtifact)
+        {
+            var messageService = ServiceProviderHolder.GetRequiredService<IMessageBoxService>();
+            var result = messageService.AskYesNoCancel($"Are you sure you want to delete the folder '{folderArtifact.TreeNodeText}'?", "Delete Folder");
+            if (result == CodeGenerator.Application.Services.MessageBoxResult.Yes)
+            {
+                try
+                {
+                    if (Directory.Exists(folderArtifact.ExistingFolderPath))
+                    {
+                        Directory.Delete(folderArtifact.ExistingFolderPath, true);
+                    }
+                    var parentArtifact = folderArtifact.Parent;
+                    parentArtifact.RemoveChild(folderArtifact);
+                    TreeViewController.OnArtifactRemoved(parentArtifact, folderArtifact);
+                }
+                catch (Exception ex)
+                {
+                    messageService.ShowError($"An error occurred while deleting the folder: {ex.Message}", "Error Deleting Folder");
+                }
+            }
         }
     }
 }

@@ -48,26 +48,6 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
 
             commands.Add(ArtifactTreeNodeCommand.Separator);
 
-            // Delete command
-            commands.Add(new ArtifactTreeNodeCommand
-            {
-                Id = "delete_domain",
-                Text = "Delete",
-                IconKey = "trash",
-                Execute = async (a) =>
-                {
-                    var parent = artifact.Parent;
-                    if (parent != null)
-                    {
-                        parent.RemoveChild(artifact);
-                        TreeViewController.OnArtifactRemoved(parent, artifact);
-                    }
-                    await Task.CompletedTask;
-                }
-            });
-
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
             // Properties command
             commands.Add(new ArtifactTreeNodeCommand
             {
@@ -77,8 +57,31 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
                 Execute = async (a) => await ShowPropertiesAsync(artifact)
             });
 
+            // Note: Delete command is now added automatically by base class via GetClipboardCommands()
+
             return commands;
         }
+
+        #region Clipboard Operations
+
+        public override bool CanDelete(DomainArtifact artifact)
+        {
+            return artifact.Parent != null;
+        }
+
+        public override void Delete(DomainArtifact artifact)
+        {
+            if (!CanDelete(artifact)) return;
+
+            var parent = artifact.Parent;
+            if (parent != null)
+            {
+                parent.RemoveChild(artifact);
+                TreeViewController.OnArtifactRemoved(parent, artifact);
+            }
+        }
+
+        #endregion
 
         protected override Task OnSelectedInternalAsync(DomainArtifact artifact, CancellationToken cancellationToken)
         {

@@ -1,4 +1,5 @@
 using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using Microsoft.Extensions.Logging;
 
@@ -9,8 +10,6 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// </summary>
     public class ViewArtifactController : ArtifactControllerBase<WorkspaceTreeViewController, ViewArtifact>
     {
-        //protected WorkspaceTreeViewController TreeViewController => (WorkspaceTreeViewController)base.TreeViewController;
-
         public ViewArtifactController(
             WorkspaceTreeViewController workspaceController,
             ILogger<ViewArtifactController> logger)
@@ -83,28 +82,31 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 }
             });
 
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
-            // Delete command
-            commands.Add(new ArtifactTreeNodeCommand
-            {
-                Id = "delete_view",
-                Text = "Delete",
-                IconKey = "trash",
-                Execute = async (a) =>
-                {
-                    var parent = artifact.Parent;
-                    if (parent != null)
-                    {
-                        parent.RemoveChild(artifact);
-                        TreeViewController.OnArtifactRemoved(parent, artifact);
-                    }
-                    await Task.CompletedTask;
-                }
-            });
+            // Note: Delete command is now added automatically by base class via GetClipboardCommands()
 
             return commands;
         }
+
+        #region Clipboard Operations
+
+        public override bool CanDelete(ViewArtifact artifact)
+        {
+            return artifact.Parent != null;
+        }
+
+        public override void Delete(ViewArtifact artifact)
+        {
+            if (!CanDelete(artifact)) return;
+
+            var parent = artifact.Parent;
+            if (parent != null)
+            {
+                parent.RemoveChild(artifact);
+                TreeViewController.OnArtifactRemoved(parent, artifact);
+            }
+        }
+
+        #endregion
 
         protected override Task OnSelectedInternalAsync(ViewArtifact artifact, CancellationToken cancellationToken)
         {

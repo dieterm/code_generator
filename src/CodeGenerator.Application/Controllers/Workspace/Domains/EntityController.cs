@@ -1,6 +1,7 @@
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Application.ViewModels.Workspace.Domains;
+using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using Microsoft.Extensions.Logging;
 
@@ -44,26 +45,6 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
 
             commands.Add(ArtifactTreeNodeCommand.Separator);
 
-            // Delete command
-            commands.Add(new ArtifactTreeNodeCommand
-            {
-                Id = "delete_entity",
-                Text = "Delete",
-                IconKey = "trash",
-                Execute = async (a) =>
-                {
-                    var parent = artifact.Parent;
-                    if (parent != null)
-                    {
-                        parent.RemoveChild(artifact);
-                        TreeViewController.OnArtifactRemoved(parent, artifact);
-                    }
-                    await Task.CompletedTask;
-                }
-            });
-
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
             // Properties command
             commands.Add(new ArtifactTreeNodeCommand
             {
@@ -73,8 +54,31 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
                 Execute = async (a) => await ShowPropertiesAsync(artifact)
             });
 
+            // Note: Delete command is now added automatically by base class via GetClipboardCommands()
+
             return commands;
         }
+
+        #region Clipboard Operations
+
+        public override bool CanDelete(EntityArtifact artifact)
+        {
+            return artifact.Parent != null;
+        }
+
+        public override void Delete(EntityArtifact artifact)
+        {
+            if (!CanDelete(artifact)) return;
+
+            var parent = artifact.Parent;
+            if (parent != null)
+            {
+                parent.RemoveChild(artifact);
+                TreeViewController.OnArtifactRemoved(parent, artifact);
+            }
+        }
+
+        #endregion
 
         protected override Task OnSelectedInternalAsync(EntityArtifact artifact, CancellationToken cancellationToken)
         {

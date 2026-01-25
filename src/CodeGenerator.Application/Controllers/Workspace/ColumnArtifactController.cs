@@ -17,8 +17,6 @@ namespace CodeGenerator.Application.Controllers.Workspace
         private readonly IDatasourceFactory _datasourceFactory;
         private ColumnEditViewModel? _editViewModel;
 
-        //protected WorkspaceTreeViewController TreeViewController => (WorkspaceTreeViewController)base.TreeViewController;
-
         public ColumnArtifactController(
             WorkspaceTreeViewController workspaceController,
             IDatasourceFactory datasourceFactory,
@@ -61,28 +59,31 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 }
             });
 
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
-            // Delete command
-            commands.Add(new ArtifactTreeNodeCommand
-            {
-                Id = "delete_column",
-                Text = "Delete",
-                IconKey = "trash",
-                Execute = async (a) =>
-                {
-                    var parent = artifact.Parent;
-                    if (parent != null)
-                    {
-                        parent.RemoveChild(artifact);
-                        TreeViewController.OnArtifactRemoved(parent, artifact);
-                    }
-                    await Task.CompletedTask;
-                }
-            });
+            // Note: Delete command is now added automatically by base class via GetClipboardCommands()
 
             return commands;
         }
+
+        #region Clipboard Operations
+
+        public override bool CanDelete(ColumnArtifact artifact)
+        {
+            return artifact.Parent != null;
+        }
+
+        public override void Delete(ColumnArtifact artifact)
+        {
+            if (!CanDelete(artifact)) return;
+
+            var parent = artifact.Parent;
+            if (parent != null)
+            {
+                parent.RemoveChild(artifact);
+                TreeViewController.OnArtifactRemoved(parent, artifact);
+            }
+        }
+
+        #endregion
 
         protected override Task OnSelectedInternalAsync(ColumnArtifact artifact, CancellationToken cancellationToken)
         {

@@ -38,6 +38,12 @@ public abstract class ArtifactTreeViewController<TTreeViewModel> : IArtifactTree
     /// Event raised when a child artifact is removed
     /// </summary>
     public event EventHandler<ArtifactChildChangedEventArgs>? ArtifactRemoved;
+
+    /// <summary>
+    /// Access to the clipboard service
+    /// </summary>
+    protected ArtifactClipboardService ClipboardService => ArtifactClipboardService.Instance;
+
     /// <summary>
     /// Notify that an artifact property has changed
     /// </summary>
@@ -73,6 +79,7 @@ public abstract class ArtifactTreeViewController<TTreeViewModel> : IArtifactTree
         Logger.LogDebug("Requesting rename for artifact: {Id}", artifact.Id);
         BeginRenameRequested?.Invoke(this, artifact);
     }
+
     private List<IArtifactController>? _artifactControllers;
 
     protected ILogger Logger { get; }
@@ -215,4 +222,133 @@ public abstract class ArtifactTreeViewController<TTreeViewModel> : IArtifactTree
         Logger.LogDebug("Artifact renamed: '{OldName}' -> '{NewName}'", oldName, newName);
     }
 
+    #region Clipboard Operations
+
+    /// <summary>
+    /// Copy the specified artifact to the clipboard
+    /// </summary>
+    public void CopyArtifact(IArtifact artifact)
+    {
+        var controller = GetController(artifact);
+        if (controller != null && controller.CanCopy(artifact))
+        {
+            controller.Copy(artifact);
+            Logger.LogInformation("Artifact copied: {ArtifactId}", artifact.Id);
+        }
+        else
+        {
+            Logger.LogWarning("Cannot copy artifact: {ArtifactId}", artifact.Id);
+        }
+    }
+
+    /// <summary>
+    /// Cut the specified artifact to the clipboard
+    /// </summary>
+    public void CutArtifact(IArtifact artifact)
+    {
+        var controller = GetController(artifact);
+        if (controller != null && controller.CanCut(artifact))
+        {
+            controller.Cut(artifact);
+            Logger.LogInformation("Artifact cut: {ArtifactId}", artifact.Id);
+        }
+        else
+        {
+            Logger.LogWarning("Cannot cut artifact: {ArtifactId}", artifact.Id);
+        }
+    }
+
+    /// <summary>
+    /// Paste the clipboard content onto the specified target artifact
+    /// </summary>
+    public void PasteArtifact(IArtifact targetArtifact)
+    {
+        var clipboardArtifact = ClipboardService.GetArtifact();
+        if (clipboardArtifact == null)
+        {
+            Logger.LogWarning("No artifact on clipboard to paste");
+            return;
+        }
+
+        var controller = GetController(targetArtifact);
+        if (controller != null && controller.CanPaste(clipboardArtifact, targetArtifact))
+        {
+            controller.Paste(clipboardArtifact, targetArtifact);
+            
+            // If it was a cut operation, clear the clipboard
+            if (ClipboardService.IsCutOperation)
+            {
+                ClipboardService.Clear();
+            }
+            
+            Logger.LogInformation("Artifact pasted onto: {TargetId}", targetArtifact.Id);
+        }
+        else
+        {
+            Logger.LogWarning("Cannot paste artifact onto: {TargetId}", targetArtifact.Id);
+        }
+    }
+
+    /// <summary>
+    /// Delete the specified artifact
+    /// </summary>
+    public void DeleteArtifact(IArtifact artifact)
+    {
+        var controller = GetController(artifact);
+        if (controller != null && controller.CanDelete(artifact))
+        {
+            controller.Delete(artifact);
+            
+            // Clear clipboard if we deleted the artifact that was on it
+            ClipboardService.ClearIfContains(artifact);
+            
+            Logger.LogInformation("Artifact deleted: {ArtifactId}", artifact.Id);
+        }
+        else
+        {
+            Logger.LogWarning("Cannot delete artifact: {ArtifactId}", artifact.Id);
+        }
+    }
+
+    /// <summary>
+    /// Check if copy is available for the specified artifact
+    /// </summary>
+    public bool CanCopyArtifact(IArtifact artifact)
+    {
+        var controller = GetController(artifact);
+        return controller?.CanCopy(artifact) ?? false;
+    }
+
+    /// <summary>
+    /// Check if cut is available for the specified artifact
+    /// </summary>
+    public bool CanCutArtifact(IArtifact artifact)
+    {
+        var controller = GetController(artifact);
+        return controller?.CanCut(artifact) ?? false;
+    }
+
+    /// <summary>
+    /// Check if paste is available for the specified target artifact
+    /// </summary>
+    public bool CanPasteArtifact(IArtifact targetArtifact)
+    {
+        var clipboardArtifact = ClipboardService.GetArtifact();
+        if (clipboardArtifact == null)
+            return false;
+
+        var controller = GetController(targetArtifact);
+        return controller?.CanPaste(clipboardArtifact, targetArtifact) ?? false;
+    }
+
+    /// <summary>
+    /// Check if delete is available for the specified artifact
+    /// </summary>
+    public bool CanDeleteArtifact(IArtifact artifact)
+    {
+        var controller = GetController(artifact);
+        return controller?.CanDelete(artifact) ?? false;
+    }
+
+    #endregion
 }

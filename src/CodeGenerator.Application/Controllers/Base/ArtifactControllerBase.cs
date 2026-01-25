@@ -13,6 +13,11 @@ namespace CodeGenerator.Application.Controllers.Base
         protected ILogger Logger { get; }
         protected TTreeView TreeViewController { get; }
 
+        /// <summary>
+        /// Access to the clipboard service
+        /// </summary>
+        protected ArtifactClipboardService ClipboardService => ArtifactClipboardService.Instance;
+
         protected ArtifactControllerBase(TTreeView treeViewController, ILogger logger)
         {
             TreeViewController = treeViewController;
@@ -30,9 +35,100 @@ namespace CodeGenerator.Application.Controllers.Base
         {
             if (artifact is TArtifact typedArtifact)
             {
-                return GetCommands(typedArtifact);
+                var commands = GetCommands(typedArtifact).ToList();
+                
+                // Add clipboard commands
+                var clipboardCommands = GetClipboardCommands(typedArtifact);
+                if (clipboardCommands.Any())
+                {
+                    if (commands.Any())
+                    {
+                        commands.Add(ArtifactTreeNodeCommand.Separator);
+                    }
+                    commands.AddRange(clipboardCommands);
+                }
+                
+                return commands;
             }
             return Enumerable.Empty<ArtifactTreeNodeCommand>();
+        }
+
+        /// <summary>
+        /// Get clipboard-related context menu commands
+        /// </summary>
+        protected virtual IEnumerable<ArtifactTreeNodeCommand> GetClipboardCommands(TArtifact artifact)
+        {
+            var commands = new List<ArtifactTreeNodeCommand>();
+
+            // Cut command
+            if (CanCut(artifact))
+            {
+                commands.Add(new ArtifactTreeNodeCommand
+                {
+                    Id = "cut",
+                    Text = "Cut",
+                    IconKey = "scissors",
+                    Execute = async (a) => Cut(a as TArtifact),
+                    CanExecute = (a) => CanCut(a as TArtifact)
+                });
+            }
+
+            // Copy command
+            if (CanCopy(artifact))
+            {
+                commands.Add(new ArtifactTreeNodeCommand
+                {
+                    Id = "copy",
+                    Text = "Copy",
+                    IconKey = "copy",
+                    Execute = async (a) => Copy(a as TArtifact),
+                    CanExecute = (a) => CanCopy(a as TArtifact)
+                });
+            }
+
+            // Paste command
+            var clipboardArtifact = ClipboardService.GetArtifact();
+            if (clipboardArtifact != null && CanPaste(clipboardArtifact, artifact))
+            {
+                commands.Add(new ArtifactTreeNodeCommand
+                {
+                    Id = "paste",
+                    Text = "Paste",
+                    IconKey = "clipboard-paste",
+                    Execute = async (a) => 
+                    {
+                        var toPaste = ClipboardService.GetArtifact();
+                        if (toPaste != null)
+                        {
+                            Paste(toPaste, a as TArtifact);
+                        }
+                    },
+                    CanExecute = (a) => 
+                    {
+                        var toPaste = ClipboardService.GetArtifact();
+                        return toPaste != null && CanPaste(toPaste, a as TArtifact);
+                    }
+                });
+            }
+
+            // Delete command
+            if (CanDelete(artifact))
+            {
+                if (commands.Any())
+                {
+                    commands.Add(ArtifactTreeNodeCommand.Separator);
+                }
+                commands.Add(new ArtifactTreeNodeCommand
+                {
+                    Id = "delete",
+                    Text = "Delete",
+                    IconKey = "trash",
+                    Execute = async (a) => Delete(a as TArtifact),
+                    CanExecute = (a) => CanDelete(a as TArtifact)
+                });
+            }
+
+            return commands;
         }
 
         public async Task OnSelectedAsync(IArtifact artifact, CancellationToken cancellationToken = default)
@@ -52,7 +148,7 @@ namespace CodeGenerator.Application.Controllers.Base
         }
 
         /// <summary>
-        /// Get commands for the artifact
+        /// Get commands for the artifact (excluding clipboard commands which are added automatically)
         /// </summary>
         protected abstract IEnumerable<ArtifactTreeNodeCommand> GetCommands(TArtifact artifact);
 
@@ -87,5 +183,143 @@ namespace CodeGenerator.Application.Controllers.Base
         {
             return new List<TemplateDefinitionAndLocation>();
         }
+
+        #region Clipboard Operations - Default Implementations
+
+        /// <summary>
+        /// Check if the artifact can be copied. Override to enable copy for specific artifacts.
+        /// </summary>
+        public virtual bool CanCopy(TArtifact artifact)
+        {
+            return false; // Disabled by default, override in derived classes
+        }
+
+        /// <summary>
+        /// Check if the artifact can be cut. Override to enable cut for specific artifacts.
+        /// </summary>
+        public virtual bool CanCut(TArtifact artifact)
+        {
+            return false; // Disabled by default, override in derived classes
+        }
+
+        /// <summary>
+        /// Check if the artifact can be deleted. Override to enable delete for specific artifacts.
+        /// </summary>
+        public virtual bool CanDelete(TArtifact artifact)
+        {
+            return false; // Disabled by default, override in derived classes
+        }
+
+        /// <summary>
+        /// Check if an artifact can be pasted onto this target. Override to enable paste for specific artifacts.
+        /// </summary>
+        public virtual bool CanPaste(IArtifact artifactToPaste, TArtifact targetArtifact)
+        {
+            return false; // Disabled by default, override in derived classes
+        }
+
+        /// <summary>
+        /// Copy the artifact to the clipboard
+        /// </summary>
+        public virtual void Copy(TArtifact artifact)
+        {
+            if (!CanCopy(artifact))
+            {
+                Logger.LogWarning("Cannot copy artifact {ArtifactId}", artifact.Id);
+                return;
+            }
+
+            ClipboardService.Copy(artifact);
+            Logger.LogDebug("Copied artifact {ArtifactId} to clipboard", artifact.Id);
+        }
+
+        /// <summary>
+        /// Cut the artifact to the clipboard
+        /// </summary>
+        public virtual void Cut(TArtifact artifact)
+        {
+            if (!CanCut(artifact))
+            {
+                Logger.LogWarning("Cannot cut artifact {ArtifactId}", artifact.Id);
+                return;
+            }
+
+            ClipboardService.Cut(artifact);
+            Logger.LogDebug("Cut artifact {ArtifactId} to clipboard", artifact.Id);
+        }
+
+        /// <summary>
+        /// Delete the artifact. Override to implement actual deletion logic.
+        /// </summary>
+        public virtual void Delete(TArtifact artifact)
+        {
+            if (!CanDelete(artifact))
+            {
+                Logger.LogWarning("Cannot delete artifact {ArtifactId}", artifact.Id);
+                return;
+            }
+
+            // Default implementation - derived classes should override for actual deletion
+            Logger.LogWarning("Delete not implemented for artifact type {ArtifactType}", artifact.GetType().Name);
+        }
+
+        /// <summary>
+        /// Paste the artifact onto the target. Override to implement actual paste logic.
+        /// </summary>
+        public virtual void Paste(IArtifact artifactToPaste, TArtifact targetArtifact)
+        {
+            if (!CanPaste(artifactToPaste, targetArtifact))
+            {
+                Logger.LogWarning("Cannot paste artifact {SourceId} onto {TargetId}", 
+                    artifactToPaste.Id, targetArtifact.Id);
+                return;
+            }
+
+            // Default implementation - derived classes should override for actual paste
+            Logger.LogWarning("Paste not implemented for target type {TargetType}", targetArtifact.GetType().Name);
+        }
+
+        bool IArtifactController.CanCopy(IArtifact artifact)
+        {
+
+            return artifact is TArtifact && CanCopy((TArtifact)artifact);
+        }
+
+        bool IArtifactController.CanCut(IArtifact artifact)
+        {
+            return artifact is TArtifact && CanCut((TArtifact)artifact);
+        }
+
+        bool IArtifactController.CanDelete(IArtifact artifact)
+        {
+            return artifact is TArtifact && CanDelete((TArtifact)artifact);
+        }
+
+        bool IArtifactController.CanPaste(IArtifact artifactToPaste, IArtifact targetArtifact)
+        {
+            return targetArtifact is TArtifact && CanPaste(artifactToPaste, (TArtifact)targetArtifact);
+        }
+
+        void IArtifactController.Copy(IArtifact artifact)
+        {
+            Copy((TArtifact)artifact);
+        }
+
+        void IArtifactController.Cut(IArtifact artifact)
+        {
+            Cut((TArtifact)artifact);
+        }
+
+        void IArtifactController.Delete(IArtifact artifact)
+        {
+            Delete((TArtifact)artifact);
+        }
+
+        void IArtifactController.Paste(IArtifact artifactToPaste, IArtifact targetArtifact)
+        {
+            Paste(artifactToPaste, (TArtifact)targetArtifact);
+        }
+
+        #endregion
     }
 }

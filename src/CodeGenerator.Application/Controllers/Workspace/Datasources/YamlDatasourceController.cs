@@ -86,24 +86,6 @@ public class YamlDatasourceController : ArtifactControllerBase<WorkspaceTreeView
 
         commands.Add(ArtifactTreeNodeCommand.Separator);
 
-        // Delete command
-        commands.Add(new ArtifactTreeNodeCommand
-        {
-            Id = "delete_datasource",
-            Text = "Delete",
-            IconKey = "trash",
-            Execute = async (a) =>
-            {
-                var parent = artifact.Parent;
-                if (parent != null)
-                {
-                    parent.RemoveChild(artifact);
-                    TreeViewController.OnArtifactRemoved(parent, artifact);
-                }
-                await Task.CompletedTask;
-            }
-        });
-
         // Properties command
         commands.Add(new ArtifactTreeNodeCommand
         {
@@ -113,8 +95,31 @@ public class YamlDatasourceController : ArtifactControllerBase<WorkspaceTreeView
             Execute = async (a) => await ShowPropertiesAsync(artifact)
         });
 
+        // Note: Delete command is now added automatically by base class via GetClipboardCommands()
+
         return commands;
     }
+
+    #region Clipboard Operations
+
+    public override bool CanDelete(YamlDatasourceArtifact artifact)
+    {
+        return artifact.Parent != null;
+    }
+
+    public override void Delete(YamlDatasourceArtifact artifact)
+    {
+        if (!CanDelete(artifact)) return;
+
+        var parent = artifact.Parent;
+        if (parent != null)
+        {
+            parent.RemoveChild(artifact);
+            TreeViewController.OnArtifactRemoved(parent, artifact);
+        }
+    }
+
+    #endregion
 
     protected override Task OnSelectedInternalAsync(YamlDatasourceArtifact artifact, CancellationToken cancellationToken)
     {
