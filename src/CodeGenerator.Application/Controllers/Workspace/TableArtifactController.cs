@@ -13,6 +13,7 @@ using CodeGenerator.Domain.Databases.RelationalDatabases;
 using CodeGenerator.Shared;
 using CodeGenerator.TemplateEngines.Scriban;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace CodeGenerator.Application.Controllers.Workspace
 {
@@ -24,6 +25,12 @@ namespace CodeGenerator.Application.Controllers.Workspace
         private TableEditViewModel? _editViewModel;
         private readonly TemplateEngineManager _templateEngineManager;
         private readonly IWindowManagerService _windowManagerService;
+        private static List<CreateScriptCommandInfo>? _createScriptCommands;
+
+        static TableArtifactController()
+        {
+            _createScriptCommands = GetCreateScriptCommands().ToList();
+        }
 
         public TableArtifactController(
             WorkspaceTreeViewController workspaceController,
@@ -57,7 +64,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             };
             createObjectCommand.SubCommands.Add(newEntityCommand);
 
-            foreach(var domain in TreeViewController.CurrentWorkspace.Domains.GetDomains())
+            foreach (var domain in TreeViewController.CurrentWorkspace!.Domains.GetDomains())
             {
                 var domainCommand = new ArtifactTreeNodeCommand
                 {
@@ -91,21 +98,33 @@ namespace CodeGenerator.Application.Controllers.Workspace
                     Id = $"generate_script_{db.Id}",
                     Text = db.Name,
                     IconKey = "database",
-                    SubCommands = new List<ArtifactTreeNodeCommand>
-                    {
-                        CreateScriptCommand(db, artifact, "Create Table", "create_table"),
-                        CreateScriptCommand(db, artifact, "Drop Table", "drop_table"),
-                        ArtifactTreeNodeCommand.Separator,
-                        CreateScriptCommand(db, artifact, "Select row", "select_row"),
-                        CreateScriptCommand(db, artifact, "Insert row", "insert_row"),
-                        CreateScriptCommand(db, artifact, "Update row", "update_row"),
-                        CreateScriptCommand(db, artifact, "Delete row", "delete_row")
-                    }
+                    SubCommands = new List<ArtifactTreeNodeCommand>()
+                    //{
+                    //    CreateScriptCommand(db, artifact, "Create Table", "create_table"),
+                    //    CreateScriptCommand(db, artifact, "Drop Table", "drop_table"),
+                    //    ArtifactTreeNodeCommand.Separator,
+                    //    CreateScriptCommand(db, artifact, "Select row", "select_row"),
+                    //    CreateScriptCommand(db, artifact, "Insert row", "insert_row"),
+                    //    CreateScriptCommand(db, artifact, "Update row", "update_row"),
+                    //    CreateScriptCommand(db, artifact, "Delete row", "delete_row")
+                    //}
                 };
-                if(artifact.CanAlterTable())
+
+                foreach (var commandInfo in _createScriptCommands!)
                 {
-                    dbCommand.SubCommands.Insert(1, CreateScriptCommand(db, artifact, "Alter Table", "alter_table"));
+                    if (commandInfo.Database.Id == db.Id)
+                    {
+                        if (commandInfo.CanExecute(artifact))
+                        {
+                            dbCommand.SubCommands.Add(CreateScriptCommand(commandInfo, artifact));
+                        }
+                    }
                 }
+
+                //if (artifact.CanAlterTable())
+                //{
+                //    dbCommand.SubCommands.Insert(1, CreateScriptCommand(db, artifact, "Alter Table", "alter_table"));
+                //}
                 generateScriptCommand.SubCommands.Add(dbCommand);
             }
             commands.Add(generateScriptCommand);
@@ -205,6 +224,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
             return commands;
         }
+
+
 
         private async Task DeleteTableAsync(TableArtifact artifact)
         {
@@ -315,38 +336,51 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
             await Task.CompletedTask;
         }
-
-        private ArtifactTreeNodeCommand CreateScriptCommand(RelationalDatabase db, TableArtifact artifact, string text, string action)
+        private ArtifactTreeNodeCommand CreateScriptCommand(CreateScriptCommandInfo commandInfo, TableArtifact artifact)
         {
             return new ArtifactTreeNodeCommand
             {
-                Id = $"generate_script_{db.Id}_{action}",
-                Text = text,
+                Id = $"generate_script_{commandInfo.Database.Id}_{commandInfo.Action}",
+                Text = commandInfo.Text,
                 IconKey = "script",
                 Execute = async (a) =>
                 {
-                    await GenerateScriptAsync(db, artifact, action);
+                    await commandInfo.ExecuteAsync(artifact, this);
                 }
             };
         }
+        //private ArtifactTreeNodeCommand CreateScriptCommand(RelationalDatabase db, TableArtifact artifact, string text, string action)
+        //{
+        //    return new ArtifactTreeNodeCommand
+        //    {
+        //        Id = $"generate_script_{db.Id}_{action}",
+        //        Text = text,
+        //        IconKey = "script",
+        //        Execute = async (a) =>
+        //        {
+        //            await GenerateScriptAsync(db, artifact, action);
+        //        }
+        //    };
+        //}
 
         private async Task GenerateScriptAsync(RelationalDatabase db, TableArtifact artifact, string action)
         {
             try
             {
-                var folderName = char.ToUpper(db.Id[0]) + db.Id.Substring(1);
-                var templateFolder = WorkspaceSettings.Instance.DefaultTemplateFolder;
-                if(!Directory.Exists(templateFolder))
+                var commandInfo = _createScriptCommands!.Single(cmd => cmd.Action == action && cmd.Database == db);
+                var requiredTemplate = _requiredTemplates!.Single(rt => rt.TemplateFolderPath[2] == SUBFOLDER_GENERATE_SCRIPT && rt.TemplateFolderPath[3] == db.Id && rt.TemplateDefinition.TemplateName==commandInfo.GetTemplateName());
+                var templateManager = ServiceProviderHolder.GetRequiredService<TemplateManager>();
+                var scribanTemplate = templateManager.GetTemplateById(requiredTemplate.TemplateId) as ScribanFileTemplate; // ensure template is loaded
+                if(scribanTemplate == null)
                 {
-                    throw new DirectoryNotFoundException($"Template folder not found: {templateFolder}");
-                }
-                var templatePath = Path.Combine(templateFolder,
-                    "SQL",
-                    folderName,
-                    $"table_{action}.sql.scriban");
+                    var templateFolderPath = templateManager.ResolveTemplateIdToFolderPath(requiredTemplate.TemplateId);
+                    var templatePath = Path.Combine(templateFolderPath, requiredTemplate.TemplateDefinition.TemplateName+ ".scriban");
+                    scribanTemplate = new ScribanFileTemplate(requiredTemplate.TemplateDefinition.TemplateName, templatePath);
+                    Logger.LogWarning($"Template not loaded in manager, loading from path: {templatePath}");
+                 }
+
                 var tabLabel = $"{artifact.Name} - {action} [{db.Id}]";
 
-                var scribanTemplate = new ScribanFileTemplate($"table_{action}.sql.scriban", templatePath);
                 scribanTemplate.CreateTemplateFileIfMissing = true;
                 var templateInstance = new ScribanTemplateInstance(scribanTemplate);
 
@@ -373,9 +407,9 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 {
                     return db.EscapeIdentifier(identifier);
                 }));
-                
+
                 var content = await _templateEngineManager.RenderTemplateAsync(templateInstance);
-                if(content.Succeeded == false)
+                if (content.Succeeded == false)
                 {
                     var errorContent = $"-- Errors generating script:\n-- {string.Join("\n-- ", content.Errors)}";
                     _windowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel()
@@ -386,14 +420,15 @@ namespace CodeGenerator.Application.Controllers.Workspace
                     });
                     return;
                 }
-                
+
                 IArtifact? lastGenArtifact = content.Artifacts?.FirstOrDefault();
-                    
-                if(lastGenArtifact is FileArtifact fileArtifact)
+
+                if (lastGenArtifact is FileArtifact fileArtifact)
                 {
-                    _windowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel() { 
+                    _windowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel()
+                    {
                         TabLabel = tabLabel,
-                        TextContent = fileArtifact.GetTextContent(), 
+                        TextContent = fileArtifact.GetTextContent(),
                         TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.SQL
                     });
                 }
@@ -409,12 +444,88 @@ namespace CodeGenerator.Application.Controllers.Workspace
         {
             var fileArtifact = new FileArtifact(fileName);
             fileArtifact.SetTextContent(content);
-            
+
             if (artifact.Parent != null)
             {
                 artifact.Parent.AddChild(fileArtifact);
                 TreeViewController.OnArtifactAdded(artifact.Parent, fileArtifact);
                 await TreeViewController.SelectArtifactAsync(fileArtifact);
+            }
+        }
+        private List<TemplateDefinitionAndLocation>? _requiredTemplates = null;
+        public override List<TemplateDefinitionAndLocation> RegisterRequiredTemplates()
+        {
+            var requiredTemplates = base.RegisterRequiredTemplates();
+
+            foreach (var commandInfo in _createScriptCommands!)
+            {
+                var dbFolderName = commandInfo.Database.Id;
+                // full templateid will be: @Workspacee/TableArtifact/SQL/<database_id>/table_<action>_sql
+                var subFolders = new string[] { SUBFOLDER_GENERATE_SCRIPT, dbFolderName };
+
+                var templateDefinition = TemplateDefinitionAndLocation.ForWorkspaceArtifact(
+                    artifactTypeName: typeof(TableArtifact).Name,
+                    templateName: commandInfo.GetTemplateName(),
+                    displayName: $"{commandInfo.Database.Name} - {commandInfo.Text} Script",
+                    description: $"Generates a {commandInfo.Text} script for the table in {commandInfo.Database.Name}.", subFolders);
+
+                requiredTemplates.Add(templateDefinition);
+            }
+            
+            // keep a local copy for lookup
+            _requiredTemplates = requiredTemplates;
+            
+            return requiredTemplates;
+        }
+        public const string SUBFOLDER_GENERATE_SCRIPT = "generate_script";
+        public static IEnumerable<CreateScriptCommandInfo> GetCreateScriptCommands()
+        {
+            foreach (var db in RelationalDatabases.All)
+            {
+                yield return new CreateScriptCommandInfo(db, CreateScriptCommandInfo.CREATE_TABLE, $"Create Table");
+                yield return new CreateScriptCommandInfo(db, CreateScriptCommandInfo.DROP_TABLE, $"Drop Table");
+                yield return new CreateScriptCommandInfo(db, CreateScriptCommandInfo.SELECT_ROW, $"Select Row");
+                yield return new CreateScriptCommandInfo(db, CreateScriptCommandInfo.INSERT_ROW, $"Insert Row");
+                yield return new CreateScriptCommandInfo(db, CreateScriptCommandInfo.UPDATE_ROW, $"Update Row");
+                yield return new CreateScriptCommandInfo(db, CreateScriptCommandInfo.DELETE_ROW, $"Delete Row");
+                yield return new CreateScriptCommandInfo(db, CreateScriptCommandInfo.ALTER_TABLE, $"Alter Table");
+            }
+        }
+
+        public class CreateScriptCommandInfo
+        {
+            public const string CREATE_TABLE = "create_table";
+            public const string ALTER_TABLE = "alter_table";
+            public const string DROP_TABLE = "drop_table";
+            public const string SELECT_ROW = "select_row";
+            public const string INSERT_ROW = "insert_row";
+            public const string UPDATE_ROW = "update_row";
+            public const string DELETE_ROW = "delete_row";
+
+            public string GetTemplateName()
+            {
+                return $"{Action}_sql";
+            }
+            public RelationalDatabase Database { get; set; }
+            public string Action { get; set; }
+            public string Text { get; set; }
+            public CreateScriptCommandInfo(RelationalDatabase database, string action, string text)
+            {
+                Database = database;
+                Action = action;
+                Text = text;
+            }
+            public bool CanExecute(TableArtifact artifact)
+            {
+                if (Action == ALTER_TABLE)
+                {
+                    return artifact.CanAlterTable();
+                }
+                return true;
+            }
+            public async Task ExecuteAsync(TableArtifact artifact, TableArtifactController controller)
+            {
+                await controller.GenerateScriptAsync(Database, artifact, Action);
             }
         }
     }

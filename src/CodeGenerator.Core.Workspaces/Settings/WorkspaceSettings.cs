@@ -20,6 +20,12 @@ namespace CodeGenerator.Core.Workspaces.Settings
         private static WorkspaceSettings? _instance;
         private static readonly object _lock = new object();
 
+        /// <summary>
+        /// Event raised when the default template folder changes.
+        /// Listeners (like TemplateManager) can subscribe to handle the change.
+        /// </summary>
+        public static event EventHandler<string?>? DefaultTemplateFolderChanged;
+
         public static WorkspaceSettings Instance
         {
             get
@@ -113,7 +119,17 @@ namespace CodeGenerator.Core.Workspaces.Settings
         public string DefaultTemplateFolder
         {
             get { return (string)this[nameof(DefaultTemplateFolder)]; }
-            set { this[nameof(DefaultTemplateFolder)] = value; }
+            set 
+            { 
+                var oldValue = (string)this[nameof(DefaultTemplateFolder)];
+                this[nameof(DefaultTemplateFolder)] = value;
+                
+                // Notify listeners when the value changes
+                if (oldValue != value)
+                {
+                    DefaultTemplateFolderChanged?.Invoke(this, value);
+                }
+            }
         }
 
         #endregion

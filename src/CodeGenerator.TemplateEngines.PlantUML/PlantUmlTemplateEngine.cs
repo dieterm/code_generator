@@ -1,5 +1,6 @@
 using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Shared;
 using Microsoft.Extensions.Logging;
 using PlantUml.Net;
 
@@ -51,6 +52,9 @@ public class PlantUmlTemplateEngine : TemplateEngine<PlantUmlTemplate, PlantUmlT
                 return new TemplateOutput("Diagram definition is empty.");
             }
 
+            // Preprocess includes to resolve TemplateId syntax
+            diagramDefinition = PreprocessDiagramIncludes(diagramDefinition);
+
             // Render the PlantUML diagram to image bytes
             var renderer = _rendererFactory.CreateRenderer(new PlantUmlSettings());
             var bytes = await renderer.RenderAsync(diagramDefinition, templateInstance.OutputFormat);
@@ -83,10 +87,40 @@ public class PlantUmlTemplateEngine : TemplateEngine<PlantUmlTemplate, PlantUmlT
     }
 
     /// <summary>
+    /// Preprocess diagram definition to resolve TemplateId includes
+    /// </summary>
+    private string PreprocessDiagramIncludes(string diagramDefinition)
+    {
+        if (!PlantUmlIncludePreprocessor.HasTemplateIdIncludes(diagramDefinition))
+        {
+            return diagramDefinition;
+        }
+
+        try
+        {
+            var templateManager = ServiceProviderHolder.GetRequiredService<TemplateManager>();
+            var pathResolver = templateManager.PathResolver;
+            
+            var processed = PlantUmlIncludePreprocessor.ProcessIncludes(diagramDefinition, pathResolver);
+            
+            Logger.LogDebug("Preprocessed PlantUML includes");
+            return processed;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogWarning(ex, "Failed to preprocess PlantUML includes, continuing with original definition");
+            return diagramDefinition;
+        }
+    }
+
+    /// <summary>
     /// Render a PlantUML diagram directly from definition text
     /// </summary>
     public async Task<byte[]> RenderDiagramAsync(string diagramDefinition, OutputFormat format = OutputFormat.Png, CancellationToken cancellationToken = default)
     {
+        // Preprocess includes
+        diagramDefinition = PreprocessDiagramIncludes(diagramDefinition);
+        
         var renderer = _rendererFactory.CreateRenderer(new PlantUmlSettings());
         return await renderer.RenderAsync(diagramDefinition, format);
     }

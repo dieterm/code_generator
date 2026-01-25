@@ -1,5 +1,6 @@
 using CodeGenerator.Shared.ViewModels;
 using System.Collections;
+using System.Diagnostics;
 
 namespace CodeGenerator.UserControls.ViewModels
 {
@@ -62,7 +63,8 @@ namespace CodeGenerator.UserControls.ViewModels
                                 return;
                             }
                         }
-                        throw new InvalidOperationException($"Value {value} not found in Items collection.");
+                        Debug.WriteLine($"Value {value} not found in Items collection.");
+                        //throw new InvalidOperationException($"Value {value} not found in Items collection.");
                     }
                     else
                     {

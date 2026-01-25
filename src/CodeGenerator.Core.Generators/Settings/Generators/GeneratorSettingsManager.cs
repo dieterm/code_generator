@@ -150,10 +150,43 @@ namespace CodeGenerator.Core.Settings.Generators
                 {
                     RegisterGenerator(provider);
                 }
+
+                // Register generator templates with the TemplateManager
+                RegisterGeneratorTemplatesWithTemplateManager();
             }
             catch (Exception ex)
             {
                 _logger?.LogError(ex, "Failed to discover generators from service provider");
+            }
+        }
+
+        /// <summary>
+        /// Register generator templates with the TemplateManager for special folder resolution
+        /// </summary>
+        private void RegisterGeneratorTemplatesWithTemplateManager()
+        {
+            try
+            {
+                var templateManager = ServiceProviderHolder.GetRequiredService<TemplateManager>();
+
+                foreach (var provider in _generatorSettingsProviders)
+                {
+                    if (provider is GeneratorSettingsDescription description)
+                    {
+                        foreach (var template in description.Templates)
+                        {
+                            // Register the template ID to auto-detect special folders
+                            
+                            templateManager.RegisterRequiredTemplate(template.TemplateId);
+                        }
+                    }
+                }
+
+                _logger?.LogDebug("Registered generator templates with TemplateManager");
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogWarning(ex, "Failed to register generator templates with TemplateManager");
             }
         }
 

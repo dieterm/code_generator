@@ -47,7 +47,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
         /// </summary>
         protected override IEnumerable<IArtifactController> LoadArtifactControllers()
         {
-            return new List<IArtifactController>
+            var controllers = new List<IArtifactController>
             {
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<WorkspaceArtifactController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<DatasourcesContainerController>(),
@@ -77,6 +77,15 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
                 // Add other controllers here as needed
             };
+
+            // Register required templates from all controllers
+            foreach (var controller in controllers)
+            {
+                var requiredTemplates = controller.RegisterRequiredTemplates();
+                _templateManager.RegisterRequiredTemplates(requiredTemplates);
+            }
+
+            return controllers;
         }
 
         /// <summary>
@@ -120,7 +129,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
             
             if(CurrentWorkspace != null )
             { 
-                _templateManager.RegisterTemplateFolder(CurrentWorkspace.WorkspaceDirectory);
+                // Set workspace directory on TemplateManager (ensures template folders exist)
+                _templateManager.SetWorkspaceDirectory(CurrentWorkspace.WorkspaceDirectory);
             }
             
             ShowWorkspaceTreeView();
@@ -138,7 +148,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
             
             CurrentWorkspace = await _workspaceFileService.CreateNewAsync(directory, name, cancellationToken);
 
-            _templateManager.RegisterTemplateFolder(CurrentWorkspace.WorkspaceDirectory);
+            // Set workspace directory on TemplateManager (ensures template folders exist)
+            _templateManager.SetWorkspaceDirectory(CurrentWorkspace.WorkspaceDirectory);
 
             ShowWorkspaceTreeView();
             WorkspaceChanged?.Invoke(this, CurrentWorkspace);
@@ -168,7 +179,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
             if (CurrentWorkspace != null)
             {
                 Logger.LogInformation("Closing workspace '{Name}'", CurrentWorkspace.Name);
-                _templateManager.UnregisterTemplateFolder(CurrentWorkspace.WorkspaceDirectory);
+                // Clear workspace directory from TemplateManager
+                _templateManager.SetWorkspaceDirectory(null);
             }
             
             CurrentWorkspace = null;

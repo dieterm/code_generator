@@ -21,6 +21,7 @@ namespace CodeGenerator.Generators.DotNet.Generators.DomainLayer.DomainScope
 {
     public class EntitiesClassGenerator : GeneratorBase
     {
+        public const string GENERATOR_ID = "DotNet.DomainLayer.DomainScope.EntitiesClassGenerator";
         private Func<CreatedArtifactEventArgs, Task>? _unsubscribe_handler;
         private readonly ILogger<EntitiesClassGenerator> _logger;
 

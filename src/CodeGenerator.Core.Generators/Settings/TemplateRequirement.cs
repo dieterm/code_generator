@@ -34,11 +34,11 @@ namespace CodeGenerator.Core.Generators.Settings
         [JsonPropertyName("templateId")]
         public string TemplateId { get; set; }
         
-        /// <summary>
-        /// Any optional subfolder path after the "@workspace/<generatorname>/" part of the TemplateId
-        /// </summary>
-        [JsonPropertyName("templatePath")]
-        public string? TemplatePath { get; set; }
+        ///// <summary>
+        ///// Any optional subfolder path after the "@workspace/<generatorname>/" part of the TemplateId
+        ///// </summary>
+        //[JsonPropertyName("templatePath")]
+        //public string? TemplatePath { get; set; }
         /// <summary>
         /// Description of what the template does
         /// </summary>

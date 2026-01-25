@@ -21,5 +21,6 @@
     <ProjectReference Include="..\CodeGenerator.Core.Templates\CodeGenerator.Core.Templates.csproj" />
     <ProjectReference Include="..\CodeGenerator.Domain\CodeGenerator.Domain.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Artifacts\CodeGenerator.Core.Artifacts.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Shared\CodeGenerator.Shared.csproj" />
   </ItemGroup>
 </Project>

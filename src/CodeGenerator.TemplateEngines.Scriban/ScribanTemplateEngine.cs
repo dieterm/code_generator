@@ -314,7 +314,20 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
                 }
                 templateLocations.AddRange(templateInstance.ExtraTemplateLocations);
                 var finalTemplateLocations = templateLocations.Where(l => !string.IsNullOrWhiteSpace(l)).Distinct().ToList();
-                context.TemplateLoader = new DefaultTemplateLoader(finalTemplateLocations, Logger);
+                
+                // Get TemplatePathResolver from TemplateManager if available
+                TemplatePathResolver? pathResolver = null;
+                try
+                {
+                    var templateManager = ServiceProviderHolder.GetRequiredService<TemplateManager>();
+                    pathResolver = templateManager.PathResolver;
+                }
+                catch
+                {
+                    // TemplateManager not available, continue without path resolver
+                }
+                
+                context.TemplateLoader = new DefaultTemplateLoader(finalTemplateLocations, Logger, pathResolver);
                 context.PushGlobal(_globalFunctions);
                 var extraParams = new ScriptObject();
                 foreach (var param in templateInstance.Parameters)
@@ -601,7 +614,7 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
         var templateId = Path.GetFileNameWithoutExtension(filePath);
         var templateDefinition = TemplateDefinition.LoadForTemplate(filePath);
         if(templateDefinition != null)
-            templateId = templateDefinition.TemplateId;
+            templateId = templateDefinition.TemplateName;
         return new ScribanFileTemplate(templateId, filePath);
     }
 

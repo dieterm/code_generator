@@ -8,6 +8,8 @@ using CodeGenerator.Core.Events.Application;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Settings.Application;
+using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Presentation.WinForms.ViewModels;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Ribbon;
@@ -23,8 +25,9 @@ namespace CodeGenerator.Application.Controllers
         private readonly GenerationController _generationController;
         private readonly SettingsController _settingsController;
         private readonly TemplateTreeViewController _templateController;
+        private readonly TemplateManager _templateManager;
 
-        public ApplicationController( MainViewModel viewModel, SettingsController settingsController, WorkspaceTreeViewController workspaceController, GenerationController generationController, TemplateTreeViewController templateController, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IApplicationService applicationService, ApplicationMessageBus messageBus, IMessageBoxService messageBoxService, IFileSystemDialogService fileSystemDialogService, ILogger<ApplicationController> logger) 
+        public ApplicationController( MainViewModel viewModel, SettingsController settingsController, WorkspaceTreeViewController workspaceController, GenerationController generationController, TemplateTreeViewController templateController, TemplateManager templateManager, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IApplicationService applicationService, ApplicationMessageBus messageBus, IMessageBoxService messageBoxService, IFileSystemDialogService fileSystemDialogService, ILogger<ApplicationController> logger) 
             : base(windowManagerService, ribbonBuilder, messageBus, messageBoxService, fileSystemDialogService, logger)
         {
             _mainViewModel = viewModel;
@@ -33,6 +36,7 @@ namespace CodeGenerator.Application.Controllers
             _workspaceController = workspaceController;
             _generationController = generationController;
             _templateController = templateController;
+            _templateManager = templateManager;
         }
 
         public override void Initialize()
@@ -45,6 +49,34 @@ namespace CodeGenerator.Application.Controllers
 
             _generationController.Initialize();
             _settingsController.Initialize();
+
+            // Initialize default template folder from settings
+            InitializeDefaultTemplateFolder();
+            
+            // Subscribe to settings changes
+            WorkspaceSettings.DefaultTemplateFolderChanged += OnDefaultTemplateFolderChanged;
+        }
+
+        /// <summary>
+        /// Initialize the default template folder from WorkspaceSettings
+        /// </summary>
+        private void InitializeDefaultTemplateFolder()
+        {
+            var defaultFolder = WorkspaceSettings.Instance.DefaultTemplateFolder;
+            if (!string.IsNullOrEmpty(defaultFolder))
+            {
+                _templateManager.SetDefaultTemplateFolder(defaultFolder);
+                _logger.LogInformation("Initialized default template folder: {Folder}", defaultFolder);
+            }
+        }
+
+        /// <summary>
+        /// Handle changes to the default template folder setting
+        /// </summary>
+        private void OnDefaultTemplateFolderChanged(object? sender, string? newFolder)
+        {
+            _templateManager.SetDefaultTemplateFolder(newFolder);
+            _logger.LogInformation("Default template folder changed to: {Folder}", newFolder ?? "(none)");
         }
 
         private void CreateRibbon()
@@ -340,6 +372,9 @@ namespace CodeGenerator.Application.Controllers
 
         public override void Dispose()
         {
+            // Unsubscribe from settings events
+            WorkspaceSettings.DefaultTemplateFolderChanged -= OnDefaultTemplateFolderChanged;
+            
             // Unsubscribe from events
             _mainViewModel.NewRequested -= OnNewRequested;
             _mainViewModel.OpenRequested -= OnOpenRequested;

@@ -1,4 +1,5 @@
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Templates;
 
 namespace CodeGenerator.Application.Controllers.Base
 {
@@ -32,6 +33,13 @@ namespace CodeGenerator.Application.Controllers.Base
         /// Called when the artifact is double-clicked
         /// </summary>
         Task OnDoubleClickAsync(IArtifact artifact, CancellationToken cancellationToken = default);
+        
         void OnArtifactRenamed(IArtifact artifact, string oldName, string newName);
+
+        /// <summary>
+        /// Register required templates for this controller.
+        /// Returns a list of template definitions with their expected locations.
+        /// </summary>
+        List<TemplateDefinitionAndLocation> RegisterRequiredTemplates();
     }
 }

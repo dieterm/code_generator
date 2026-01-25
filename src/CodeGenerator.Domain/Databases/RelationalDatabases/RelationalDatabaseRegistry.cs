@@ -7,7 +7,8 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
     public static class RelationalDatabases
     {
         /// <summary>
-        /// Get all available relational databases
+        /// Get all available relational databases.
+        /// TODO: get list dynamically instead of hardcoded using DI-container
         /// </summary>
         public static IEnumerable<RelationalDatabase> All => new RelationalDatabase[]
         {

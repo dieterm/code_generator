@@ -5,6 +5,7 @@ using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.DotNet;
 using CodeGenerator.Generators.CodeArchitectureLayers.PresentationLayer;
 using CodeGenerator.UserControls.ViewModels;
+using Scriban;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +40,8 @@ namespace CodeGenerator.Generators.DotNet.Generators.DomainLayer.DomainScope
 
         public static GeneratorSettingsDescription CreateDescription()
         {
-            var settingsDescription = new GeneratorSettingsDescription("DotNet.DomainLayer.DomainScope.EntitiesClassGenerator", "Entities Class Generator", "Generates entity classes for the domain layer.", "Domain Layer");
+
+            var settingsDescription = new GeneratorSettingsDescription(EntitiesClassGenerator.GENERATOR_ID, "Entities Class Generator", "Generates entity classes for the domain layer.", "Domain Layer");
 
             // ProjectType
             settingsDescription.ParameterDefinitions.Add(new ParameterDefinition
@@ -60,7 +62,8 @@ namespace CodeGenerator.Generators.DotNet.Generators.DomainLayer.DomainScope
                 Required = true
             });
             settingsDescription.DependingGeneratorIds.Add($"{CodeArchitectureLayerArtifact.DOMAIN_LAYER}Layer.{CodeArchitectureLayerArtifact.DOMAIN_SCOPE}Scope.DotNetProject");
-            var templateDescription = new TemplateRequirement(ENTITIES_CLASS_TEMPLATE_ID, "some information about the entities class template", "{EntityName}.cs", TemplateType.Scriban);
+            var templateDefinitionAndLocation = TemplateDefinitionAndLocation.ForGenerator(EntitiesClassGenerator.GENERATOR_ID, ENTITIES_CLASS_TEMPLATE_ID);
+            var templateDescription = new TemplateRequirement(templateDefinitionAndLocation.TemplateId, ENTITIES_CLASS_TEMPLATE_ID, "{EntityName}.cs", TemplateType.Scriban);
             //templateDescription.TemplateType
             settingsDescription.Templates.Add(templateDescription);
             return settingsDescription;

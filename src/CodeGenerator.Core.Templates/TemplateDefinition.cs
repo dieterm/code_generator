@@ -9,9 +9,10 @@ namespace CodeGenerator.Core.Templates;
 public class TemplateDefinition
 {
     /// <summary>
-    /// Unique identifier for the template
+    /// Name of the template (without path information).
+    /// The full TemplateId is determined by TemplateDefinitionAndLocation based on folder location.
     /// </summary>
-    public string TemplateId { get; set; } = string.Empty;
+    public string TemplateName { get; set; } = string.Empty;
 
     /// <summary>
     /// Human-readable name of the template
@@ -107,11 +108,12 @@ public class TemplateDefinition
         var defPath = GetDefinitionFilePath(templateFilePath);
         SaveToFile(defPath);
     }
+    
     public void SaveForTemplate(TemplateArtifact template)
     {
         var defPath = GetDefinitionFilePath(template.FilePath);
         SaveToFile(defPath);
-        template.RenameTemplate(TemplateId);
+        template.RenameTemplate(TemplateName);
     }
 
     public void RenameDefinitionFile(string oldTemplateFilePath, string newTemplateFilePath)
@@ -142,7 +144,7 @@ public class TemplateDefinition
         var fileName = Path.GetFileNameWithoutExtension(templateFilePath);
         return new TemplateDefinition
         {
-            TemplateId = fileName,
+            TemplateName = fileName,
             DisplayName = fileName,
             Description = $"Template: {fileName}",
             Parameters = new List<TemplateParameter>()

@@ -170,7 +170,7 @@ public class TemplateParametersViewModel : ViewModelBase
         var definition = _templateArtifact.GetOrCreateDefinition();
 
         // Update template metadata from edit view model
-        definition.TemplateId = EditViewModel.EditableTemplateId;
+        definition.TemplateName = EditViewModel.EditableTemplateId;
         definition.DisplayName = EditViewModel.EditableDisplayName;
         definition.Description = string.IsNullOrWhiteSpace(EditViewModel.EditableDescription) 
             ? null 
@@ -228,14 +228,14 @@ public class TemplateParametersViewModel : ViewModelBase
 
         // Load editable template metadata
         var definition = _templateArtifact.Definition;
-        var templateId = definition?.TemplateId ?? Path.GetFileNameWithoutExtension(_templateArtifact.FilePath);
+        var templateName = definition?.TemplateName ?? Path.GetFileNameWithoutExtension(_templateArtifact.FilePath);
         var displayName = definition?.DisplayName ?? _templateArtifact.FileName;
         var description = definition?.Description;
 
         // Load parameter definitions for edit mode
         EditViewModel.LoadFromParameters(
             _templateArtifact.Parameters, 
-            templateId, 
+            templateName, 
             displayName, 
             description);
 

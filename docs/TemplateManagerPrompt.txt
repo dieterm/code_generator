@@ -68,3 +68,11 @@ Bijvoorbeeld bij de Plantuml-engine:
 via het !include en !include_once keyword moet gedecteerd worden of er verwezen wordt naar een TemplateId (via een regex als een regel vb. !include @... bevat).
 En vervangen worden door het effectieve filepath, vooraleer hij door de UmlPlant-library wordt gerendert.
 
+Doe overal waar nodig de nodige aanpassingen.
+
+----------------
+
+Momenteel worden enkel de 4 rootspecialfolders aangemaakt in de TemplatesFolder ("Workspace", "Generators", "UserDefined", "TemplateEngines").
+Ik wil dat de special subfolders (bv. @Workspace/@<artifactname>/subfolders../<templatename> ) ook automatisch worden aangemaakt.
+
+Zorg er dus voor dat de functies TemplatePathResolver.RegisterSpecialFolder en TemplatePathResolver.RegisterRequiredTemplate alle nodige (sub)folders automatisch aanmaken indien ze nog niet bestaan.
