@@ -20,9 +20,9 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
             NameField = new SingleLineTextFieldModel { Label = "Property Name", Name = nameof(PropertyArtifact.Name) };
             DataTypeField = new ComboboxFieldModel { Label = "Data Type", Name = nameof(PropertyArtifact.DataType) };
             IsNullableField = new BooleanFieldModel { Label = "Is Nullable", Name = nameof(PropertyArtifact.IsNullable) };
-            MaxLengthField = new IntegerFieldModel { Label = "Max Length", Name = nameof(PropertyArtifact.MaxLength) };
-            PrecisionField = new IntegerFieldModel { Label = "Precision", Name = nameof(PropertyArtifact.Precision) };
-            ScaleField = new IntegerFieldModel { Label = "Scale", Name = nameof(PropertyArtifact.Scale) };
+            MaxLengthField = new IntegerFieldModel { Label = "Max Length", Name = nameof(PropertyArtifact.MaxLength), Minimum = 0, Maximum = int.MaxValue };
+            PrecisionField = new IntegerFieldModel { Label = "Precision", Name = nameof(PropertyArtifact.Precision), Minimum = 0, Maximum = int.MaxValue };
+            ScaleField = new IntegerFieldModel { Label = "Scale", Name = nameof(PropertyArtifact.Scale), Minimum = 0, Maximum = int.MaxValue };
             DescriptionField = new SingleLineTextFieldModel { Label = "Description", Name = nameof(PropertyArtifact.Description) };
             ExampleValueField = new SingleLineTextFieldModel { Label = "Example Value", Name = nameof(PropertyArtifact.ExampleValue) };
 

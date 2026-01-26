@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Settings\**" />
+    <EmbeddedResource Remove="Settings\**" />
+    <None Remove="Settings\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Controllers\Template\TemplateController.cs" />
     <Compile Remove="ViewModels\UserControls\TableArtifactFieldModel.cs" />
     <Compile Remove="ViewModels\Workspace\WorkspaceDetailsViewModel.cs" />
@@ -36,10 +42,6 @@
     <ProjectReference Include="..\CodeGenerator.TemplateEngines.Scriban\CodeGenerator.TemplateEngines.Scriban.csproj" />
     <ProjectReference Include="..\CodeGenerator.TemplateEngines.T4\CodeGenerator.TemplateEngines.T4.csproj" />
     <ProjectReference Include="..\CodeGenerator.UserControls\CodeGenerator.UserControls.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Settings\" />
   </ItemGroup>
 
 </Project>
