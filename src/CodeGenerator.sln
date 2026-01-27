@@ -1,3 +1,4 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36804.6
@@ -15,7 +16,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C07A3E83-0321-4673-AA42-47F3D68755B5}"
 	ProjectSection(SolutionItems) = preProject
 		..\.gitignore = ..\.gitignore
+		..\docs\Ideeën.md = ..\docs\Ideeën.md
 		..\README.md = ..\README.md
+		..\docs\T4-CheatSheet.md = ..\docs\T4-CheatSheet.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Domain", "CodeGenerator.Domain\CodeGenerator.Domain.csproj", "{F1EB0A8F-3BA5-47B9-92FD-75DE4D624A35}"
@@ -93,6 +96,75 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly", "CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly\CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly.csproj", "{18A22235-B249-44FE-A8D4-61E9C204A717}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core.Workspaces.Datasources.OpenApi", "CodeGenerator.Core.Workspaces.Datasources.OpenApi\CodeGenerator.Core.Workspaces.Datasources.OpenApi.csproj", "{304DAA48-F952-4A7E-9AD8-293C256821BB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Design Patterns", "Design Patterns", "{DC28153C-893D-412A-AAC7-1BB5F175F823}"
+	ProjectSection(SolutionItems) = preProject
+		..\docs\Design Patterns\README.md = ..\docs\Design Patterns\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain Driven Design", "Domain Driven Design", "{9B3D462C-9BF0-4250-9527-210982F147F8}"
+	ProjectSection(SolutionItems) = preProject
+		..\docs\Domain Driven Design\DomainDrivenDesign.md = ..\docs\Domain Driven Design\DomainDrivenDesign.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Software Architecture", "Software Architecture", "{CCF1F7EE-251E-4B3D-ACC9-FC50A659AF78}"
+	ProjectSection(SolutionItems) = preProject
+		..\docs\Software Architecture\CleanArchitecture.md = ..\docs\Software Architecture\CleanArchitecture.md
+		..\docs\Software Architecture\Hexagonal.md = ..\docs\Software Architecture\Hexagonal.md
+		..\docs\Software Architecture\N-Tier.md = ..\docs\Software Architecture\N-Tier.md
+		..\docs\Software Architecture\Onion.md = ..\docs\Software Architecture\Onion.md
+		..\docs\Software Architecture\README.md = ..\docs\Software Architecture\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Behavioral", "Behavioral", "{BA9739A9-4016-4254-A5DA-DC7D7BC78D0A}"
+	ProjectSection(SolutionItems) = preProject
+		..\docs\Design Patterns\Behavioral\ChainOfResponsibility.md = ..\docs\Design Patterns\Behavioral\ChainOfResponsibility.md
+		..\docs\Design Patterns\Behavioral\Command.md = ..\docs\Design Patterns\Behavioral\Command.md
+		..\docs\Design Patterns\Behavioral\Iterator.md = ..\docs\Design Patterns\Behavioral\Iterator.md
+		..\docs\Design Patterns\Behavioral\Mediator.md = ..\docs\Design Patterns\Behavioral\Mediator.md
+		..\docs\Design Patterns\Behavioral\Memento.md = ..\docs\Design Patterns\Behavioral\Memento.md
+		..\docs\Design Patterns\Behavioral\Observer.md = ..\docs\Design Patterns\Behavioral\Observer.md
+		..\docs\Design Patterns\Behavioral\State.md = ..\docs\Design Patterns\Behavioral\State.md
+		..\docs\Design Patterns\Behavioral\Strategy.md = ..\docs\Design Patterns\Behavioral\Strategy.md
+		..\docs\Design Patterns\Behavioral\TemplateMethod.md = ..\docs\Design Patterns\Behavioral\TemplateMethod.md
+		..\docs\Design Patterns\Behavioral\Visitor.md = ..\docs\Design Patterns\Behavioral\Visitor.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Creational", "Creational", "{4B6047C3-0A0E-4E1B-A181-CE67530A51AA}"
+	ProjectSection(SolutionItems) = preProject
+		..\docs\Design Patterns\Creational\AbstractFactory.md = ..\docs\Design Patterns\Creational\AbstractFactory.md
+		..\docs\Design Patterns\Creational\Builder.md = ..\docs\Design Patterns\Creational\Builder.md
+		..\docs\Design Patterns\Creational\FactoryMethod.md = ..\docs\Design Patterns\Creational\FactoryMethod.md
+		..\docs\Design Patterns\Creational\Prototype.md = ..\docs\Design Patterns\Creational\Prototype.md
+		..\docs\Design Patterns\Creational\Singleton.md = ..\docs\Design Patterns\Creational\Singleton.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Structural", "Structural", "{CA0BD3F3-2DC8-44E0-80C4-DD27259D65F1}"
+	ProjectSection(SolutionItems) = preProject
+		..\docs\Design Patterns\Structural\Adapter.md = ..\docs\Design Patterns\Structural\Adapter.md
+		..\docs\Design Patterns\Structural\Bridge.md = ..\docs\Design Patterns\Structural\Bridge.md
+		..\docs\Design Patterns\Structural\Composite.md = ..\docs\Design Patterns\Structural\Composite.md
+		..\docs\Design Patterns\Structural\Decorator.md = ..\docs\Design Patterns\Structural\Decorator.md
+		..\docs\Design Patterns\Structural\DependencyInjection.md = ..\docs\Design Patterns\Structural\DependencyInjection.md
+		..\docs\Design Patterns\Structural\Facade.md = ..\docs\Design Patterns\Structural\Facade.md
+		..\docs\Design Patterns\Structural\Flyweight.md = ..\docs\Design Patterns\Structural\Flyweight.md
+		..\docs\Design Patterns\Structural\Proxy.md = ..\docs\Design Patterns\Structural\Proxy.md
+		..\docs\Design Patterns\Structural\Repository.md = ..\docs\Design Patterns\Structural\Repository.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Crosscutting Concerns", "Crosscutting Concerns", "{999C70FC-AA7F-4ED4-AEC9-301A8574526D}"
+	ProjectSection(SolutionItems) = preProject
+		..\docs\Crosscutting Concerns\README.md = ..\docs\Crosscutting Concerns\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Architectural Patterns", "Architectural Patterns", "{5CD3D203-FD09-4197-B799-0D9AE05CF236}"
+	ProjectSection(SolutionItems) = preProject
+		..\docs\Architectural Patterns\Microkernel.md = ..\docs\Architectural Patterns\Microkernel.md
+		..\docs\Architectural Patterns\MVC.md = ..\docs\Architectural Patterns\MVC.md
+		..\docs\Architectural Patterns\MVP.md = ..\docs\Architectural Patterns\MVP.md
+		..\docs\Architectural Patterns\MVVM.md = ..\docs\Architectural Patterns\MVVM.md
+		..\docs\Architectural Patterns\README.md = ..\docs\Architectural Patterns\README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -272,6 +344,14 @@ Global
 		{87E9B465-9EA7-4099-A76E-348260B5DBC5} = {E9F8E255-2538-42FC-AD05-7742FE416432}
 		{18A22235-B249-44FE-A8D4-61E9C204A717} = {E9F8E255-2538-42FC-AD05-7742FE416432}
 		{304DAA48-F952-4A7E-9AD8-293C256821BB} = {E9F8E255-2538-42FC-AD05-7742FE416432}
+		{DC28153C-893D-412A-AAC7-1BB5F175F823} = {C07A3E83-0321-4673-AA42-47F3D68755B5}
+		{9B3D462C-9BF0-4250-9527-210982F147F8} = {C07A3E83-0321-4673-AA42-47F3D68755B5}
+		{CCF1F7EE-251E-4B3D-ACC9-FC50A659AF78} = {C07A3E83-0321-4673-AA42-47F3D68755B5}
+		{BA9739A9-4016-4254-A5DA-DC7D7BC78D0A} = {DC28153C-893D-412A-AAC7-1BB5F175F823}
+		{4B6047C3-0A0E-4E1B-A181-CE67530A51AA} = {DC28153C-893D-412A-AAC7-1BB5F175F823}
+		{CA0BD3F3-2DC8-44E0-80C4-DD27259D65F1} = {DC28153C-893D-412A-AAC7-1BB5F175F823}
+		{999C70FC-AA7F-4ED4-AEC9-301A8574526D} = {C07A3E83-0321-4673-AA42-47F3D68755B5}
+		{5CD3D203-FD09-4197-B799-0D9AE05CF236} = {C07A3E83-0321-4673-AA42-47F3D68755B5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF76BCB8-B816-4DA2-B1B6-D1F900E7DD06}
