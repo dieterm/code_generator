@@ -18,9 +18,11 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
         {
             NameField = new SingleLineTextFieldModel { Label = "Entity Name", Name = nameof(EntityArtifact.Name) };
             DescriptionField = new SingleLineTextFieldModel { Label = "Description", Name = nameof(EntityArtifact.Description) };
+            DefaultStateField = new ComboboxFieldModel { Label = "Default State", Name = nameof(EntityArtifact.DefaultStateId) };
 
             NameField.PropertyChanged += OnFieldChanged;
             DescriptionField.PropertyChanged += OnFieldChanged;
+            DefaultStateField.PropertyChanged += OnFieldChanged;
         }
 
         /// <summary>
@@ -34,6 +36,8 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
                 if (_entity != null)
                 {
                     _entity.PropertyChanged -= Entity_PropertyChanged;
+                    _entity.States.ChildAdded -= States_ChildChanged;
+                    _entity.States.ChildRemoved -= States_ChildChanged;
                 }
                 if (SetProperty(ref _entity, value))
                 {
@@ -41,16 +45,37 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
                     if (_entity != null)
                     {
                         _entity.PropertyChanged += Entity_PropertyChanged;
+                        _entity.States.ChildAdded += States_ChildChanged;
+                        _entity.States.ChildRemoved += States_ChildChanged;
                     }
                 }
             }
         }
 
+        private void States_ChildChanged(object? sender, EventArgs e)
+        {
+            // Refresh states list when states are added or removed
+            RefreshStatesComboBox();
+        }
+
+        /// <summary>
+        /// Observe entity property changes from outside
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Entity_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(EntityArtifact.Name))
             {
                 NameField.Value = _entity?.Name;
+            }
+            else if (e.PropertyName == nameof(EntityArtifact.DefaultStateId))
+            {
+                if (!_isLoading)
+                {
+                    DefaultStateField.Value = _entity?.DefaultStateId;
+                    ObserveDefaultEntityState();
+                }
             }
         }
 
@@ -65,6 +90,11 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
         public SingleLineTextFieldModel DescriptionField { get; }
 
         /// <summary>
+        /// Default state selection field
+        /// </summary>
+        public ComboboxFieldModel DefaultStateField { get; }
+
+        /// <summary>
         /// Event raised when any field value changes
         /// </summary>
         public event EventHandler<ArtifactPropertyChangedEventArgs>? ValueChanged;
@@ -76,13 +106,66 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
             _isLoading = true;
             try
             {
+
                 NameField.Value = _entity.Name;
                 DescriptionField.Value = _entity.Description;
+
+                RefreshStatesComboBox();
+                DefaultStateField.Value = _entity.DefaultStateId;
+
+                ObserveDefaultEntityState();
             }
             finally
             {
                 _isLoading = false;
             }
+        }
+
+        private void ObserveDefaultEntityState()
+        {
+            if (_lastDefaultState != null)
+            {
+                _lastDefaultState.PropertyChanged -= EntityState_PropertyChanged;
+            }
+            _lastDefaultState = _entity.DefaultState;
+            if (_lastDefaultState != null)
+            {
+                _lastDefaultState.PropertyChanged += EntityState_PropertyChanged;
+            }
+        }
+
+        private EntityStateArtifact? _lastDefaultState;
+        private void EntityState_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            // If the name of the default state changes, refresh the combo box to reflect the new name
+            if (e.PropertyName == nameof(EntityStateArtifact.Name))
+            {
+                RefreshStatesComboBox();
+                DefaultStateField.Value = _entity.DefaultStateId;
+            }
+        }
+
+        private void RefreshStatesComboBox()
+        {
+            if (_entity == null) return;
+
+            var states = _entity.GetStates().ToList();
+            var items = new List<ComboboxItem>
+            {
+                new ComboboxItem { DisplayName = "(None)", Value = null }
+            };
+
+            foreach (var state in states)
+            {
+                items.Add(new ComboboxItem
+                {
+                    DisplayName = state.Name,
+                    Value = state.Id,
+                    Tooltip = string.Empty
+                });
+            }
+
+            DefaultStateField.Items = items;
         }
 
         private void OnFieldChanged(object? sender, PropertyChangedEventArgs e)
@@ -92,6 +175,10 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
             if (e.PropertyName == nameof(FieldViewModelBase.Value) && sender is FieldViewModelBase field)
             {
                 SaveToEntity();
+                if(field == DefaultStateField)
+                {
+                    ObserveDefaultEntityState();
+                }
                 ValueChanged?.Invoke(this, new ArtifactPropertyChangedEventArgs(_entity, field.Name, field.Value));
             }
         }
@@ -101,6 +188,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
             if (_entity == null) return;
             _entity.Name = !string.IsNullOrWhiteSpace(NameField.Value as string) ? NameField.Value as string : "Entity";
             _entity.Description = DescriptionField.Value as string;
+            _entity.DefaultStateId = DefaultStateField.Value as string ?? string.Empty;
         }
     }
 }

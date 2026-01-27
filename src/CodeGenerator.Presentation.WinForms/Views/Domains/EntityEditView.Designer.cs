@@ -13,6 +13,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             lblTitle = new Label();
             txtName = new SingleLineTextField();
             txtDescription = new SingleLineTextField();
+            cbxDefaultState = new ComboboxField();
             tableLayoutPanel = new TableLayoutPanel();
             tableLayoutPanel.SuspendLayout();
             SuspendLayout();
@@ -35,12 +36,14 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel.Controls.Add(txtName, 0, 0);
             tableLayoutPanel.Controls.Add(txtDescription, 0, 1);
+            tableLayoutPanel.Controls.Add(cbxDefaultState, 0, 2);
             tableLayoutPanel.Location = new Point(10, 40);
             tableLayoutPanel.Name = "tableLayoutPanel";
-            tableLayoutPanel.RowCount = 2;
+            tableLayoutPanel.RowCount = 3;
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.Size = new Size(380, 120);
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tableLayoutPanel.Size = new Size(380, 180);
             tableLayoutPanel.TabIndex = 1;
             // 
             // txtName
@@ -61,6 +64,15 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             txtDescription.Size = new Size(374, 50);
             txtDescription.TabIndex = 1;
             // 
+            // cbxDefaultState
+            // 
+            cbxDefaultState.Dock = DockStyle.Top;
+            cbxDefaultState.Label = "Default State:";
+            cbxDefaultState.Location = new Point(3, 115);
+            cbxDefaultState.Name = "cbxDefaultState";
+            cbxDefaultState.Size = new Size(374, 50);
+            cbxDefaultState.TabIndex = 2;
+            // 
             // EntityEditView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -69,7 +81,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             Controls.Add(lblTitle);
             Name = "EntityEditView";
             Padding = new Padding(10);
-            Size = new Size(400, 180);
+            Size = new Size(400, 240);
             tableLayoutPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -81,5 +93,6 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
         private TableLayoutPanel tableLayoutPanel;
         private SingleLineTextField txtName;
         private SingleLineTextField txtDescription;
+        private ComboboxField cbxDefaultState;
     }
 }

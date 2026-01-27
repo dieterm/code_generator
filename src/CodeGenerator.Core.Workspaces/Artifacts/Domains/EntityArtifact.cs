@@ -1,4 +1,5 @@
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.Events;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Shared.Views.TreeNode;
 
@@ -16,13 +17,18 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
 
             EnsureEntityStatesContainerExists();
             EnsureEntityRelationsContainerExists();
+
+            States.ChildRemoved += States_ChildRemoved;
         }
+
 
         public EntityArtifact(ArtifactState state)
             : base(state)
         {
             EnsureEntityStatesContainerExists();
             EnsureEntityRelationsContainerExists();
+
+            States.ChildRemoved += States_ChildRemoved;
         }
 
 
@@ -50,6 +56,24 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
         {
             get => GetValue<string?>(nameof(Description));
             set => SetValue(nameof(Description), value);
+        }
+
+        /// <summary>
+        /// Default state ID for this entity, used to persist in memento-state
+        /// </summary>
+        public string? DefaultStateId
+        {
+            get => GetValue<string?>(nameof(DefaultStateId));
+            set => SetValue(nameof(DefaultStateId), value);
+        }
+
+        /// <summary>
+        /// Gets the default state for this entity
+        /// </summary>
+        public EntityStateArtifact? DefaultState
+        {
+            get => GetStates().FirstOrDefault(s => s.Id == DefaultStateId);
+            //set => DefaultStateId = value?.Id ?? null;
         }
 
         /// <summary>
@@ -97,7 +121,18 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
                     ?? Enumerable.Empty<EntityRelationArtifact>(); 
             } 
         }
-            
+
+        private void States_ChildRemoved(object? sender, ChildRemovedEventArgs e)
+        {
+            if(e.ChildArtifact is EntityStateArtifact removedState)
+            {
+                // If the removed state was the default state, clear the default state
+                if (DefaultStateId == removedState.Id)
+                {
+                    DefaultStateId = null;
+                }
+            }
+        }
 
         /// <summary>
         /// Get all states for this entity

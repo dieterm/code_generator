@@ -31,6 +31,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
 
             txtName.BindViewModel(_viewModel.NameField);
             txtDescription.BindViewModel(_viewModel.DescriptionField);
+            cbxDefaultState.BindViewModel(_viewModel.DefaultStateField);
 
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
         }
