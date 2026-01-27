@@ -28,6 +28,7 @@
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Csv\CodeGenerator.Core.Workspaces.Datasources.Csv.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly\CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Json\CodeGenerator.Core.Workspaces.Datasources.Json.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.OpenApi\CodeGenerator.Core.Workspaces.Datasources.OpenApi.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Xml\CodeGenerator.Core.Workspaces.Datasources.Xml.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Yaml\CodeGenerator.Core.Workspaces.Datasources.Yaml.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces\CodeGenerator.Core.Workspaces.csproj" />

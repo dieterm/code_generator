@@ -5,6 +5,7 @@ using CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Excel.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Json.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql.ViewModels;
+using CodeGenerator.Core.Workspaces.Datasources.OpenApi.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.PostgreSql.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.SqlServer.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Xml.ViewModels;
@@ -113,6 +114,11 @@ namespace CodeGenerator.Presentation.WinForms.Views
             {
                 detailsControl = new DotNetAssemblyDatasourceEditView();
                 ((DotNetAssemblyDatasourceEditView)detailsControl).BindViewModel(dotNetAssemblyViewModel);
+            }
+            else if (_viewModel?.DetailsViewModel is OpenApiDatasourceEditViewModel openApiViewModel)
+            {
+                detailsControl = new OpenApiDatasourceEditView();
+                ((OpenApiDatasourceEditView)detailsControl).BindViewModel(openApiViewModel);
             }
             else if (_viewModel?.DetailsViewModel is ColumnEditViewModel columnViewModel)
             {

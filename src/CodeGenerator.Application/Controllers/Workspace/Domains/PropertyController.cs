@@ -3,6 +3,7 @@ using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
+using CodeGenerator.Domain.NamingConventions;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Domains
@@ -42,6 +43,32 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
                     await Task.CompletedTask;
                 }
             });
+
+            // Naming Convention Commands
+            var namingConventionCommand = new ArtifactTreeNodeCommand
+            {
+                Id = "property_naming_convention",
+                Text = "Naming Convention",
+                IconKey = "edit",
+                SubCommands = new List<ArtifactTreeNodeCommand>()
+            };
+
+            foreach (var style in Enum.GetValues<NamingStyle>())
+            {
+                namingConventionCommand.SubCommands.Add(new ArtifactTreeNodeCommand
+                {
+                    Id = $"property_to_{style.ToString().ToLower()}_property",
+                    Text = $"To {style}",
+                    IconKey = "edit",
+                    Execute = async (a) =>
+                    {
+                        (a as PropertyArtifact)!.Name = NamingConventions.Convert(artifact.Name, style);
+                        
+                        await Task.CompletedTask;
+                    }
+                });
+            }
+            commands.Add(namingConventionCommand);
 
             commands.Add(ArtifactTreeNodeCommand.Separator);
 
