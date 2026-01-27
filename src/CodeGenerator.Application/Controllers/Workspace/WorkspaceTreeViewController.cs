@@ -64,6 +64,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<JsonDatasourceController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<XmlDatasourceController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<YamlDatasourceController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<DotNetAssemblyDatasourceController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<TableArtifactController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<ViewArtifactController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<ColumnArtifactController>(),

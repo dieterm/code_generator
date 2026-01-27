@@ -1,6 +1,7 @@
 ﻿using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Core.Workspaces.Datasources.Csv.ViewModels;
+using CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Excel.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Json.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql.ViewModels;
@@ -107,6 +108,11 @@ namespace CodeGenerator.Presentation.WinForms.Views
             {
                 detailsControl = new YamlDatasourceEditView();
                 ((YamlDatasourceEditView)detailsControl).BindViewModel(yamlViewModel);
+            }
+            else if (_viewModel?.DetailsViewModel is DotNetAssemblyDatasourceEditViewModel dotNetAssemblyViewModel)
+            {
+                detailsControl = new DotNetAssemblyDatasourceEditView();
+                ((DotNetAssemblyDatasourceEditView)detailsControl).BindViewModel(dotNetAssemblyViewModel);
             }
             else if (_viewModel?.DetailsViewModel is ColumnEditViewModel columnViewModel)
             {
