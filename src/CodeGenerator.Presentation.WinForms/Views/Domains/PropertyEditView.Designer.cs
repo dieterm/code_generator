@@ -18,6 +18,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             numPrecision = new IntegerField();
             numScale = new IntegerField();
             txtAllowedValues = new SingleLineTextField();
+            cmbValueTypeReference = new ComboboxField();
             txtDescription = new SingleLineTextField();
             txtExampleValue = new SingleLineTextField();
             tableLayoutPanel = new TableLayoutPanel();
@@ -47,11 +48,12 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             tableLayoutPanel.Controls.Add(numPrecision, 0, 4);
             tableLayoutPanel.Controls.Add(numScale, 0, 5);
             tableLayoutPanel.Controls.Add(txtAllowedValues, 0, 6);
-            tableLayoutPanel.Controls.Add(txtDescription, 0, 7);
-            tableLayoutPanel.Controls.Add(txtExampleValue, 0, 8);
+            tableLayoutPanel.Controls.Add(cmbValueTypeReference, 0, 7);
+            tableLayoutPanel.Controls.Add(txtDescription, 0, 8);
+            tableLayoutPanel.Controls.Add(txtExampleValue, 0, 9);
             tableLayoutPanel.Location = new Point(10, 40);
             tableLayoutPanel.Name = "tableLayoutPanel";
-            tableLayoutPanel.RowCount = 9;
+            tableLayoutPanel.RowCount = 10;
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
@@ -61,7 +63,8 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.Size = new Size(380, 500);
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tableLayoutPanel.Size = new Size(380, 550);
             tableLayoutPanel.TabIndex = 1;
             // 
             // txtName
@@ -128,23 +131,33 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             txtAllowedValues.Size = new Size(374, 50);
             txtAllowedValues.TabIndex = 6;
             // 
+            // cmbValueTypeReference
+            // 
+            cmbValueTypeReference.Dock = DockStyle.Top;
+            cmbValueTypeReference.ErrorMessageVisible = true;
+            cmbValueTypeReference.Label = "Value Type:";
+            cmbValueTypeReference.Location = new Point(3, 375);
+            cmbValueTypeReference.Name = "cmbValueTypeReference";
+            cmbValueTypeReference.Size = new Size(374, 50);
+            cmbValueTypeReference.TabIndex = 7;
+            // 
             // txtDescription
             // 
             txtDescription.Dock = DockStyle.Top;
             txtDescription.Label = "Description:";
-            txtDescription.Location = new Point(3, 375);
+            txtDescription.Location = new Point(3, 431);
             txtDescription.Name = "txtDescription";
             txtDescription.Size = new Size(374, 50);
-            txtDescription.TabIndex = 7;
+            txtDescription.TabIndex = 8;
             // 
             // txtExampleValue
             // 
             txtExampleValue.Dock = DockStyle.Top;
             txtExampleValue.Label = "Example Value:";
-            txtExampleValue.Location = new Point(3, 431);
+            txtExampleValue.Location = new Point(3, 487);
             txtExampleValue.Name = "txtExampleValue";
             txtExampleValue.Size = new Size(374, 50);
-            txtExampleValue.TabIndex = 8;
+            txtExampleValue.TabIndex = 9;
             // 
             // PropertyEditView
             // 
@@ -154,7 +167,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             Controls.Add(lblTitle);
             Name = "PropertyEditView";
             Padding = new Padding(10);
-            Size = new Size(400, 560);
+            Size = new Size(400, 610);
             tableLayoutPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -171,6 +184,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
         private IntegerField numPrecision;
         private IntegerField numScale;
         private SingleLineTextField txtAllowedValues;
+        private ComboboxField cmbValueTypeReference;
         private SingleLineTextField txtDescription;
         private SingleLineTextField txtExampleValue;
     }

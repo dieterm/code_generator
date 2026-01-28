@@ -37,6 +37,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             numPrecision.BindViewModel(_viewModel.PrecisionField);
             numScale.BindViewModel(_viewModel.ScaleField);
             txtAllowedValues.BindViewModel(_viewModel.AllowedValuesField);
+            cmbValueTypeReference.BindViewModel(_viewModel.ValueTypeReferenceField);
             txtDescription.BindViewModel(_viewModel.DescriptionField);
             txtExampleValue.BindViewModel(_viewModel.ExampleValueField);
 
@@ -48,7 +49,8 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
         {
             if (e.PropertyName == nameof(PropertyEditViewModel.ShowMaxLength) ||
                 e.PropertyName == nameof(PropertyEditViewModel.ShowPrecisionScale) ||
-                e.PropertyName == nameof(PropertyEditViewModel.ShowAllowedValues))
+                e.PropertyName == nameof(PropertyEditViewModel.ShowAllowedValues) ||
+                e.PropertyName == nameof(PropertyEditViewModel.ShowValueTypeReference))
             {
                 UpdateFieldVisibility();
             }
@@ -62,6 +64,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             numPrecision.Visible = _viewModel.ShowPrecisionScale;
             numScale.Visible = _viewModel.ShowPrecisionScale;
             txtAllowedValues.Visible = _viewModel.ShowAllowedValues;
+            cmbValueTypeReference.Visible = _viewModel.ShowValueTypeReference;
         }
 
         public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase

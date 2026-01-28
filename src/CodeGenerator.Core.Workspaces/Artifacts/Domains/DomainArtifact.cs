@@ -21,6 +21,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
             Name = name;
             
             EnsureEntitiesContainerExists();
+            EnsureValueTypesContainerExists();
         }
 
 
@@ -29,6 +30,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
             : base(state)
         {
             EnsureEntitiesContainerExists();
+            EnsureValueTypesContainerExists();
         }
 
         public override string TreeNodeText => Name;
@@ -96,6 +98,11 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
         /// </summary>
         public EntitiesContainerArtifact Entities => EnsureEntitiesContainerExists();
 
+        /// <summary>
+        /// Gets the ValueTypesContainerArtifact for this domain
+        /// </summary>
+        public ValueTypesContainerArtifact ValueTypes => EnsureValueTypesContainerExists();
+
         private EntitiesContainerArtifact EnsureEntitiesContainerExists()
         {
             var existing = Children.OfType<EntitiesContainerArtifact>().FirstOrDefault();
@@ -103,6 +110,18 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
             {
                 existing = new EntitiesContainerArtifact();
                 // Automatically add EntitiesContainerArtifact
+                AddChild(existing);
+            }
+            return existing;
+        }
+
+        private ValueTypesContainerArtifact EnsureValueTypesContainerExists()
+        {
+            var existing = Children.OfType<ValueTypesContainerArtifact>().FirstOrDefault();
+            if (existing == null)
+            {
+                existing = new ValueTypesContainerArtifact();
+                // Automatically add ValueTypesContainerArtifact
                 AddChild(existing);
             }
             return existing;
@@ -126,6 +145,11 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
         public void AddEntity(EntityArtifact entityArtifact)
         {
             Entities.AddEntity(entityArtifact);
+        }
+
+        public void AddValueType(ValueTypeArtifact valueTypeArtifact)
+        {
+            ValueTypes.AddValueType(valueTypeArtifact);
         }
     }
 }

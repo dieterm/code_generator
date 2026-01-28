@@ -81,6 +81,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<PropertyController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityRelationsContainerController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityRelationController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<ValueTypesContainerController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<ValueTypeController>(),
 
                 // Add other controllers here as needed
             };

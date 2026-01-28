@@ -150,6 +150,11 @@ namespace CodeGenerator.Presentation.WinForms.Views
                 detailsControl = new EntityStateEditView();
                 ((EntityStateEditView)detailsControl).BindViewModel(entityStateViewModel);
             }
+            else if (_viewModel?.DetailsViewModel is ValueTypeEditViewModel valueTypeViewModel)
+            {
+                detailsControl = new ValueTypeEditView();
+                ((ValueTypeEditView)detailsControl).BindViewModel(valueTypeViewModel);
+            }
             else if (_viewModel?.DetailsViewModel is PropertyEditViewModel propertyViewModel)
             {
                 detailsControl = new PropertyEditView();

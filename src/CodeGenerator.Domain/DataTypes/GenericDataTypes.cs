@@ -175,6 +175,13 @@
             Description = "JSON data"
         };
 
+        // Value Type reference
+        public static readonly GenericDataType ValueTypeReference = new("valuetypereference", "Value Type Reference", DataTypeCategory.ValueType)
+        {
+            Description = "Reference to a domain value type",
+            SupportsValueTypeReference = true
+        };
+
         /// <summary>
         /// Get all generic data types
         /// </summary>
@@ -187,7 +194,8 @@
             Boolean, Bit,
             Date, Time, DateTime, DateTime2, Timestamp, DateTimeOffset,
             Binary, VarBinary, Blob,
-            Guid, Xml, Json
+            Guid, Xml, Json, 
+            ValueTypeReference
         };
 
         public static IEnumerable<GenericDataType> NumericTypes => new[]
@@ -219,6 +227,11 @@
         public static IEnumerable<GenericDataType> EnumTypes => new[]
         {
             Enum
+        };
+
+        public static IEnumerable<GenericDataType> ValueTypeReferenceTypes => new[]
+        {
+            ValueTypeReference
         };
 
         /// <summary>
@@ -257,6 +270,11 @@
         public static bool IsEnumType(string dataType)
         {
             return EnumTypes.Any(t => t.Id.Equals(dataType, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public static bool IsValueTypeReferenceType(string dataType)
+        {
+            return ValueTypeReferenceTypes.Any(t => t.Id.Equals(dataType, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

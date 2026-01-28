@@ -13,6 +13,7 @@
         Binary,
         Guid,
         Enum,
+        ValueType,
         Other
     }
 }

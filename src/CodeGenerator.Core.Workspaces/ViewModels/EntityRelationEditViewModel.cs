@@ -1,4 +1,5 @@
 using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Core.Artifacts.Views;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Shared.ViewModels;
@@ -108,7 +109,7 @@ namespace CodeGenerator.Core.Workspaces.ViewModels
 
             foreach (var entity in entities)
             {
-                TargetEntityField.Items.Add(new ComboboxItem { DisplayName = entity.Name, Value = entity.Id });
+                TargetEntityField.Items.Add(new ArtifactComboboxItem(entity));
             }
         }
 

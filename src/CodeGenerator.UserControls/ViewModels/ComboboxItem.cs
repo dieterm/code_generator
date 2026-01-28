@@ -3,7 +3,7 @@ namespace CodeGenerator.UserControls.ViewModels
     /// <summary>
     /// Represents an item in a combobox
     /// </summary>
-    public class ComboboxItem
+    public class ComboboxItem: IDisposable
     {
         /// <summary>
         /// Display name shown in the combobox
@@ -16,6 +16,14 @@ namespace CodeGenerator.UserControls.ViewModels
         public virtual object? Value { get; set; }
         
         public virtual string Tooltip { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Override in derived classes to dispose resources
+        /// </summary>
+        public virtual void Dispose()
+        {
+            // No resources to dispose in the base class
+        }
 
         public override string ToString() => DisplayName;
     }

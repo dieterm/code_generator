@@ -43,6 +43,11 @@ namespace CodeGenerator.Domain.DataTypes
         public bool SupportsAllowedValues { get; set; }
 
         /// <summary>
+        /// Indicates if this type supports value type reference (e.g., enum types)
+        /// </summary>
+        public bool SupportsValueTypeReference { get; set; }
+
+        /// <summary>
         /// Indicates if this type supports 'precision' parameter
         /// </summary>
         public bool SupportsPrecision { get; set; }

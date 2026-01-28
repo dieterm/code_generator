@@ -12,5 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CodeGenerator.Shared\CodeGenerator.Shared.csproj" />
+    <ProjectReference Include="..\CodeGenerator.UserControls\CodeGenerator.UserControls.csproj" />
   </ItemGroup>
 </Project>

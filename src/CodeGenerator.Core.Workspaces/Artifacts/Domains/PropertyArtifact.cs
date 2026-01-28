@@ -39,6 +39,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
                 return new ResourceManagerTreeNodeIcon("dollar-sign");
             else if (GenericDataTypes.IsEnumType(DataType))
                 return new ResourceManagerTreeNodeIcon("list");
+            else if (GenericDataTypes.IsValueTypeReferenceType(DataType))
+                return new ResourceManagerTreeNodeIcon("component");
             else if (GenericDataTypes.IsTextBasedType(DataType))
                 return new ResourceManagerTreeNodeIcon("case-sensitive");
             else if (GenericDataTypes.IsNumericType(DataType))
@@ -122,6 +124,20 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
         {
             get => GetValue<string?>(nameof(AllowedValues));
             set => SetValue(nameof(AllowedValues), value);
+        }
+
+        /// <summary>
+        /// Reference to a ValueTypeArtifact (by ID) when DataType supports value type reference
+        /// </summary>
+        public string? ValueTypeReferenceId
+        {
+            get => GetValue<string?>(nameof(ValueTypeReferenceId));
+            set => SetValue(nameof(ValueTypeReferenceId), value);
+        }
+
+        public ValueTypeArtifact? ValueTypeReference 
+        { 
+            get { return FindAncesterOfType<DomainArtifact>()?.ValueTypes.FindDescendantById<ValueTypeArtifact>(ValueTypeReferenceId); } 
         }
 
         /// <summary>

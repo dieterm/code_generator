@@ -110,6 +110,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<PropertyController>();
         services.AddSingleton<EntityRelationsContainerController>();
         services.AddSingleton<EntityRelationController>();
+        services.AddSingleton<ValueTypesContainerController>();
+        services.AddSingleton<ValueTypeController>();
 
         // Template Artifact Controllers
         services.AddSingleton<RootArtifactController>();
