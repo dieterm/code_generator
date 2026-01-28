@@ -18,10 +18,12 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
         {
             NameField = new SingleLineTextFieldModel { Label = "Entity Name", Name = nameof(EntityArtifact.Name) };
             DescriptionField = new SingleLineTextFieldModel { Label = "Description", Name = nameof(EntityArtifact.Description) };
+            IsAggregateRootField = new BooleanFieldModel { Label = "Is Aggregate Root", Name = nameof(EntityArtifact.IsAggregateRoot) };
             DefaultStateField = new ComboboxFieldModel { Label = "Default State", Name = nameof(EntityArtifact.DefaultStateId) };
 
             NameField.PropertyChanged += OnFieldChanged;
             DescriptionField.PropertyChanged += OnFieldChanged;
+            IsAggregateRootField.PropertyChanged += OnFieldChanged;
             DefaultStateField.PropertyChanged += OnFieldChanged;
         }
 
@@ -77,6 +79,10 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
                     ObserveDefaultEntityState();
                 }
             }
+            else if (e.PropertyName == nameof(EntityArtifact.IsAggregateRoot))
+            {
+                IsAggregateRootField.Value = _entity?.IsAggregateRoot;
+            }
         }
 
         /// <summary>
@@ -88,6 +94,11 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
         /// Entity description field
         /// </summary>
         public SingleLineTextFieldModel DescriptionField { get; }
+
+        /// <summary>
+        /// Is aggregate root field
+        /// </summary>
+        public BooleanFieldModel IsAggregateRootField { get; }
 
         /// <summary>
         /// Default state selection field
@@ -109,6 +120,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
 
                 NameField.Value = _entity.Name;
                 DescriptionField.Value = _entity.Description;
+                IsAggregateRootField.Value = _entity.IsAggregateRoot;
 
                 RefreshStatesComboBox();
                 DefaultStateField.Value = _entity.DefaultStateId;
@@ -188,6 +200,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
             if (_entity == null) return;
             _entity.Name = !string.IsNullOrWhiteSpace(NameField.Value as string) ? NameField.Value as string : "Entity";
             _entity.Description = DescriptionField.Value as string;
+            _entity.IsAggregateRoot = IsAggregateRootField.Value is bool isAggregateRoot && isAggregateRoot;
             _entity.DefaultStateId = DefaultStateField.Value as string ?? string.Empty;
         }
     }

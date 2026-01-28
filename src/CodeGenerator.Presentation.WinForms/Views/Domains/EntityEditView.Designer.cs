@@ -13,6 +13,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             lblTitle = new Label();
             txtName = new SingleLineTextField();
             txtDescription = new SingleLineTextField();
+            chkIsAggregateRoot = new BooleanField();
             cbxDefaultState = new ComboboxField();
             tableLayoutPanel = new TableLayoutPanel();
             tableLayoutPanel.SuspendLayout();
@@ -36,14 +37,16 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel.Controls.Add(txtName, 0, 0);
             tableLayoutPanel.Controls.Add(txtDescription, 0, 1);
-            tableLayoutPanel.Controls.Add(cbxDefaultState, 0, 2);
+            tableLayoutPanel.Controls.Add(chkIsAggregateRoot, 0, 2);
+            tableLayoutPanel.Controls.Add(cbxDefaultState, 0, 3);
             tableLayoutPanel.Location = new Point(10, 40);
             tableLayoutPanel.Name = "tableLayoutPanel";
-            tableLayoutPanel.RowCount = 3;
+            tableLayoutPanel.RowCount = 4;
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.Size = new Size(380, 180);
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tableLayoutPanel.Size = new Size(380, 220);
             tableLayoutPanel.TabIndex = 1;
             // 
             // txtName
@@ -64,14 +67,23 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             txtDescription.Size = new Size(374, 50);
             txtDescription.TabIndex = 1;
             // 
+            // chkIsAggregateRoot
+            // 
+            chkIsAggregateRoot.Dock = DockStyle.Top;
+            chkIsAggregateRoot.Label = "Is Aggregate Root:";
+            chkIsAggregateRoot.Location = new Point(3, 115);
+            chkIsAggregateRoot.Name = "chkIsAggregateRoot";
+            chkIsAggregateRoot.Size = new Size(374, 30);
+            chkIsAggregateRoot.TabIndex = 2;
+            // 
             // cbxDefaultState
             // 
             cbxDefaultState.Dock = DockStyle.Top;
             cbxDefaultState.Label = "Default State:";
-            cbxDefaultState.Location = new Point(3, 115);
+            cbxDefaultState.Location = new Point(3, 151);
             cbxDefaultState.Name = "cbxDefaultState";
             cbxDefaultState.Size = new Size(374, 50);
-            cbxDefaultState.TabIndex = 2;
+            cbxDefaultState.TabIndex = 3;
             // 
             // EntityEditView
             // 
@@ -81,7 +93,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             Controls.Add(lblTitle);
             Name = "EntityEditView";
             Padding = new Padding(10);
-            Size = new Size(400, 240);
+            Size = new Size(400, 280);
             tableLayoutPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -93,6 +105,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
         private TableLayoutPanel tableLayoutPanel;
         private SingleLineTextField txtName;
         private SingleLineTextField txtDescription;
+        private BooleanField chkIsAggregateRoot;
         private ComboboxField cbxDefaultState;
     }
 }

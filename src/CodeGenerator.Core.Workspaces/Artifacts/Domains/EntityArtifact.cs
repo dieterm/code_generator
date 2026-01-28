@@ -59,6 +59,15 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
         }
 
         /// <summary>
+        /// Indicates if this entity is an aggregate root in DDD
+        /// </summary>
+        public bool IsAggregateRoot
+        {
+            get => GetValue<bool>(nameof(IsAggregateRoot));
+            set => SetValue(nameof(IsAggregateRoot), value);
+        }
+
+        /// <summary>
         /// Default state ID for this entity, used to persist in memento-state
         /// </summary>
         public string? DefaultStateId
