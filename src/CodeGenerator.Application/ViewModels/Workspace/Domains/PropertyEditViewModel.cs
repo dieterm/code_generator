@@ -23,6 +23,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
             MaxLengthField = new IntegerFieldModel { Label = "Max Length", Name = nameof(PropertyArtifact.MaxLength), Minimum = 0, Maximum = int.MaxValue };
             PrecisionField = new IntegerFieldModel { Label = "Precision", Name = nameof(PropertyArtifact.Precision), Minimum = 0, Maximum = int.MaxValue };
             ScaleField = new IntegerFieldModel { Label = "Scale", Name = nameof(PropertyArtifact.Scale), Minimum = 0, Maximum = int.MaxValue };
+            AllowedValuesField = new SingleLineTextFieldModel { Label = "Allowed Values", Name = nameof(PropertyArtifact.AllowedValues), Tooltip = "Comma-separated list of allowed values for enum type" };
             DescriptionField = new SingleLineTextFieldModel { Label = "Description", Name = nameof(PropertyArtifact.Description) };
             ExampleValueField = new SingleLineTextFieldModel { Label = "Example Value", Name = nameof(PropertyArtifact.ExampleValue) };
 
@@ -37,6 +38,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
             MaxLengthField.PropertyChanged += OnFieldChanged;
             PrecisionField.PropertyChanged += OnFieldChanged;
             ScaleField.PropertyChanged += OnFieldChanged;
+            AllowedValuesField.PropertyChanged += OnAllowedValuesFieldChanged;
             DescriptionField.PropertyChanged += OnFieldChanged;
             ExampleValueField.PropertyChanged += OnFieldChanged;
         }
@@ -79,6 +81,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
         public IntegerFieldModel MaxLengthField { get; }
         public IntegerFieldModel PrecisionField { get; }
         public IntegerFieldModel ScaleField { get; }
+        public SingleLineTextFieldModel AllowedValuesField { get; }
         public SingleLineTextFieldModel DescriptionField { get; }
         public SingleLineTextFieldModel ExampleValueField { get; }
 
@@ -95,6 +98,13 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
         {
             get => _showPrecisionScale;
             set => SetProperty(ref _showPrecisionScale, value);
+        }
+
+        private bool _showAllowedValues;
+        public bool ShowAllowedValues
+        {
+            get => _showAllowedValues;
+            set => SetProperty(ref _showAllowedValues, value);
         }
 
         /// <summary>
@@ -118,6 +128,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
                 MaxLengthField.Value = _property.MaxLength;
                 PrecisionField.Value = _property.Precision;
                 ScaleField.Value = _property.Scale;
+                AllowedValuesField.Value = _property.AllowedValues;
                 DescriptionField.Value = _property.Description;
                 ExampleValueField.Value = _property.ExampleValue;
 
@@ -140,6 +151,18 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
             }
         }
 
+        private void OnAllowedValuesFieldChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (_isLoading || _property == null) return;
+
+            if (e.PropertyName == nameof(FieldViewModelBase.Value) && sender is FieldViewModelBase field)
+            {
+                ValidateAllowedValues();
+                SaveToProperty();
+                ValueChanged?.Invoke(this, new ArtifactPropertyChangedEventArgs(_property, field.Name, field.Value));
+            }
+        }
+
         private void OnDataTypeFieldChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (_isLoading || _property == null) return;
@@ -148,7 +171,28 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
             {
                 SaveToProperty();
                 UpdateFieldVisibility();
+                ValidateAllowedValues();
                 ValueChanged?.Invoke(this, new ArtifactPropertyChangedEventArgs(_property, nameof(PropertyArtifact.DataType), _property.DataType));
+            }
+        }
+
+        private void ValidateAllowedValues()
+        {
+            if (ShowAllowedValues)
+            {
+                var allowedValues = AllowedValuesField.Value?.ToString();
+                if (string.IsNullOrWhiteSpace(allowedValues))
+                {
+                    AllowedValuesField.ErrorMessage = "At least one value is required for Enum-type";
+                }
+                else
+                {
+                    AllowedValuesField.ErrorMessage = null;
+                }
+            }
+            else
+            {
+                AllowedValuesField.ErrorMessage = null;
             }
         }
 
@@ -161,6 +205,9 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
             
             // Show Precision/Scale for decimal types
             ShowPrecisionScale = dataTypeId == GenericDataTypes.Decimal.Id || dataTypeId == GenericDataTypes.Money.Id;
+            
+            // Show AllowedValues for enum types
+            ShowAllowedValues = GenericDataTypes.IsEnumType(dataTypeId);
         }
 
         private void SaveToProperty()
@@ -173,6 +220,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
             _property.MaxLength = MaxLengthField.Value as int?;
             _property.Precision = PrecisionField.Value as int?;
             _property.Scale = ScaleField.Value as int?;
+            _property.AllowedValues = AllowedValuesField.Value as string;
             _property.Description = DescriptionField.Value as string;
             _property.ExampleValue = ExampleValueField.Value as string;
         }

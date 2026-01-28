@@ -90,6 +90,13 @@
             Description = "Large Unicode text data"
         };
 
+        // Enum types
+        public static readonly GenericDataType Enum = new("enum", "Enumeration", DataTypeCategory.Enum)
+        {
+            Description = "Enumerated type with predefined set of values",
+            SupportsAllowedValues = true
+        };
+
         // Boolean
         public static readonly GenericDataType Boolean = new("boolean", "Boolean", DataTypeCategory.Boolean)
         {
@@ -176,6 +183,7 @@
             TinyInt, SmallInt, Int, BigInt,
             Decimal, Float, Double, Money,
             Char, VarChar, NChar, NVarChar, Text, NText,
+            Enum,
             Boolean, Bit,
             Date, Time, DateTime, DateTime2, Timestamp, DateTimeOffset,
             Binary, VarBinary, Blob,
@@ -206,6 +214,11 @@
         public static IEnumerable<GenericDataType> BinaryTypes => new[]
         {
             Binary, VarBinary, Blob
+        };
+
+        public static IEnumerable<GenericDataType> EnumTypes => new[]
+        {
+            Enum
         };
 
         /// <summary>
@@ -239,6 +252,11 @@
         public static bool IsBooleanType(string dataType)
         {
             return BooleanTypes.Any(t => t.Id.Equals(dataType, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public static bool IsEnumType(string dataType)
+        {
+            return EnumTypes.Any(t => t.Id.Equals(dataType, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

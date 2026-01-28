@@ -1,6 +1,7 @@
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Models;
+using CodeGenerator.Domain.DataTypes;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             MaxLengthField,
             PrecisionField,
             ScaleField,
+            AllowedValuesField,
             IsNullableField,
             IsPrimaryKeyField,
             IsAutoIncrementField,
@@ -38,6 +40,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             MaxLengthField = new IntegerFieldModel { Label = "Max Length", Name = nameof(ColumnArtifact.MaxLength), Minimum=0, Maximum=int.MaxValue };
             PrecisionField = new IntegerFieldModel { Label = "Precision", Name = nameof(ColumnArtifact.Precision), Minimum = 0, Maximum = int.MaxValue, Tooltip="Total number of digits (including decimals)" };
             ScaleField = new IntegerFieldModel { Label = "Scale", Name = nameof(ColumnArtifact.Scale), Minimum = 0, Maximum = int.MaxValue, Tooltip="Number of digits after comma" };
+            AllowedValuesField = new SingleLineTextFieldModel { Label = "Allowed Values", Name = nameof(ColumnArtifact.AllowedValues), Tooltip = "Comma-separated list of allowed values for enum type" };
             IsNullableField = new BooleanFieldModel { Label = "Nullable", Name = nameof(ColumnArtifact.IsNullable) };
             IsPrimaryKeyField = new BooleanFieldModel { Label = "Primary Key", Name = nameof(ColumnArtifact.IsPrimaryKey) };
             IsAutoIncrementField = new BooleanFieldModel { Label = "Auto Increment", Name = nameof(ColumnArtifact.IsAutoIncrement) };
@@ -51,6 +54,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             MaxLengthField.PropertyChanged += OnFieldChanged;
             PrecisionField.PropertyChanged += OnFieldChanged;
             ScaleField.PropertyChanged += OnFieldChanged;
+            AllowedValuesField.PropertyChanged += OnAllowedValuesFieldChanged;
             IsNullableField.PropertyChanged += OnFieldChanged;
             IsPrimaryKeyField.PropertyChanged += OnFieldChanged;
             IsAutoIncrementField.PropertyChanged += OnFieldChanged;
@@ -66,7 +70,43 @@ namespace CodeGenerator.Application.ViewModels.Workspace
                 {
                     DataTypeField.ErrorMessage = dataType.TypeNotes;
                     DataTypeField.Tooltip = dataType.TypeDescription;
+                    
+                    // Validate AllowedValues when data type changes
+                    ValidateAllowedValues();
                 }
+            }
+        }
+
+        private void OnAllowedValuesFieldChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (_isLoading || _column == null) return;
+
+            if (e.PropertyName == nameof(FieldViewModelBase.Value) && sender is FieldViewModelBase field)
+            {
+                ValidateAllowedValues();
+                SaveToColumn();
+                ValueChanged?.Invoke(this, new ArtifactPropertyChangedEventArgs(_column, field.Name, field.Value));
+            }
+        }
+
+        private void ValidateAllowedValues()
+        {
+            var dataType = DataTypeField.SelectedItem as DataTypeComboboxItem;
+            if (dataType != null && dataType.UseAllowedValues)
+            {
+                var allowedValues = AllowedValuesField.Value?.ToString();
+                if (string.IsNullOrWhiteSpace(allowedValues))
+                {
+                    AllowedValuesField.ErrorMessage = "At least one value is required for Enum-type";
+                }
+                else
+                {
+                    AllowedValuesField.ErrorMessage = null;
+                }
+            }
+            else
+            {
+                AllowedValuesField.ErrorMessage = null;
             }
         }
 
@@ -103,10 +143,6 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             {
                 fieldModel.Value = (sender as ColumnArtifact).GetValue<object>(e.PropertyName);
             }
-            //if (e.PropertyName == nameof(ColumnArtifact.Name))
-            //{
-            //    this.NameField.Value = (sender as ColumnArtifact)?.Name;
-            //}
         }
 
         // Field ViewModels
@@ -115,6 +151,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         public IntegerFieldModel MaxLengthField { get; }
         public IntegerFieldModel PrecisionField { get; }
         public IntegerFieldModel ScaleField { get; }
+        public SingleLineTextFieldModel AllowedValuesField { get; }
         public BooleanFieldModel IsNullableField { get; }
         public BooleanFieldModel IsPrimaryKeyField { get; }
         public BooleanFieldModel IsAutoIncrementField { get; }
@@ -132,9 +169,6 @@ namespace CodeGenerator.Application.ViewModels.Workspace
                 {
                     DataTypeField.SelectedItem = selectedItem;
                 }
-                 // This logic might be handled by the view binding, but if we need to update visibility of fields based on the new item properties:
-                 // OnFieldChanged handles saving, but what about UI state?
-                 // The view usually binds to the Item properties if the Combobox supports it, or we rely on the `BuildFullDataType` logic.
             }
         }
 
@@ -155,6 +189,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
                 MaxLengthField.Value = _column.MaxLength;
                 PrecisionField.Value = _column.Precision;
                 ScaleField.Value = _column.Scale;
+                AllowedValuesField.Value = _column.AllowedValues;
                 IsNullableField.Value = _column.IsNullable;
                 IsPrimaryKeyField.Value = _column.IsPrimaryKey;
                 IsAutoIncrementField.Value = _column.IsAutoIncrement;
@@ -195,6 +230,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             _column.MaxLength = MaxLengthField.Value is int maxLen ? maxLen : null;
             _column.Precision = PrecisionField.Value is int prec ? prec : null;
             _column.Scale = ScaleField.Value is int scale ? scale : null;
+            _column.AllowedValues = AllowedValuesField.Value?.ToString();
             _column.IsNullable = IsNullableField.Value is bool nullable && nullable;
             _column.IsPrimaryKey = IsPrimaryKeyField.Value is bool pk && pk;
             _column.IsAutoIncrement = IsAutoIncrementField.Value is bool autoInc && autoInc;

@@ -17,6 +17,7 @@ namespace CodeGenerator.Core.Workspaces.Models
         public bool UseMaxLength { get; set; }
         public bool UsePrecision { get; set; }
         public bool UseScale { get; set; }
+        public bool UseAllowedValues { get; set; }
         /// <summary>
         /// warnings or notes about this data type
         /// </summary>

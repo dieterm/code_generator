@@ -36,6 +36,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             numMaxLength.BindViewModel(_viewModel.MaxLengthField);
             numPrecision.BindViewModel(_viewModel.PrecisionField);
             numScale.BindViewModel(_viewModel.ScaleField);
+            txtAllowedValues.BindViewModel(_viewModel.AllowedValuesField);
             txtDescription.BindViewModel(_viewModel.DescriptionField);
             txtExampleValue.BindViewModel(_viewModel.ExampleValueField);
 
@@ -46,7 +47,8 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(PropertyEditViewModel.ShowMaxLength) ||
-                e.PropertyName == nameof(PropertyEditViewModel.ShowPrecisionScale))
+                e.PropertyName == nameof(PropertyEditViewModel.ShowPrecisionScale) ||
+                e.PropertyName == nameof(PropertyEditViewModel.ShowAllowedValues))
             {
                 UpdateFieldVisibility();
             }
@@ -59,6 +61,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             numMaxLength.Visible = _viewModel.ShowMaxLength;
             numPrecision.Visible = _viewModel.ShowPrecisionScale;
             numScale.Visible = _viewModel.ShowPrecisionScale;
+            txtAllowedValues.Visible = _viewModel.ShowAllowedValues;
         }
 
         public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase

@@ -142,6 +142,11 @@ namespace CodeGenerator.UserControls.Views
             {
                 if (_viewModel.Value is int intValue)
                 {
+                    if (intValue > nudValue.Maximum)
+                        nudValue.Maximum = intValue;
+                    if (intValue < nudValue.Minimum)
+                        nudValue.Minimum = intValue;
+
                     nudValue.Value = intValue;
                 }
                 else

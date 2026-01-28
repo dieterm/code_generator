@@ -63,6 +63,14 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
                     Notes = "NTEXT is deprecated; use NVARCHAR(MAX) instead"
                 },
 
+                // Enum types
+                new(GenericDataTypes.Enum, "NVARCHAR", "NVARCHAR(255)", "VARCHAR(255)")
+                {
+                    MinMaxLength = 1,
+                    MaxMaxLength = 4000,
+                    Notes = "SQL Server does not have native ENUM type; use NVARCHAR with CHECK constraint for allowed values validation"
+                },
+
                 // Boolean types
                 new(GenericDataTypes.Boolean, "BIT", "BIT"),
                 new(GenericDataTypes.Bit, "BIT", "BIT"),

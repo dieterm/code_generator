@@ -1,6 +1,19 @@
-Verander de knop btnShowTemplates naar btnDefaultTemplates (met tekst "Default Templates").
-Voeg ernaast een knop toe btnShowWorkspaceTemplates (met tekst "Workspace Templates").
-Gebruik voor beide de functie WithCommand(...)
-Zorg ervoor dat de btnShowWorkspaceTemplates enkel zichtbaar is als er momenteel een workspace open is.
-Als de gebruiker op de btnDefaultTemplates klikt moeten alle acties van de TemplateTreeViewController van toepassing zijn op de WorkspaceSettings.Instance.DefaultTemplateFolder folder.
-Als de gebruiker op de btnShowWorkspaceTemplates 
+Ik heb voor de ExistingFolderArtifactController en de TemplateArtifactController de CanDelete en Delete functie al geimplementeerd.
+Ik heb eerst gekeken of er in de bestaande functie IEnumerable<ArtifactTreeNodeCommand> GetCommands(ColumnArtifact artifact) een Delete/Remove ArtifactTreeNodeCommand aanwezig was.
+Ik heb dan de inhoud van de property ArtifactTreeNodeCommand.Execute naar Delete() verplaatst als volgt:
+Execute = async (a) => { <move this content to Delete()-function> }
+Daarna heb ik de volledige Delete/Remove ArtifactTreeNodeCommand verwijderd uit GetCommands(...).
+
+Kan je voor alle ArtifactControllers in deze folder (en subfolders) nakijken of er een Delete/Remove ArtifactTreeNodeCommand aanwezig is?
+En zoja, die omvormen naar de CanDelete en Delete functies.
+
+D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Application\Controllers\Workspace\
+
+Junkers TOP 22/28-3 ZWB
+
+Ik heb op EntityArtifact een property DefaultStateId toegevoegd.
+Voeg nu een ComboboxField toe in EntityEditView en EntityEditViewModel om dit veld te kunnen invullen/wijzigen.
+De comboboxfield moet alle states tonen van de onderliggende EntityArtifact.States -property
+
+Kan je in folder "D:\Cloud\GitHub\code_generator_main\docs\Software Architecture" documentatie genereren voor:
+Clean Architecture, Hexagonal, Onion, N-Tier

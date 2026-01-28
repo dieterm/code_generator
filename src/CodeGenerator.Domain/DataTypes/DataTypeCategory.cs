@@ -12,6 +12,7 @@
         DateTime,
         Binary,
         Guid,
+        Enum,
         Other
     }
 }

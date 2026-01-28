@@ -55,6 +55,12 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
                 new(GenericDataTypes.Text, "TEXT", "TEXT"),
                 new(GenericDataTypes.NText, "TEXT", "TEXT"),
 
+                // Enum types
+                new(GenericDataTypes.Enum, "VARCHAR", "VARCHAR(255)", "TEXT")
+                {
+                    Notes = "PostgreSQL supports native ENUM via CREATE TYPE. Use VARCHAR with CHECK constraint for portability, or create a custom enum type."
+                },
+
                 // Boolean types
                 new(GenericDataTypes.Boolean, "BOOLEAN", "BOOLEAN", "BOOL"),
                 new(GenericDataTypes.Bit, "BIT", "BIT({maxlength})", "BIT VARYING")

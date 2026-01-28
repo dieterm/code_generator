@@ -1,6 +1,8 @@
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Domain.Databases.RelationalDatabases;
+using CodeGenerator.Domain.DataTypes;
 using MySqlConnector;
+using System.Text.RegularExpressions;
 
 namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
 {
@@ -172,6 +174,14 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
                 // eg. varchar(255), int(11) unsigned, enum('a','b','c')
                 var columnType = reader.GetString("COLUMN_TYPE");
                 var dataType = reader.GetString("DATA_TYPE");
+                
+                // Extract allowed values for ENUM type
+                string? allowedValues = null;
+                if (string.Equals(dataType, "enum", StringComparison.OrdinalIgnoreCase))
+                {
+                    allowedValues = ExtractEnumValues(columnType);
+                }
+                
                 // try to map datatype to generic type
                 var typeMapping = MysqlDatabase.Instance.DataTypeMappings.AllMappings.FirstOrDefault(m => string.Equals(m.NativeTypeName, dataType, StringComparison.OrdinalIgnoreCase));
                 if(typeMapping != null)
@@ -198,7 +208,8 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
                     DefaultValue = reader.IsDBNull(reader.GetOrdinal("COLUMN_DEFAULT")) 
                         ? null 
                         : reader.GetString("COLUMN_DEFAULT"),
-                    OrdinalPosition = reader.GetInt32("ORDINAL_POSITION")
+                    OrdinalPosition = reader.GetInt32("ORDINAL_POSITION"),
+                    AllowedValues = allowedValues
                 };
 
                 // Add decorator to mark as existing
@@ -249,11 +260,18 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
             while (await reader.ReadAsync(cancellationToken))
             {
                 var columnName = reader.GetString("COLUMN_NAME");
-                //var dataType = reader.GetString("COLUMN_TYPE");
                 // Use COLUMN_TYPE for full type info
                 // eg. varchar(255), int(11) unsigned, enum('a','b','c')
                 var columnType = reader.GetString("COLUMN_TYPE");
                 var dataType = reader.GetString("DATA_TYPE");
+                
+                // Extract allowed values for ENUM type
+                string? allowedValues = null;
+                if (string.Equals(dataType, "enum", StringComparison.OrdinalIgnoreCase))
+                {
+                    allowedValues = ExtractEnumValues(columnType);
+                }
+                
                 // try to map datatype to generic type
                 var typeMapping = MysqlDatabase.Instance.DataTypeMappings.AllMappings.FirstOrDefault(m => string.Equals(m.NativeTypeName, dataType, StringComparison.OrdinalIgnoreCase));
                 if (typeMapping != null)
@@ -273,7 +291,8 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
                     Scale = reader.IsDBNull(reader.GetOrdinal("NUMERIC_SCALE")) 
                         ? null 
                         : (int?)reader.GetInt32("NUMERIC_SCALE"),
-                    OrdinalPosition = reader.GetInt32("ORDINAL_POSITION")
+                    OrdinalPosition = reader.GetInt32("ORDINAL_POSITION"),
+                    AllowedValues = allowedValues
                 };
 
                 // Add decorator to mark as existing
@@ -290,6 +309,35 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
 
                 view.AddChild(column);
             }
+        }
+
+        /// <summary>
+        /// Extract enum values from MySQL COLUMN_TYPE like "enum('value1','value2','value3')"
+        /// Returns comma-separated values: "value1,value2,value3"
+        /// </summary>
+        private static string? ExtractEnumValues(string columnType)
+        {
+            if (string.IsNullOrEmpty(columnType))
+                return null;
+
+            // Match enum('value1','value2',...)
+            var match = Regex.Match(columnType, @"enum\((.+)\)", RegexOptions.IgnoreCase);
+            if (!match.Success)
+                return null;
+
+            var valuesString = match.Groups[1].Value;
+            
+            // Extract individual values (handling escaped quotes)
+            var values = new List<string>();
+            var valueMatches = Regex.Matches(valuesString, @"'((?:[^'\\]|\\.)*)'");
+            foreach (Match valueMatch in valueMatches)
+            {
+                // Unescape the value
+                var value = valueMatch.Groups[1].Value.Replace("\\'", "'").Replace("\\\\", "\\");
+                values.Add(value);
+            }
+
+            return values.Count > 0 ? string.Join(",", values) : null;
         }
 
         private async Task ImportIndexesAsync(

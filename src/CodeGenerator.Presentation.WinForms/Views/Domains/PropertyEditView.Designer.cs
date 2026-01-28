@@ -17,6 +17,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             numMaxLength = new IntegerField();
             numPrecision = new IntegerField();
             numScale = new IntegerField();
+            txtAllowedValues = new SingleLineTextField();
             txtDescription = new SingleLineTextField();
             txtExampleValue = new SingleLineTextField();
             tableLayoutPanel = new TableLayoutPanel();
@@ -45,11 +46,12 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             tableLayoutPanel.Controls.Add(numMaxLength, 0, 3);
             tableLayoutPanel.Controls.Add(numPrecision, 0, 4);
             tableLayoutPanel.Controls.Add(numScale, 0, 5);
-            tableLayoutPanel.Controls.Add(txtDescription, 0, 6);
-            tableLayoutPanel.Controls.Add(txtExampleValue, 0, 7);
+            tableLayoutPanel.Controls.Add(txtAllowedValues, 0, 6);
+            tableLayoutPanel.Controls.Add(txtDescription, 0, 7);
+            tableLayoutPanel.Controls.Add(txtExampleValue, 0, 8);
             tableLayoutPanel.Location = new Point(10, 40);
             tableLayoutPanel.Name = "tableLayoutPanel";
-            tableLayoutPanel.RowCount = 8;
+            tableLayoutPanel.RowCount = 9;
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
@@ -58,7 +60,8 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.Size = new Size(380, 450);
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tableLayoutPanel.Size = new Size(380, 500);
             tableLayoutPanel.TabIndex = 1;
             // 
             // txtName
@@ -115,23 +118,33 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             numScale.Size = new Size(374, 50);
             numScale.TabIndex = 5;
             // 
+            // txtAllowedValues
+            // 
+            txtAllowedValues.Dock = DockStyle.Top;
+            txtAllowedValues.ErrorMessageVisible = true;
+            txtAllowedValues.Label = "Allowed Values:";
+            txtAllowedValues.Location = new Point(3, 319);
+            txtAllowedValues.Name = "txtAllowedValues";
+            txtAllowedValues.Size = new Size(374, 50);
+            txtAllowedValues.TabIndex = 6;
+            // 
             // txtDescription
             // 
             txtDescription.Dock = DockStyle.Top;
             txtDescription.Label = "Description:";
-            txtDescription.Location = new Point(3, 319);
+            txtDescription.Location = new Point(3, 375);
             txtDescription.Name = "txtDescription";
             txtDescription.Size = new Size(374, 50);
-            txtDescription.TabIndex = 6;
+            txtDescription.TabIndex = 7;
             // 
             // txtExampleValue
             // 
             txtExampleValue.Dock = DockStyle.Top;
             txtExampleValue.Label = "Example Value:";
-            txtExampleValue.Location = new Point(3, 375);
+            txtExampleValue.Location = new Point(3, 431);
             txtExampleValue.Name = "txtExampleValue";
             txtExampleValue.Size = new Size(374, 50);
-            txtExampleValue.TabIndex = 7;
+            txtExampleValue.TabIndex = 8;
             // 
             // PropertyEditView
             // 
@@ -141,7 +154,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             Controls.Add(lblTitle);
             Name = "PropertyEditView";
             Padding = new Padding(10);
-            Size = new Size(400, 510);
+            Size = new Size(400, 560);
             tableLayoutPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -157,6 +170,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
         private IntegerField numMaxLength;
         private IntegerField numPrecision;
         private IntegerField numScale;
+        private SingleLineTextField txtAllowedValues;
         private SingleLineTextField txtDescription;
         private SingleLineTextField txtExampleValue;
     }

@@ -63,6 +63,12 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
                     Notes = "LONGTEXT supports up to 4GB of data"
                 },
 
+                // Enum types
+                new(GenericDataTypes.Enum, "ENUM", "ENUM({allowedvalues})", "ENUM")
+                {
+                    Notes = "MySQL native ENUM type. Values are specified as comma-separated quoted strings."
+                },
+
                 // Boolean types
                 new(GenericDataTypes.Boolean, "TINYINT", "TINYINT(1)", "BOOL", "BOOLEAN"),
                 new(GenericDataTypes.Bit, "BIT", "BIT(1)", "BIT"),

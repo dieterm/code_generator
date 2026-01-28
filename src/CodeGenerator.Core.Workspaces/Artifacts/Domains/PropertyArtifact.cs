@@ -37,6 +37,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
                 return new ResourceManagerTreeNodeIcon("braces");
             else if (DataType == GenericDataTypes.Money.Id)
                 return new ResourceManagerTreeNodeIcon("dollar-sign");
+            else if (GenericDataTypes.IsEnumType(DataType))
+                return new ResourceManagerTreeNodeIcon("list");
             else if (GenericDataTypes.IsTextBasedType(DataType))
                 return new ResourceManagerTreeNodeIcon("case-sensitive");
             else if (GenericDataTypes.IsNumericType(DataType))
@@ -111,6 +113,15 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
         {
             get => GetValue<int?>(nameof(Scale));
             set => SetValue(nameof(Scale), value);
+        }
+
+        /// <summary>
+        /// Allowed values for enum types (comma-separated list)
+        /// </summary>
+        public string? AllowedValues
+        {
+            get => GetValue<string?>(nameof(AllowedValues));
+            set => SetValue(nameof(AllowedValues), value);
         }
 
         /// <summary>

@@ -25,6 +25,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             txtMaxLength = new IntegerField();
             txtPrecision = new IntegerField();
             txtScale = new IntegerField();
+            txtAllowedValues = new SingleLineTextField();
             txtDefaultValue = new SingleLineTextField();
             grpOptions = new GroupBox();
             flowLayoutOptions = new FlowLayoutPanel();
@@ -55,7 +56,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             grpGeneral.Controls.Add(tableLayoutGeneral);
             grpGeneral.Location = new Point(10, 44);
             grpGeneral.Name = "grpGeneral";
-            grpGeneral.Size = new Size(480, 330);
+            grpGeneral.Size = new Size(480, 380);
             grpGeneral.TabIndex = 1;
             grpGeneral.TabStop = false;
             grpGeneral.Text = "General";
@@ -71,17 +72,19 @@ namespace CodeGenerator.Presentation.WinForms.Views
             tableLayoutGeneral.Controls.Add(txtMaxLength, 0, 2);
             tableLayoutGeneral.Controls.Add(txtPrecision, 0, 3);
             tableLayoutGeneral.Controls.Add(txtScale, 0, 4);
-            tableLayoutGeneral.Controls.Add(txtDefaultValue, 0, 5);
+            tableLayoutGeneral.Controls.Add(txtAllowedValues, 0, 5);
+            tableLayoutGeneral.Controls.Add(txtDefaultValue, 0, 6);
             tableLayoutGeneral.Location = new Point(6, 22);
             tableLayoutGeneral.Name = "tableLayoutGeneral";
-            tableLayoutGeneral.RowCount = 6;
+            tableLayoutGeneral.RowCount = 7;
             tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
             tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
             tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
             tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
             tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
             tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
-            tableLayoutGeneral.Size = new Size(468, 300);
+            tableLayoutGeneral.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+            tableLayoutGeneral.Size = new Size(468, 350);
             tableLayoutGeneral.TabIndex = 0;
             // 
             // txtName
@@ -131,21 +134,31 @@ namespace CodeGenerator.Presentation.WinForms.Views
             txtScale.Size = new Size(462, 44);
             txtScale.TabIndex = 4;
             // 
+            // txtAllowedValues
+            // 
+            txtAllowedValues.Dock = DockStyle.Top;
+            txtAllowedValues.ErrorMessageVisible = true;
+            txtAllowedValues.Label = "Allowed Values:";
+            txtAllowedValues.Location = new Point(3, 253);
+            txtAllowedValues.Name = "txtAllowedValues";
+            txtAllowedValues.Size = new Size(462, 44);
+            txtAllowedValues.TabIndex = 5;
+            // 
             // txtDefaultValue
             // 
             txtDefaultValue.Dock = DockStyle.Top;
             txtDefaultValue.ErrorMessageVisible = true;
             txtDefaultValue.Label = "Default Value:";
-            txtDefaultValue.Location = new Point(3, 253);
+            txtDefaultValue.Location = new Point(3, 303);
             txtDefaultValue.Name = "txtDefaultValue";
             txtDefaultValue.Size = new Size(462, 44);
-            txtDefaultValue.TabIndex = 5;
+            txtDefaultValue.TabIndex = 6;
             // 
             // grpOptions
             // 
             grpOptions.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             grpOptions.Controls.Add(flowLayoutOptions);
-            grpOptions.Location = new Point(10, 380);
+            grpOptions.Location = new Point(10, 430);
             grpOptions.Name = "grpOptions";
             grpOptions.Size = new Size(480, 135);
             grpOptions.TabIndex = 2;
@@ -200,7 +213,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             Controls.Add(lblTitle);
             Name = "ColumnEditView";
             Padding = new Padding(10);
-            Size = new Size(500, 526);
+            Size = new Size(500, 576);
             grpGeneral.ResumeLayout(false);
             grpGeneral.PerformLayout();
             tableLayoutGeneral.ResumeLayout(false);
@@ -220,6 +233,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
         private IntegerField txtMaxLength;
         private IntegerField txtPrecision;
         private IntegerField txtScale;
+        private SingleLineTextField txtAllowedValues;
         private SingleLineTextField txtDefaultValue;
         private GroupBox grpOptions;
         private FlowLayoutPanel flowLayoutOptions;

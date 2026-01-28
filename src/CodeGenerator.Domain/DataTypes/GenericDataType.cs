@@ -33,17 +33,22 @@ namespace CodeGenerator.Domain.DataTypes
         public DataTypeCategory Category { get; }
 
         /// <summary>
-        /// Indicates if this type supports a max length parameter
+        /// Indicates if this type supports a 'max length' parameter
         /// </summary>
         public bool SupportsMaxLength { get; set; }
 
         /// <summary>
-        /// Indicates if this type supports precision parameter
+        /// Indicates if this type supports an 'allowed values' parameter
+        /// </summary>
+        public bool SupportsAllowedValues { get; set; }
+
+        /// <summary>
+        /// Indicates if this type supports 'precision' parameter
         /// </summary>
         public bool SupportsPrecision { get; set; }
 
         /// <summary>
-        /// Indicates if this type supports scale parameter
+        /// Indicates if this type supports 'scale' parameter
         /// </summary>
         public bool SupportsScale { get; set; }
 

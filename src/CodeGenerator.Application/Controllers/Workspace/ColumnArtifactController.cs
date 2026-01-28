@@ -128,7 +128,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
                         TypeDescription = m.Description,
                         UseMaxLength = m.SupportsMaxLength,
                         UsePrecision = m.SupportsPrecision,
-                        UseScale = m.SupportsScale
+                        UseScale = m.SupportsScale,
+                        UseAllowedValues = m.SupportsAllowedValues
                     }).ToList();
 
                     _editViewModel.SetAvailableDataTypes(items);

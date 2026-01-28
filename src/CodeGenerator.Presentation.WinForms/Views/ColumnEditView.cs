@@ -40,6 +40,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             txtMaxLength.BindViewModel(_viewModel.MaxLengthField);
             txtPrecision.BindViewModel(_viewModel.PrecisionField);
             txtScale.BindViewModel(_viewModel.ScaleField);
+            txtAllowedValues.BindViewModel(_viewModel.AllowedValuesField);
             chkNullable.BindViewModel(_viewModel.IsNullableField);
             chkPrimaryKey.BindViewModel(_viewModel.IsPrimaryKeyField);
             chkAutoIncrement.BindViewModel(_viewModel.IsAutoIncrementField);
@@ -53,7 +54,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
         }
 
         /// <summary>
-        /// Update visibility of length, precision, and scale fields based on selected data type
+        /// Update visibility of length, precision, scale, and allowed values fields based on selected data type
         /// </summary>
         private void UpdateVisibilityFields()
         {
@@ -64,6 +65,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
                 txtMaxLength.Visible = dataType.UseMaxLength;
                 txtPrecision.Visible = dataType.UsePrecision;
                 txtScale.Visible = dataType.UseScale;
+                txtAllowedValues.Visible = dataType.UseAllowedValues;
             }
         }
 
