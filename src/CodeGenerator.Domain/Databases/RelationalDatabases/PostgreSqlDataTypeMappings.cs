@@ -22,7 +22,7 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
                 new(GenericDataTypes.BigInt, "BIGINT", "BIGINT", "INT8"),
 
                 // Decimal types
-                new(GenericDataTypes.Decimal, "NUMERIC", "NUMERIC({precision},{scale})", "DECIMAL")
+                new(GenericDataTypes.Decimal, "NUMERIC", $"NUMERIC({DataTypeMapping.Precision_Placeholder},{DataTypeMapping.Scale_Placeholder})", "DECIMAL")
                 {
                     MaxPrecision = 131072,
                     MaxScale = 16383
@@ -32,22 +32,22 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
                 new(GenericDataTypes.Money, "MONEY", "MONEY"),
 
                 // String types
-                new(GenericDataTypes.Char, "CHARACTER", "CHARACTER({maxlength})", "CHAR")
+                new(GenericDataTypes.Char, "CHARACTER", $"CHARACTER({DataTypeMapping.MaxLength_Placeholder})", "CHAR")
                 {
                     MinMaxLength = 1,
                     MaxMaxLength = int.MaxValue
                 },
-                new(GenericDataTypes.VarChar, "CHARACTER VARYING", "CHARACTER VARYING({maxlength})", "VARCHAR")
+                new(GenericDataTypes.VarChar, "CHARACTER VARYING", $"CHARACTER VARYING({DataTypeMapping.MaxLength_Placeholder})", "VARCHAR")
                 {
                     MinMaxLength = 1,
                     MaxMaxLength = int.MaxValue
                 },
-                new(GenericDataTypes.NChar, "CHARACTER", "CHARACTER({maxlength})", "CHAR")
+                new(GenericDataTypes.NChar, "CHARACTER", $"CHARACTER({DataTypeMapping.MaxLength_Placeholder})", "CHAR")
                 {
                     MinMaxLength = 1,
                     MaxMaxLength = int.MaxValue
                 },
-                new(GenericDataTypes.NVarChar, "CHARACTER VARYING", "CHARACTER VARYING({maxlength})", "VARCHAR")
+                new(GenericDataTypes.NVarChar, "CHARACTER VARYING", $"CHARACTER VARYING({DataTypeMapping.MaxLength_Placeholder})", "VARCHAR")
                 {
                     MinMaxLength = 1,
                     MaxMaxLength = int.MaxValue
@@ -63,7 +63,7 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
 
                 // Boolean types
                 new(GenericDataTypes.Boolean, "BOOLEAN", "BOOLEAN", "BOOL"),
-                new(GenericDataTypes.Bit, "BIT", "BIT({maxlength})", "BIT VARYING")
+                new(GenericDataTypes.Bit, "BIT", $"BIT({DataTypeMapping.MaxLength_Placeholder})", "BIT VARYING")
                 {
                     MinMaxLength = 1,
                     MaxMaxLength = int.MaxValue

@@ -6,6 +6,12 @@ namespace CodeGenerator.Domain.DataTypes
     /// </summary>
     public class DataTypeMapping
     {
+        public const string MaxLength_Placeholder = "{maxlength}";
+        public const string Precision_Placeholder = "{precision}";
+        public const string Scale_Placeholder = "{scale}";
+        public const string AllowedValues_Placeholder = "{allowedvalues}";
+        public const string EnumAllowedValue_Placeholder = "{enumallowedvalue}";
+
         /// <summary>
         /// The generic data type being mapped
         /// </summary>
@@ -23,6 +29,11 @@ namespace CodeGenerator.Domain.DataTypes
         /// </summary>
         public string FormatString { get; }
 
+        /// <summary>
+        /// Gets or sets the format string used to represent allowed values and default value for enum types.
+        /// Example: "'{enumallowedvalue}'"
+        /// </summary>
+        public string? EnumAllowedValuesFormat { get; set; }
         /// <summary>
         /// Aliases that map to this type (for parsing)
         /// </summary>
@@ -74,7 +85,7 @@ namespace CodeGenerator.Domain.DataTypes
         /// <summary>
         /// Generate the type definition string
         /// </summary>
-        public string GenerateTypeDef(int? maxLength = null, int? precision = null, int? scale = null)
+        public string GenerateTypeDef(int? maxLength = null, int? precision = null, int? scale = null, string[]? allowedValues = null)
         {
             var result = FormatString;
 
@@ -83,27 +94,27 @@ namespace CodeGenerator.Domain.DataTypes
                 var lengthStr = (maxLength == -1 && !string.IsNullOrEmpty(UnlimitedLengthKeyword))
                     ? UnlimitedLengthKeyword
                     : maxLength.Value.ToString();
-                result = result.Replace("{maxlength}", lengthStr);
+                result = result.Replace(MaxLength_Placeholder, lengthStr);
             }
 
             if (precision.HasValue)
             {
-                result = result.Replace("{precision}", precision.Value.ToString());
+                result = result.Replace(Precision_Placeholder, precision.Value.ToString());
             }
 
             if (scale.HasValue)
             {
-                result = result.Replace("{scale}", scale.Value.ToString());
+                result = result.Replace(Scale_Placeholder, scale.Value.ToString());
             }
 
             // Remove any unused placeholders and their surrounding parentheses
-            if (!maxLength.HasValue && result.Contains("{maxlength}"))
+            if (!maxLength.HasValue && result.Contains(MaxLength_Placeholder))
             {
-                result = result.Replace("({maxlength})", "");
-                result = result.Replace("{maxlength}", "");
+                result = result.Replace($"({MaxLength_Placeholder})", "");
+                result = result.Replace(MaxLength_Placeholder, "");
             }
 
-            if (!precision.HasValue && result.Contains("{precision}"))
+            if (!precision.HasValue && result.Contains(Precision_Placeholder))
             {
                 // Remove precision/scale portion
                 var start = result.IndexOf('(');
@@ -112,6 +123,20 @@ namespace CodeGenerator.Domain.DataTypes
                 {
                     result = result.Substring(0, start);
                 }
+            }
+
+            if (allowedValues!=null && allowedValues.Length > 0)
+            {
+                var allowedValuesList = allowedValues.Select(av =>
+                {
+                    if (!string.IsNullOrEmpty(EnumAllowedValuesFormat))
+                    {
+                        return EnumAllowedValuesFormat.Replace(EnumAllowedValue_Placeholder, av);
+                    }
+                    return av;
+                }).ToArray();
+               
+                result = result.Replace(AllowedValues_Placeholder, string.Join(", ", allowedValuesList));
             }
 
             return result.Trim();
@@ -151,6 +176,16 @@ namespace CodeGenerator.Domain.DataTypes
             }
 
             return typeName.Trim();
+        }
+
+        public string? FormatDefaultValue(string? defaultValue, string dataType)
+        {
+            if(!string.IsNullOrEmpty(EnumAllowedValuesFormat))
+            {
+                // For enum types, format the default value accordingly
+                return EnumAllowedValuesFormat.Replace(EnumAllowedValue_Placeholder, defaultValue);
+            }
+            return defaultValue;
         }
     }
 }

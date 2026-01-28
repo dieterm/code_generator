@@ -264,5 +264,74 @@
       <DependentUpon>SingleLineTextField.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="EntitiesClassTemplate\" />
+    <Folder Include="Generators\DotNet.DomainLayer.DomainScope.EntitiesClassGenerator\EntitiesClassTemplate\" />
+    <Folder Include="TemplateEngines\" />
+    <Folder Include="UserDefined\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\mysql\alter_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\mysql\create_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\mysql\delete_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\mysql\drop_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\mysql\insert_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\mysql\select_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\mysql\update_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\postgresql\alter_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\postgresql\create_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\postgresql\delete_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\postgresql\drop_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\postgresql\insert_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\postgresql\select_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\postgresql\update_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\sqlserver\alter_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\sqlserver\create_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\sqlserver\delete_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\sqlserver\drop_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\sqlserver\insert_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\sqlserver\select_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\generate_script\sqlserver\update_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\mysql\alter_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\mysql\create_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\mysql\delete_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\mysql\drop_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\mysql\insert_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\mysql\select_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\mysql\table_alter_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\mysql\table_create_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\mysql\table_delete_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\mysql\table_drop_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\mysql\table_insert_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\mysql\table_select_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\mysql\table_update_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\mysql\update_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\postgresql\alter_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\postgresql\create_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\postgresql\delete_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\postgresql\drop_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\postgresql\insert_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\postgresql\select_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\postgresql\table_alter_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\postgresql\table_create_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\postgresql\table_delete_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\postgresql\table_drop_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\postgresql\table_insert_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\postgresql\table_select_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\postgresql\table_update_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\postgresql\update_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\sqlserver\alter_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\sqlserver\create_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\sqlserver\delete_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\sqlserver\drop_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\sqlserver\insert_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\sqlserver\select_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\sqlserver\table_alter_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\sqlserver\table_create_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\sqlserver\table_delete_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\sqlserver\table_drop_table_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\sqlserver\table_insert_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\sqlserver\table_select_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\sqlserver\table_update_row_sql\" />
+    <Folder Include="Workspace\TableArtifact\SQL\sqlserver\update_row_sql\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

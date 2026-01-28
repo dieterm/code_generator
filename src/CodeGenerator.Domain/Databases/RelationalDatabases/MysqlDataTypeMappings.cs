@@ -22,7 +22,7 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
                 new(GenericDataTypes.BigInt, "BIGINT", "BIGINT", "BIGINT(20)"),
 
                 // Decimal types
-                new(GenericDataTypes.Decimal, "DECIMAL", "DECIMAL({precision},{scale})", "NUMERIC")
+                new(GenericDataTypes.Decimal, "DECIMAL", $"DECIMAL({DataTypeMapping.Precision_Placeholder},{DataTypeMapping.Scale_Placeholder})", "NUMERIC")
                 {
                     MaxPrecision = 65,
                     MaxScale = 30
@@ -32,23 +32,23 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
                 new(GenericDataTypes.Money, "DECIMAL", "DECIMAL(10,2)"),
 
                 // String types
-                new(GenericDataTypes.Char, "CHAR", "CHAR({maxlength})", "CHAR")
+                new(GenericDataTypes.Char, "CHAR", $"CHAR({DataTypeMapping.MaxLength_Placeholder})", "CHAR")
                 {
                     MinMaxLength = 1,
                     MaxMaxLength = 255
                 },
-                new(GenericDataTypes.VarChar, "VARCHAR", "VARCHAR({maxlength})", "VARCHAR")
+                new(GenericDataTypes.VarChar, "VARCHAR", $"VARCHAR({DataTypeMapping.MaxLength_Placeholder})", "VARCHAR")
                 {
                     MinMaxLength = 1,
                     MaxMaxLength = 65535,
                     UnlimitedLengthKeyword = "MAX"
                 },
-                new(GenericDataTypes.NChar, "NCHAR", "NCHAR({maxlength})", "NATIONAL CHAR")
+                new(GenericDataTypes.NChar, "NCHAR", $"NCHAR({DataTypeMapping.MaxLength_Placeholder})", "NATIONAL CHAR")
                 {
                     MinMaxLength = 1,
                     MaxMaxLength = 255
                 },
-                new(GenericDataTypes.NVarChar, "NVARCHAR", "NVARCHAR({maxlength})", "NATIONAL VARCHAR")
+                new(GenericDataTypes.NVarChar, "NVARCHAR", $"NVARCHAR({DataTypeMapping.MaxLength_Placeholder})", "NATIONAL VARCHAR")
                 {
                     MinMaxLength = 1,
                     MaxMaxLength = 65535,
@@ -64,8 +64,10 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
                 },
 
                 // Enum types
-                new(GenericDataTypes.Enum, "ENUM", "ENUM({allowedvalues})", "ENUM")
+                new(GenericDataTypes.Enum, "ENUM", $"ENUM({DataTypeMapping.AllowedValues_Placeholder})", "ENUM")
                 {
+                    // make sure each value is surounded by single quotes
+                    EnumAllowedValuesFormat = $"'{DataTypeMapping.EnumAllowedValue_Placeholder}'",
                     Notes = "MySQL native ENUM type. Values are specified as comma-separated quoted strings."
                 },
 
@@ -85,12 +87,12 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
                 },
 
                 // Binary types
-                new(GenericDataTypes.Binary, "BINARY", "BINARY({maxlength})", "BINARY")
+                new(GenericDataTypes.Binary, "BINARY", $"BINARY({DataTypeMapping.MaxLength_Placeholder})", "BINARY")
                 {
                     MinMaxLength = 1,
                     MaxMaxLength = 255
                 },
-                new(GenericDataTypes.VarBinary, "VARBINARY", "VARBINARY({maxlength})", "VARBINARY")
+                new(GenericDataTypes.VarBinary, "VARBINARY", $"VARBINARY({DataTypeMapping.MaxLength_Placeholder})", "VARBINARY")
                 {
                     MinMaxLength = 1,
                     MaxMaxLength = 65535

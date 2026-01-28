@@ -35,6 +35,17 @@ namespace CodeGenerator.Domain.DataTypes
             return ((IEnumerable)_dataTypeMappings).GetEnumerator();
         }
 
+        internal string? FormatDefaultValue(string? defaultValue, string dataType)
+        {
+            var dataTypeMapping = _dataTypeMappings.FirstOrDefault(m => m.GenericType.Id.Equals(dataType, StringComparison.OrdinalIgnoreCase));
+            if (dataTypeMapping == null)
+            {
+                // fallback to searching by native type name
+                dataTypeMapping = _dataTypeMappings.FirstOrDefault(m => m.NativeTypeName.Equals(dataType, StringComparison.OrdinalIgnoreCase));
+            }
+            return dataTypeMapping?.FormatDefaultValue(defaultValue, dataType) ?? defaultValue;
+        }
+
         public IEnumerable<DataTypeMapping> AllMappings { get { return _dataTypeMappings; } }
 
         // Integer types

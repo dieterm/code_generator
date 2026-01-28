@@ -377,7 +377,11 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 templateInstance.Parameters["TableOriginalName"] = existingTableDecorator?.OriginalTableName ?? artifact.Name;
                 templateInstance.Functions.Add("GetTypeDef", new Func<ColumnArtifact, string>((c) =>
                 {
-                    return db.GetMapping(c.DataType)?.GenerateTypeDef(c.MaxLength, c.Precision, c.Scale) ?? c.DataType;
+                    return db.GetMapping(c.DataType)?.GenerateTypeDef(c.MaxLength, c.Precision, c.Scale, c.GetAllowedValues()) ?? c.DataType;
+                }));
+                templateInstance.Functions.Add("GetDefaultValue", new Func<ColumnArtifact, string?>((c) =>
+                {
+                    return db.FormatDefaultValue(c.DefaultValue, c.DataType);
                 }));
                 templateInstance.Functions.Add("GetIdentifier", new Func<string, string>((identifier) =>
                 {

@@ -128,5 +128,10 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
         {
             throw new NotImplementedException($"GenerateCreateIndexStatement is not implemented for {GetType().Name}");
         }
+
+        public string? FormatDefaultValue(string? defaultValue, string dataType)
+        {
+            return DataTypeMappings.FormatDefaultValue(defaultValue, dataType);
+        }
     }
 }

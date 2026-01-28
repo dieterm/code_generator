@@ -22,7 +22,7 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
                 new(GenericDataTypes.BigInt, "BIGINT", "BIGINT"),
 
                 // Decimal types
-                new(GenericDataTypes.Decimal, "DECIMAL", "DECIMAL({precision},{scale})", "NUMERIC")
+                new(GenericDataTypes.Decimal, "DECIMAL", $"DECIMAL({DataTypeMapping.Precision_Placeholder},{DataTypeMapping.Scale_Placeholder})", "NUMERIC")
                 {
                     MaxPrecision = 38,
                     MaxScale = 38
@@ -32,23 +32,23 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
                 new(GenericDataTypes.Money, "MONEY", "MONEY", "SMALLMONEY"),
 
                 // String types
-                new(GenericDataTypes.Char, "CHAR", "CHAR({maxlength})")
+                new(GenericDataTypes.Char, "CHAR", $"CHAR({DataTypeMapping.MaxLength_Placeholder})")
                 {
                     MinMaxLength = 1,
                     MaxMaxLength = 8000
                 },
-                new(GenericDataTypes.VarChar, "VARCHAR", "VARCHAR({maxlength})", "VARCHAR")
+                new(GenericDataTypes.VarChar, "VARCHAR", $"VARCHAR({DataTypeMapping.MaxLength_Placeholder})", "VARCHAR")
                 {
                     MinMaxLength = 1,
                     MaxMaxLength = 8000,
                     UnlimitedLengthKeyword = "MAX"
                 },
-                new(GenericDataTypes.NChar, "NCHAR", "NCHAR({maxlength})")
+                new(GenericDataTypes.NChar, "NCHAR", $"NCHAR({DataTypeMapping.MaxLength_Placeholder})")
                 {
                     MinMaxLength = 1,
                     MaxMaxLength = 4000
                 },
-                new(GenericDataTypes.NVarChar, "NVARCHAR", "NVARCHAR({maxlength})", "NVARCHAR")
+                new(GenericDataTypes.NVarChar, "NVARCHAR", $"NVARCHAR({DataTypeMapping.MaxLength_Placeholder})", "NVARCHAR")
                 {
                     MinMaxLength = 1,
                     MaxMaxLength = 4000,
@@ -87,12 +87,12 @@ namespace CodeGenerator.Domain.Databases.RelationalDatabases
                 new(GenericDataTypes.DateTimeOffset, "DATETIMEOFFSET", "DATETIMEOFFSET", "DATETIMEOFFSET(7)"),
 
                 // Binary types
-                new(GenericDataTypes.Binary, "BINARY", "BINARY({maxlength})")
+                new(GenericDataTypes.Binary, "BINARY", $"BINARY({DataTypeMapping.MaxLength_Placeholder})")
                 {
                     MinMaxLength = 1,
                     MaxMaxLength = 8000
                 },
-                new(GenericDataTypes.VarBinary, "VARBINARY", "VARBINARY({maxlength})", "VARBINARY")
+                new(GenericDataTypes.VarBinary, "VARBINARY", $"VARBINARY({DataTypeMapping.MaxLength_Placeholder})", "VARBINARY")
                 {
                     MinMaxLength = 1,
                     MaxMaxLength = 8000,

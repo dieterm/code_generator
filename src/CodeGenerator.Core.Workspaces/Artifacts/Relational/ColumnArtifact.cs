@@ -265,5 +265,14 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         {
             Name = newName;
         }
+
+        /// <summary>
+        /// For Enum types, returns the allowed values as an array.<br />
+        /// eg. if AllowedValues is "Red,Green,Blue", this returns ["Red", "Green", "Blue"]
+        /// </summary>
+        public string[]? GetAllowedValues()
+        {
+            return AllowedValues?.Split(",");
+        }
     }
 }
