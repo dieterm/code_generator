@@ -17,6 +17,7 @@ using CodeGenerator.Core.Settings.Application;
 using CodeGenerator.Core.Settings.Generators;
 using CodeGenerator.Core.Settings.ViewModels;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.Workspaces;
 using CodeGenerator.Core.Workspaces.Datasources.Csv;
 using CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly;
 using CodeGenerator.Core.Workspaces.Datasources.Excel;
@@ -27,6 +28,7 @@ using CodeGenerator.Core.Workspaces.Datasources.PostgreSql;
 using CodeGenerator.Core.Workspaces.Datasources.SqlServer;
 using CodeGenerator.Core.Workspaces.Datasources.Xml;
 using CodeGenerator.Core.Workspaces.Datasources.Yaml;
+using CodeGenerator.Core.Workspaces.MessageBus;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.CodeArchitecture;
@@ -76,7 +78,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<WorkspaceTreeViewController>();
         services.AddSingleton<IWorkspaceContextProvider>(sp => sp.GetRequiredService<WorkspaceTreeViewController>());
         services.AddSingleton<IDatasourceFactory, DatasourceFactory>();
-        services.AddSingleton<WorkspaceFileService>();
+       
         services.AddSingleton<WorkspaceRibbonViewModel>();
         // Register Template Controllers
         services.AddSingleton<TemplateTreeViewController>();
@@ -112,6 +114,12 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<EntityRelationController>();
         services.AddSingleton<ValueTypesContainerController>();
         services.AddSingleton<ValueTypeController>();
+        services.AddSingleton<EntityViewsContainerController>();
+        services.AddSingleton<EntityEditViewArtifactController>();
+        services.AddSingleton<EntityEditViewFieldController>();
+        services.AddSingleton<EntityListViewArtifactController>();
+        services.AddSingleton<EntityListViewColumnController>();
+        services.AddSingleton<EntitySelectViewArtifactController>();
 
         // Template Artifact Controllers
         services.AddSingleton<RootArtifactController>();
@@ -133,6 +141,9 @@ public static class ServiceCollectionExtensions
         // Register Message Bus systems
         services.AddSingleton<ApplicationMessageBus>();
         services.AddSingleton<GeneratorMessageBus>();
+        services.AddSingleton<WorkspaceMessageBus>();
+        
+        services.AddWorkspaceServices(configuration);
 
         // Register Services
         services.AddSingleton<DomainSchemaParser>();

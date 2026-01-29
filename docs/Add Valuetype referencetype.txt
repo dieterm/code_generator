@@ -1,0 +1,29 @@
+Ik heb in de class "D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Domain\DataTypes\GenericDataType.cs" een property 'SupportsValueTypeReference' toegevoegd.
+
+Ik heb in de class "D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Domain\DataTypes\DataTypeCategory.cs" een "ValueType" toegevoegd.
+
+Voeg op deze twee Artifacts de "ValueTypeReferenceId" (get/set) property toe:
+D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Core.Workspaces\Artifacts\Domains\PropertyArtifact.cs
+D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Core.Workspaces\Artifacts\Relational\ColumnArtifact.cs
+
+Zorg ervoor dat bij deze view (en bijhorend viewmodel) een ComboboxField voor ValueTypeReferenceId wordt toegevoegd:
+D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Presentation.WinForms\Views\Domains\PropertyEditView.cs
+In die combobox worden alle ValueTypes getoond die beschikbaar zijn binnen het DomainArtifact waartoe de PropertyArtifact behoort.
+Je vindt alle ValueTypes via de property propertyArtifact.FindAncesterOfType<DomainArtifact>().ValueTypes.GetValueTypes()
+
+Voeg op de EntityArtifact een property "IsAggregateRoot" (bool) toe (default = false).
+Voeg in de EntityEditView en EntityEditViewModel een BooleanField toe om deze property te kunnen editeren
+
+Voeg in de workspace hierarchie de volgende items toe onder EntityArtifact:
+- Views:EntityViewsContainerArtifact (gelijkaardig als States en Relations properties)
+
+--> EditView:EntityStateEditViewArtifact (om de editeer-velden voor een entitystate te definieren voor iedere property-> combobox met daarin de beschikbare DataField usercontrols) 
+LET OP: hier gaat het om de entitystate, dus de gebruiker moet kunnen selecteren voor welke EntityState de editeervelden gaan via het contextmenu
+
+--> ListView:EntityListViewAritifact (om te definieren welke properties in een Syncfusion.WinForms.DataGrid.SfDataGrid moeten getoond worden en op welke manier) 
+LET OP: hier gaat het om de Entity zelf, niet de EntityState, want je wil ook de relations tonen in de objectdatagrid. gebruik de properties van de entity.DefaultState 
+
+--> SelectView:EntitySelectViewArtifact (om te definieren welke propertie gebruikt moeten worden voor DisplayMember en ValueMember in een combobox)
+
+Maak de nodige ArtifactControllers, Views en ViewModels aan, en zorg dat de nodige ArtifactTreeNodeCommand's aanwezig zijn.
+

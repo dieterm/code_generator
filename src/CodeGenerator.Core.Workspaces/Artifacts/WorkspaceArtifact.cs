@@ -7,8 +7,11 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
     /// <summary>
     /// Represents a workspace - the root container for all datasources and configuration
     /// </summary>
-    public class WorkspaceArtifact : Artifact, IEditableTreeNode
+    public partial class WorkspaceArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
+        public const string ProjectNamePattern_LanguageParameter = "Language";
+        public const string ProjectNamePattern_WorkspaceNamespaceParameter = "WorkspaceNamespace";
+
         public WorkspaceArtifact(string name = "Workspace")
         {
             Name = name;
@@ -18,15 +21,18 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             DefaultLanguage = "C#";
             WorkspaceFilePath = string.Empty;
 
-            EnsureDatasourcesContainerExists();
-            EnsureDomainsContainerExists();
+            //EnsureDatasourcesContainerExists();
+            //EnsureDomainsContainerExists();
+
+            PublishArtifactCreationEvent();
         }
 
         public WorkspaceArtifact(ArtifactState state)
             : base(state)
         {
-            EnsureDatasourcesContainerExists();
-            EnsureDomainsContainerExists();
+            //EnsureDatasourcesContainerExists();
+            //EnsureDomainsContainerExists();
+            PublishArtifactCreationEvent();
         }
 
         public override string TreeNodeText => Name;
@@ -100,37 +106,37 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
                 ? string.Empty 
                 : Path.GetDirectoryName(WorkspaceFilePath) ?? string.Empty;
 
-        private DatasourcesContainerArtifact EnsureDatasourcesContainerExists()
-        {
-            var datasourcesContainer = Children.OfType<DatasourcesContainerArtifact>().FirstOrDefault();
-            if (datasourcesContainer == null)
-            {
-                datasourcesContainer = new DatasourcesContainerArtifact();
-                AddChild(datasourcesContainer);
-            }
-            return datasourcesContainer;
-        }
+        //private DatasourcesContainerArtifact EnsureDatasourcesContainerExists()
+        //{
+        //    var datasourcesContainer = Children.OfType<DatasourcesContainerArtifact>().FirstOrDefault();
+        //    if (datasourcesContainer == null)
+        //    {
+        //        datasourcesContainer = new DatasourcesContainerArtifact();
+        //        AddChild(datasourcesContainer);
+        //    }
+        //    return datasourcesContainer;
+        //}
 
-        /// <summary>
-        /// Gets the datasources container
-        /// </summary>
-        public DatasourcesContainerArtifact Datasources { get { return EnsureDatasourcesContainerExists(); } }
+        ///// <summary>
+        ///// Gets the datasources container
+        ///// </summary>
+        //public DatasourcesContainerArtifact Datasources { get { return EnsureDatasourcesContainerExists(); } }
 
-        private DomainsContainerArtifact EnsureDomainsContainerExists()
-        {
-            var domainsContainer = Children.OfType<DomainsContainerArtifact>().FirstOrDefault();
-            if (domainsContainer == null)
-            {
-                domainsContainer = new DomainsContainerArtifact();
-                AddChild(domainsContainer);
-            }
-            return domainsContainer;
-        }
+        //private DomainsContainerArtifact EnsureDomainsContainerExists()
+        //{
+        //    var domainsContainer = Children.OfType<DomainsContainerArtifact>().FirstOrDefault();
+        //    if (domainsContainer == null)
+        //    {
+        //        domainsContainer = new DomainsContainerArtifact();
+        //        AddChild(domainsContainer);
+        //    }
+        //    return domainsContainer;
+        //}
 
-        /// <summary>
-        /// Gets the domains container
-        /// </summary>
-        public DomainsContainerArtifact Domains { get { return EnsureDomainsContainerExists(); } }
+        ///// <summary>
+        ///// Gets the domains container
+        ///// </summary>
+        //public DomainsContainerArtifact Domains { get { return EnsureDomainsContainerExists(); } }
 
         public bool CanBeginEdit()
         {

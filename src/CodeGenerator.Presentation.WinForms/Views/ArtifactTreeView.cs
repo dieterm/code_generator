@@ -140,6 +140,11 @@ public partial class ArtifactTreeView : UserControl
             Tag = artifact
         };
 
+        if(artifact.TreeNodeTextColor != null)
+        {
+            node.TextColor = artifact.TreeNodeTextColor.Value;
+        }
+
         // Subscribe to property changes
         artifact.PropertyChanged += (s, e) =>
         {

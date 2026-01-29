@@ -17,7 +17,17 @@ namespace CodeGenerator.Shared.Memento
             try
             {
                 var type = Type.GetType(state.TypeName);
-                Debug.WriteLine($"Creating memento object of type '{state.TypeName}'");
+                if (state.Properties.ContainsKey("Name"))
+                {
+                    var name = state.Properties["Name"];
+                    Debug.WriteLine($"Creating memento object of type '{state.TypeName}' with name '{name}'");
+                } 
+                else
+                {
+                    var id = state.Properties.ContainsKey("Id") ? state.Properties["Id"] : "(no id)";
+                    Debug.WriteLine($"Creating memento object of type '{state.TypeName}' with id '{id}'");
+                }
+
                 if (type == null)
                 {
                     throw new InvalidOperationException($"Type '{state.TypeName}' could not be found.");

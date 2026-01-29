@@ -9,6 +9,7 @@ using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
+using CodeGenerator.Core.Workspaces.MessageBus;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Ribbon;
@@ -30,9 +31,11 @@ namespace CodeGenerator.Application.Controllers.Workspace
         private readonly IDatasourceFactory _datasourceFactory;
         private readonly WorkspaceFileService _workspaceFileService;
         private readonly TemplateManager _templateManager;
+        private readonly WorkspaceMessageBus _workspaceMessageBus;
         private ArtifactDetailsViewModel? _workspaceDetailsViewModel;
 
         public WorkspaceTreeViewController(
+            WorkspaceMessageBus workspaceMessageBus,
             TemplateManager templateManager,
             IDatasourceFactory datasourceFactory,
             WorkspaceFileService workspaceFileService,
@@ -42,6 +45,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             ILogger<WorkspaceTreeViewController> logger)
             : base(windowManagerService, messageBoxService, logger)
         {
+            _workspaceMessageBus = workspaceMessageBus;
             _datasourceFactory = datasourceFactory;
             _workspaceFileService = workspaceFileService;
             _templateManager = templateManager;
@@ -83,6 +87,12 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityRelationController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<ValueTypesContainerController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<ValueTypeController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityViewsContainerController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityEditViewArtifactController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityEditViewFieldController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityListViewArtifactController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityListViewColumnController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntitySelectViewArtifactController>(),
 
                 // Add other controllers here as needed
             };

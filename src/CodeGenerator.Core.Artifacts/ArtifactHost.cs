@@ -4,6 +4,7 @@ using CodeGenerator.Shared.Memento;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,9 +29,13 @@ namespace CodeGenerator.Core.Artifacts
 
         public virtual string TreeNodeText { get { return Artifact.TreeNodeText; } }
 
+        public Color? TreeNodeTextColor { get { return Artifact.TreeNodeTextColor; } }
+
         public bool IsStateChanged => ((IMementoObject)Artifact).IsStateChanged;
 
         public Dictionary<string, object?> Properties => ((IMementoObject)Artifact).Properties;
+
+        
 
         public ArtifactHost(Artifact artifact)
         {

@@ -5,6 +5,7 @@ using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Settings.Application;
+using CodeGenerator.Core.Workspaces.MessageBus;
 using CodeGenerator.Presentation.WinForms.ViewModels;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Ribbon;
@@ -23,18 +24,20 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
         private readonly WorkspaceRibbonViewModel _workspaceRibbonViewModel;
         private readonly WorkspaceTreeViewController _workspaceTreeViewController;
-
+        private readonly WorkspaceMessageBus _workspaceMessageBus;
         public bool HasUnsavedChanges { get {return _workspaceTreeViewController.HasUnsavedChanges; } }
 
-        public WorkspaceController(WorkspaceTreeViewController workspaceTreeViewController, WorkspaceRibbonViewModel workspaceRibbonViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<WorkspaceController> logger) 
+        public WorkspaceController(WorkspaceMessageBus workspaceMessageBus, WorkspaceTreeViewController workspaceTreeViewController, WorkspaceRibbonViewModel workspaceRibbonViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<WorkspaceController> logger) 
             : base(windowManagerService, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
         {
+            _workspaceMessageBus = workspaceMessageBus;
             _workspaceRibbonViewModel = workspaceRibbonViewModel;
             _workspaceTreeViewController = workspaceTreeViewController;
         }
 
         public override void Initialize()
         {
+            _workspaceMessageBus.Initialize();
             _workspaceTreeViewController.Initialize();
             _workspaceRibbonViewModel.RequestCloseWorkspace += OnRequestCloseWorkspace;
             _workspaceRibbonViewModel.RequestSaveWorkspace += OnRequestSaveWorkspace;

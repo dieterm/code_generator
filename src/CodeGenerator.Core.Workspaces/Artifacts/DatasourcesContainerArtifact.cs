@@ -6,7 +6,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
     /// <summary>
     /// Container artifact for all datasources in a workspace
     /// </summary>
-    public class DatasourcesContainerArtifact : Artifact
+    public class DatasourcesContainerArtifact : WorkspaceArtifactBase
     {
         public DatasourcesContainerArtifact()
         {

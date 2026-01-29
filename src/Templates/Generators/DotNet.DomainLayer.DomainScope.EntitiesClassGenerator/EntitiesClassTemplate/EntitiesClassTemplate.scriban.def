@@ -1,5 +1,5 @@
 {
-  "templateId": "EntitiesClassTemplate",
+  "templateName": "EntitiesClassTemplate",
   "displayName": "EntitiesClassTemplate",
   "description": "Used by EntitiesClassGenerator to generates a C# class for a domain entity.",
   "category": null,

@@ -170,6 +170,31 @@ namespace CodeGenerator.Presentation.WinForms.Views
                 detailsControl = new TableEditView();
                 ((TableEditView)detailsControl).BindViewModel(tableViewModel);
             }
+            else if (_viewModel?.DetailsViewModel is EntityEditViewEditViewModel entityEditViewViewModel)
+            {
+                detailsControl = new EntityEditViewEditView();
+                ((EntityEditViewEditView)detailsControl).BindViewModel(entityEditViewViewModel);
+            }
+            else if (_viewModel?.DetailsViewModel is EntityEditViewFieldEditViewModel entityEditViewFieldViewModel)
+            {
+                detailsControl = new EntityEditViewFieldEditView();
+                ((EntityEditViewFieldEditView)detailsControl).BindViewModel(entityEditViewFieldViewModel);
+            }
+            else if (_viewModel?.DetailsViewModel is EntityListViewEditViewModel entityListViewViewModel)
+            {
+                detailsControl = new EntityListViewEditView();
+                ((EntityListViewEditView)detailsControl).BindViewModel(entityListViewViewModel);
+            }
+            else if (_viewModel?.DetailsViewModel is EntityListViewColumnEditViewModel entityListViewColumnViewModel)
+            {
+                detailsControl = new EntityListViewColumnEditView();
+                ((EntityListViewColumnEditView)detailsControl).BindViewModel(entityListViewColumnViewModel);
+            }
+            else if (_viewModel?.DetailsViewModel is EntitySelectViewEditViewModel entitySelectViewViewModel)
+            {
+                detailsControl = new EntitySelectViewEditView();
+                ((EntitySelectViewEditView)detailsControl).BindViewModel(entitySelectViewViewModel);
+            }
             
             if (detailsControl != null)
             {

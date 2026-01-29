@@ -17,6 +17,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
 
             EnsureEntityStatesContainerExists();
             EnsureEntityRelationsContainerExists();
+            EnsureEntityViewsContainerExists();
 
             States.ChildRemoved += States_ChildRemoved;
         }
@@ -27,6 +28,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
         {
             EnsureEntityStatesContainerExists();
             EnsureEntityRelationsContainerExists();
+            EnsureEntityViewsContainerExists();
 
             States.ChildRemoved += States_ChildRemoved;
         }
@@ -82,7 +84,6 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
         public EntityStateArtifact? DefaultState
         {
             get => GetStates().FirstOrDefault(s => s.Id == DefaultStateId);
-            //set => DefaultStateId = value?.Id ?? null;
         }
 
         /// <summary>
@@ -96,7 +97,6 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
             if (existing == null)
             {
                 existing = new EntityStatesContainerArtifact();
-                // Automatically add EntitiesContainerArtifact
                 AddChild(existing);
             }
             return existing;
@@ -113,6 +113,22 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
             if (existing == null)
             {
                 existing = new EntityRelationsContainerArtifact();
+                AddChild(existing);
+            }
+            return existing;
+        }
+
+        /// <summary>
+        /// Gets the EntityViewsContainerArtifact for this entity
+        /// </summary>
+        public EntityViewsContainerArtifact Views => EnsureEntityViewsContainerExists();
+
+        private EntityViewsContainerArtifact EnsureEntityViewsContainerExists()
+        {
+            var existing = Children.OfType<EntityViewsContainerArtifact>().FirstOrDefault();
+            if (existing == null)
+            {
+                existing = new EntityViewsContainerArtifact();
                 AddChild(existing);
             }
             return existing;
@@ -163,6 +179,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
         {
             Name = newName;
         }
+
         public EntityStateArtifact AddEntityState(string name)
         {
             var state = new EntityStateArtifact(name);

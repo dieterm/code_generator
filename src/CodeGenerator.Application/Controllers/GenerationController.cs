@@ -107,8 +107,11 @@ namespace CodeGenerator.Application.Controllers
 
         public async Task GenerateAsync(IProgress<GenerationProgress> progress, CancellationToken cancellationToken)
         {
+            
             try
             {
+                _generationRibbonViewModel.IsGenerating = true;
+
                 var generatorOrchestrator = ServiceProviderHolder.GetRequiredService<GeneratorOrchestrator>();
                 var workspaceContextProvider = ServiceProviderHolder.GetRequiredService<IWorkspaceContextProvider>();
                 _logger.LogInformation("Starting code generation process...");
@@ -122,12 +125,17 @@ namespace CodeGenerator.Application.Controllers
                 _logger.LogError(ex, "An error occurred during the code generation process.");
                 throw;
             }
+            finally
+            {
+                _generationRibbonViewModel.IsGenerating = false;
+            }
         }
 
         public async Task GeneratePreviewAsync(IProgress<GenerationProgress> progress, CancellationToken cancellationToken)
         {
             try
             {
+                _generationRibbonViewModel.IsGenerating = true;
                 var generatorOrchestrator = ServiceProviderHolder.GetRequiredService<GeneratorOrchestrator>();
                 var workspaceContextProvider = ServiceProviderHolder.GetRequiredService<IWorkspaceContextProvider>();
                 _logger.LogInformation("Starting code generation preview process...");
@@ -141,8 +149,11 @@ namespace CodeGenerator.Application.Controllers
                 _logger.LogError(ex, "An error occurred during the code generation preview process.");
                 throw;
             }
+            finally
+            {
+                _generationRibbonViewModel.IsGenerating = false;
+            }
         }
-
         public void CreateRibbon()
         {
             var generationTab = _ribbonBuilder.AddTab("tabGeneration", "Generation");
@@ -184,7 +195,6 @@ namespace CodeGenerator.Application.Controllers
                 return;
             }
             _generationCancellationTokenSource = new CancellationTokenSource();
-            _generationRibbonViewModel.IsGenerating = true;
             await GenerateAsync(this, _generationCancellationTokenSource.Token);
             _generationCancellationTokenSource = null;
         }
@@ -197,7 +207,6 @@ namespace CodeGenerator.Application.Controllers
                 return;
             }
             _generationCancellationTokenSource = new CancellationTokenSource();
-            _generationRibbonViewModel.IsGenerating = true;
             await GeneratePreviewAsync(this, _generationCancellationTokenSource.Token);
             _generationCancellationTokenSource = null;
         }

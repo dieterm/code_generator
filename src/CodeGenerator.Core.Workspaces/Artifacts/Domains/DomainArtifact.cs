@@ -7,14 +7,18 @@ using CodeGenerator.Shared.Models;
 using CodeGenerator.Shared.Views.TreeNode;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
 {
-    public class DomainArtifact : Artifact, IEditableTreeNode
+    public class DomainArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
+        public const string DEFAULT_DOMAIN_NAME_APPLICATION = "Application";
+        public const string DEFAULT_DOMAIN_NAME_SHARED = "Shared";
+
         public DomainArtifact(string name)
             : base()
         {
@@ -22,6 +26,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
             
             EnsureEntitiesContainerExists();
             EnsureValueTypesContainerExists();
+            
+            PublishArtifactCreationEvent();
         }
 
 
@@ -31,12 +37,15 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
         {
             EnsureEntitiesContainerExists();
             EnsureValueTypesContainerExists();
+
+            PublishArtifactCreationEvent();
         }
 
         public override string TreeNodeText => Name;
 
         public override ITreeNodeIcon TreeNodeIcon { get; } = new ResourceManagerTreeNodeIcon("box");
 
+        public override Color? TreeNodeTextColor { get { return Name == DEFAULT_DOMAIN_NAME_APPLICATION ? Color.Blue : (Name == DEFAULT_DOMAIN_NAME_SHARED ? Color.Green : (Color?)null); } }
         /// <summary>
         /// Display name of the domain
         /// </summary>
@@ -129,7 +138,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
 
         public bool CanBeginEdit()
         {
-            return Parent != null;
+            return Parent != null && Name != DEFAULT_DOMAIN_NAME_APPLICATION && Name != DEFAULT_DOMAIN_NAME_SHARED;
         }
 
         public void EndEdit(string oldName, string newName)

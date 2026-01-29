@@ -2,6 +2,7 @@ using CodeGenerator.Core.Artifacts.Events;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Shared.Memento;
 using System.ComponentModel;
+using System.Drawing;
 
 namespace CodeGenerator.Core.Artifacts;
 
@@ -93,8 +94,13 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
     private readonly ArtifactDecoratorCollection _decorators = new ArtifactDecoratorCollection();
     public IEnumerable<IArtifactDecorator> Decorators { get { return _decorators; } }
 
+    /// <inheritdoc/>
     public abstract string TreeNodeText { get; }
+    /// <inheritdoc/>
     public abstract ITreeNodeIcon TreeNodeIcon { get; }
+
+    /// <inheritdoc/>
+    public virtual Color? TreeNodeTextColor => null;
 
     /// <summary>
     /// Materialize the artifact and child-artifacts (generate its content, files, etc.)
@@ -311,6 +317,8 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
     /// Check if this artifact can be previewed
     /// </summary>
     public bool CanPreview => Decorators.OfType<IPreviewableDecorator>().Any(d => d.CanPreview);
+
+
 
     public override IMementoState CaptureState()
     {

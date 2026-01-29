@@ -2,6 +2,7 @@
 using CodeGenerator.Core.Generators.Settings;
 using CodeGenerator.Core.Settings.Generators;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.DotNet;
@@ -26,9 +27,10 @@ namespace CodeGenerator.Generators.DotNet
     {
         public const string ProjectNamePattern_LayerParameter = "Layer";
         public const string ProjectNamePattern_ScopeParameter = "Scope";
-        public const string ProjectNamePattern_LanguageParameter = "Language";
-        public const string ProjectNamePattern_WorkspaceNamespaceParameter = "WorkspaceNamespace";
-        public const string ProjectNamePattern_DefaultValue = "{WorkspaceNamespace}.{Layer}.{Scope}";
+        public const string ProjectNamePattern_LanguageParameter = WorkspaceArtifact.ProjectNamePattern_LanguageParameter;
+        public const string ProjectNamePattern_WorkspaceNamespaceParameter = WorkspaceArtifact.ProjectNamePattern_WorkspaceNamespaceParameter;
+        // "{WorkspaceNamespace}.{Layer}.{Scope}"
+        public const string ProjectNamePattern_DefaultValue = $"{{{ProjectNamePattern_WorkspaceNamespaceParameter}}}.{{{ProjectNamePattern_LayerParameter}}}.{{{ProjectNamePattern_ScopeParameter}}}";
         private readonly GeneratorSettings _settings;
         private readonly string _layer;
 
