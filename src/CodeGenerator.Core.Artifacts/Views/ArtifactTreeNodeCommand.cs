@@ -1,6 +1,6 @@
 using CodeGenerator.Core.Artifacts;
 
-namespace CodeGenerator.Application.Controllers.Base;
+namespace CodeGenerator.Core.Artifacts;
 
 /// <summary>
 /// Command definition for artifact tree node context menus

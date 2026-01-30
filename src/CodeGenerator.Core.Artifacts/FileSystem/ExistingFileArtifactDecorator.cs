@@ -32,7 +32,13 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
         {
             // to deterime the target filename
             // first look for a FileArtifactDectorator
+            var fileArtifact = this.Artifact as FileArtifact;
 
+            if (fileArtifact != null) {
+                // use the filename from the FileArtifactDecorator
+                File.Copy(FilePath, fileArtifact.FullPath, true);
+                return Task.CompletedTask;
+            }
             // if not found use the same filename as the existing file
 
             // determine the target directory

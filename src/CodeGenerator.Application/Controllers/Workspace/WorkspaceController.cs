@@ -5,13 +5,17 @@ using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Settings.Application;
+using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.MessageBus;
+using CodeGenerator.Domain.DotNet;
 using CodeGenerator.Presentation.WinForms.ViewModels;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Ribbon;
+using CodeGenerator.TemplateEngines.DotNetProject.Services;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,6 +48,104 @@ namespace CodeGenerator.Application.Controllers.Workspace
             _workspaceRibbonViewModel.RequestOpenWorkspace += OnRequestOpenWorkspace;
             _workspaceRibbonViewModel.RequestNewWorkspace += OnRequestNewWorkspace;
             _workspaceRibbonViewModel.RequestShowTemplates += OnRequestShowTemplates;
+            _workspaceRibbonViewModel.RequestUndo += OnRequestUndo;
+            _workspaceRibbonViewModel.RequestRedo += OnRequestRedo;
+        }
+
+        private async void OnRequestRedo(object? sender, EventArgs e)
+        {
+            if(_workspaceTreeViewController.CurrentWorkspace==null)
+                return;
+            var dotNetProjectService = ServiceProviderHolder.GetRequiredService<DotNetProjectService>();
+            var workspaceOutputDirectory = _workspaceTreeViewController.CurrentWorkspace.DefaultOutputDirectory;
+
+            var supportedLanguages = new Dictionary<string, List<DotNetLanguage>>();
+            var supportedFrameworks = new Dictionary<string, List<TargetFramework>>();
+            var totalCombinations = DotNetProjectType.AllTypes.Length * TargetFrameworks.AllFrameworks.Length;// * DotNetLanguages.AllLanguages.Count;
+            var counter = 0;
+            foreach (var projectType in DotNetProjectType.AllTypes)
+            {
+                supportedLanguages.Add(projectType, new List<DotNetLanguage>());
+                supportedFrameworks.Add(projectType, new List<TargetFramework>());
+                //foreach(var targetFramework in DotNetProjectType.ProjectTypeSupportedFrameworks[projectType])
+                foreach (var targetFramework in DotNetProjectType.ProjectTypeSupportedFrameworks[projectType])
+                {
+                    counter++;
+                    _logger.LogInformation("Creating project {Counter}/{Total} : {ProjectType} {TargetFramework}", counter, totalCombinations, projectType, targetFramework);
+                    var language = DotNetLanguages.CSharp;
+                    //foreach(var language in DotNetLanguages.AllLanguages)
+                   // {
+                        
+                        var folderName = $"{projectType}.{targetFramework.Id}.{language.Id}";
+                        var projectDirectory = System.IO.Path.Combine(workspaceOutputDirectory, folderName);
+                        try
+                        {
+                            _logger.LogInformation(projectDirectory);
+                            Directory.CreateDirectory(projectDirectory);
+                            await dotNetProjectService.CreateProjectAsync("ProjectXYZ", projectDirectory, projectType, targetFramework.DotNetCommandLineArgument, language.DotNetCommandLineArgument);
+
+                            supportedLanguages[projectType].Add(language);
+                            supportedFrameworks[projectType].Add(targetFramework);
+                        }
+                        catch (Exception ex)
+                        {
+                            if(Directory.Exists(projectDirectory))
+                                Directory.Delete(projectDirectory);
+
+                            _logger.LogError(ex, "Failed to create project {ProjectType} {TargetFramework} {Language}", projectType, targetFramework, language.DotNetCommandLineArgument);
+                        }
+                    //}
+                }
+            }
+
+            var languageLookup = new Dictionary<DotNetLanguage, string>
+            {
+                { DotNetLanguages.CSharp, "DotNetLanguages.CSharp" },
+                { DotNetLanguages.FSharp, "DotNetLanguages.FSharp" },
+                { DotNetLanguages.VisualBasic, "DotNetLanguages.VisualBasic" }
+            };
+
+            var frameworkLookup = new Dictionary<TargetFramework, string>
+            {
+                { TargetFrameworks.Net10, "TargetFrameworks.Net10" },
+                { TargetFrameworks.Net9, "TargetFrameworks.Net9" },
+                { TargetFrameworks.Net8, "TargetFrameworks.Net8" },
+                { TargetFrameworks.Net7, "TargetFrameworks.Net7" },
+                { TargetFrameworks.Net6, "TargetFrameworks.Net6" },
+                { TargetFrameworks.Net5, "TargetFrameworks.Net5" },
+                { TargetFrameworks.NetStandard21, "TargetFrameworks.NetStandard21" },
+                { TargetFrameworks.NetStandard20, "TargetFrameworks.NetStandard20" },
+                { TargetFrameworks.NetCore31, "TargetFrameworks.NetCore31" },
+                { TargetFrameworks.Net48, "TargetFrameworks.Net48" },
+                { TargetFrameworks.Net472, "TargetFrameworks.Net472" }
+            };
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var projectType in supportedLanguages.Keys)
+            {
+                sb.AppendLine("ProjectTypeSupportedLanguages[ClassLib] = new[] {");
+               
+                foreach (var language in supportedLanguages[projectType].Distinct())
+                {
+                    sb.AppendLine (languageLookup[language] + ",");
+                }
+                sb.AppendLine("};");
+            }
+            foreach (var projectType in supportedFrameworks.Keys)
+            {
+                sb.AppendLine("ProjectTypeSupportedFrameworks[ClassLib] = new[] {");
+                foreach (var framework in supportedFrameworks[projectType].Distinct())
+                {
+                    sb.AppendLine (frameworkLookup[framework] + ",");
+                }
+                sb.AppendLine("};");
+            }
+            Debug.WriteLine(sb.ToString());
+        }
+
+        private void OnRequestUndo(object? sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void OnRequestShowTemplates(object? sender, EventArgs e)
@@ -239,6 +341,19 @@ namespace CodeGenerator.Application.Controllers.Workspace
                         .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
                         .WithImage("file_code")
                         .WithCommand(_workspaceRibbonViewModel.RequestShowTemplatesCommand)
+                    .Build();
+
+            workspaceTabBuilder.AddToolStrip("toolstripWorkspaceUndoRedo", "History")
+                    .AddButton("btnUndo", "Undo")
+                        .WithSize(RibbonButtonSize.Large)
+                        .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
+                        .WithImage("undo")
+                        .WithCommand(_workspaceRibbonViewModel.RequestUndoCommand)
+                    .AddButton("btnRedo", "Redo")
+                        .WithSize(RibbonButtonSize.Large)
+                        .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
+                        .WithImage("redo")
+                        .WithCommand(_workspaceRibbonViewModel.RequestRedoCommand)
                     .Build();
 
             workspaceTabBuilder.Build();

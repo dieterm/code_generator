@@ -1,5 +1,6 @@
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.ViewModels.Workspace.Domains;
+using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Domain.DataTypes;
 using CodeGenerator.Domain.NamingConventions;

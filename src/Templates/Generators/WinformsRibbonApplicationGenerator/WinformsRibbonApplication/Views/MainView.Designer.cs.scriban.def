@@ -1,0 +1,28 @@
+{
+  "templateName": "MainView.Designer.cs",
+  "displayName": "MainView.Designer.cs",
+  "description": "Template: MainView.Designer.cs",
+  "category": null,
+  "tags": null,
+  "version": null,
+  "author": null,
+  "parameters": [
+    {
+      "name": "Namespace",
+      "description": "Parameter \u0027Namespace\u0027 of type \u0027String\u0027",
+      "fullyQualifiedAssemblyTypeName": "System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
+      "required": false,
+      "defaultValue": null,
+      "allowedValues": null,
+      "label": "Namespace",
+      "tooltip": null,
+      "displayOrder": 0,
+      "validationPattern": null,
+      "minValue": null,
+      "maxValue": null,
+      "tableDataFilter": null,
+      "tableDataMaxRows": null,
+      "isTemplateDatasourceArtifactData": false
+    }
+  ]
+}

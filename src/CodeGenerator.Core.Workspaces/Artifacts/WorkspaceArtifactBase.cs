@@ -1,5 +1,6 @@
 ﻿using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.MessageBus;
+using CodeGenerator.Core.Workspaces.MessageBus.Events;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Shared;
 using System;
@@ -21,17 +22,38 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         {
 
         }
-        private WorkspaceArtifact _workspaceArtifact;
-        protected void PublishArtifactCreationEvent()
+        
+        protected void PublishArtifactConstructionEvent()
         {
             var messageBus = ServiceProviderHolder.GetRequiredService<WorkspaceMessageBus>();
-            // when construction of a WorkspaceArtifact is complete, store this as the new _workspaceArtifact to use for all subsequent events
-            // we cannot use IWorkspaceContextProvider because during the creation of the workspace-tree, the context provider may not yet be fully initialized
-            if (this is WorkspaceArtifact workspaceArtifact) 
-            { 
-                _workspaceArtifact = workspaceArtifact;
+            
+            messageBus.PublishArtifactConstruction( this);
+        }
+
+        /// <summary>
+        /// Notify any subscribers that the context menu is opening for this artifact.<br />
+        /// Subscribers can add custom commands to the context menu via the returned event args.
+        /// </summary>
+        public ArtifactContextMenuOpeningEventArgs PublishArtifactContextMenuOpeningEvent(List<ArtifactTreeNodeCommand> commands)
+        {
+            var messageBus = ServiceProviderHolder.GetRequiredService<WorkspaceMessageBus>();
+
+            var eventArgs = messageBus.PublishArtifactContextMenuOpening(this, commands);
+
+            return eventArgs;
+        }
+
+        public T EnsureChildArtifactExists<T>(Func<T>? factory = null, Func<T, bool>? predicate = null) where T : WorkspaceArtifactBase
+        {
+            if(factory == null) factory = () => Activator.CreateInstance<T>();
+            if(predicate == null) predicate = (a) => true;
+            var childArtifact = Children.OfType<T>().FirstOrDefault(predicate);
+            if (childArtifact == null)
+            {
+                childArtifact = factory();
+                AddChild(childArtifact);
             }
-            messageBus.PublishArtifactConstruction(_workspaceArtifact, this);
+            return childArtifact;
         }
     }
 }

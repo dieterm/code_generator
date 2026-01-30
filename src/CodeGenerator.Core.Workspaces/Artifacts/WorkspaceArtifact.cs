@@ -1,5 +1,8 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
+using CodeGenerator.Core.Workspaces.MessageBus.EventHandlers;
+using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Shared.Views.TreeNode;
 
 namespace CodeGenerator.Core.Workspaces.Artifacts
@@ -15,24 +18,26 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         public WorkspaceArtifact(string name = "Workspace")
         {
             Name = name;
-            RootNamespace = "MyCompany.MyProduct";
-            DefaultOutputDirectory = string.Empty;
-            DefaultTargetFramework = "net8.0";
-            DefaultLanguage = "C#";
-            WorkspaceFilePath = string.Empty;
+            
+            RootNamespace = WorkspaceSettings.Instance.RootNamespace;
+            DefaultOutputDirectory = WorkspaceSettings.Instance.DefaultOutputDirectory;
+            DefaultTargetFramework = WorkspaceSettings.Instance.DefaultTargetFramework;
+            DefaultLanguage = WorkspaceSettings.Instance.DefaultLanguage;
+            //WorkspaceFilePath = string.Empty;
 
-            //EnsureDatasourcesContainerExists();
-            //EnsureDomainsContainerExists();
+            EnsureChildArtifactExists<DatasourcesContainerArtifact>();
+            EnsureChildArtifactExists<ScopesContainerArtifact>();
 
-            PublishArtifactCreationEvent();
+            PublishArtifactConstructionEvent();
         }
 
         public WorkspaceArtifact(ArtifactState state)
             : base(state)
         {
-            //EnsureDatasourcesContainerExists();
-            //EnsureDomainsContainerExists();
-            PublishArtifactCreationEvent();
+            EnsureChildArtifactExists<DatasourcesContainerArtifact>();
+            EnsureChildArtifactExists<ScopesContainerArtifact>();
+
+            PublishArtifactConstructionEvent();
         }
 
         public override string TreeNodeText => Name;
@@ -106,37 +111,15 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
                 ? string.Empty 
                 : Path.GetDirectoryName(WorkspaceFilePath) ?? string.Empty;
 
-        //private DatasourcesContainerArtifact EnsureDatasourcesContainerExists()
-        //{
-        //    var datasourcesContainer = Children.OfType<DatasourcesContainerArtifact>().FirstOrDefault();
-        //    if (datasourcesContainer == null)
-        //    {
-        //        datasourcesContainer = new DatasourcesContainerArtifact();
-        //        AddChild(datasourcesContainer);
-        //    }
-        //    return datasourcesContainer;
-        //}
+        /// <summary>
+        /// Gets the datasources container
+        /// </summary>
+        public DatasourcesContainerArtifact Datasources { get { return this.EnsureChildArtifactExists<DatasourcesContainerArtifact>(); } }
 
-        ///// <summary>
-        ///// Gets the datasources container
-        ///// </summary>
-        //public DatasourcesContainerArtifact Datasources { get { return EnsureDatasourcesContainerExists(); } }
-
-        //private DomainsContainerArtifact EnsureDomainsContainerExists()
-        //{
-        //    var domainsContainer = Children.OfType<DomainsContainerArtifact>().FirstOrDefault();
-        //    if (domainsContainer == null)
-        //    {
-        //        domainsContainer = new DomainsContainerArtifact();
-        //        AddChild(domainsContainer);
-        //    }
-        //    return domainsContainer;
-        //}
-
-        ///// <summary>
-        ///// Gets the domains container
-        ///// </summary>
-        //public DomainsContainerArtifact Domains { get { return EnsureDomainsContainerExists(); } }
+        /// <summary>
+        /// Gets the scopes container
+        /// </summary>
+        public ScopesContainerArtifact Scopes { get { return this.EnsureChildArtifactExists<ScopesContainerArtifact>(); } }
 
         public bool CanBeginEdit()
         {

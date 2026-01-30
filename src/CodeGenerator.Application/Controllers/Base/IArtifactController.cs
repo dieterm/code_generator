@@ -1,4 +1,5 @@
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.Views;
 using CodeGenerator.Core.Templates;
 
 namespace CodeGenerator.Application.Controllers.Base

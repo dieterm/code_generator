@@ -12,8 +12,7 @@ namespace CodeGenerator.Core.Workspaces.MessageBus.Events
     {
         public IArtifact Artifact { get; }
 
-        public ArtifactConstructionEventArgs(WorkspaceArtifact workspaceArtifact, IArtifact artifact) 
-            : base(workspaceArtifact)
+        public ArtifactConstructionEventArgs(IArtifact artifact) 
         {
             Artifact = artifact;
         }

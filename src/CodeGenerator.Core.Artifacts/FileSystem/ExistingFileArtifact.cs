@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeGenerator.Shared.ExtensionMethods;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -10,14 +11,20 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
     public class ExistingFileArtifact : FileArtifact
     {
         public const string EXISTING_FILE_PROPERTIES_DECORATOR_KEY = "ExistingFile";
-        private readonly ExistingFileArtifactDecorator _existingFileArtifactDecorator;
+        public const string EXISTING_IMAGE_FILE_PROPERTIES_DECORATOR_KEY = "ExistingImageFile";
+        private ExistingFileArtifactDecorator _existingFileArtifactDecorator;
         public ExistingFileArtifact(string existingFilePath, string? fileName = null) 
             : base (fileName?? System.IO.Path.GetFileName(existingFilePath))
         {
             if(!File.Exists(existingFilePath)) throw new ArgumentException("The specified existing file path does not exist.", nameof(existingFilePath));
-            _existingFileArtifactDecorator = AddOrGetDecorator(() => new ExistingFileArtifactDecorator(ExistingFileArtifact.EXISTING_FILE_PROPERTIES_DECORATOR_KEY, existingFilePath));
+            _existingFileArtifactDecorator = AddOrGetDecorator(() => new ExistingFileArtifactDecorator(EXISTING_FILE_PROPERTIES_DECORATOR_KEY, existingFilePath));
             
             ExistingFilePath = existingFilePath;
+
+            if(ExistingFilePath.IsImageFile())
+            {
+                AddOrGetDecorator(() => new ExistingImageFileDecorator(EXISTING_IMAGE_FILE_PROPERTIES_DECORATOR_KEY));
+            }
         }
 
         public ExistingFileArtifact(ArtifactState state)
@@ -50,6 +57,8 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
                 {
                     throw new InvalidOperationException("ExistingFileArtifact can only have one ExistingFileArtifactDecorator.");
                 }
+                if(_existingFileArtifactDecorator==null)
+                    _existingFileArtifactDecorator = existingFileDecorator;
                 _existingFileArtifactDecorator.PropertyChanged += ExistingFileArtifactDecorator_PropertyChanged;
             }
             return base.AddDecorator(decorator);
@@ -62,5 +71,6 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
                 RaisePropertyChangedEvent(nameof(ExistingFilePath));
             }
         }
+
     }
 }

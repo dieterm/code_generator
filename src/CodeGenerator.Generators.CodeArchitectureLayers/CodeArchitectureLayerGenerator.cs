@@ -57,24 +57,26 @@ namespace CodeGenerator.Generators.CodeArchitectureLayers
             }
 
             // Get domains from workspace
-            var domains = args.Result.Workspace.Domains.GetDomains().ToArray();
-            
-            foreach (var domain in domains)
+            // var domains = args.Result.Workspace.Domains.GetDomains().ToArray();
+            var scopes = args.Result.Workspace.Scopes.ToArray();
+
+            //foreach (var domain in domains)
+            foreach (var scope in scopes)
             {
                 var folderNamePattern = new ParameterizedString(settings.FolderNamePattern);
                 var parameters = new Dictionary<string, string>
                 {
                     { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_WorkspaceNamespaceParameter, args.Result.Workspace.RootNamespace },
                     { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_LayerParameter, LayerName },
-                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_ScopeParameter, domain.Name },
-                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_DomainNamespaceParameter, domain.DefaultNamespacePattern }
+                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_ScopeParameter, scope.Name },
+                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_DomainNamespaceParameter, scope.Namespace }
                 };
                 var folderName = folderNamePattern.GetOutput(parameters);
                 var scopeFolderArtifact = new FolderArtifact(folderName);
                 AddChildArtifactToParent(args.Result.RootArtifact, scopeFolderArtifact, args.Result);
-                var layerArtifact = CreateLayerArtifact(domain.Name);
+                var layerArtifact = CreateLayerArtifact(scope.Name);
                 // attach a reference to the domain artifact which is being used here
-                layerArtifact.AddDecorator(new DomainArtifactRefDecorator(domain));
+                layerArtifact.AddDecorator(new ScopeArtifactRefDecorator(scope));
                 AddChildArtifactToParent(scopeFolderArtifact, layerArtifact, args.Result);
             }
         }

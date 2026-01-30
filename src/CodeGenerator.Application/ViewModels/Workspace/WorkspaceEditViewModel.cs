@@ -22,7 +22,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             DefaultTargetFrameworkField = new ComboboxFieldModel { Label = "Target Framework", Name = nameof(WorkspaceArtifact.DefaultTargetFramework) };
             DefaultLanguageField = new ComboboxFieldModel { Label = "Default Language", Name = nameof(WorkspaceArtifact.DefaultLanguage) };
             // Set up target framework options
-            DefaultTargetFrameworkField.Items = TargetFrameworks.AllFrameworks.Select((f) => new ComboboxItem { DisplayName = f, Value = f }).ToList();
+            DefaultTargetFrameworkField.Items = TargetFrameworks.AllFrameworks.Select((f) => new ComboboxItem { DisplayName = f.Name, Value = f.Id }).ToList();
             // Set up language options
             DefaultLanguageField.Items = DotNetLanguages.AllLanguages.Select((lang) => new ComboboxItem { 
                 DisplayName = lang.DotNetCommandLineArgument, 

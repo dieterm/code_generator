@@ -1,6 +1,9 @@
 using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.Views;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.Workspaces.MessageBus;
+using CodeGenerator.Shared;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Base
@@ -48,7 +51,9 @@ namespace CodeGenerator.Application.Controllers.Base
                     commands.AddRange(clipboardCommands);
                 }
                 
-                return commands;
+                var messageBus = ServiceProviderHolder.GetRequiredService<WorkspaceMessageBus>().PublishArtifactContextMenuOpening(typedArtifact, commands);
+
+                return messageBus.Commands;
             }
             return Enumerable.Empty<ArtifactTreeNodeCommand>();
         }

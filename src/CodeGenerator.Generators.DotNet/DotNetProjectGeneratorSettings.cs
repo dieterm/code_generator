@@ -42,7 +42,7 @@ namespace CodeGenerator.Generators.DotNet
 
         public string? TargetFramework
         {
-            get => _settings.GetParameter<string>(nameof(TargetFramework)) ?? TargetFrameworks.Net8;
+            get => _settings.GetParameter<string>(nameof(TargetFramework)) ?? TargetFrameworks.Net8.Id;
             set => _settings.SetParameter<string>(nameof(TargetFramework), value);
         }
 
@@ -87,7 +87,7 @@ namespace CodeGenerator.Generators.DotNet
             settingsDescription.ParameterDefinitions.Add(new ParameterDefinition
             {
                 Name = nameof(TargetFramework),
-                PossibleValues = TargetFrameworks.AllFrameworks.Select(t => (object)new ComboboxItem { DisplayName = t, Value = t }).ToList(),
+                PossibleValues = TargetFrameworks.AllFrameworks.Select(t => (object)new ComboboxItem { DisplayName = t.Name, Value = t.Id }).ToList(),
                 Description = "The target framework for the .NET project (e.g., net8.0, net7.0).",
                 Type = ParameterDefinitionTypes.String,
                 DefaultValue = TargetFrameworks.Net8,

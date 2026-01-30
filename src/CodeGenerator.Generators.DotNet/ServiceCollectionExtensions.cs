@@ -1,4 +1,5 @@
 using CodeGenerator.Core.Generators;
+using CodeGenerator.Core.Workspaces.MessageBus;
 using CodeGenerator.Generators.DotNet.Generators;
 using CodeGenerator.Generators.DotNet.Generators.ApplicationLayer.ApplicationScope;
 using CodeGenerator.Generators.DotNet.Generators.ApplicationLayer.DomainScope;
@@ -48,6 +49,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IMessageBusAwareGenerator, InfrastructureLayerDomainScopeDotNetProjectGenerator>();
 
         services.AddTransient<IMessageBusAwareGenerator, EntitiesClassGenerator>();
+
 
         return services;
     }

@@ -48,7 +48,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
 
         public string FileName { 
             get{ return _fileArtifactDecorator.FileName; } 
-            private set{ _fileArtifactDecorator.FileName = value; }
+            set{ _fileArtifactDecorator.FileName = value; }
         }
 
         public string FullPath

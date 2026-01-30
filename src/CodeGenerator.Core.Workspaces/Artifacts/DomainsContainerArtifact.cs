@@ -29,15 +29,15 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         public override string TreeNodeText => "Domains";
 
         public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("boxes");
-        public DomainArtifact SharedDomain => Children.OfType<DomainArtifact>().First(d => d.Name == DomainArtifact.DEFAULT_DOMAIN_NAME_SHARED);
+        public ScopeArtifact SharedDomain => Children.OfType<ScopeArtifact>().First(d => d.Name == ScopeArtifact.DEFAULT_DOMAIN_NAME_SHARED);
 
-        private DomainArtifact EnsureSharedDomainExists()
+        private ScopeArtifact EnsureSharedDomainExists()
         {
-            var newOrExisting = Children.OfType<DomainArtifact>().FirstOrDefault(d => d.Name == DomainArtifact.DEFAULT_DOMAIN_NAME_SHARED);
+            var newOrExisting = Children.OfType<ScopeArtifact>().FirstOrDefault(d => d.Name == ScopeArtifact.DEFAULT_DOMAIN_NAME_SHARED);
             if (newOrExisting == null) {
-                newOrExisting = new DomainArtifact(DomainArtifact.DEFAULT_DOMAIN_NAME_SHARED);
+                newOrExisting = new ScopeArtifact(ScopeArtifact.DEFAULT_DOMAIN_NAME_SHARED);
                 // Default pattern: {WorkspaceNamespace}.{Shared}
-                newOrExisting.DefaultNamespacePattern = $"{{{WorkspaceArtifact.ProjectNamePattern_WorkspaceNamespaceParameter}}}.{{{DomainArtifact.DEFAULT_DOMAIN_NAME_SHARED}}}";
+                newOrExisting.DefaultNamespacePattern = $"{{{WorkspaceArtifact.ProjectNamePattern_WorkspaceNamespaceParameter}}}.{{{ScopeArtifact.DEFAULT_DOMAIN_NAME_SHARED}}}";
 
                 AddChild(newOrExisting);
             }
@@ -45,16 +45,16 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             return newOrExisting;
         }
         
-        public DomainArtifact ApplicationDomain => Children.OfType<DomainArtifact>().First(d => d.Name == DomainArtifact.DEFAULT_DOMAIN_NAME_APPLICATION);
+        public ScopeArtifact ApplicationDomain => Children.OfType<ScopeArtifact>().First(d => d.Name == ScopeArtifact.DEFAULT_DOMAIN_NAME_APPLICATION);
 
-        private DomainArtifact EnsureApplicationDomainExists()
+        private ScopeArtifact EnsureApplicationDomainExists()
         {
-            var newOrExisting = Children.OfType<DomainArtifact>().FirstOrDefault(d => d.Name == DomainArtifact.DEFAULT_DOMAIN_NAME_APPLICATION);
+            var newOrExisting = Children.OfType<ScopeArtifact>().FirstOrDefault(d => d.Name == ScopeArtifact.DEFAULT_DOMAIN_NAME_APPLICATION);
             if (newOrExisting == null)
             {
-                newOrExisting = new DomainArtifact(DomainArtifact.DEFAULT_DOMAIN_NAME_APPLICATION);
+                newOrExisting = new ScopeArtifact(ScopeArtifact.DEFAULT_DOMAIN_NAME_APPLICATION);
                 // Default pattern: {WorkspaceNamespace}.{Application}
-                newOrExisting.DefaultNamespacePattern = $"{{{WorkspaceArtifact.ProjectNamePattern_WorkspaceNamespaceParameter}}}.{{{DomainArtifact.DEFAULT_DOMAIN_NAME_APPLICATION}}}";
+                newOrExisting.DefaultNamespacePattern = $"{{{WorkspaceArtifact.ProjectNamePattern_WorkspaceNamespaceParameter}}}.{{{ScopeArtifact.DEFAULT_DOMAIN_NAME_APPLICATION}}}";
 
                 AddChild(newOrExisting);
             }
@@ -65,20 +65,20 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         /// <summary>
         /// Add a domain
         /// </summary>
-        public void AddDomain(DomainArtifact domainArtifact)
+        public void AddDomain(ScopeArtifact domainArtifact)
         {
            AddChild(domainArtifact);
         }
 
-        public IEnumerable<DomainArtifact> GetDomains()
+        public IEnumerable<ScopeArtifact> GetDomains()
         {
-            return Children.OfType<DomainArtifact>().ToArray();
+            return Children.OfType<ScopeArtifact>().ToArray();
         }
 
         /// <summary>
         /// Remove a domain
         /// </summary>
-        public void RemoveDomain(DomainArtifact domainArtifact)
+        public void RemoveDomain(ScopeArtifact domainArtifact)
         {
             RemoveChild(domainArtifact);
         }

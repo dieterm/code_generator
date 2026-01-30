@@ -8,10 +8,10 @@ namespace CodeGenerator.Domain.DotNet
 {
     public static class DotNetLanguages
     {
-        public static readonly DotNetLanguage CSharp = new DotNetLanguage("C#", "csproj", "csharp");
-        public static readonly DotNetLanguage FSharp = new DotNetLanguage("F#", "fsproj", "fsharp");
-        public static readonly DotNetLanguage VisualBasic = new DotNetLanguage("VB", "vbproj", "vb");
-        public static readonly DotNetLanguage Python = new DotNetLanguage("Python", "pyproj", "python");
+        public static readonly DotNetLanguage CSharp = new DotNetLanguage("csharp", "CSharp", "C#", "csproj", "csharp");
+        public static readonly DotNetLanguage FSharp = new DotNetLanguage("fsharp", "FSharp", "F#", "fsproj", "fsharp");
+        public static readonly DotNetLanguage VisualBasic = new DotNetLanguage("visualbasic", "Visual Basic", "VB", "vbproj", "vb");
+        public static readonly DotNetLanguage Python = new DotNetLanguage("python", "Python", "Python", "pyproj", "python");
 
         public static readonly List<DotNetLanguage> AllLanguages = new List<DotNetLanguage>
         {
@@ -21,7 +21,7 @@ namespace CodeGenerator.Domain.DotNet
             Python
         };
 
-        public static DotNetLanguage GetByCommandLineArgument(string language)
+        public static DotNetLanguage GetByCommandLineArgument(string? language)
         {
             if(language==null) throw new ArgumentNullException(nameof(language));
             return AllLanguages.Single(l => l.DotNetCommandLineArgument.Equals(language, StringComparison.OrdinalIgnoreCase));

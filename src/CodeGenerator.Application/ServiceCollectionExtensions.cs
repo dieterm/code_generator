@@ -4,6 +4,7 @@ using CodeGenerator.Application.Controllers.Template;
 using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Application.Controllers.Workspace.Datasources;
 using CodeGenerator.Application.Controllers.Workspace.Domains;
+using CodeGenerator.Application.Controllers.Workspace.Scopes;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Application.ViewModels.Generation;
@@ -103,7 +104,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IndexArtifactController>();
         services.AddSingleton<ForeignKeyArtifactController>();
 
-        services.AddSingleton<DomainsContainerController>();
+        //services.AddSingleton<DomainsContainerController>();
+        services.AddSingleton<ScopesContainerController>();
         services.AddSingleton<DomainController>();
         services.AddSingleton<EntitiesContainerController>();
         services.AddSingleton<EntityController>();
@@ -174,6 +176,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.Scriban.ScribanTemplateEngine>();
         services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.T4.T4TemplateEngine>();
         services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.PlantUML.PlantUmlTemplateEngine>();
+
+        services.AddDotNetWinformsRibbonApplicationGeneratorServices(configuration);
 
         // Add logging
         services.AddLogging(builder =>

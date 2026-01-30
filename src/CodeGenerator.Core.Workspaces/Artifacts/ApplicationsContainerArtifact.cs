@@ -1,4 +1,5 @@
-﻿using CodeGenerator.Core.Artifacts.TreeNode;
+﻿using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.TreeNode;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,15 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
 {
     public class ApplicationsContainerArtifact : WorkspaceArtifactBase
     {
+        public ApplicationsContainerArtifact()
+        {
+
+        }
+        public ApplicationsContainerArtifact(ArtifactState state)
+            : base(state)
+        {
+
+        }
         public override string TreeNodeText => "Application";
 
         public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("dock");

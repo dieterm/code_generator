@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\Template\TemplateController.cs" />
+    <Compile Remove="Controllers\Workspace\DomainsContainerController.cs" />
     <Compile Remove="ViewModels\UserControls\TableArtifactFieldModel.cs" />
     <Compile Remove="ViewModels\Workspace\WorkspaceDetailsViewModel.cs" />
   </ItemGroup>
@@ -37,6 +38,7 @@
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.PostgreServer\CodeGenerator.Core.Workspaces.Datasources.PostgreServer.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.SqlServer\CodeGenerator.Core.Workspaces.Datasources.SqlServer.csproj" />
     <ProjectReference Include="..\CodeGenerator.Generators.CodeArchitectureLayers\CodeGenerator.Generators.CodeArchitectureLayers.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Generators.DotNet.WinformsRibbonApplication\CodeGenerator.Generators.DotNet.WinformsRibbonApplication.csproj" />
     <ProjectReference Include="..\CodeGenerator.Generators.DotNet\CodeGenerator.Generators.DotNet.csproj" />
     <ProjectReference Include="..\CodeGenerator.Shared\CodeGenerator.Shared.csproj" />
     <ProjectReference Include="..\CodeGenerator.TemplateEngines.DotNetProject\CodeGenerator.TemplateEngines.DotNetProject.csproj" />

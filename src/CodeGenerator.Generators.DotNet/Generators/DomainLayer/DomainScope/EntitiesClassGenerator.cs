@@ -42,7 +42,7 @@ namespace CodeGenerator.Generators.DotNet.Generators.DomainLayer.DomainScope
             if(domainProjectArtifact== null) return false;
             var domainLayerArtifact = domainProjectArtifact.Parent as DomainLayerArtifact;
             if(domainLayerArtifact == null) return false;
-            var hasDecorator = domainLayerArtifact.HasDecorator<DomainArtifactRefDecorator>();
+            var hasDecorator = domainLayerArtifact.HasDecorator<ScopeArtifactRefDecorator>();
             return hasDecorator;
         }
 
@@ -61,14 +61,14 @@ namespace CodeGenerator.Generators.DotNet.Generators.DomainLayer.DomainScope
                 _logger.LogError("Parent artifact is not a CodeArchitectureLayerArtifact.");
                 throw new InvalidOperationException("Parent artifact is not a CodeArchitectureLayerArtifact.");
             }
-            var domainArtifactRefDecorator = layerArtifact.GetDecoratorOfType<DomainArtifactRefDecorator>();
-            if(domainArtifactRefDecorator == null)
+            var scopeArtifactRefDecorator = layerArtifact.GetDecoratorOfType<ScopeArtifactRefDecorator>();
+            if(scopeArtifactRefDecorator == null)
             {
                 _logger.LogError("DomainArtifactRefDecorator not found on layer artifact.");
                 throw new InvalidOperationException("DomainArtifactRefDecorator not found on layer artifact.");
             }
-            _logger.LogInformation("Generating entity classes for domain {DomainName} on layer {LayerName} scope {Scope}.", domainArtifactRefDecorator.DomainArtifact.Name, layerArtifact.Layer, layerArtifact.Scope);
-            var domainArtifact = domainArtifactRefDecorator.DomainArtifact;
+            _logger.LogInformation("Generating entity classes for domain {DomainName} on layer {LayerName} scope {Scope}.", scopeArtifactRefDecorator.ScopeArtifact.Domain.Name, layerArtifact.Layer, layerArtifact.Scope);
+            var domainArtifact = scopeArtifactRefDecorator.ScopeArtifact.Domain;
 
             var settings = GetSettings();
             var entitiesSettings = new EntitiesClassGeneratorSettings(settings);

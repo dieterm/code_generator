@@ -101,5 +101,7 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
 
             return parentFolder?.Children ?? artifacts;
         }
+
+        
     }
 }

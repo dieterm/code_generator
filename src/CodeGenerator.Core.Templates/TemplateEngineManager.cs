@@ -40,7 +40,7 @@ namespace CodeGenerator.Core.Templates
             var engine = _templateEngines.FirstOrDefault(te => te.SupportsTemplateFileExtension(fileExtension));
             if (engine == null)
             {
-                _logger.LogWarning("No template engine found that supports file extension '{FileExtension}'.", fileExtension);
+                //_logger.LogWarning("No template engine found that supports file extension '{FileExtension}'.", fileExtension);
             }
             return engine;
         }

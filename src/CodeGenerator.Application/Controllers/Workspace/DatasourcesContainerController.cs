@@ -1,4 +1,5 @@
 using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Services;
 using Microsoft.Extensions.Logging;

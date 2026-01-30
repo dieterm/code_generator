@@ -27,7 +27,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
             EnsureEntitiesContainerExists();
             EnsureValueTypesContainerExists();
             
-            PublishArtifactCreationEvent();
+            PublishArtifactConstructionEvent();
         }
 
 
@@ -38,7 +38,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
             EnsureEntitiesContainerExists();
             EnsureValueTypesContainerExists();
 
-            PublishArtifactCreationEvent();
+            PublishArtifactConstructionEvent();
         }
 
         public override string TreeNodeText => Name;

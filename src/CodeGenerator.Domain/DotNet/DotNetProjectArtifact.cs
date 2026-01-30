@@ -111,5 +111,23 @@ namespace CodeGenerator.Domain.DotNet
             if(folderArtifact==null) throw new InvalidOperationException("Cannot determine relative folder path, no FolderArtifactDecorator ancestor found.");
             return folderArtifact.FullPath;
         }
+
+        public void AddNuGetPackage(NuGetPackage syncfusion_Edit_Windows)
+        {
+            var existingPackage = NuGetPackages.FirstOrDefault(p => p.PackageId.Equals(syncfusion_Edit_Windows.PackageId, StringComparison.OrdinalIgnoreCase));
+            if(existingPackage != null)
+            {
+                // check if the version is higher than existing
+                var isHigherVersion = syncfusion_Edit_Windows.IsHigherVersionThan(existingPackage);
+                if (isHigherVersion)
+                {
+                    existingPackage.Version = syncfusion_Edit_Windows.Version;
+                }
+            }
+            else
+            {
+                NuGetPackages.Add(syncfusion_Edit_Windows);
+            }
+        }
     }
 }

@@ -9,6 +9,65 @@ namespace CodeGenerator.Shared.ExtensionMethods
 {
     public static class FileSystemExtensions
     {
+        
+        public static HashSet<string> TextFileExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".txt", ".md", ".csv", ".log", ".json", ".xml", ".yaml", ".yml", ".ini", ".cfg"
+        };
+        public static HashSet<string> DocumentFileExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".doc", ".docx", ".pdf", ".txt", ".rtf", ".odt"
+        };
+        public static HashSet<string> ImageFileExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".svg", ".webp"
+        };
+
+        public static HashSet<string> VideoFileExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".mp4", ".avi", ".mov", ".wmv", ".flv", ".mkv", ".webm"
+        };
+
+        public static HashSet<string> AudioFileExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".mp3", ".wav", ".aac", ".flac", ".ogg", ".wma"
+        };
+
+        public static bool IsImageFile(this string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return false;
+            var extension = System.IO.Path.GetExtension(filePath);
+            return ImageFileExtensions.Contains(extension);
+        }
+
+        public static bool IsTextFile(this string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return false;
+            var extension = System.IO.Path.GetExtension(filePath)?.ToLowerInvariant();
+            return TextFileExtensions.Contains(extension);
+        }
+
+        public static bool IsDocumentFile(this string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return false;
+            var extension = System.IO.Path.GetExtension(filePath)?.ToLowerInvariant();
+            return DocumentFileExtensions.Contains(extension);
+        }
+
+        public static bool IsVideoFile(this string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return false;
+            var extension = System.IO.Path.GetExtension(filePath)?.ToLowerInvariant();
+            return VideoFileExtensions.Contains(extension);
+        }
+
+        public static bool IsAudioFile(this string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return false;
+            var extension = System.IO.Path.GetExtension(filePath)?.ToLowerInvariant();
+            return AudioFileExtensions.Contains(extension);
+        }
+
         public static bool IsValidFileName(this string? fileName)
         {
             if (string.IsNullOrWhiteSpace(fileName)) return false;

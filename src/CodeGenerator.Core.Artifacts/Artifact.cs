@@ -1,6 +1,7 @@
 using CodeGenerator.Core.Artifacts.Events;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Shared.Memento;
+using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 
@@ -338,4 +339,5 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
     {
         return TreeNodeText;
     }
+
 }

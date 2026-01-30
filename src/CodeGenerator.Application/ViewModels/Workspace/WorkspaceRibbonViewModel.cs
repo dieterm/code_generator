@@ -21,6 +21,8 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         public event EventHandler? RequestSaveWorkspace;
         public event EventHandler? RequestCloseWorkspace;
         public event EventHandler? RequestShowTemplates;
+        public event EventHandler? RequestUndo;
+        public event EventHandler? RequestRedo;
 
         // Commands
         public ICommand RequestNewWorkspaceCommand { get; }
@@ -28,17 +30,22 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         public ICommand RequestSaveWorkspaceCommand { get; }
         public ICommand RequestCloseWorkspaceCommand { get; }
         public ICommand RequestShowTemplatesCommand { get; }
+        public ICommand RequestUndoCommand { get; }
+        public ICommand RequestRedoCommand { get; }
 
         public WorkspaceRibbonViewModel(IWorkspaceContextProvider workspaceContextProvider)
         {
             _workspaceContextProvider = workspaceContextProvider;
             _workspaceContextProvider.WorkspaceChanged += OnWorkspaceChanged;
             _workspaceContextProvider.WorkspaceHasUnsavedChangesChanged += OnWorkspaceHasUnsavedChangesChanged;
+
             RequestNewWorkspaceCommand = new RelayCommand((e) => RequestNewWorkspace?.Invoke(this, EventArgs.Empty), CanRequestNewWorkspace);
             RequestOpenWorkspaceCommand = new RelayCommand((e) => RequestOpenWorkspace?.Invoke(this, EventArgs.Empty), CanRequestOpenWorkspace);
             RequestSaveWorkspaceCommand = new RelayCommand((e) => RequestSaveWorkspace?.Invoke(this, EventArgs.Empty), CanRequestSaveWorkspace);
             RequestCloseWorkspaceCommand = new RelayCommand((e) => RequestCloseWorkspace?.Invoke(this, EventArgs.Empty), CanRequestCloseWorkspace);
             RequestShowTemplatesCommand = new RelayCommand((e) => RequestShowTemplates?.Invoke(this, EventArgs.Empty), CanShowTemplates);
+            RequestUndoCommand = new RelayCommand((e) => RequestUndo?.Invoke(this, EventArgs.Empty));
+            RequestRedoCommand = new RelayCommand((e) => RequestRedo?.Invoke(this, EventArgs.Empty));
         }
 
         private void OnWorkspaceHasUnsavedChangesChanged(object? sender, EventArgs e)

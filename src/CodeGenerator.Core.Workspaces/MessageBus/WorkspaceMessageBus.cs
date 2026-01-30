@@ -22,9 +22,18 @@ namespace CodeGenerator.Core.Workspaces.MessageBus
             _subscribers.ForEach(subscriber => subscriber.Subscribe(this));
         }
 
-        public void PublishArtifactConstruction(WorkspaceArtifact workspaceArtifact, IArtifact artifact)
+        public ArtifactConstructionEventArgs PublishArtifactConstruction(IArtifact artifact)
         {
-            Publish(new ArtifactConstructionEventArgs(workspaceArtifact, artifact));
+            var eventArgs = new ArtifactConstructionEventArgs(artifact);
+            Publish(eventArgs);
+            return eventArgs;
+        }
+
+        public ArtifactContextMenuOpeningEventArgs PublishArtifactContextMenuOpening(IArtifact artifact, List<ArtifactTreeNodeCommand> commands)
+        {
+            var eventArgs = new ArtifactContextMenuOpeningEventArgs(artifact, commands);
+            Publish(eventArgs);
+            return eventArgs;
         }
 
         public void Dispose()

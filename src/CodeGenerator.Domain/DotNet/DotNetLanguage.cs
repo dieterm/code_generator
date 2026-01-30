@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Domain.DotNet
 {
-    public record DotNetLanguage(string DotNetCommandLineArgument, string ProjectFileExtension, string ImageKey);
+    public record DotNetLanguage(string Id, string Name, string DotNetCommandLineArgument, string ProjectFileExtension, string ImageKey);
 
 }

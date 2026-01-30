@@ -1,6 +1,7 @@
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Controllers.Workspace.Datasources;
 using CodeGenerator.Application.Controllers.Workspace.Domains;
+using CodeGenerator.Application.Controllers.Workspace.Scopes;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
@@ -76,7 +77,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<IndexArtifactController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<ForeignKeyArtifactController>(),
 
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<DomainsContainerController>(),
+                //ServiceProviderHolder.ServiceProvider.GetRequiredService<DomainsContainerController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<ScopesContainerController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<DomainController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<EntitiesContainerController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityController>(),
@@ -381,12 +383,12 @@ namespace CodeGenerator.Application.Controllers.Workspace
             WindowManagerService.ShowWorkspaceDetailsView(_workspaceDetailsViewModel);
         }
 
-        public DomainArtifact AddDomain(string domainName)
-        {
-            var domainArtifact = new DomainArtifact(domainName);
-            CurrentWorkspace?.Domains.AddDomain(domainArtifact);
-            return domainArtifact;
-        }
+        //public DomainArtifact AddDomain(string domainName)
+        //{
+        //    var domainArtifact = new DomainArtifact(domainName);
+        //    CurrentWorkspace?.Domains.AddDomain(domainArtifact);
+        //    return domainArtifact;
+        //}
 
         public void CreateEntityFromTableInDomain(TableArtifact table, DomainArtifact domain)
         {

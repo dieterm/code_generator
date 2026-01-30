@@ -15,6 +15,8 @@ namespace CodeGenerator.Core.Templates
         private readonly TemplateEngineManager _templateEngineManager;
         private readonly TemplatePathResolver _pathResolver;
         private readonly Dictionary<string, ITemplate> _templates = new Dictionary<string, ITemplate>();
+        private readonly object _templatesLock = new object();
+        private readonly List<Task> _pendingScanTasks = new List<Task>();
         
         public IEnumerable<string> TemplateFolders { get { return _registeredTemplateFolders; } }
         
@@ -22,6 +24,11 @@ namespace CodeGenerator.Core.Templates
         /// Gets the template path resolver for special folder syntax support
         /// </summary>
         public TemplatePathResolver PathResolver => _pathResolver;
+
+        /// <summary>
+        /// Event raised when template scanning is complete
+        /// </summary>
+        public event EventHandler? TemplatesLoaded;
 
         public TemplateManager(ILogger<TemplateManager> logger, TemplateEngineManager templateEngineManager)
         {
@@ -70,11 +77,17 @@ namespace CodeGenerator.Core.Templates
             
             if (!string.IsNullOrEmpty(defaultFolder) && Directory.Exists(defaultFolder))
             {
-                // Scan default folder for templates
+                // Scan default folder for templates on background thread
                 if (!_registeredTemplateFolders.Contains(defaultFolder))
                 {
                     _registeredTemplateFolders.Add(defaultFolder);
-                    ScanFolderForTemplates(defaultFolder, _templates);
+                    var scanTask = Task.Run(() => ScanFolderForTemplates(defaultFolder));
+                    lock (_pendingScanTasks)
+                    {
+                        _pendingScanTasks.Add(scanTask);
+                    }
+                    // Fire and forget, but track completion
+                    scanTask.ContinueWith(t => OnScanTaskCompleted(t), TaskScheduler.Default);
                 }
             }
         }
@@ -103,7 +116,12 @@ namespace CodeGenerator.Core.Templates
                 if (Directory.Exists(templatesFolder) && !_registeredTemplateFolders.Contains(templatesFolder))
                 {
                     _registeredTemplateFolders.Insert(0, templatesFolder); // Workspace takes priority
-                    ScanFolderForTemplates(templatesFolder, _templates);
+                    var scanTask = Task.Run(() => ScanFolderForTemplates(templatesFolder));
+                    lock (_pendingScanTasks)
+                    {
+                        _pendingScanTasks.Add(scanTask);
+                    }
+                    scanTask.ContinueWith(t => OnScanTaskCompleted(t), TaskScheduler.Default);
                 }
             }
         }
@@ -115,47 +133,106 @@ namespace CodeGenerator.Core.Templates
 
             if (!_registeredTemplateFolders.Contains(folderPath)) { 
                 _registeredTemplateFolders.Add(folderPath);
-                // Scan the folder for templates
-                ScanFolderForTemplates(folderPath, _templates);
+                // Scan the folder for templates on background thread
+                var scanTask = Task.Run(() => ScanFolderForTemplates(folderPath));
+                lock (_pendingScanTasks)
+                {
+                    _pendingScanTasks.Add(scanTask);
+                }
+                scanTask.ContinueWith(t => OnScanTaskCompleted(t), TaskScheduler.Default);
+            }
+        }
+
+        /// <summary>
+        /// Wait for all pending template scans to complete
+        /// </summary>
+        public async Task WaitForPendingScansAsync()
+        {
+            Task[] tasksToWait;
+            lock (_pendingScanTasks)
+            {
+                tasksToWait = _pendingScanTasks.ToArray();
+            }
+            if (tasksToWait.Length > 0)
+            {
+                await Task.WhenAll(tasksToWait);
+            }
+        }
+
+        private void OnScanTaskCompleted(Task task)
+        {
+            lock (_pendingScanTasks)
+            {
+                _pendingScanTasks.Remove(task);
+                if (_pendingScanTasks.Count == 0)
+                {
+                    // All scans complete, notify listeners
+                    TemplatesLoaded?.Invoke(this, EventArgs.Empty);
+                }
+            }
+
+            if (task.IsFaulted && task.Exception != null)
+            {
+                _logger.LogError(task.Exception, "Error during template folder scan");
             }
         }
 
         public IEnumerable<ITemplate> GetAllTemplates()
         {
-            return _templates.Values;
+            lock (_templatesLock)
+            {
+                return _templates.Values.ToList();
+            }
         }
 
         public IEnumerable<ITemplate> GetTemplatesByType(TemplateType templateType)
         {
-            return _templates.Values.Where(t => t.TemplateType == templateType).ToList();
+            lock (_templatesLock)
+            {
+                return _templates.Values.Where(t => t.TemplateType == templateType).ToList();
+            }
         }
 
         public IEnumerable<ITemplate> GetTemplatesByType(IEnumerable<TemplateType> templateTypes)
         {
-            return _templates.Values.Where(t => templateTypes.Contains(t.TemplateType)).ToList();
+            lock (_templatesLock)
+            {
+                return _templates.Values.Where(t => templateTypes.Contains(t.TemplateType)).ToList();
+            }
         }
 
         public void UnregisterTemplateFolder(string folderPath)
         {
             _registeredTemplateFolders.Remove(folderPath);
             // Optionally, remove templates loaded from this folder
-            foreach(var templatePath in _templates.Keys.ToArray())
+            lock (_templatesLock)
             {
-                if (Path.GetDirectoryName(templatePath)?.Equals(folderPath, StringComparison.OrdinalIgnoreCase) == true)
+                foreach (var templatePath in _templates.Keys.ToArray())
                 {
-                    var template = _templates[templatePath];
-                    _templates.Remove(templatePath);
-                    _logger.LogInformation("Unloaded template: {TemplateId} from {FilePath}", template.TemplateId, templatePath);
+                    if (Path.GetDirectoryName(templatePath)?.Equals(folderPath, StringComparison.OrdinalIgnoreCase) == true)
+                    {
+                        var template = _templates[templatePath];
+                        _templates.Remove(templatePath);
+                        _logger.LogInformation("Unloaded template: {TemplateId} from {FilePath}", template.TemplateId, templatePath);
+                    }
                 }
             }
         }
 
         public void RefreshTemplates()
         {
-            _templates.Clear();
-            foreach(var folder in _registeredTemplateFolders)
+            lock (_templatesLock)
             {
-                ScanFolderForTemplates(folder, _templates);
+                _templates.Clear();
+            }
+            foreach (var folder in _registeredTemplateFolders)
+            {
+                var scanTask = Task.Run(() => ScanFolderForTemplates(folder));
+                lock (_pendingScanTasks)
+                {
+                    _pendingScanTasks.Add(scanTask);
+                }
+                scanTask.ContinueWith(t => OnScanTaskCompleted(t), TaskScheduler.Default);
             }
         }
 
@@ -177,36 +254,45 @@ namespace CodeGenerator.Core.Templates
                 if (!string.IsNullOrEmpty(resolvedPath))
                 {
                     // Check if we already have this template loaded
-                    if (_templates.TryGetValue(resolvedPath, out var cachedTemplate))
+                    lock (_templatesLock)
                     {
-                        return cachedTemplate;
+                        if (_templates.TryGetValue(resolvedPath, out var cachedTemplate))
+                        {
+                            return cachedTemplate;
+                        }
                     }
 
                     // Load the template from the resolved path
                     var template = LoadTemplateFromPath(resolvedPath);
                     if (template != null)
                     {
-                        _templates[resolvedPath] = template;
+                        lock (_templatesLock)
+                        {
+                            _templates[resolvedPath] = template;
+                        }
                         return template;
                     }
                 }
             }
 
             // Standard lookup by template ID
-            var result = _templates.Values.FirstOrDefault(t => t.TemplateId.Equals(templateId, StringComparison.OrdinalIgnoreCase));
-            if (result != null)
-                return result;
-
-            // Try to match by the template name portion only (for backward compatibility)
-            var parsed = TemplateIdParser.Parse(templateId);
-            if (parsed.IsValid && !string.IsNullOrEmpty(parsed.TemplateName))
+            lock (_templatesLock)
             {
-                result = _templates.Values.FirstOrDefault(t => 
-                    t.TemplateId.Equals(parsed.TemplateName, StringComparison.OrdinalIgnoreCase) ||
-                    t.TemplateId.EndsWith("/" + parsed.TemplateName, StringComparison.OrdinalIgnoreCase));
-            }
+                var result = _templates.Values.FirstOrDefault(t => t.TemplateId.Equals(templateId, StringComparison.OrdinalIgnoreCase));
+                if (result != null)
+                    return result;
 
-            return result;
+                // Try to match by the template name portion only (for backward compatibility)
+                var parsed = TemplateIdParser.Parse(templateId);
+                if (parsed.IsValid && !string.IsNullOrEmpty(parsed.TemplateName))
+                {
+                    result = _templates.Values.FirstOrDefault(t =>
+                        t.TemplateId.Equals(parsed.TemplateName, StringComparison.OrdinalIgnoreCase) ||
+                        t.TemplateId.EndsWith("/" + parsed.TemplateName, StringComparison.OrdinalIgnoreCase));
+                }
+
+                return result;
+            }
         }
 
         /// <summary>
@@ -265,9 +351,9 @@ namespace CodeGenerator.Core.Templates
         }
 
         /// <summary>
-        /// Recursively scan a folder for template files
+        /// Recursively scan a folder for template files (thread-safe)
         /// </summary>
-        private void ScanFolderForTemplates(string folderPath, Dictionary<string, ITemplate> templates)
+        private void ScanFolderForTemplates(string folderPath)
         {
             try
             {
@@ -275,7 +361,7 @@ namespace CodeGenerator.Core.Templates
                 foreach (var subDir in Directory.GetDirectories(folderPath))
                 {
                     // Recursively scan subdirectory
-                    ScanFolderForTemplates(subDir, templates);
+                    ScanFolderForTemplates(subDir);
                 }
 
                 // Process template files
@@ -285,8 +371,11 @@ namespace CodeGenerator.Core.Templates
                     if (filePath.EndsWith(TemplateDefinition.DefinitionFileExtension, StringComparison.OrdinalIgnoreCase))
                         continue;
 
-                    if(_templates.ContainsKey(filePath))
-                        continue; // already loaded
+                    lock (_templatesLock)
+                    {
+                        if (_templates.ContainsKey(filePath))
+                            continue; // already loaded
+                    }
 
                     var extension = Path.GetExtension(filePath).TrimStart('.');
                     var templateEngine = _templateEngineManager.GetTemplateEngineByFileExtension(extension);
@@ -294,10 +383,16 @@ namespace CodeGenerator.Core.Templates
                     if (templateEngine != null)
                     {
                         var templateArtifact = templateEngine.CreateTemplateFromFile(filePath);
-                        if(templateArtifact!=null)
+                        if (templateArtifact != null)
                         {
-                            templates.Add(filePath,templateArtifact);
-                            _logger.LogInformation("Loaded template: {TemplateId} from {FilePath}", templateArtifact.TemplateId, filePath);
+                            lock (_templatesLock)
+                            {
+                                if (!_templates.ContainsKey(filePath))
+                                {
+                                    _templates.Add(filePath, templateArtifact);
+                                    _logger.LogInformation("Loaded template: {TemplateId} from {FilePath}", templateArtifact.TemplateId, filePath);
+                                }
+                            }
                         }
                     }
                 }

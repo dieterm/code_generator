@@ -2,6 +2,7 @@ using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels.Base;
 using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Shared.ViewModels;
 using Microsoft.Extensions.Logging;
 
@@ -165,6 +166,12 @@ public abstract class ArtifactTreeViewController<TTreeViewModel> : IArtifactTree
         if (controller != null)
         {
             return controller.GetContextMenuCommands(artifact);
+        }
+        else if(artifact is WorkspaceArtifactBase workspaceArtifact)
+        {
+            var commands = new List<ArtifactTreeNodeCommand>();
+            workspaceArtifact.PublishArtifactContextMenuOpeningEvent(commands);
+            return commands;
         }
         return Enumerable.Empty<ArtifactTreeNodeCommand>();
     }

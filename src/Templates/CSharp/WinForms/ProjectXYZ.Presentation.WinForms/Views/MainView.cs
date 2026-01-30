@@ -1,0 +1,21 @@
+using Syncfusion.Windows.Forms.Tools;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+
+
+namespace ProjectXYZ.Presentation.WinForms
+{
+    public partial class MainView : RibbonForm
+    {
+        /// <summary>
+        /// expose DockingManger for WindowManagerService
+        /// </summary>
+        public DockingManager DockingManager { get { return dockingManager; } }
+
+        public MainView()
+        {
+            InitializeComponent();
+        }
+    }
+}

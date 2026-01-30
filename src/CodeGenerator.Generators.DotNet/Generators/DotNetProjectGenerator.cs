@@ -57,11 +57,12 @@ namespace CodeGenerator.Generators.DotNet.Generators
 
         protected virtual async Task<DotNetProjectArtifact> OnLayerScopeCreatedAsync(CreatedArtifactEventArgs args)
         {
-            var settings = new DotNetProjectGeneratorSettings<TLayer>(base.GetSettings(), Layer);
             var appLayerArtifact = args.Artifact as TLayer;
             if (appLayerArtifact == null) throw new ArgumentException("Artifact is not an ApplicationLayerArtifact");
-            
+
             // GET SETTINGS
+            var settings = new DotNetProjectGeneratorSettings<TLayer>(base.GetSettings(), Layer);
+
             var language = DotNetLanguages.GetByCommandLineArgument(settings.Language);
             var targetFramework = settings.TargetFramework;
             var projectType = settings.ProjectType;
@@ -85,6 +86,10 @@ namespace CodeGenerator.Generators.DotNet.Generators
 
             var dotNetProjectTemplate = new DotNetProjectTemplate(projectType, language, targetFramework);
             var dotNetProjectTemplateInstance = new DotNetProjectTemplateInstance(dotNetProjectTemplate, projectName);
+            foreach(var nugetPackage in dotNetProjectArtifact.NuGetPackages)
+            {
+                dotNetProjectTemplateInstance.Packages.Add(nugetPackage);
+            }
             if (!args.Result.PreviewOnly)
             {
                 dotNetProjectTemplateInstance.OutputDirectory = dotNetProjectArtifact.FindAncesterOfType<FolderArtifact>()?.FullPath;

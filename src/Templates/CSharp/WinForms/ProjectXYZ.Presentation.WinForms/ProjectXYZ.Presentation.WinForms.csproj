@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
+    <PackageReference Include="Syncfusion.Edit.Windows" Version="32.1.20" />
+    <PackageReference Include="Syncfusion.Grouping.Base" Version="32.1.20" />
+    <PackageReference Include="Syncfusion.Office2019Theme.WinForms" Version="32.1.20" />
+    <PackageReference Include="Syncfusion.SfListView.WinForms" Version="32.1.20" />
+    <PackageReference Include="Syncfusion.Shared.Base" Version="32.1.20" />
+    <PackageReference Include="Syncfusion.Tools.Windows" Version="32.1.20" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ProjectXYZ.Shared\ProjectXYZ.Shared.csproj" />
+    <ProjectReference Include="..\ProjectXYZ.UserControls\ProjectXYZ.UserControls.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Resources\LucideIcons_#000000.Designer.cs">
+      <DependentUpon>LucideIcons_#000000.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Resources\LucideIcons_#ffffff.Designer.cs">
+      <DependentUpon>LucideIcons_#ffffff.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\LucideIcons_#000000.resx">
+      <LastGenOutput>LucideIcons_#000000.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\LucideIcons_#ffffff.resx">
+      <LastGenOutput>LucideIcons_#ffffff.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

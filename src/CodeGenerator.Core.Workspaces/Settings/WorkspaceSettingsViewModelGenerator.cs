@@ -58,7 +58,7 @@ namespace CodeGenerator.Core.Workspaces.Settings
                 Label = "Default Target Framework",
                 Name = nameof(_settings.DefaultTargetFramework),
                 IsRequired = true,
-                Items = TargetFrameworks.AllFrameworks.Select(f => new ComboboxItem { Value = f, DisplayName = f }).ToList(),
+                Items = TargetFrameworks.AllFrameworks.Select(f => new ComboboxItem { Value = f.Id, DisplayName = f.Name }).ToList(),
                 Value = _settings.DefaultTargetFramework
             };
             targetFrameworkField.PropertyChanged += TargetFrameworkField_PropertyChanged;
