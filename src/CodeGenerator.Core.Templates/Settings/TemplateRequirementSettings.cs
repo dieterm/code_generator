@@ -1,7 +1,6 @@
-using CodeGenerator.Core.Templates;
 using System.Text.Json.Serialization;
 
-namespace CodeGenerator.Core.Settings.Generators
+namespace CodeGenerator.Core.Templates.Settings
 {
     /// <summary>
     /// Represents a template requirement for a generator.

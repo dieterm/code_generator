@@ -9,6 +9,11 @@
   <ItemGroup>
     <ProjectReference Include="..\CodeGenerator.Core.Templates\CodeGenerator.Core.Templates.csproj" />
     <ProjectReference Include="..\CodeGenerator.Domain\CodeGenerator.Domain.csproj" />
+    <ProjectReference Include="..\CodeGenerator.TemplateEngines.Scriban\CodeGenerator.TemplateEngines.Scriban.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Templates\classlib\csharp\" />
   </ItemGroup>
 
 </Project>

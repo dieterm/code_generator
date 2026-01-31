@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace CodeGenerator.Core.Generators.Settings
+namespace CodeGenerator.Core.Settings
 {
     /// <summary>
     /// Defines a parameter for a generator

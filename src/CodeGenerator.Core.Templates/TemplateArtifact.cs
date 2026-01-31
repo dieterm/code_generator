@@ -19,11 +19,11 @@ public class TemplateArtifact : Artifact
         //FileName = Path.GetFileName(filePath);
         
         // Try to create template from file if engine is provided
-        if (templateEngine != null)
+        if (templateEngine != null && templateEngine is IFileBasedTemplateEngine fileBasedTemplateEngine)
         {
             try
             {
-                _template = templateEngine.CreateTemplateFromFile(filePath);
+                _template = fileBasedTemplateEngine.CreateTemplateFromFile(filePath);
             }
             catch
             {
@@ -43,7 +43,10 @@ public class TemplateArtifact : Artifact
         var fileExtention = Path.GetExtension(FilePath);
         var templateEngineManager = ServiceProviderHolder.GetRequiredService<TemplateEngineManager>();
         var templateEngine = templateEngineManager.GetTemplateEngineByFileExtension(fileExtention);
-        _template = templateEngine!.CreateTemplateFromFile(FilePath);
+        if (templateEngine is IFileBasedTemplateEngine fileBasedTemplateEngine)
+        {
+            _template = fileBasedTemplateEngine.CreateTemplateFromFile(FilePath);
+        }
     }
 
     /// <summary>

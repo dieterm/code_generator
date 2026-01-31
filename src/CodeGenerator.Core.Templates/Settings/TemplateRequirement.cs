@@ -1,7 +1,6 @@
-﻿using CodeGenerator.Core.Templates;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
-namespace CodeGenerator.Core.Generators.Settings
+namespace CodeGenerator.Core.Templates.Settings
 {
     /// <summary>
     /// Represents a template requirement for a generator.
@@ -73,9 +72,9 @@ namespace CodeGenerator.Core.Generators.Settings
         /// <summary>
         /// Convert to settings version for persistence
         /// </summary>
-        public Core.Settings.Generators.TemplateRequirementSettings ToSettings()
+        public TemplateRequirementSettings ToSettings()
         {
-            return new Core.Settings.Generators.TemplateRequirementSettings
+            return new TemplateRequirementSettings
             {
                 TemplateId = TemplateId,
                 Description = Description,
@@ -89,7 +88,7 @@ namespace CodeGenerator.Core.Generators.Settings
         /// <summary>
         /// Create from settings version
         /// </summary>
-        public static TemplateRequirement FromSettings(Core.Settings.Generators.TemplateRequirementSettings settings)
+        public static TemplateRequirement FromSettings(TemplateRequirementSettings settings)
         {
             return new TemplateRequirement
             {

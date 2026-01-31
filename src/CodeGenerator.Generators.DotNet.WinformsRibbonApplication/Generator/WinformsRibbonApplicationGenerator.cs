@@ -103,46 +103,62 @@ namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication
                 }
                 filesToIgnore.Add(TemplateDefinition.GetDefinitionFilePath(file));
                 
+                if(templateEngine is IFileBasedTemplateEngine fileBasedTemplateEngine)
+                {
+                    //// Check for template definition
+                    //var definitionFilePath = TemplateDefinition.GetDefinitionFilePath(file);
+                    //if (File.Exists(definitionFilePath))
+                    //{
+                    //    var templateDefinition = TemplateDefinition.LoadFromFile(definitionFilePath);
+                    //    if (templateDefinition != null)
+                    //    {
+                    //        // You can use templateDefinition as needed
+                    //    }
+                    //}
+
+                    var template = fileBasedTemplateEngine.CreateTemplateFromFile(file);
+                    if (template is ScribanFileTemplate scribanTemplate)
+                    {
+                        // Set Scriban specific options if needed
+                        scribanTemplate.CreateTemplateFileIfMissing = true;
+                    }
+                    var templateInstance = templateEngine.CreateTemplateInstance(template);
+
+                    templateInstance.SetParameter("Namespace", parentNamespace);
+                    var renderResult = await templateEngine.RenderAsync(templateInstance);
+
+                    if (renderResult.Succeeded)
+                    {
+                        foreach (var artifact in renderResult.Artifacts)
+                        {
+                            if (artifact is FileArtifact fileArtifact)
+                            {
+                                // remove extension from filename
+                                var filenameWithoutExtension = Path.GetFileNameWithoutExtension(file);
+                                fileArtifact.FileName = filenameWithoutExtension;
+                                parentArtifact.AddChild(fileArtifact);
+                                //AddChildArtifactToParent(parentArtifact, fileArtifact, result);
+                            }
+                            else
+                            {
+                                // Handle other artifact types if necessary
+                                parentArtifact.AddChild(artifact);
+                                //AddChildArtifactToParent(parentArtifact, artifact, result);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Log errors
+                        foreach (var error in renderResult.Errors)
+                        {
+                            result.Errors.Add($"Error rendering template '{file}': {error}");
+                        }
+                    }
+                }
+
                 // Create template instance
-                var template = templateEngine.CreateTemplateFromFile(file);
-                if(template is ScribanFileTemplate scribanTemplate)
-                {
-                    // Set Scriban specific options if needed
-                    scribanTemplate.CreateTemplateFileIfMissing = true;
-                }
-                var templateInstance = templateEngine.CreateTemplateInstance(template);
                 
-                templateInstance.SetParameter("Namespace", parentNamespace);
-                var renderResult = await templateEngine.RenderAsync(templateInstance);
-                
-                if(renderResult.Succeeded)
-                {
-                    foreach(var artifact in renderResult.Artifacts)
-                    {
-                        if (artifact is FileArtifact fileArtifact)
-                        {
-                            // remove extension from filename
-                            var filenameWithoutExtension = Path.GetFileNameWithoutExtension(file);
-                            fileArtifact.FileName = filenameWithoutExtension;
-                            parentArtifact.AddChild(fileArtifact);
-                            //AddChildArtifactToParent(parentArtifact, fileArtifact, result);
-                        }
-                        else
-                        {
-                            // Handle other artifact types if necessary
-                            parentArtifact.AddChild(artifact);
-                            //AddChildArtifactToParent(parentArtifact, artifact, result);
-                        }
-                    }
-                }
-                else
-                {
-                    // Log errors
-                    foreach(var error in renderResult.Errors)
-                    {
-                        result.Errors.Add($"Error rendering template '{file}': {error}");
-                    }
-                }
 
             }
 

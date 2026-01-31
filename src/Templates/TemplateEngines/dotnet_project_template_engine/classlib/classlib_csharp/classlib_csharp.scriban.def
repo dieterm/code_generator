@@ -1,0 +1,28 @@
+{
+  "templateName": "classlib_csharp",
+  "displayName": "classlib_csharp.scriban",
+  "description": null,
+  "category": null,
+  "tags": null,
+  "version": null,
+  "author": null,
+  "parameters": [
+    {
+      "name": "DotNetProject",
+      "description": "DotNetProject",
+      "fullyQualifiedAssemblyTypeName": "System.String",
+      "required": true,
+      "defaultValue": null,
+      "allowedValues": null,
+      "label": "DotNetProject",
+      "tooltip": null,
+      "displayOrder": 0,
+      "validationPattern": null,
+      "minValue": null,
+      "maxValue": null,
+      "tableDataFilter": null,
+      "tableDataMaxRows": null,
+      "isTemplateDatasourceArtifactData": false
+    }
+  ]
+}

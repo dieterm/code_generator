@@ -1,4 +1,6 @@
 ﻿using CodeGenerator.Core.Interfaces;
+using CodeGenerator.Core.Templates.Settings;
+using CodeGenerator.Shared;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -12,73 +14,67 @@ namespace CodeGenerator.Core.Templates
         where TTemplate : ITemplate
         where TTemplateInstance : ITemplateInstance
     {
-        protected string[] SupportedFileExtensions { get; } = Array.Empty<string>();
         protected TemplateType SupportedTemplateType { get; }
 
-        /// <summary>
         /// <inheritdoc/>
-        /// </summary>
         public string Id { get; }
-        /// <summary>
         /// <inheritdoc/>
-        /// </summary>
         public string DisplayName { get; }
         protected ILogger Logger { get; }
-        public abstract string DefaultFileExtension { get; }
-
-        protected TemplateEngine(ILogger logger, string id, string displayName, TemplateType supportedTemplateType, string[]? supportedFileExtensions = null)
+        
+        public TemplateEngineSettingsDescription SettingsDescription { get; }
+        protected TemplateEngine(ILogger logger, string id, string displayName, TemplateType supportedTemplateType)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             Id = id ?? throw new ArgumentNullException(nameof(id));
             DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
             SupportedTemplateType = supportedTemplateType;
-            if (supportedFileExtensions != null)
-            {
-                SupportedFileExtensions = supportedFileExtensions;
-            }
+            SettingsDescription = CreateSettingsDescription();
         }
+
         /// <summary>
-        /// <inheritdoc/>
+        /// Override to provide a custom settings description.
         /// </summary>
-        public virtual bool SupportsTemplate(ITemplate template)
+        protected virtual TemplateEngineSettingsDescription CreateSettingsDescription()
         {
-            return template is TTemplate && template.TemplateType == SupportedTemplateType;
+            return new TemplateEngineSettingsDescription(Id, DisplayName, DisplayName);
         }
-        /// <summary>
+
         /// <inheritdoc/>
-        /// </summary>
         public virtual bool SupportsTemplateType(TemplateType templateType)
         {
             return templateType == SupportedTemplateType;
         }
-       
-        /// <summary>
-        /// This method checks whether the given fileOrFolderName ends with one of the supported file extensions.<br />
-        /// It does not check if the file or folder actually exists.<br />
-        /// These checks need to be done by the derived classes if needed.
-        /// </summary>
-        public virtual bool SupportsTemplatePath(string fileOrFolderName)
-        {
-            if(string.IsNullOrWhiteSpace(fileOrFolderName)) throw new ArgumentNullException(nameof(fileOrFolderName));
-            return SupportedFileExtensions.Any(ext => fileOrFolderName.EndsWith($".{ext}", StringComparison.OrdinalIgnoreCase));
-        }
 
-        /// <summary>
         /// <inheritdoc/>
-        /// </summary>
-        public virtual bool SupportsTemplateFileExtension(string fileExtension)
+        public virtual bool SupportsTemplate(ITemplate template)
         {
-            if (string.IsNullOrWhiteSpace(fileExtension)) throw new ArgumentNullException(nameof(fileExtension));
-            return SupportedFileExtensions.Contains(fileExtension, StringComparer.OrdinalIgnoreCase);
+            return template is TTemplate && template.TemplateType == SupportedTemplateType;
         }
 
+        /// <inheritdoc/>
         public abstract Task<TemplateOutput> RenderAsync(TTemplateInstance templateInstance, CancellationToken cancellationToken);
+
+        /// <inheritdoc/>
         Task<TemplateOutput> ITemplateEngine.RenderAsync(ITemplateInstance templateInstance, CancellationToken cancellationToken)
         {
             return RenderAsync((TTemplateInstance)templateInstance, cancellationToken);
         }
 
-        public abstract ITemplate CreateTemplateFromFile(string filePath);
+        /// <inheritdoc/>
         public abstract ITemplateInstance CreateTemplateInstance(ITemplate template);
+
+        /// <inheritdoc/>
+        public virtual void Initialize()
+        {
+            // Default implementation does nothing
+        }
+
+        protected virtual TemplateEngineSettings GetSettings()
+        {
+            var settingsManager = ServiceProviderHolder.GetRequiredService<TemplateEngineSettingsManager>();
+            var settings = settingsManager.GetTemplateEngineSettings(this.SettingsDescription.Id);
+            return settings;
+        }
     }
 }

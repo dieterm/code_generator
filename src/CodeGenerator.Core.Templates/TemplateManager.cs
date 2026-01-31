@@ -30,12 +30,13 @@ namespace CodeGenerator.Core.Templates
         /// </summary>
         public event EventHandler? TemplatesLoaded;
 
-        public TemplateManager(ILogger<TemplateManager> logger, TemplateEngineManager templateEngineManager)
+        public TemplateManager(TemplatePathResolver templatePathResolver, ILogger<TemplateManager> logger, TemplateEngineManager templateEngineManager)
         {
             _logger = logger;
             _templateEngineManager = templateEngineManager;
-            _pathResolver = new TemplatePathResolver(
-                logger != null ? Microsoft.Extensions.Logging.LoggerFactory.Create(b => { }).CreateLogger<TemplatePathResolver>() : null);
+            _pathResolver = templatePathResolver;
+            //_pathResolver = new TemplatePathResolver(
+            //    logger != null ? Microsoft.Extensions.Logging.LoggerFactory.Create(b => { }).CreateLogger<TemplatePathResolver>() : null);
         }
 
         /// <summary>
@@ -296,11 +297,22 @@ namespace CodeGenerator.Core.Templates
         }
 
         /// <summary>
-        /// Resolve a TemplateId to a file path
+        /// Resolve a TemplateId to a file path, and return the searched locations. <br />
+        /// Returns null if the template could not be resolved.
+        /// </summary>
+        public string? ResolveTemplateIdToPath(string templateId, out List<string> searchLocations)
+        {
+            return _pathResolver.ResolveTemplateId(templateId, out searchLocations);
+        }
+
+        /// <summary>
+        /// Resolve a TemplateId to a file path. <br />
+        /// Returns null if the template could not be resolved.
         /// </summary>
         public string? ResolveTemplateIdToPath(string templateId)
         {
-            return _pathResolver.ResolveTemplateId(templateId);
+            List<string> searchLocations;
+            return _pathResolver.ResolveTemplateId(templateId, out searchLocations);
         }
 
         /// <summary>
@@ -332,9 +344,9 @@ namespace CodeGenerator.Core.Templates
                 var extension = Path.GetExtension(filePath).TrimStart('.');
                 var templateEngine = _templateEngineManager.GetTemplateEngineByFileExtension(extension);
 
-                if (templateEngine != null)
+                if (templateEngine != null && templateEngine is IFileBasedTemplateEngine fileBasedTemplateEngine)
                 {
-                    var template = templateEngine.CreateTemplateFromFile(filePath);
+                    var template = fileBasedTemplateEngine.CreateTemplateFromFile(filePath);
                     if (template != null)
                     {
                         _logger.LogInformation("Loaded template: {TemplateId} from {FilePath}", template.TemplateId, filePath);
@@ -380,9 +392,9 @@ namespace CodeGenerator.Core.Templates
                     var extension = Path.GetExtension(filePath).TrimStart('.');
                     var templateEngine = _templateEngineManager.GetTemplateEngineByFileExtension(extension);
 
-                    if (templateEngine != null)
+                    if (templateEngine != null && templateEngine is IFileBasedTemplateEngine fileBasedTemplateEngine)
                     {
-                        var templateArtifact = templateEngine.CreateTemplateFromFile(filePath);
+                        var templateArtifact = fileBasedTemplateEngine.CreateTemplateFromFile(filePath);
                         if (templateArtifact != null)
                         {
                             lock (_templatesLock)

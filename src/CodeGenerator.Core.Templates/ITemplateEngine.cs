@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.Templates.Settings;
 
 namespace CodeGenerator.Core.Interfaces;
 
@@ -16,18 +17,13 @@ public interface ITemplateEngine
     /// Display name used in logs and user interface
     /// </summary>
     string DisplayName { get; }
-    string DefaultFileExtension { get; }
+    
+    TemplateEngineSettingsDescription SettingsDescription { get; }
+    void Initialize();
 
-    bool SupportsTemplatePath(string fileOrFolderName);
-    /// <summary>
-    /// File extensions supported by this template engine (without dot) eg. "scriban", "tt"<br />
-    /// Used to identify template files for this engine.
-    /// For folder-based templates, should throw exception or return false.
-    /// </summary>
-    bool SupportsTemplateFileExtension(string fileExtension);
     bool SupportsTemplate(ITemplate template);
     bool SupportsTemplateType(TemplateType templateType);
-    ITemplate CreateTemplateFromFile(string filePath);
+
     ITemplateInstance CreateTemplateInstance(ITemplate template);
     /// <summary>
     /// Render a template with the given model

@@ -18,6 +18,7 @@ using CodeGenerator.Core.Settings.Application;
 using CodeGenerator.Core.Settings.Generators;
 using CodeGenerator.Core.Settings.ViewModels;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.Templates.Settings;
 using CodeGenerator.Core.Workspaces;
 using CodeGenerator.Core.Workspaces.Datasources.Csv;
 using CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly;
@@ -154,6 +155,7 @@ public static class ServiceCollectionExtensions
         // Settings Managers
         services.AddSingleton<ApplicationSettingsManager>();
         services.AddSingleton<WorkspaceSettingsManager>();
+        services.AddSingleton<TemplateEngineSettingsManager>();
         services.AddSingleton<GeneratorSettingsManager>();
 
         // Register Ribbon Builder
@@ -167,6 +169,7 @@ public static class ServiceCollectionExtensions
         // IMPORTANT: Ensure that all generators are registered here
 
         services.AddSingleton<TemplateManager>();
+        services.AddSingleton<TemplatePathResolver>();
         services.AddSingleton<TemplateEngineManager>();
         // Register Template Engines
         services.AddSingleton<DotNetProjectTemplateEngine>();
@@ -176,13 +179,22 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.Scriban.ScribanTemplateEngine>();
         services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.T4.T4TemplateEngine>();
         services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.PlantUML.PlantUmlTemplateEngine>();
-
+        
         services.AddDotNetWinformsRibbonApplicationGeneratorServices(configuration);
 
         // Add logging
         services.AddLogging(builder =>
         {
             builder.AddDebug();
+            builder.SetMinimumLevel(LogLevel.Debug); // Enable Debug level logging
+
+            // Filter out noisy Microsoft and System logs
+            builder.AddFilter("Microsoft", LogLevel.Warning);
+            builder.AddFilter("System", LogLevel.Warning);
+            builder.AddFilter("CodeGenerator", LogLevel.Debug); // Debug for your application
+            //builder.AddFilter("CodeGenerator.Application", LogLevel.Debug);      // Alleen Application layer
+            //builder.AddFilter("CodeGenerator.Core.Templates", LogLevel.Trace);   // Extra verbose voor Templates
+            //builder.AddFilter("CodeGenerator.Generators", LogLevel.Information); // Minder verbose voor Generators
             builder.AddConfiguration(configuration.GetSection("Logging"));
         });
 

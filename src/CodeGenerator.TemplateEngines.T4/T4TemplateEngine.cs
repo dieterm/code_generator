@@ -11,7 +11,7 @@ namespace CodeGenerator.TemplateEngines.T4
     /// <summary>
     /// T4 Template Engine implementation using Mono.TextTemplating
     /// </summary>
-    public class T4TemplateEngine : TemplateEngine<T4Template, T4TemplateInstance>
+    public class T4TemplateEngine : FileBasedTemplateEngine<T4Template, T4TemplateInstance>
     {
         private readonly ConcurrentDictionary<string, (CompiledTemplate Template, TemplateGenerator Generator)> _compiledTemplates = new();
         private readonly string? _templateRootFolder;

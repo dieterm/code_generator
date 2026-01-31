@@ -1,6 +1,7 @@
 ﻿using CodeGenerator.Core.Generators.Settings;
 using CodeGenerator.Core.Settings.Generators;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.Templates.Settings;
 using CodeGenerator.Generators.DotNet.Generators;
 using CodeGenerator.Generators.DotNet.Generators.PresentationLayer.ApplicationScope;
 using System;

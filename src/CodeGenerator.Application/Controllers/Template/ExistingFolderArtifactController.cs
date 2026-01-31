@@ -34,7 +34,7 @@ namespace CodeGenerator.Application.Controllers.Template
             };
             // get template engines
             var templateEngineManager = ServiceProviderHolder.GetRequiredService<TemplateEngineManager>();
-            var templateEngines = templateEngineManager.TemplateEngines.Where(t => !string.IsNullOrEmpty(t.DefaultFileExtension)).ToArray();
+            var templateEngines = templateEngineManager.TemplateEngines.OfType<IFileBasedTemplateEngine>().ToArray();
             foreach (var engine in templateEngines)
             {
                 createTemplateCommand.SubCommands.Add(new ArtifactTreeNodeCommand

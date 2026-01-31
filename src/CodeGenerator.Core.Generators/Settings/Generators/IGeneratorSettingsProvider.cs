@@ -1,4 +1,4 @@
-using CodeGenerator.Core.Generators.Settings;
+using CodeGenerator.Core.Templates.Settings;
 
 namespace CodeGenerator.Core.Settings.Generators
 {

@@ -77,9 +77,11 @@ namespace CodeGenerator.Application.Controllers.Template
 
         public void Initialize()
         {
+            _templateEngineManager.Intitialize();
+
             // Initialize default template folder from settings
             InitializeDefaultTemplateFolder();
-
+            
             // Subscribe to settings changes
             WorkspaceSettings.DefaultTemplateFolderChanged += OnDefaultTemplateFolderChanged;
         }

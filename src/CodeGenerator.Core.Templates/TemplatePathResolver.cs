@@ -32,7 +32,7 @@ public class TemplatePathResolver
     /// </summary>
     public event EventHandler<string>? RequiredTemplateFolderMissing;
 
-    public TemplatePathResolver(ILogger<TemplatePathResolver>? logger = null)
+    public TemplatePathResolver(ILogger<TemplatePathResolver> logger)
     {
         _logger = logger;
         RegisterDefaultSpecialFolders();
@@ -421,12 +421,29 @@ public class TemplatePathResolver
     /// <returns>Resolved file path, or null if not found</returns>
     public string? ResolveTemplateId(string templateId)
     {
+        List<string> searchedLocations;
+        return ResolveTemplateId(templateId, out searchedLocations);
+    }
+
+    /// <summary>
+    /// Resolve a TemplateId to a file path, checking workspace first, then default folder
+    /// </summary>
+    /// <param name="templateId">The TemplateId to resolve</param>
+    /// <param name="searchedLocations">Outputs the list of locations searched</param>
+    /// <returns>Resolved file path, or null if not found</returns>
+    public string? ResolveTemplateId(string templateId, out List<string> searchedLocations)
+    {
+        searchedLocations = new List<string>();
+
         if (string.IsNullOrWhiteSpace(templateId))
             return null;
 
         // If it doesn't use special folder syntax, return as-is (might be a direct path)
         if (!TemplateIdParser.HasSpecialFolderSyntax(templateId))
         {
+            if(searchedLocations !=null)
+                searchedLocations.Add(templateId);
+
             return File.Exists(templateId) ? templateId : null;
         }
 
@@ -443,6 +460,9 @@ public class TemplatePathResolver
             var workspacePath = ResolveInDirectory(parsed, CurrentWorkspaceDirectory, useTemplatesSubfolder: true);
             if (!string.IsNullOrEmpty(workspacePath))
             {
+                if(searchedLocations != null)
+                    searchedLocations.Add(workspacePath);
+
                 _logger?.LogDebug("Resolved template '{TemplateId}' in workspace: {Path}", templateId, workspacePath);
                 return workspacePath;
             }
@@ -454,6 +474,9 @@ public class TemplatePathResolver
             var defaultPath = ResolveInDirectory(parsed, DefaultTemplateFolder, useTemplatesSubfolder: false);
             if (!string.IsNullOrEmpty(defaultPath))
             {
+                if(searchedLocations != null)
+                    searchedLocations.Add(defaultPath);
+
                 _logger?.LogDebug("Resolved template '{TemplateId}' in default folder: {Path}", templateId, defaultPath);
                 return defaultPath;
             }
@@ -531,13 +554,18 @@ public class TemplatePathResolver
 
     private string? ResolveInDirectory(ParsedTemplateId parsed, string rootDirectory, bool useTemplatesSubfolder)
     {
+        _logger?.LogDebug("Resolving template '{TemplateId}' in directory: {RootDirectory}", parsed.FullTemplateId, rootDirectory);
+
         var folderPath = BuildFolderPathFromParsed(parsed, rootDirectory, useTemplatesSubfolder);
-        
+        _logger?.LogDebug("Looking for template in folder: {FolderPath}", folderPath);
+
         if (!Directory.Exists(folderPath))
             return null;
 
         // Look for template files in the template folder
         var templateFolder = Path.Combine(folderPath, parsed.TemplateName);
+        _logger?.LogDebug("Looking for template files ({defext}) in folder: {TemplateFolder}", TemplateDefinition.DefinitionFileExtension, templateFolder);
+
         if (Directory.Exists(templateFolder))
         {
             // Find template files in the folder
@@ -547,12 +575,13 @@ public class TemplatePathResolver
 
             foreach(var defFile in defFiles)
             {
+                _logger?.LogDebug("Checking template definition file: {DefinitionFile}", defFile);
                 var templateDef = TemplateDefinition.LoadFromFile(defFile);
                 if (templateDef != null && string.Equals(templateDef.TemplateName, parsed.TemplateName, StringComparison.OrdinalIgnoreCase))
                 {
+                    _logger?.LogDebug("Found matching template definition: {TemplateName}", templateDef.TemplateName);
                     // remove definition file extension to get template file path
                     return defFile.Substring(0, defFile.Length - TemplateDefinition.DefinitionFileExtension.Length);
-
                 }
             }
         }

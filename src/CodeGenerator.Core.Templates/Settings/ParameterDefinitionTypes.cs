@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CodeGenerator.Core.Generators.Settings
+namespace CodeGenerator.Core.Settings
 {
     public class ParameterDefinitionTypes
     {

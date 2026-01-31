@@ -1,145 +1,122 @@
-using CodeGenerator.Core.Generators;
-using CodeGenerator.Core.Generators.Settings;
+﻿using CodeGenerator.Core.Interfaces;
+using CodeGenerator.Core.Settings;
 using CodeGenerator.Core.Settings.Interfaces;
 using CodeGenerator.Core.Settings.Models;
-using CodeGenerator.Core.Templates;
-using CodeGenerator.Core.Templates.Settings;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Models;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Reflection;
-using System.Runtime;
+using System.Linq;
+using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
-namespace CodeGenerator.Core.Settings.Generators
+namespace CodeGenerator.Core.Templates.Settings
 {
-    /// <summary>
-    /// Service for managing generator-specific settings.
-    /// Stores settings as JSON and integrates with registered IGeneratorSettingsProvider instances.
-    /// </summary>
-    public class GeneratorSettingsManager : LocalApplicationDataSettingsManager<AllGeneratorSettings>
+    public class TemplateEngineSettingsManager : LocalApplicationDataSettingsManager<AllTemplateEngineSettings>
     {
-        private readonly List<IGeneratorSettingsProvider> _generatorSettingsProviders = new();
+        private readonly List<TemplateEngineSettingsDescription> _templateEngineSettingsDescriptions = new List<TemplateEngineSettingsDescription>();
 
-        public GeneratorSettingsManager(ILogger<GeneratorSettingsManager> logger)
-            : base(GetDefaultSettingsFilePath("CodeGenerator", "generator-settings.json"), logger)
+        public TemplateEngineSettingsManager(ILogger<TemplateEngineSettingsManager> logger)
+            : base(GetDefaultSettingsFilePath("CodeGenerator", "template-engine-settings.json"), logger)
         {
             
         }
 
-        public GeneratorSettingsManager(string settingsFilePath, ILogger<GeneratorSettingsManager> logger)
-            : base(settingsFilePath, logger)
+        public override AllTemplateEngineSettings CreateDefaultSettings()
         {
-            
+            return new AllTemplateEngineSettings();
         }
-  
-        #region Generator Registration
 
-        /// <summary>
-        /// Discover and register all IGeneratorSettingsProvider instances from the service provider.
-        /// Initializes settings for generators that don't have saved settings yet.
-        /// </summary>
-        public void DiscoverAndRegisterGenerators()
+        public void DiscoverAndRegisterTemplateEngines()
         {
             try
             {
-                var providers = ServiceProviderHolder.ServiceProvider
-                    .GetServices<IMessageBusAwareGenerator>()
-                    .Select(g => g.SettingsDescription as IGeneratorSettingsProvider)
+                var settingsDescriptions = ServiceProviderHolder.ServiceProvider
+                    .GetServices<ITemplateEngine>()
+                    .Select(g => g.SettingsDescription)
                     .ToList();
-                _generatorSettingsProviders.AddRange(providers);
-                _logger?.LogInformation("Discovered {Count} generator settings providers", providers.Count);
+                _templateEngineSettingsDescriptions.AddRange(settingsDescriptions);
+                _logger?.LogInformation("Discovered {Count} template engine settings providers", settingsDescriptions.Count);
 
-                foreach (var provider in providers)
+                foreach (var settingsDescription in settingsDescriptions)
                 {
-                    RegisterGenerator(provider);
+                    RegisterTemplateEngine(settingsDescription);
                 }
 
                 // Register generator templates with the TemplateManager
-                RegisterGeneratorTemplatesWithTemplateManager();
+                RegisterTemplateEngineTemplatesWithTemplateManager();
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex, "Failed to discover generators from service provider");
+                _logger?.LogError(ex, "Failed to discover template engine from service provider");
             }
         }
 
-        /// <summary>
-        /// Register generator templates with the TemplateManager for special folder resolution
-        /// </summary>
-        private void RegisterGeneratorTemplatesWithTemplateManager()
+        private void RegisterTemplateEngineTemplatesWithTemplateManager()
         {
             try
             {
                 var templateManager = ServiceProviderHolder.GetRequiredService<TemplateManager>();
 
-                foreach (var provider in _generatorSettingsProviders)
+                foreach (var settingsDescription in _templateEngineSettingsDescriptions)
                 {
-                    if (provider is GeneratorSettingsDescription description)
+                    foreach (var template in settingsDescription.Templates)
                     {
-                        foreach (var template in description.Templates)
-                        {
-                            // Register the template ID to auto-detect special folders
-                            
-                            templateManager.RegisterRequiredTemplate(template.TemplateId);
-                        }
+                        // Register the template ID to auto-detect special folders
+
+                        templateManager.RegisterRequiredTemplate(template.TemplateId);
                     }
                 }
 
-                _logger?.LogDebug("Registered generator templates with TemplateManager");
+                _logger?.LogDebug("Registered template engine templates with TemplateManager");
             }
             catch (Exception ex)
             {
-                _logger?.LogWarning(ex, "Failed to register generator templates with TemplateManager");
+                _logger?.LogWarning(ex, "Failed to register template engine templates with TemplateManager");
             }
         }
 
-        /// <summary>
-        /// Register a single generator and initialize its settings if not already present
-        /// </summary>
-        public void RegisterGenerator(IGeneratorSettingsProvider provider)
+        private void RegisterTemplateEngine(TemplateEngineSettingsDescription settingsDescription)
         {
-            var generatorId = provider.GeneratorId;
+            var templateEngineId = settingsDescription.Id;
 
             // If no settings exist for this generator, create defaults from provider
-            if (!Settings.HasGeneratorSettings(generatorId))
+            if (!Settings.HasTemplateEngineSettings(templateEngineId))
             {
-                var settings = provider.GetDefaultSettings();
-                settings.Name = provider.GeneratorName;
-                settings.Description = provider.GeneratorDescription;
-                settings.Category = provider.Category;
-                
-                Settings.SetGeneratorSettings(settings);
-                
-                _logger?.LogInformation("Registered new generator: {Id} ({Name})", generatorId, provider.GeneratorName);
+                var settings = settingsDescription.GetDefaultSettings();
+                settings.Name = settingsDescription.Name;
+                settings.Description = settingsDescription.Description;
+                settings.Category = settingsDescription.Category;
+
+                Settings.SetTemplateEngineSettings(settings);
+
+                _logger?.LogInformation("Registered new template engine: {Id} ({Name})", templateEngineId, settingsDescription.Name);
             }
             else
             {
                 // Update metadata but keep user settings
-                var settings = Settings.GetGeneratorSettings(generatorId);
-                settings.Name = provider.GeneratorName;
-                settings.Description = provider.GeneratorDescription;
-                settings.Category = provider.Category;
+                var settings = Settings.GetTemplateEngineSettings(templateEngineId);
+                settings.Name = settingsDescription.Name;
+                settings.Description = settingsDescription.Description;
+                settings.Category = settingsDescription.Category;
 
                 // Merge any new templates from the provider
-                MergeTemplatesFromProvider(generatorId, provider);
-                
-                _logger?.LogDebug("Generator already registered: {Id}", generatorId);
+                MergeTemplatesFromSettingsDescription(templateEngineId, settingsDescription);
+
+                _logger?.LogDebug("Template engine already registered: {Id}", templateEngineId);
             }
         }
 
-        /// <summary>
-        /// Merge new templates from provider into existing settings
-        /// (adds new templates, doesn't overwrite existing)
-        /// </summary>
-        private void MergeTemplatesFromProvider(string generatorId, IGeneratorSettingsProvider provider)
+        private void MergeTemplatesFromSettingsDescription(string templateEngineId, TemplateEngineSettingsDescription settingsDescription)
         {
-            var settings = Settings.GetGeneratorSettings(generatorId);
-            var defaultSettings = provider.GetDefaultSettings();
+            var settings = Settings.GetTemplateEngineSettings(templateEngineId);
+            var defaultSettings = settingsDescription.GetDefaultSettings();
 
             foreach (var template in defaultSettings.Templates)
             {
@@ -155,148 +132,29 @@ namespace CodeGenerator.Core.Settings.Generators
                         Enabled = template.Enabled
                     });
 
-                    _logger?.LogDebug("Added new template {TemplateId} to generator {GeneratorId}", 
-                        template.TemplateId, generatorId);
+                    _logger?.LogDebug("Added new template {TemplateId} to template engine {TemplateEngineId}",
+                        template.TemplateId, templateEngineId);
                 }
             }
         }
 
-        #endregion
-
-        #region Get/Set Generator Settings
-
-        /// <summary>
-        /// Get all registered generator settings
-        /// </summary>
-        //public AllGeneratorSettings GetAllSettings() => Settings;
-
-        /// <summary>
-        /// Get settings for a specific generator
-        /// </summary>
-        public GeneratorSettings GetGeneratorSettings(string generatorId)
-        {
-            return Settings.GetGeneratorSettings(generatorId);
-        }
-
-        /// <summary>
-        /// Update settings for a specific generator
-        /// </summary>
-        public void UpdateGeneratorSettings(GeneratorSettings settings)
-        {
-            Settings.SetGeneratorSettings(settings);
-        }
-
-        /// <summary>
-        /// Get all registered generator IDs
-        /// </summary>
-        public IEnumerable<string> GetRegisteredGeneratorIds()
-        {
-            return Settings.Generators.Keys;
-        }
-
-        /// <summary>
-        /// Check if a generator is enabled
-        /// </summary>
-        public bool IsGeneratorEnabled(string generatorId)
-        {
-            return Settings.GetGeneratorSettings(generatorId).Enabled;
-        }
-
-        /// <summary>
-        /// Enable or disable a generator
-        /// </summary>
-        public void SetGeneratorEnabled(string generatorId, bool enabled)
-        {
-            var settings = Settings.GetGeneratorSettings(generatorId);
-            settings.Enabled = enabled;
-        }
-
-        #endregion
-
-        #region Template Settings
-
-        /// <summary>
-        /// Get templates for a specific generator
-        /// </summary>
-        public List<TemplateRequirementSettings> GetTemplates(string generatorId)
-        {
-            return Settings.GetGeneratorSettings(generatorId).Templates;
-        }
-
-        /// <summary>
-        /// Update a template for a generator
-        /// </summary>
-        public void UpdateTemplate(string generatorId, TemplateRequirementSettings template)
-        {
-            var settings = Settings.GetGeneratorSettings(generatorId);
-            settings.SetTemplate(template);
-        }
-
-        /// <summary>
-        /// Set the file path for a template
-        /// </summary>
-        public void SetTemplateFilePath(string generatorId, string templateId, string filePath)
-        {
-            var settings = Settings.GetGeneratorSettings(generatorId);
-            var template = settings.GetTemplate(templateId);
-            
-            if (template != null)
-            {
-                template.TemplateFilePath = filePath;
-            }
-        }
-
-        /// <summary>
-        /// Enable or disable a template
-        /// </summary>
-        public void SetTemplateEnabled(string generatorId, string templateId, bool enabled)
-        {
-            var settings = Settings.GetGeneratorSettings(generatorId);
-            var template = settings.GetTemplate(templateId);
-            
-            if (template != null)
-            {
-                template.Enabled = enabled;
-            }
-        }
-
-        #endregion
-
-        #region Parameter Settings
-
-        /// <summary>
-        /// Get a parameter value for a generator
-        /// </summary>
-        public T? GetParameter<T>(string generatorId, string parameterName, T? defaultValue = default)
-        {
-            return Settings.GetGeneratorSettings(generatorId).GetParameter(parameterName, defaultValue);
-        }
-
-        /// <summary>
-        /// Set a parameter value for a generator
-        /// </summary>
-        public void SetParameter<T>(string generatorId, string parameterName, T? value)
-        {
-            Settings.GetGeneratorSettings(generatorId).SetParameter(parameterName, value);
-        }
-
         public override SettingSection GetSettingsViewModelSection()
         {
-            var generatorsSection = new SettingSection("generators", "Generators Settings") { IconKey = "settings" };
-            var rootProviders = _generatorSettingsProviders.Where(p => p.DependingGeneratorIds.Count == 0).ToList();
-            foreach (var rootProvider in rootProviders)
+            var templateEnginesSection = new SettingSection("templateEngines", "Template Engines Settings") { IconKey = "settings" };
+            var settingsDescriptions = _templateEngineSettingsDescriptions.Where(p => p.DependingTemplateIds.Count == 0).ToList();
+            foreach (var settingsDescription in settingsDescriptions)
             {
-                CreateGeneratorSettings(generatorsSection, rootProvider);
+                CreateTemplateEngineSettings(templateEnginesSection, settingsDescription);
             }
 
-            return generatorsSection;
+            return templateEnginesSection;
         }
 
-        private void CreateGeneratorSettings(SettingSection generatorsSection, IGeneratorSettingsProvider generatorSettingsProvider)
+        private void CreateTemplateEngineSettings(SettingSection templateEnginesSection, TemplateEngineSettingsDescription settingsDescription)
         {
-            var generatorId = generatorSettingsProvider.GeneratorId;
-            var generatorSettings = GetGeneratorSettings(generatorId);
-            var generatorSection = new SettingSection(generatorId, generatorSettingsProvider.GeneratorName)
+            var templateEngineId = settingsDescription.Id;
+            var templateEngineSettings = GetTemplateEngineSettings(templateEngineId);
+            var templateEngineSection = new SettingSection(templateEngineId, settingsDescription.Name)
             {
                 IconKey = "generator"
             };
@@ -307,33 +165,36 @@ namespace CodeGenerator.Core.Settings.Generators
                     if (sender is FieldViewModelBase fieldViewModel)
                     {
                         var value = fieldViewModel.Value;
-                        SetParameter<object>(generatorId, fieldViewModel.Name, value);
+                        SetParameter<object>(templateEngineId, fieldViewModel.Name, value);
                     }
                 }
             };
-            var enabledFieldSettingsItem = CreateEnabledFieldSettingsItem(generatorId, generatorSettings.Enabled, generatorSection);
-            generatorSection.Items.Add(enabledFieldSettingsItem);
+            var enabledFieldSettingsItem = CreateEnabledFieldSettingsItem(templateEngineId, templateEngineSettings.Enabled, templateEngineSection);
+            templateEngineSection.Items.Add(enabledFieldSettingsItem);
 
-            foreach (var parameterDefinition in generatorSettingsProvider.ParameterDefinitions)
+            foreach (var parameterDefinition in settingsDescription.ParameterDefinitions)
             {
-                object parameterValue = generatorSettings.GetParameter<object>(parameterDefinition.Name, parameterDefinition.DefaultValue);
-                if( parameterValue is System.Text.Json.JsonElement jsonParameterValue)
+                object parameterValue = templateEngineSettings.GetParameter<object>(parameterDefinition.Name, parameterDefinition.DefaultValue);
+                if (parameterValue is System.Text.Json.JsonElement jsonParameterValue)
                 {
-                    if(jsonParameterValue.ValueKind == JsonValueKind.String)
+                    if (jsonParameterValue.ValueKind == JsonValueKind.String)
                     {
                         parameterValue = jsonParameterValue.GetString() ?? string.Empty;
-                    } else if (jsonParameterValue.ValueKind == JsonValueKind.Number)
+                    }
+                    else if (jsonParameterValue.ValueKind == JsonValueKind.Number)
                     {
                         parameterValue = jsonParameterValue.GetInt32();
-                    } else if (jsonParameterValue.ValueKind == JsonValueKind.True || jsonParameterValue.ValueKind == JsonValueKind.False)
+                    }
+                    else if (jsonParameterValue.ValueKind == JsonValueKind.True || jsonParameterValue.ValueKind == JsonValueKind.False)
                     {
                         parameterValue = jsonParameterValue.GetBoolean();
-                    }else
+                    }
+                    else
                     {
                         throw new InvalidOperationException("Unsupported JsonElement value kind for parameter");
                     }
                 }
-                if(parameterDefinition.Type == ParameterDefinitionTypes.Template)
+                if (parameterDefinition.Type == ParameterDefinitionTypes.Template)
                 {
                     var templateManager = ServiceProviderHolder.GetRequiredService<TemplateManager>();
                     var allowedEngines = parameterDefinition.PossibleValues?
@@ -355,7 +216,7 @@ namespace CodeGenerator.Core.Settings.Generators
                     };
                     comboBoxField.PropertyChanged += fieldViewModelPropertyChangedValueSetter;
                     var comboBoxSettingsItem = new SettingsItem<ComboboxFieldModel>(comboBoxField, parameterDefinition.Name, parameterDefinition.Name, $"Parameter: {parameterDefinition.Name} : {parameterDefinition.Type}");
-                    generatorSection.Items.Add(comboBoxSettingsItem);
+                    templateEngineSection.Items.Add(comboBoxSettingsItem);
                 }
                 else if (parameterDefinition.Type != ParameterDefinitionTypes.ParameterisedString && parameterDefinition.PossibleValues != null && parameterDefinition.PossibleValues.Count > 0)
                 {
@@ -378,7 +239,7 @@ namespace CodeGenerator.Core.Settings.Generators
                     };
                     comboBoxField.PropertyChanged += fieldViewModelPropertyChangedValueSetter;
                     var comboBoxSettingsItem = new SettingsItem<ComboboxFieldModel>(comboBoxField, parameterDefinition.Name, parameterDefinition.Name, $"Parameter: {parameterDefinition.Name} : {parameterDefinition.Type}");
-                    generatorSection.Items.Add(comboBoxSettingsItem);
+                    templateEngineSection.Items.Add(comboBoxSettingsItem);
                 }
                 else
                 {
@@ -395,7 +256,7 @@ namespace CodeGenerator.Core.Settings.Generators
                             };
                             intField.PropertyChanged += fieldViewModelPropertyChangedValueSetter;
                             var intSettingsItem = new SettingsItem<IntegerFieldModel>(intField, parameterDefinition.Name, parameterDefinition.Name, $"Parameter: {parameterDefinition.Name} : {parameterDefinition.Type}");
-                            generatorSection.Items.Add(intSettingsItem);
+                            templateEngineSection.Items.Add(intSettingsItem);
                             break;
                         case ParameterDefinitionTypes.String:
                             var parameterField = new SingleLineTextFieldModel
@@ -407,7 +268,7 @@ namespace CodeGenerator.Core.Settings.Generators
                             };
                             parameterField.PropertyChanged += fieldViewModelPropertyChangedValueSetter;
                             var parameterSettingsItem = new SettingsItem<SingleLineTextFieldModel>(parameterField, parameterDefinition.Name, parameterDefinition.Name, $"Parameter: {parameterDefinition.Name} : {parameterDefinition.Type}");
-                            generatorSection.Items.Add(parameterSettingsItem);
+                            templateEngineSection.Items.Add(parameterSettingsItem);
                             break;
                         case ParameterDefinitionTypes.Boolean:
                             // BooleanField
@@ -420,7 +281,7 @@ namespace CodeGenerator.Core.Settings.Generators
                             };
                             boolField.PropertyChanged += fieldViewModelPropertyChangedValueSetter;
                             var boolSettingsItem = new SettingsItem<BooleanFieldModel>(boolField, parameterDefinition.Name, parameterDefinition.Name, $"Parameter: {parameterDefinition.Name} : {parameterDefinition.Type}");
-                            generatorSection.Items.Add(boolSettingsItem);
+                            templateEngineSection.Items.Add(boolSettingsItem);
                             break;
                         case ParameterDefinitionTypes.ParameterisedString:
                             var parameterizedStringField = new ParameterizedStringFieldModel();
@@ -453,7 +314,7 @@ namespace CodeGenerator.Core.Settings.Generators
                             parameterizedStringField.RefreshParameterizedString();
                             parameterizedStringField.PropertyChanged += fieldViewModelPropertyChangedValueSetter;
                             var parameterizedStringSettingsItem = new SettingsItem<ParameterizedStringFieldModel>(parameterizedStringField, parameterDefinition.Name, parameterDefinition.Name, $"Parameter: {parameterDefinition.Name} : {parameterDefinition.Type}");
-                            generatorSection.Items.Add(parameterizedStringSettingsItem);
+                            templateEngineSection.Items.Add(parameterizedStringSettingsItem);
                             break;
                         default:
                             throw new NotImplementedException($"Unknown parameterdefinitiontype {parameterDefinition.Type}");
@@ -462,16 +323,16 @@ namespace CodeGenerator.Core.Settings.Generators
                 }
             }
 
-            if (generatorSettings.Templates.Count > 0)
+            if (templateEngineSettings.Templates.Count > 0)
             {
                 // Add template settings
                 var templatesSection = new SettingSection("templates", "Templates")
                 {
                     IconKey = "template"
                 };
-                foreach (var templateDefinition in generatorSettingsProvider.Templates)
+                foreach (var templateDefinition in settingsDescription.Templates)
                 {
-                    var template = generatorSettings.GetTemplate(templateDefinition.TemplateId);
+                    var template = templateEngineSettings.GetTemplate(templateDefinition.TemplateId);
 
                     if (template == null)
                         template = templateDefinition.ToSettings();
@@ -493,10 +354,10 @@ namespace CodeGenerator.Core.Settings.Generators
 
                         case TemplateType.ImageFile:
 
-                            AddTemplateFileFieldSettingsItem(generatorId, template, templateSection);
+                            AddTemplateFileFieldSettingsItem(templateEngineId, template, templateSection);
                             break;
                         case TemplateType.Folder:
-                            AddTemplateFolderFieldSettingsItem(generatorId,template, templateSection);
+                            AddTemplateFolderFieldSettingsItem(templateEngineId, template, templateSection);
                             break;
                         default:
                             break;
@@ -505,18 +366,27 @@ namespace CodeGenerator.Core.Settings.Generators
 
                     templatesSection.Sections.Add(templateSection);
                 }
-                generatorSection.Sections.Add(templatesSection);
+                templateEngineSection.Sections.Add(templatesSection);
             }
             // add depending generators
-            foreach (var dependingProvider in _generatorSettingsProviders.Where(p => p.DependingGeneratorIds.Contains(generatorSettingsProvider.GeneratorId)))
+            foreach (var dependingProvider in _templateEngineSettingsDescriptions.Where(p => p.DependingTemplateIds.Contains((string)settingsDescription.Id)))
             {
-                CreateGeneratorSettings(generatorSection, dependingProvider);
+                CreateTemplateEngineSettings(templateEngineSection, dependingProvider);
             }
-            generatorsSection.Sections.Add(generatorSection);
+            templateEnginesSection.Sections.Add(templateEngineSection);
         }
 
+        private void SetParameter<T>(string templateEngineId, string paramName, T value)
+        {
+            Settings.GetTemplateEngineSettings(templateEngineId).SetParameter(paramName, value);
+        }
 
-        private void AddTemplateFolderFieldSettingsItem(string generatorId, TemplateRequirementSettings template, SettingSection templateSection)
+        public TemplateEngineSettings GetTemplateEngineSettings(string templateEngineId)
+        {
+            return Settings.GetTemplateEngineSettings(templateEngineId);
+        }
+
+        private void AddTemplateFolderFieldSettingsItem(string templateEngineId, TemplateRequirementSettings template, SettingSection templateSection)
         {
             var templateFolderField = new FolderFieldModel
             {
@@ -532,15 +402,28 @@ namespace CodeGenerator.Core.Settings.Generators
                     if (sender is FieldViewModelBase fieldViewModel)
                     {
                         var value = fieldViewModel.Value as string;
-                        SetTemplateFilePath(generatorId, template.TemplateId, value);
+                        SetTemplateFilePath(templateEngineId, template.TemplateId, value);
                     }
                 }
             };
             var settingsItem = new SettingsItem<FolderFieldModel>(templateFolderField, template.TemplateId, "Template Folder", "Path to the template folder");
             templateSection.Items.Add(settingsItem);
         }
+        /// <summary>
+        /// Set the file path for a template
+        /// </summary>
+        public void SetTemplateFilePath(string templateEngineId, string templateId, string filePath)
+        {
+            var settings = Settings.GetTemplateEngineSettings(templateEngineId);
+            var template = settings.GetTemplate(templateId);
 
-        private void AddTemplateFileFieldSettingsItem(string generatorId, TemplateRequirementSettings template, SettingSection templateSection)
+            if (template != null)
+            {
+                template.TemplateFilePath = filePath;
+            }
+        }
+
+        private void AddTemplateFileFieldSettingsItem(string templateEngineId, TemplateRequirementSettings template, SettingSection templateSection)
         {
             string filter = template.TemplateType switch
             {
@@ -567,7 +450,7 @@ namespace CodeGenerator.Core.Settings.Generators
                     if (sender is FieldViewModelBase fieldViewModel)
                     {
                         var value = fieldViewModel.Value as string;
-                        SetTemplateFilePath(generatorId, template.TemplateId, value);
+                        SetTemplateFilePath(templateEngineId, template.TemplateId, value);
                     }
                 }
             };
@@ -575,7 +458,7 @@ namespace CodeGenerator.Core.Settings.Generators
             templateSection.Items.Add(settingsItem);
         }
 
-        private SettingsItem<BooleanFieldModel> CreateEnabledFieldSettingsItem(string generatorId, bool initialValue, SettingSection generatorSection)
+        private SettingsItem<BooleanFieldModel> CreateEnabledFieldSettingsItem(string templateEngineId, bool initialValue, SettingSection generatorSection)
         {
             var enabledField = new BooleanFieldModel
             {
@@ -591,7 +474,7 @@ namespace CodeGenerator.Core.Settings.Generators
                     if (sender is FieldViewModelBase fieldViewModel)
                     {
                         var value = Convert.ToBoolean(fieldViewModel.Value);
-                        SetGeneratorEnabled(generatorId, value);
+                        SetTemplateEngineEnabled(templateEngineId, value);
                     }
                 }
             };
@@ -599,13 +482,10 @@ namespace CodeGenerator.Core.Settings.Generators
             return enabledSettingsItem;
         }
 
-
-
-        public override AllGeneratorSettings CreateDefaultSettings()
+        private void SetTemplateEngineEnabled(string templateEngineId, bool enabled)
         {
-            return new AllGeneratorSettings();
+            var settings = Settings.GetTemplateEngineSettings(templateEngineId);
+            settings.Enabled = enabled;
         }
-
-        #endregion
     }
 }

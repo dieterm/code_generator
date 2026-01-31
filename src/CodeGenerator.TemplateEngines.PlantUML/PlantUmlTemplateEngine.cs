@@ -9,7 +9,7 @@ namespace CodeGenerator.TemplateEngines.PlantUML;
 /// <summary>
 /// Template engine for rendering PlantUML diagrams to images
 /// </summary>
-public class PlantUmlTemplateEngine : TemplateEngine<PlantUmlTemplate, PlantUmlTemplateInstance>
+public class PlantUmlTemplateEngine : FileBasedTemplateEngine<PlantUmlTemplate, PlantUmlTemplateInstance>
 {
     public const string IMAGE_CONTENT_DECORATOR_KEY = "ImageContent";
 

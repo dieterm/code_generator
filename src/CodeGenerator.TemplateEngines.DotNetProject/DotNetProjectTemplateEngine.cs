@@ -1,9 +1,13 @@
 ﻿using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.FileSystem;
+using CodeGenerator.Core.Settings;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Domain.DotNet;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.Models;
 using CodeGenerator.TemplateEngines.DotNetProject.Models;
 using CodeGenerator.TemplateEngines.DotNetProject.Services;
+using CodeGenerator.TemplateEngines.Scriban;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -20,25 +24,40 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
             "Class1.cs",
         };
         private readonly DotNetProjectService _dotNetProjectService;
-        public DotNetProjectTemplateEngine(DotNetProjectService dotNetProjectService, ILogger<DotNetProjectTemplateEngine> logger)
+        public DotNetProjectTemplateEngine( DotNetProjectService dotNetProjectService, ILogger<DotNetProjectTemplateEngine> logger)
             : base(logger, "dotnet_project_template_engine", "DotNet Project Template Engine", TemplateType.DotNetProject)
         {
             _dotNetProjectService = dotNetProjectService;
+
+            SettingsDescription.ParameterDefinitions.Add(new Core.Settings.ParameterDefinition()
+            {
+                Name = $"{DotNetProjectType.ClassLib}_{DotNetLanguages.CSharp.Id}_template_id", // "classlib_csharp_template_id"
+                Description = "ClassLib Csharp Project File Scriban Template",
+                Type = ParameterDefinitionTypes.Template,
+                PossibleValues = (new[] { TemplateType.Scriban }).Cast<object>().ToList()
+            });
+
+            //SettingsDescription.Templates.Add(new Core.Templates.Settings.TemplateRequirement()
+            //{
+            //    TemplateId = TemplateIdParser.BuildTemplateEngineTemplateId(Id, "DotNetProjectTemplate"),
+            //    Description = "Generates a .NET project with specified type, framework, language and NuGet packages.",
+            //    OutputFileNamePattern = "{{ProjectName}}",
+            //    TemplateType = TemplateType.Scriban
+            //});
         }
-
-        /// <summary>
-        /// This template engine does not have a default file extension since it creates projects from parameters.
-        /// </summary>
-        public override string DefaultFileExtension => null;
-
-        public override ITemplate CreateTemplateFromFile(string filePath)
+        public override void Initialize()
         {
-            throw new NotImplementedException();
+            var templateManager = ServiceProviderHolder.GetRequiredService<TemplateManager>();
+            foreach (var projectType in DotNetProjectType.AllTypes)
+            {
+                var templateName = $"{projectType}_{DotNetLanguages.CSharp.Id}";
+                templateManager.RegisterRequiredTemplate(TemplateIdParser.BuildTemplateEngineTemplateId(Id, templateName, projectType));
+            }
         }
 
         public override ITemplateInstance CreateTemplateInstance(ITemplate template)
         {
-            throw new NotImplementedException();
+            return new DotNetProjectTemplateInstance((DotNetProjectTemplate)template, "ProjectXYZ");
         }
 
         public override async Task<TemplateOutput> RenderAsync(DotNetProjectTemplateInstance templateInstance, CancellationToken cancellationToken)
@@ -64,7 +83,48 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
             }
             
             var dotNetTemplate = (DotNetProjectTemplate)templateInstance.Template;
-            var project = await _dotNetProjectService.CreateProjectAsync(templateInstance.ProjectName, outputDir, dotNetTemplate.DotNetProjectType, dotNetTemplate.DotNetTargetFramework, dotNetTemplate.DotNetLanguage.DotNetCommandLineArgument, cancellationToken);
+
+            var scribanTemplateId = TemplateIdParser.BuildTemplateEngineTemplateId(Id, $"{dotNetTemplate.DotNetProjectType}_{dotNetTemplate.DotNetLanguage.Id}", dotNetTemplate.DotNetProjectType);
+            var templateManager = ServiceProviderHolder.GetRequiredService<TemplateManager>();
+            List<string> searchedLocations;
+            var scribanTemplateFilePath = templateManager.ResolveTemplateIdToPath(scribanTemplateId, out searchedLocations);
+            
+            var scribanTemplate = templateManager.GetTemplateById(scribanTemplateId);
+            if (scribanTemplate != null)
+            {
+                Logger.LogInformation("Using Scriban template at '{scribanTemplateFilePath}' to create DotNet project file", scribanTemplateFilePath);
+
+                // Create the project-file using Scriban template
+                var templateEngineManager = ServiceProviderHolder.GetRequiredService<TemplateEngineManager>();
+                var templateEngine = templateEngineManager.GetTemplateEnginesForTemplate(scribanTemplate).FirstOrDefault();
+                if (templateEngine != null)
+                {
+                    var scribanTemplateInstance = templateEngine.CreateTemplateInstance(scribanTemplate);
+                    if(scribanTemplateInstance is ScribanTemplateInstance sti)
+                    {
+                        sti.OutputFileName = templateInstance.ProjectName + ".csproj";
+                    }
+                    scribanTemplateInstance.SetParameter("DotNetProject", templateInstance);
+                    
+                    var result = await templateEngine.RenderAsync(scribanTemplateInstance, cancellationToken);
+                    if (result.Succeeded) { 
+                        return result;
+                    }
+                }
+            } 
+            else
+            {
+                Logger.LogInformation("No Scriban template with id '{scribanTemplateId}' found to create DotNet project file", scribanTemplateId);
+
+                foreach (var loc in searchedLocations)
+                {
+                    Logger.LogInformation("\tSearched for Scriban template at: {location}", loc);
+                }
+            }
+
+                // if we get here:
+                // Create the project using DotNet CLI
+                var project = await _dotNetProjectService.CreateProjectAsync(templateInstance.ProjectName, outputDir, dotNetTemplate.DotNetProjectType, dotNetTemplate.DotNetTargetFramework, dotNetTemplate.DotNetLanguage.DotNetCommandLineArgument, cancellationToken);
             
             foreach (var package in templateInstance.Packages)
             {

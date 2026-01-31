@@ -1,34 +1,36 @@
-using CodeGenerator.Core.Templates.Settings;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
-namespace CodeGenerator.Core.Settings.Generators
+namespace CodeGenerator.Core.Templates.Settings
 {
-    /// <summary>
-    /// Represents the saved settings for a single generator.
-    /// This class is JSON serializable for persistence.
-    /// </summary>
-    public class GeneratorSettings
+    public class TemplateEngineSettings
     {
-        public GeneratorSettings()
+        /// <summary>
+        /// Parameterless constructor for deserialization
+        /// </summary>
+        public TemplateEngineSettings()
         {
-            GeneratorId = string.Empty;
+            TemplateEngineId = string.Empty;
             Templates = new List<TemplateRequirementSettings>();
             Parameters = new Dictionary<string, object?>();
         }
 
-        public GeneratorSettings(string generatorId)
+        public TemplateEngineSettings(string templateEngineId)
         {
-            GeneratorId = generatorId;
+            TemplateEngineId = templateEngineId;
             Templates = new List<TemplateRequirementSettings>();
             Parameters = new Dictionary<string, object?>();
         }
 
         /// <summary>
-        /// Unique identifier for the generator these settings belong to
+        /// Template engine identifier
         /// </summary>
-        [JsonPropertyName("generatorId")]
-        public string GeneratorId { get; set; }
-
+        [JsonPropertyName("templateEngineId")]
+        public string TemplateEngineId { get; set; }
         /// <summary>
         /// Display name of the generator
         /// </summary>
@@ -46,12 +48,12 @@ namespace CodeGenerator.Core.Settings.Generators
         /// </summary>
         [JsonPropertyName("category")]
         public string? Category { get; set; }
-
         /// <summary>
-        /// Whether this generator is enabled
+        /// Whether this template engine is enabled
         /// </summary>
         [JsonPropertyName("enabled")]
         public bool Enabled { get; set; } = true;
+
 
         /// <summary>
         /// List of template configurations for this generator

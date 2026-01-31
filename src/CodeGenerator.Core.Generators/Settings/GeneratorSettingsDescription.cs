@@ -4,7 +4,9 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CodeGenerator.Core.Settings;
 using CodeGenerator.Core.Settings.Generators;
+using CodeGenerator.Core.Templates.Settings;
 
 namespace CodeGenerator.Core.Generators.Settings
 {

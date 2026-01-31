@@ -1,6 +1,7 @@
 using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.Templates.Settings;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Shared;
 using CodeGenerator.TemplateEngines.Scriban;
@@ -16,7 +17,7 @@ namespace CodeGenerator.TemplateEngines.Scriban;
 /// <summary>
 /// Scriban-based template engine implementation
 /// </summary>
-public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemplateInstance>
+public class ScribanTemplateEngine : FileBasedTemplateEngine<ScribanTemplate, ScribanTemplateInstance>
 {
     private static readonly ScriptObject _globalFunctions = new ScriptObject();
     private readonly ConcurrentDictionary<string, Template> _compiledTemplates = new ConcurrentDictionary<string, Template>();
@@ -27,6 +28,7 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
         : base(logger, "scriban_template_engine", "Scriban Template Engine", TemplateType.Scriban, new[] { "scriban" })
     {
         
+       
     }
     static ScribanTemplateEngine()
     {
@@ -183,7 +185,7 @@ public class ScribanTemplateEngine : TemplateEngine<ScribanTemplate, ScribanTemp
     public static Dictionary<string, string> BuildinFunctionsTooltips { get; } = new Dictionary<string, string>();
 
     public override string DefaultFileExtension => "scriban";
-
+ 
     private static void RegisterBuiltInFunctions()
     {
         // String manipulation

@@ -23,4 +23,8 @@
     <ProjectReference Include="..\CodeGenerator.Shared\CodeGenerator.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Settings\" />
+  </ItemGroup>
+
 </Project>

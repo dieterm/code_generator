@@ -1,3 +1,4 @@
+using CodeGenerator.Core.Settings.Interfaces;
 using System.Text.Json.Serialization;
 
 namespace CodeGenerator.Core.Settings.Generators
@@ -6,24 +7,12 @@ namespace CodeGenerator.Core.Settings.Generators
     /// Container for all generator settings.
     /// This is the root object that gets serialized to JSON.
     /// </summary>
-    public class AllGeneratorSettings
+    public class AllGeneratorSettings : LocalApplicationDataSettingsBase
     {
         public AllGeneratorSettings()
         {
             Generators = new Dictionary<string, GeneratorSettings>();
         }
-
-        /// <summary>
-        /// Version of the settings format for migration purposes
-        /// </summary>
-        [JsonPropertyName("version")]
-        public string Version { get; set; } = "1.0";
-
-        /// <summary>
-        /// Last modified timestamp
-        /// </summary>
-        [JsonPropertyName("lastModified")]
-        public DateTime LastModified { get; set; } = DateTime.UtcNow;
 
         /// <summary>
         /// Dictionary of generator settings, keyed by generator ID

@@ -20,6 +20,15 @@ namespace CodeGenerator.Core.Templates
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        public void Intitialize()
+        {
+            foreach (var engine in _templateEngines)
+            {
+                _logger.LogInformation("Initializing template engine '{TemplateEngineId}'...", engine.Id);
+                engine.Initialize();
+            }
+        }
+
         public ITemplateEngine? GetTemplateEngineById(string id)
         {
             var engine = _templateEngines.FirstOrDefault(te => te.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
@@ -37,7 +46,7 @@ namespace CodeGenerator.Core.Templates
         /// <returns></returns>
         public ITemplateEngine? GetTemplateEngineByFileExtension(string fileExtension)
         {
-            var engine = _templateEngines.FirstOrDefault(te => te.SupportsTemplateFileExtension(fileExtension));
+            var engine = _templateEngines.OfType<IFileBasedTemplateEngine>().FirstOrDefault(te => te.SupportsTemplateFileExtension(fileExtension));
             if (engine == null)
             {
                 //_logger.LogWarning("No template engine found that supports file extension '{FileExtension}'.", fileExtension);

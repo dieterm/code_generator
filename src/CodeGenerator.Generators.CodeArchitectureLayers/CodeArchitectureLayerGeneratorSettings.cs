@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Core.Generators.Settings;
+using CodeGenerator.Core.Settings;
 using CodeGenerator.Core.Settings.Generators;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Shared.Models;
