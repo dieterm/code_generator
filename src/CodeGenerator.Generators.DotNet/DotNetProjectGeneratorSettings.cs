@@ -41,10 +41,10 @@ namespace CodeGenerator.Generators.DotNet
             _layer = layer;
         }
 
-        public string? TargetFramework
+        public TargetFramework? TargetFramework
         {
-            get => _settings.GetParameter<string>(nameof(TargetFramework)) ?? TargetFrameworks.Net8.Id;
-            set => _settings.SetParameter<string>(nameof(TargetFramework), value);
+            get => TargetFrameworks.AllFrameworks.FirstOrDefault(f => f.Id== _settings.GetParameter<string>(nameof(TargetFramework))) ?? TargetFrameworks.Net8;
+            set => _settings.SetParameter<string>(nameof(TargetFramework), value?.Id);
         }
 
         public string? ProjectType

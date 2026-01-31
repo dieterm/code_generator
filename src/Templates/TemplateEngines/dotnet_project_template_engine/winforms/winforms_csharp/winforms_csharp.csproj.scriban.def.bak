@@ -1,6 +1,6 @@
 {
-  "templateName": "classlib_csharp",
-  "displayName": "classlib_csharp.scriban",
+  "templateName": "winforms_csharp.csproj",
+  "displayName": "winforms_csharp.csproj.scriban",
   "description": null,
   "category": null,
   "tags": null,

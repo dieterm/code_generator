@@ -19,6 +19,9 @@ namespace CodeGenerator.Core.Generators
         protected GeneratorBase()
         {
             SettingsDescription = ConfigureSettingsDescription();
+            var settingsManager = ServiceProviderHolder.GetRequiredService<GeneratorSettingsManager>();
+            settingsManager.SettingsSaved += (sender, e) => RefreshEnabledState();
+            RefreshEnabledState();
         }
 
         protected abstract GeneratorSettingsDescription ConfigureSettingsDescription();
@@ -30,9 +33,23 @@ namespace CodeGenerator.Core.Generators
             return settings;
         }
 
+        /// <summary>
+        /// Returns whether this generator is enabled in the settings.<br />
+        /// (will automatically update on settings change)
+        /// </summary>
+        public bool Enabled { get; private set; }
+        
+        private void RefreshEnabledState()
+        {
+            var settings = GetSettings();
+            Enabled = settings.Enabled;
+        }
+
         public virtual void Initialize(GeneratorMessageBus messageBus)
         {
             MessageBus = messageBus;
+            RefreshEnabledState();
+            
         }
 
         public abstract void SubscribeToEvents(GeneratorMessageBus messageBus);

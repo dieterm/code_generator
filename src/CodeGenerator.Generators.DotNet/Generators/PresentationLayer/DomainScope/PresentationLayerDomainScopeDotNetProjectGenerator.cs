@@ -16,8 +16,8 @@ namespace CodeGenerator.Generators.DotNet.Generators.PresentationLayer.DomainSco
 {
     public class PresentationLayerDomainScopeDotNetProjectGenerator : DotNetProjectGenerator<PresentationLayerArtifact>
     {
-        public PresentationLayerDomainScopeDotNetProjectGenerator(ILogger<PresentationLayerDomainScopeDotNetProjectGenerator> logger, DotNetProjectTemplateEngine dotNetProjectTemplateEngine)
-            : base(CodeArchitectureLayerArtifact.PRESENTATION_LAYER, CodeArchitectureLayerArtifact.DOMAIN_SCOPE, dotNetProjectTemplateEngine, logger)
+        public PresentationLayerDomainScopeDotNetProjectGenerator(ILogger<PresentationLayerDomainScopeDotNetProjectGenerator> logger)
+            : base(CodeArchitectureLayerArtifact.PRESENTATION_LAYER, CodeArchitectureLayerArtifact.DOMAIN_SCOPE, logger)
         {
         }
         override public bool LayerArtifactFilter(CreatedArtifactEventArgs e)

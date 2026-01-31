@@ -16,8 +16,8 @@ namespace CodeGenerator.Generators.DotNet.Generators.PresentationLayer.SharedSco
 {
     public class PresentationLayerSharedScopeDotNetProjectGenerator : DotNetProjectGenerator<PresentationLayerArtifact>
     {
-        public PresentationLayerSharedScopeDotNetProjectGenerator(ILogger<PresentationLayerSharedScopeDotNetProjectGenerator> logger, DotNetProjectTemplateEngine dotNetProjectTemplateEngine)
-            : base(CodeArchitectureLayerArtifact.PRESENTATION_LAYER, CodeArchitectureLayerArtifact.SHARED_SCOPE, dotNetProjectTemplateEngine, logger)
+        public PresentationLayerSharedScopeDotNetProjectGenerator(ILogger<PresentationLayerSharedScopeDotNetProjectGenerator> logger)
+            : base(CodeArchitectureLayerArtifact.PRESENTATION_LAYER, CodeArchitectureLayerArtifact.SHARED_SCOPE, logger)
         {
         }
 

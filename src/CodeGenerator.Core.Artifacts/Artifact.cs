@@ -18,7 +18,7 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
     public event EventHandler<ChildRemovedEventArgs>? ChildRemoved;
     public event EventHandler<DecoratorAddedEventArgs>? DecoratorAdded;
     public event EventHandler<DecoratorRemovedEventArgs>? DecoratorRemoved;
-
+    public event EventHandler? Generated;
     protected void OnChildAdded(IArtifact child)
     {
         ChildAdded?.Invoke(this, new ChildAddedEventArgs(child));
@@ -27,6 +27,10 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
     protected void OnChildRemoved(IArtifact child)
     {
         ChildRemoved?.Invoke(this, new ChildRemovedEventArgs(child));
+    }
+    protected void OnGenerated()
+    {
+        Generated?.Invoke(this, EventArgs.Empty);
     }
 
     protected void OnDecoratorAdded(IArtifactDecorator decorator)
@@ -113,12 +117,21 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
 
         progress.Report(new ArtifactGenerationProgress(this, "Generating artifact", currentStep++, totalSteps));
         await GenerateSelfAsync(progress, cancellationToken);
-
+        
         foreach (var child in _children)
         {
-            progress.Report(new ArtifactGenerationProgress(this, "Generating child artifact", currentStep++, totalSteps));
+            if(cancellationToken.IsCancellationRequested)
+                break;
+            if(currentStep%10 == 0)
+            {
+                // Report progress every 10 steps to avoid flooding
+                progress.Report(new ArtifactGenerationProgress(this, "Generating child artifacts", currentStep, totalSteps));
+            }
             await child.GenerateAsync(progress, cancellationToken);
         }
+
+        // raise Generated-event
+        OnGenerated();
 
         progress.Report(new ArtifactGenerationProgress(this, "Generated artifact", currentStep, totalSteps));
     }

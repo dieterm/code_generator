@@ -16,8 +16,8 @@ namespace CodeGenerator.Generators.DotNet.Generators.InfrastructureLayer.Applica
 {
     public class InfrastructureLayerApplicationScopeDotNetProjectGenerator : DotNetProjectGenerator<InfrastructureLayerArtifact>
     {
-        public InfrastructureLayerApplicationScopeDotNetProjectGenerator(ILogger<InfrastructureLayerApplicationScopeDotNetProjectGenerator> logger, DotNetProjectTemplateEngine dotNetProjectTemplateEngine)
-            : base(CodeArchitectureLayerArtifact.INFRASTRUCTURE_LAYER, CodeArchitectureLayerArtifact.APPLICATION_SCOPE, dotNetProjectTemplateEngine, logger)
+        public InfrastructureLayerApplicationScopeDotNetProjectGenerator(ILogger<InfrastructureLayerApplicationScopeDotNetProjectGenerator> logger)
+            : base(CodeArchitectureLayerArtifact.INFRASTRUCTURE_LAYER, CodeArchitectureLayerArtifact.APPLICATION_SCOPE, logger)
         {
         }
 

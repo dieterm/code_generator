@@ -6,7 +6,7 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
 {
     public class DotNetProjectTemplate : ITemplate
     {
-        public DotNetProjectTemplate(string projectType, DotNetLanguage language, string targetFramework)
+        public DotNetProjectTemplate(string projectType, DotNetLanguage language, TargetFramework targetFramework)
         {
             DotNetProjectType = projectType ?? throw new ArgumentNullException(nameof(projectType));
             DotNetLanguage = language;
@@ -15,7 +15,7 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
             Icon = new ResourceManagerTreeNodeIcon($"dotnet-{projectType}-{language.DotNetCommandLineArgument}-template");
         }
 
-        public DotNetProjectTemplate(string id, string projectType, DotNetLanguage language, string targetFramework)
+        public DotNetProjectTemplate(string id, string projectType, DotNetLanguage language, TargetFramework targetFramework)
         {
             TemplateId = id ?? throw new ArgumentNullException(nameof(id));
             DotNetProjectType = projectType ?? throw new ArgumentNullException(nameof(projectType));
@@ -39,7 +39,7 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
         /// Console parameter to use for the 'dotnet --framework' argument
         /// eg. "net6.0", "net7.0", "netstandard2.1"
         /// </summary>
-        public string DotNetTargetFramework { get; set; }
+        public TargetFramework DotNetTargetFramework { get; set; }
 
         public TemplateType TemplateType { get { return TemplateType.DotNetProject; } }
         public bool UseCaching { get; set; } = false;

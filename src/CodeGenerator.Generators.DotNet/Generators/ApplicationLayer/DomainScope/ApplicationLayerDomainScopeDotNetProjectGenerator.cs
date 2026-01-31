@@ -16,8 +16,8 @@ namespace CodeGenerator.Generators.DotNet.Generators.ApplicationLayer.DomainScop
 {
     public class ApplicationLayerDomainScopeDotNetProjectGenerator : DotNetProjectGenerator<ApplicationLayerArtifact>
     {
-        public ApplicationLayerDomainScopeDotNetProjectGenerator(ILogger<ApplicationLayerDomainScopeDotNetProjectGenerator> logger, DotNetProjectTemplateEngine dotNetProjectTemplateEngine)
-            : base(CodeArchitectureLayerArtifact.APPLICATION_LAYER, CodeArchitectureLayerArtifact.DOMAIN_SCOPE, dotNetProjectTemplateEngine, logger)
+        public ApplicationLayerDomainScopeDotNetProjectGenerator(ILogger<ApplicationLayerDomainScopeDotNetProjectGenerator> logger)
+            : base(CodeArchitectureLayerArtifact.APPLICATION_LAYER, CodeArchitectureLayerArtifact.DOMAIN_SCOPE, logger)
         {
             
         }

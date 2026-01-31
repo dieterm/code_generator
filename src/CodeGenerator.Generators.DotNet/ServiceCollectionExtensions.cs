@@ -49,7 +49,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IMessageBusAwareGenerator, InfrastructureLayerDomainScopeDotNetProjectGenerator>();
 
         services.AddTransient<IMessageBusAwareGenerator, EntitiesClassGenerator>();
-
+        services.AddTransient<IMessageBusAwareGenerator, DotNetSolutionGenerator>();
 
         return services;
     }

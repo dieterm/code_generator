@@ -21,8 +21,8 @@ namespace CodeGenerator.Generators.DotNet.Generators.PresentationLayer.Applicati
         //  $"{generator.Layer}Layer.{generator.Scope}Scope.DotNetProject"
         // eg. "PresentationLayerApplicationScopeDotNetProject"
         public const string GENERATOR_ID = $"{CodeArchitectureLayerArtifact.PRESENTATION_LAYER}Layer.{CodeArchitectureLayerArtifact.APPLICATION_SCOPE}Scope.DotNetProject";
-        public PresentationLayerApplicationScopeDotNetProjectGenerator(ILogger<PresentationLayerApplicationScopeDotNetProjectGenerator> logger, DotNetProjectTemplateEngine dotNetProjectTemplateEngine)
-            : base(CodeArchitectureLayerArtifact.PRESENTATION_LAYER, CodeArchitectureLayerArtifact.APPLICATION_SCOPE, dotNetProjectTemplateEngine, logger)
+        public PresentationLayerApplicationScopeDotNetProjectGenerator(ILogger<PresentationLayerApplicationScopeDotNetProjectGenerator> logger)
+            : base(CodeArchitectureLayerArtifact.PRESENTATION_LAYER, CodeArchitectureLayerArtifact.APPLICATION_SCOPE, logger)
         {
         }
 

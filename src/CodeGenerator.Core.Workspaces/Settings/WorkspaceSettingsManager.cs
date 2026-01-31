@@ -14,6 +14,14 @@ namespace CodeGenerator.Core.Workspaces.Settings
     {
         private readonly WorkspaceSettings _settings;
         private readonly WorkspaceSettingsViewModelGenerator _viewModelGenerator;
+
+        public event EventHandler? SettingsSaved;
+
+        private void RaiseSettingsSaved()
+        {
+            SettingsSaved?.Invoke(this, EventArgs.Empty);
+        }
+
         public WorkspaceSettingsManager()
         {
             _settings = WorkspaceSettings.Instance;
@@ -40,6 +48,7 @@ namespace CodeGenerator.Core.Workspaces.Settings
         public void SaveSettings()
         {
             _settings.Save();
+            RaiseSettingsSaved();
         }
 
         /// <summary>
@@ -48,6 +57,7 @@ namespace CodeGenerator.Core.Workspaces.Settings
         public void ResetSettings()
         {
             _settings.ResetToDefaults();
+            RaiseSettingsSaved();
         }
 
         public string GetSettingsFilePath()

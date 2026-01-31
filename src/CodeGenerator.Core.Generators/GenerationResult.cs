@@ -1,5 +1,6 @@
 using CodeGenerator.Core.Artifacts.CodeGeneration;
 using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Generators;
 
 namespace CodeGenerator.Core.Generators;
 
@@ -13,7 +14,21 @@ public class GenerationResult
         this.RootArtifact = rootArtifact;
         this.Workspace = workspace;
         this.PreviewOnly = previewOnly;
+        InitializeDotNetProjectReferences();
     }
+
+    private void InitializeDotNetProjectReferences()
+    {
+        foreach(var scope in this.Workspace.Scopes)
+        {
+            var projectReference = new ScopeDotNetProjectReferences(scope);
+            // TODO: Add support for subscopes
+            this.DotNetProjectReferences.Add(projectReference);
+        }
+    }
+
+    public ScopeDotNetProjectReferencesCollection DotNetProjectReferences { get; } = new ScopeDotNetProjectReferencesCollection();
+
     /// <summary>
     /// Whether the generation was successful
     /// </summary>

@@ -16,8 +16,8 @@ namespace CodeGenerator.Generators.DotNet.Generators.InfrastructureLayer.SharedS
 {
     public class InfrastructureLayerSharedScopeDotNetProjectGenerator : DotNetProjectGenerator<InfrastructureLayerArtifact>
     {
-        public InfrastructureLayerSharedScopeDotNetProjectGenerator(ILogger<InfrastructureLayerSharedScopeDotNetProjectGenerator> logger, DotNetProjectTemplateEngine dotNetProjectTemplateEngine)
-            : base(CodeArchitectureLayerArtifact.INFRASTRUCTURE_LAYER, CodeArchitectureLayerArtifact.SHARED_SCOPE, dotNetProjectTemplateEngine, logger)
+        public InfrastructureLayerSharedScopeDotNetProjectGenerator(ILogger<InfrastructureLayerSharedScopeDotNetProjectGenerator> logger)
+            : base(CodeArchitectureLayerArtifact.INFRASTRUCTURE_LAYER, CodeArchitectureLayerArtifact.SHARED_SCOPE, logger)
         {
         }
 

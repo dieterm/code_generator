@@ -16,8 +16,8 @@ namespace CodeGenerator.Generators.DotNet.Generators.InfrastructureLayer.DomainS
 {
     public class InfrastructureLayerDomainScopeDotNetProjectGenerator : DotNetProjectGenerator<InfrastructureLayerArtifact>
     {
-        public InfrastructureLayerDomainScopeDotNetProjectGenerator(ILogger<InfrastructureLayerDomainScopeDotNetProjectGenerator> logger, DotNetProjectTemplateEngine dotNetProjectTemplateEngine)
-            : base(CodeArchitectureLayerArtifact.INFRASTRUCTURE_LAYER, CodeArchitectureLayerArtifact.DOMAIN_SCOPE, dotNetProjectTemplateEngine, logger)
+        public InfrastructureLayerDomainScopeDotNetProjectGenerator(ILogger<InfrastructureLayerDomainScopeDotNetProjectGenerator> logger)
+            : base(CodeArchitectureLayerArtifact.INFRASTRUCTURE_LAYER, CodeArchitectureLayerArtifact.DOMAIN_SCOPE, logger)
         {
         }
 

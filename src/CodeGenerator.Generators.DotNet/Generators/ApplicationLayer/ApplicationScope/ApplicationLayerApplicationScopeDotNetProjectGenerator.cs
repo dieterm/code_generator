@@ -3,6 +3,7 @@ using CodeGenerator.Core.Generators.MessageBus;
 using CodeGenerator.Core.Generators.Settings;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.DotNet;
+using CodeGenerator.Generators.DotNet.Events;
 using CodeGenerator.TemplateEngines.DotNetProject;
 using Microsoft.Extensions.Logging;
 using System;
@@ -15,10 +16,11 @@ namespace CodeGenerator.Generators.DotNet.Generators.ApplicationLayer.Applicatio
 {
     public class ApplicationLayerApplicationScopeDotNetProjectGenerator : DotNetProjectGenerator<ApplicationLayerArtifact>
     {
-        public ApplicationLayerApplicationScopeDotNetProjectGenerator(ILogger<ApplicationLayerApplicationScopeDotNetProjectGenerator> logger, DotNetProjectTemplateEngine dotNetProjectTemplateEngine)
-            : base(CodeArchitectureLayerArtifact.APPLICATION_LAYER, CodeArchitectureLayerArtifact.APPLICATION_SCOPE, dotNetProjectTemplateEngine, logger)
+        public ApplicationLayerApplicationScopeDotNetProjectGenerator(ILogger<ApplicationLayerApplicationScopeDotNetProjectGenerator> logger)
+            : base(CodeArchitectureLayerArtifact.APPLICATION_LAYER, CodeArchitectureLayerArtifact.APPLICATION_SCOPE, logger)
         {
         }
+
 
         protected override async Task<DotNetProjectArtifact> OnLayerScopeCreatedAsync(CreatedArtifactEventArgs args)
         {

@@ -163,6 +163,16 @@ namespace CodeGenerator.Presentation.WinForms.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap dotnet_solution {
+            get {
+                object obj = ResourceManager.GetObject("dotnet_solution", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap favicon {
             get {
                 object obj = ResourceManager.GetObject("favicon", resourceCulture);
@@ -266,16 +276,6 @@ namespace CodeGenerator.Presentation.WinForms.Resources {
         public static System.Drawing.Bitmap shared_project {
             get {
                 object obj = ResourceManager.GetObject("shared_project", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap solution {
-            get {
-                object obj = ResourceManager.GetObject("solution", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

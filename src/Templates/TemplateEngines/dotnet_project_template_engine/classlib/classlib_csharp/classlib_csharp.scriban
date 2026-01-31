@@ -1,14 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>{{ DotNetProject.template.dot_net_target_framework }}</TargetFramework>
+    <TargetFramework>{{ DotNetProject.template.dot_net_target_framework.dot_net_command_line_argument }}</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-{{- for package in DotNetProject.packages}}
+{{- for package in DotNetProject.packages }}
 	  <PackageReference Include="{{ package.package_id }}" Version="{{ package.version }}" />
-{{- end}}
+{{- end }}
+  </ItemGroup>
+
+  <ItemGroup>
+{{- for projectRef in ProjectReferences }}
+    <ProjectReference Include="{{ projectRef }}" />
+{{- end }}
   </ItemGroup>
 </Project>

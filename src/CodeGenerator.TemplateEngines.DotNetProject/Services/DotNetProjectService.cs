@@ -116,24 +116,64 @@ public class DotNetProjectService
         }
     }
 
+    public async Task<string> AddProjectToSolutionAsync(
+        string solutionPath,
+        string solutionSubFolder,
+        string projectPath,
+        CancellationToken cancellationToken = default)
+    {
+        var command = $"sln \"{solutionPath}\" add \"{projectPath}\" -s \"{solutionSubFolder}\"";
+        var result = await RunDotNetCommandAsync(command, cancellationToken);
+        if (!result.Success)
+        {
+            throw new InvalidOperationException($"Failed to add project to solution: {result.Error}");
+        }
+        _logger.LogInformation("Added project {Project} to solution {Solution}", projectPath, solutionPath);
+        return solutionPath;
+    }
+
+    /// <summary>
+    /// Generates a .NET solution and adds the specified projects to it.
+    /// Specify the formattype: sln or slnx
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="directory"></param>
+    /// <param name="solutionType">sln or slnx</param>
+    /// <param name="projectPaths"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task<string> CreateSolutionAsync(
         string name,
         string directory,
+        string solutionType,
         IEnumerable<string> projectPaths,
         CancellationToken cancellationToken = default)
     {
-        var solutionPath = Path.Combine(directory, $"{name}.sln");
+        if(solutionType != "sln" && solutionType != "slnx")
+        {
+            throw new ArgumentException($"Unsupported solution type: {solutionType}. Supported types are 'sln' and 'slnx'.");
+        }
+        var solutionPath = Path.Combine(directory, $"{name}.{solutionType}");
+
 
         // Create solution if it doesn't exist
         if (!File.Exists(solutionPath))
         {
-            var createResult = await RunDotNetCommandAsync($"new sln -n {name} -o \"{directory}\"", cancellationToken);
+            var createResult = await RunDotNetCommandAsync($"new sln -n {name} -o \"{directory}\" --format {solutionType}", cancellationToken);
             if (!createResult.Success)
             {
                 throw new InvalidOperationException($"Failed to create solution: {createResult.Error}");
             }
         }
-
+        if(!File.Exists(solutionPath))
+        {
+            // try .slnx file
+            solutionPath = Path.Combine(directory, $"{name}.slnx");
+            if (!File.Exists(solutionPath)) {
+                throw new InvalidOperationException($"Solution file not found after creation: {solutionPath}");
+            }
+        }
         // Add projects to solution
         foreach (var projectPath in projectPaths)
         {

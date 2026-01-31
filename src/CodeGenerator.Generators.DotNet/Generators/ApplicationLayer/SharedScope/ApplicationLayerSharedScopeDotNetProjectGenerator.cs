@@ -17,8 +17,8 @@ namespace CodeGenerator.Generators.DotNet.Generators.ApplicationLayer.SharedScop
     public class ApplicationLayerSharedScopeDotNetProjectGenerator : DotNetProjectGenerator<ApplicationLayerArtifact>
     {
         
-        public ApplicationLayerSharedScopeDotNetProjectGenerator(ILogger<ApplicationLayerSharedScopeDotNetProjectGenerator> logger, DotNetProjectTemplateEngine dotNetProjectTemplateEngine) 
-            : base(CodeArchitectureLayerArtifact.APPLICATION_LAYER, CodeArchitectureLayerArtifact.SHARED_SCOPE, dotNetProjectTemplateEngine, logger)
+        public ApplicationLayerSharedScopeDotNetProjectGenerator(ILogger<ApplicationLayerSharedScopeDotNetProjectGenerator> logger) 
+            : base(CodeArchitectureLayerArtifact.APPLICATION_LAYER, CodeArchitectureLayerArtifact.SHARED_SCOPE, logger)
         {
         }
 

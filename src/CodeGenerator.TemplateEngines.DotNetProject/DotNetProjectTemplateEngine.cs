@@ -29,13 +29,13 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
         {
             _dotNetProjectService = dotNetProjectService;
 
-            SettingsDescription.ParameterDefinitions.Add(new Core.Settings.ParameterDefinition()
-            {
-                Name = $"{DotNetProjectType.ClassLib}_{DotNetLanguages.CSharp.Id}_template_id", // "classlib_csharp_template_id"
-                Description = "ClassLib Csharp Project File Scriban Template",
-                Type = ParameterDefinitionTypes.Template,
-                PossibleValues = (new[] { TemplateType.Scriban }).Cast<object>().ToList()
-            });
+            //SettingsDescription.ParameterDefinitions.Add(new Core.Settings.ParameterDefinition()
+            //{
+            //    Name = $"{DotNetProjectType.ClassLib}_{DotNetLanguages.CSharp.Id}_template_id", // "classlib_csharp_template_id"
+            //    Description = "ClassLib Csharp Project File Scriban Template",
+            //    Type = ParameterDefinitionTypes.Template,
+            //    PossibleValues = (new[] { TemplateType.Scriban }).Cast<object>().ToList()
+            //});
 
             //SettingsDescription.Templates.Add(new Core.Templates.Settings.TemplateRequirement()
             //{
@@ -88,7 +88,7 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
             var templateManager = ServiceProviderHolder.GetRequiredService<TemplateManager>();
             List<string> searchedLocations;
             var scribanTemplateFilePath = templateManager.ResolveTemplateIdToPath(scribanTemplateId, out searchedLocations);
-            
+           
             var scribanTemplate = templateManager.GetTemplateById(scribanTemplateId);
             if (scribanTemplate != null)
             {
@@ -102,10 +102,23 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
                     var scribanTemplateInstance = templateEngine.CreateTemplateInstance(scribanTemplate);
                     if(scribanTemplateInstance is ScribanTemplateInstance sti)
                     {
-                        sti.OutputFileName = templateInstance.ProjectName + ".csproj";
+                        sti.OutputFileName = templateInstance.GetProjectFileName();
                     }
-                    scribanTemplateInstance.SetParameter("DotNetProject", templateInstance);
+                    // Prepare project references
+                    var projectReferences = new List<string>();
                     
+                    var dotNetProjectFullPath = Path.Combine(outputDir, templateInstance.GetProjectFileName());
+                    
+                    foreach (var projectReference in templateInstance.ProjectReferences) 
+                    { 
+                        var projectReferenceFullPath = projectReference.ProjectArtifact.GetProjectFilePath();
+                        var relativePath = Path.GetRelativePath(outputDir, projectReferenceFullPath);
+                        projectReferences.Add(relativePath);
+                    }
+                    
+                    scribanTemplateInstance.SetParameter("DotNetProject", templateInstance);
+                    scribanTemplateInstance.SetParameter("ProjectReferences", projectReferences);
+
                     var result = await templateEngine.RenderAsync(scribanTemplateInstance, cancellationToken);
                     if (result.Succeeded) { 
                         return result;
@@ -124,7 +137,7 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
 
                 // if we get here:
                 // Create the project using DotNet CLI
-                var project = await _dotNetProjectService.CreateProjectAsync(templateInstance.ProjectName, outputDir, dotNetTemplate.DotNetProjectType, dotNetTemplate.DotNetTargetFramework, dotNetTemplate.DotNetLanguage.DotNetCommandLineArgument, cancellationToken);
+                var project = await _dotNetProjectService.CreateProjectAsync(templateInstance.ProjectName, outputDir, dotNetTemplate.DotNetProjectType, dotNetTemplate.DotNetTargetFramework.DotNetCommandLineArgument, dotNetTemplate.DotNetLanguage.DotNetCommandLineArgument, cancellationToken);
             
             foreach (var package in templateInstance.Packages)
             {

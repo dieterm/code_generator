@@ -27,7 +27,10 @@ namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication
 
         private bool PresentationDotNetProjectFilter(CreatedArtifactEventArgs args)
         {
-            if(args.Artifact is DotNetProjectArtifact projectArtifact)
+            if(!Enabled)
+                return false;
+
+            if (args.Artifact is DotNetProjectArtifact projectArtifact)
             {
                 if(projectArtifact.Parent is CodeArchitectureLayerArtifact layerArtifact)
                 {
@@ -45,6 +48,9 @@ namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication
 
         private async Task OnPresentationDotNetProjectCreated(CreatedArtifactEventArgs e)
         {
+            if (!Enabled)
+                return;
+
             var projectArtifact = (e.Artifact as DotNetProjectArtifact)!;
       
             projectArtifact.AddNuGetPackage(NuGetPackages.Syncfusion_Edit_Windows);
@@ -176,7 +182,8 @@ namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication
 
         public override void UnsubscribeFromEvents(GeneratorMessageBus messageBus)
         {
-            messageBus.Unsubscribe(_unsubscribe_handler!);
+            if(_unsubscribe_handler!=null)
+                messageBus.Unsubscribe(_unsubscribe_handler!);
         }
 
         protected override GeneratorSettingsDescription ConfigureSettingsDescription()

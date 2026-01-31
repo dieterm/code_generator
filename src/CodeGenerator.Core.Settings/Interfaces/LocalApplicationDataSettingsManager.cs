@@ -12,6 +12,7 @@ namespace CodeGenerator.Core.Settings.Interfaces
 {
     public abstract class LocalApplicationDataSettingsManager<TSettings> : ISettingsManager where TSettings : LocalApplicationDataSettingsBase, new()
     {
+        public event EventHandler? SettingsSaved;
         private TSettings _settings;
         public TSettings Settings => _settings;
 
@@ -22,6 +23,11 @@ namespace CodeGenerator.Core.Settings.Interfaces
             WriteIndented = true,
             PropertyNameCaseInsensitive = true
         };
+
+        protected void RaiseSettingsSavedEvent()
+        {
+            SettingsSaved?.Invoke(this, EventArgs.Empty);
+        }
 
         protected LocalApplicationDataSettingsManager(string settingsFilePath, ILogger logger)
         {
@@ -101,7 +107,10 @@ namespace CodeGenerator.Core.Settings.Interfaces
                 }
 
                 File.WriteAllText(_settingsFilePath, json);
+                
                 _logger?.LogInformation("{SettingsModelName} settings saved to {Path}", SettingsModelName, _settingsFilePath);
+
+                RaiseSettingsSavedEvent();
             }
             catch (Exception ex)
             {

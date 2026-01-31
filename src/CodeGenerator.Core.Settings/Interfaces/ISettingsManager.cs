@@ -10,6 +10,7 @@ namespace CodeGenerator.Core.Settings.Interfaces
 {
     public interface ISettingsManager
     {
+        event EventHandler? SettingsSaved;
         /// <summary>
         /// Load settings from <settingscope>.config file
         /// Settings are automatically loaded on first access, but this can be called explicitly

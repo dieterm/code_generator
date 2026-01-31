@@ -19,9 +19,18 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
         public List<NuGetPackage> Packages { get; private set; } = new();
 
         /// <summary>
+        /// Returns the project file name, e.g. 'MyProject.csproj'
+        /// </summary>
+        /// <returns></returns>
+        public string GetProjectFileName()
+        {
+            return $"{ProjectName}.{_template.DotNetLanguage.ProjectFileExtension}";
+        }
+
+        /// <summary>
         /// Project references
         /// </summary>
-        //public List<DotNetProjectReference> ProjectReferences { get; } = new();
+        public List<DotNetProjectReference> ProjectReferences { get; } = new();
 
         public DotNetProjectTemplateInstance(DotNetProjectTemplate template, string projectName)
         {

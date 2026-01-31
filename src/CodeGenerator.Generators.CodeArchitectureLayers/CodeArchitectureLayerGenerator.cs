@@ -28,33 +28,36 @@ namespace CodeGenerator.Generators.CodeArchitectureLayers
 
         private void OnCreatingRootArtifact(CreatingArtifactEventArgs args)
         {
+            if (!Enabled)
+                return;
+
             var settings = new CodeArchitectureLayerGeneratorSettings(base.GetSettings());
            
-            var commonScopes = new List<string>
-            {
-                CodeArchitectureLayerArtifact.SHARED_SCOPE,
-                CodeArchitectureLayerArtifact.APPLICATION_SCOPE
-            };
+            //var commonScopes = new List<string>
+            //{
+            //    CodeArchitectureLayerArtifact.SHARED_SCOPE,
+            //    CodeArchitectureLayerArtifact.APPLICATION_SCOPE
+            //};
             
             
-            foreach (var scope in commonScopes)
-            {
-                var folderNamePattern = new ParameterizedString(settings.FolderNamePattern);
-                var parameters = new Dictionary<string, string>
-                {
-                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_WorkspaceNamespaceParameter, args.Result.Workspace.RootNamespace },
-                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_LayerParameter, LayerName },
-                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_ScopeParameter, scope },
-                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_DomainNamespaceParameter, scope }
-                };
-                var folderName = folderNamePattern.GetOutput(parameters);
+            //foreach (var scope in commonScopes)
+            //{
+            //    var folderNamePattern = new ParameterizedString(settings.FolderNamePattern);
+            //    var parameters = new Dictionary<string, string>
+            //    {
+            //        { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_WorkspaceNamespaceParameter, args.Result.Workspace.RootNamespace },
+            //        { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_LayerParameter, LayerName },
+            //        { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_ScopeParameter, scope },
+            //        { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_DomainNamespaceParameter, scope }
+            //    };
+            //    var folderName = folderNamePattern.GetOutput(parameters);
                 
-                var scopeFolderArtifact = new FolderArtifact(folderName);
-                AddChildArtifactToParent(args.Result.RootArtifact, scopeFolderArtifact, args.Result);
+            //    var scopeFolderArtifact = new FolderArtifact(folderName);
+            //    AddChildArtifactToParent(args.Result.RootArtifact, scopeFolderArtifact, args.Result);
                 
-                var layerArtifact = CreateLayerArtifact(scope);
-                AddChildArtifactToParent(scopeFolderArtifact, layerArtifact, args.Result);
-            }
+            //    var layerArtifact = CreateLayerArtifact(scope);
+            //    AddChildArtifactToParent(scopeFolderArtifact, layerArtifact, args.Result);
+            //}
 
             // Get domains from workspace
             // var domains = args.Result.Workspace.Domains.GetDomains().ToArray();

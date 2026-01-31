@@ -15,6 +15,12 @@ namespace CodeGenerator.Core.Settings.Application
     {
         private readonly ApplicationSettings _settings;
         private readonly ApplicationSettingsViewModelGenerator _viewModelGenerator;
+
+        public event EventHandler? SettingsSaved;
+        protected void RaiseSettingsSavedEvent()
+        {
+            SettingsSaved?.Invoke(this, EventArgs.Empty);
+        }
         public ApplicationSettingsManager()
         {
             _settings = ApplicationSettings.Instance;
@@ -42,6 +48,7 @@ namespace CodeGenerator.Core.Settings.Application
         public void SaveSettings()
         {
             _settings.Save();
+            RaiseSettingsSavedEvent();
         }
 
         /// <summary>
@@ -50,6 +57,7 @@ namespace CodeGenerator.Core.Settings.Application
         public void ResetSettings()
         {
             _settings.ResetToDefaults();
+            RaiseSettingsSavedEvent();
         }
 
         #endregion

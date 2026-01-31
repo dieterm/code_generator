@@ -12,7 +12,7 @@ namespace CodeGenerator.Domain.DotNet
 {
     public class DotNetProjectArtifact : Artifact
     {
-        public DotNetProjectArtifact(string name, DotNetLanguage language, string projectType, string targetFramework)
+        public DotNetProjectArtifact(string name, DotNetLanguage language, string projectType, TargetFramework targetFramework)
         {
             //Id = $"DotNetProject:{Name}";
             Name = name;
@@ -34,8 +34,19 @@ namespace CodeGenerator.Domain.DotNet
                 ProjectReferences = new List<DotNetProjectReference>();
         }
 
-        //public override string Id => $"DotNetProject:{Name}";
+        /// <summary>
+        /// Returns the project file name, e.g. 'MyProject.csproj'
+        /// </summary>
         public string ProjectFileName { get { return $"{Name}.{Language.ProjectFileExtension}"; } }
+
+        /// <summary>
+        /// Returns the full project file path in the workspace folder, e.g. 'C:\Projects\MyWorkspace\MyProject\MyProject.csproj'
+        /// </summary>
+        public string GetProjectFilePath()
+        {
+            var folderPath = GetFolderPath();
+            return System.IO.Path.Combine(folderPath, ProjectFileName);
+        }
 
         public string Name {
             get { return GetValue<string>(nameof(Name)); }
@@ -76,11 +87,11 @@ namespace CodeGenerator.Domain.DotNet
             }
         }
 
-        public string TargetFramework
+        public TargetFramework TargetFramework
         {
-            get { return GetValue<string>(nameof(TargetFramework)); }
+            get { return TargetFrameworks.AllFrameworks.Single(f => f.Id ==GetValue<string>(nameof(TargetFramework))); }
             set { 
-                if(SetValue(nameof(TargetFramework), value))
+                if(SetValue(nameof(TargetFramework), value.Id))
                     RaisePropertyChangedEvent(nameof(TreeNodeText));
             }
         }
@@ -97,7 +108,7 @@ namespace CodeGenerator.Domain.DotNet
             private set { SetValue(nameof(ProjectReferences), value); }
         }
 
-        public override string TreeNodeText { get { return $"{Name} ({Language.DotNetCommandLineArgument}, {ProjectType}, {TargetFramework})"; } }
+        public override string TreeNodeText { get { return $"{Name} ({Language.DotNetCommandLineArgument}, {ProjectType}, {TargetFramework.DotNetCommandLineArgument})"; } }
 
         private ITreeNodeIcon _treeNodeIcon;
         public override ITreeNodeIcon TreeNodeIcon { get { return _treeNodeIcon; } }
