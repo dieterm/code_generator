@@ -1,3 +1,18 @@
+using CodeGenerator.Domain.ProgrammingLanguages.Cpp;
+using CodeGenerator.Domain.ProgrammingLanguages.CSharp;
+using CodeGenerator.Domain.ProgrammingLanguages.FSharp;
+using CodeGenerator.Domain.ProgrammingLanguages.Go;
+using CodeGenerator.Domain.ProgrammingLanguages.Java;
+using CodeGenerator.Domain.ProgrammingLanguages.JavaScript;
+using CodeGenerator.Domain.ProgrammingLanguages.Kotlin;
+using CodeGenerator.Domain.ProgrammingLanguages.Php;
+using CodeGenerator.Domain.ProgrammingLanguages.Python;
+using CodeGenerator.Domain.ProgrammingLanguages.Ruby;
+using CodeGenerator.Domain.ProgrammingLanguages.Rust;
+using CodeGenerator.Domain.ProgrammingLanguages.Swift;
+using CodeGenerator.Domain.ProgrammingLanguages.TypeScript;
+using CodeGenerator.Domain.ProgrammingLanguages.VisualBasic;
+
 namespace CodeGenerator.Domain.ProgrammingLanguages
 {
     /// <summary>
@@ -12,7 +27,19 @@ namespace CodeGenerator.Domain.ProgrammingLanguages
         public static IEnumerable<ProgrammingLanguage> All => new ProgrammingLanguage[]
         {
             CSharpLanguage.Instance,
-            JavaLanguage.Instance
+            VisualBasicLanguage.Instance,
+            FSharpLanguage.Instance,
+            JavaLanguage.Instance,
+            KotlinLanguage.Instance,
+            PythonLanguage.Instance,
+            JavaScriptLanguage.Instance,
+            TypeScriptLanguage.Instance,
+            SwiftLanguage.Instance,
+            GoLanguage.Instance,
+            RustLanguage.Instance,
+            CppLanguage.Instance,
+            PhpLanguage.Instance,
+            RubyLanguage.Instance
         };
 
         /// <summary>
@@ -29,6 +56,18 @@ namespace CodeGenerator.Domain.ProgrammingLanguages
         public static ProgrammingLanguage? FindByName(string name)
         {
             return All.FirstOrDefault(lang => lang.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        }
+
+        /// <summary>
+        /// Find a language by file extension
+        /// </summary>
+        public static ProgrammingLanguage? FindByFileExtension(string extension)
+        {
+            // Normalize extension to include dot
+            if (!extension.StartsWith("."))
+                extension = "." + extension;
+
+            return All.FirstOrDefault(lang => lang.FileExtension.Equals(extension, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

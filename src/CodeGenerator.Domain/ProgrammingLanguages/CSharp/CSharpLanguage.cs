@@ -1,7 +1,7 @@
 using CodeGenerator.Domain.DataTypes;
 using CodeGenerator.Domain.NamingConventions;
 
-namespace CodeGenerator.Domain.ProgrammingLanguages
+namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
 {
     /// <summary>
     /// C# programming language definition
