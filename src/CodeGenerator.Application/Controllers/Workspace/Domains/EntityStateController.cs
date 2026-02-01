@@ -33,7 +33,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             var commands = new List<ArtifactTreeNodeCommand>();
 
             // Add Property command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "add_property",
                 Text = "Add Property",
@@ -48,10 +48,9 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
                 }
             });
 
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
+           
             // Rename command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_RENAME)
             {
                 Id = "rename_state",
                 Text = "Rename",
@@ -64,7 +63,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             });
 
             // Naming Convention Commands
-            var namingConventionCommand = new ArtifactTreeNodeCommand
+            var namingConventionCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_RENAME)
             {
                 Id = "properties_naming_convention",
                 Text = "Properties Naming Convention",
@@ -74,7 +73,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
 
             foreach(var style in Enum.GetValues<NamingStyle>())
             {
-                namingConventionCommand.SubCommands.Add(new ArtifactTreeNodeCommand
+                namingConventionCommand.SubCommands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_RENAME)
                 {
                     Id = $"properties_to_{style.ToString().ToLower()}_property",
                     Text = $"To {style}",
@@ -93,10 +92,9 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             
             commands.Add(namingConventionCommand);
 
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
+            
             // Properties command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "state_properties",
                 Text = "Properties",

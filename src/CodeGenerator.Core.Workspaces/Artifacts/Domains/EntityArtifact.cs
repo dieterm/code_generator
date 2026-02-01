@@ -8,7 +8,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
     /// <summary>
     /// Represents an entity within a domain
     /// </summary>
-    public class EntityArtifact : Artifact, IEditableTreeNode
+    public class EntityArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
         public EntityArtifact(string name)
             : base()

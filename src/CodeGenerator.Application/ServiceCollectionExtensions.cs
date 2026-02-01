@@ -107,6 +107,8 @@ public static class ServiceCollectionExtensions
 
         //services.AddSingleton<DomainsContainerController>();
         services.AddSingleton<ScopesContainerController>();
+        services.AddSingleton<SubScopesContainerController>();
+        services.AddSingleton<ScopeArtifactController>();
         services.AddSingleton<DomainController>();
         services.AddSingleton<EntitiesContainerController>();
         services.AddSingleton<EntityController>();

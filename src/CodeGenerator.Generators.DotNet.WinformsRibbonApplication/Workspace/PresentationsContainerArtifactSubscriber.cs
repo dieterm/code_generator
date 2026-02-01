@@ -18,7 +18,7 @@ namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication
         {
             if(artifact.Parent is ScopeArtifact scopeArtifact && scopeArtifact.Name == ScopeArtifact.DEFAULT_SCOPE_APPLICATION)
             {
-                args.Commands.Add(new ArtifactTreeNodeCommand
+                args.Commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
                 {
                     Id = "add_new_winforms_presentation",
                     Text = "Add New Winforms Application",

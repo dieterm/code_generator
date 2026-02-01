@@ -34,7 +34,7 @@ public class ExcelDatasourceController : ArtifactControllerBase<WorkspaceTreeVie
         var commands = new List<ArtifactTreeNodeCommand>();
 
         // Rename command
-        commands.Add(new ArtifactTreeNodeCommand
+        commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_RENAME)
         {
             Id = "rename_datasource",
             Text = "Rename",
@@ -46,10 +46,9 @@ public class ExcelDatasourceController : ArtifactControllerBase<WorkspaceTreeVie
             }
         });
 
-        commands.Add(ArtifactTreeNodeCommand.Separator);
-
+        
         // Refresh sheets command
-        commands.Add(new ArtifactTreeNodeCommand
+        commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
         {
             Id = "refresh_sheets",
             Text = "Refresh Sheets",
@@ -61,10 +60,9 @@ public class ExcelDatasourceController : ArtifactControllerBase<WorkspaceTreeVie
             }
         });
 
-        commands.Add(ArtifactTreeNodeCommand.Separator);
-
+      
         // Properties command
-        commands.Add(new ArtifactTreeNodeCommand
+        commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
         {
             Id = "datasource_properties",
             Text = "Properties",

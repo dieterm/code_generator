@@ -30,7 +30,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             var commands = new List<ArtifactTreeNodeCommand>();
 
             // Column Type submenu
-            var columnTypeCommand = new ArtifactTreeNodeCommand
+            var columnTypeCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "set_column_type",
                 Text = "Set Column Type",
@@ -41,7 +41,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             foreach (var columnType in Enum.GetValues<ListViewColumnType>())
             {
                 var ct = columnType;
-                columnTypeCommand.SubCommands.Add(new ArtifactTreeNodeCommand
+                columnTypeCommand.SubCommands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
                 {
                     Id = $"set_column_{ct}",
                     Text = ct.ToString(),
@@ -55,11 +55,10 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             }
 
             commands.Add(columnTypeCommand);
-
-            commands.Add(ArtifactTreeNodeCommand.Separator);
+            var LISTVIEW_ACTIONS = "ListViewActions";
 
             // Toggle visibility
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(LISTVIEW_ACTIONS)
             {
                 Id = "toggle_visibility",
                 Text = artifact.IsVisible ? "Hide Column" : "Show Column",
@@ -72,7 +71,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             });
 
             // Toggle sortable
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(LISTVIEW_ACTIONS)
             {
                 Id = "toggle_sortable",
                 Text = artifact.IsSortable ? "Disable Sorting" : "Enable Sorting",
@@ -85,7 +84,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             });
 
             // Toggle filterable
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(LISTVIEW_ACTIONS)
             {
                 Id = "toggle_filterable",
                 Text = artifact.IsFilterable ? "Disable Filter" : "Enable Filter",
@@ -97,10 +96,10 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
                 }
             });
 
-            commands.Add(ArtifactTreeNodeCommand.Separator);
+            var MOVE_ACTIONS = "Move";
 
             // Move Left command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(MOVE_ACTIONS)
             {
                 Id = "move_left",
                 Text = "Move Left",
@@ -125,7 +124,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             });
 
             // Move Right command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(MOVE_ACTIONS)
             {
                 Id = "move_right",
                 Text = "Move Right",
@@ -149,10 +148,8 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
                 }
             });
 
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
-            // Properties command
-            commands.Add(new ArtifactTreeNodeCommand
+             // Properties command
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "column_properties",
                 Text = "Properties",

@@ -23,12 +23,13 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
             : base()
         {
             Name = name;
-
+            
             AddChild(new DomainArtifact("Domain"));
             AddChild(new InfrastructuresContainerArtifact());
             AddChild(new ApplicationsContainerArtifact());
             AddChild(new PresentationsContainerArtifact());
-
+            AddChild(new SubScopesContainerArtifact());
+            
             PublishArtifactConstructionEvent();
         }
 
@@ -39,6 +40,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
             EnsureChildArtifactExists<InfrastructuresContainerArtifact>();
             EnsureChildArtifactExists<ApplicationsContainerArtifact>();
             EnsureChildArtifactExists<PresentationsContainerArtifact>();
+            EnsureChildArtifactExists<SubScopesContainerArtifact>();
+
             PublishArtifactConstructionEvent();
         }
 
@@ -75,7 +78,15 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
 
         public bool CanBeginEdit()
         {
-            return Name != DEFAULT_SCOPE_SHARED && Name != DEFAULT_SCOPE_APPLICATION;
+            return IsDefaultScope();
+        }
+
+        /// <summary>
+        /// Returns true if this scope is one of the default scopes (Shared or Application)
+        /// </summary>
+        public bool IsDefaultScope()
+        {
+            return Name == DEFAULT_SCOPE_SHARED || Name == DEFAULT_SCOPE_APPLICATION;
         }
 
         public void EndEdit(string oldName, string newName)

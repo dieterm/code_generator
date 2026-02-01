@@ -34,7 +34,7 @@ public class PostgreSqlDatasourceController : ArtifactControllerBase<WorkspaceTr
         var commands = new List<ArtifactTreeNodeCommand>();
 
         // Rename command
-        commands.Add(new ArtifactTreeNodeCommand
+        commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_RENAME)
         {
             Id = "rename_datasource",
             Text = "Rename",
@@ -46,10 +46,8 @@ public class PostgreSqlDatasourceController : ArtifactControllerBase<WorkspaceTr
             }
         });
 
-        commands.Add(ArtifactTreeNodeCommand.Separator);
-
         // Add table command
-        commands.Add(new ArtifactTreeNodeCommand
+        commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
         {
             Id = "add_table",
             Text = "Add Table",
@@ -64,7 +62,7 @@ public class PostgreSqlDatasourceController : ArtifactControllerBase<WorkspaceTr
         });
 
         // Add view command
-        commands.Add(new ArtifactTreeNodeCommand
+        commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
         {
             Id = "add_view",
             Text = "Add View",
@@ -78,10 +76,8 @@ public class PostgreSqlDatasourceController : ArtifactControllerBase<WorkspaceTr
             }
         });
 
-        commands.Add(ArtifactTreeNodeCommand.Separator);
-
         // Refresh schema command
-        commands.Add(new ArtifactTreeNodeCommand
+        commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
         {
             Id = "refresh_schema",
             Text = "Refresh Schema",
@@ -93,10 +89,8 @@ public class PostgreSqlDatasourceController : ArtifactControllerBase<WorkspaceTr
             }
         });
 
-        commands.Add(ArtifactTreeNodeCommand.Separator);
-
         // Properties command
-        commands.Add(new ArtifactTreeNodeCommand
+        commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
         {
             Id = "datasource_properties",
             Text = "Properties",

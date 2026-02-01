@@ -13,6 +13,7 @@ using CodeGenerator.Generators.DotNet.Generators.InfrastructureLayer.SharedScope
 using CodeGenerator.Generators.DotNet.Generators.PresentationLayer.ApplicationScope;
 using CodeGenerator.Generators.DotNet.Generators.PresentationLayer.DomainScope;
 using CodeGenerator.Generators.DotNet.Generators.PresentationLayer.SharedScope;
+using CodeGenerator.Generators.DotNet.Workspace;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -51,6 +52,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IMessageBusAwareGenerator, EntitiesClassGenerator>();
         services.AddTransient<IMessageBusAwareGenerator, DotNetSolutionGenerator>();
 
+        services.AddSingleton<IWorkspaceMessageBusSubscriber, EntityArtifactSubscriber>();
         return services;
     }
 }

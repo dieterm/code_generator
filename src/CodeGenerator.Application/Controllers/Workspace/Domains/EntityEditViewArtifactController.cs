@@ -30,7 +30,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             var commands = new List<ArtifactTreeNodeCommand>();
 
             // Add Field command with property selection
-            var addFieldCommand = new ArtifactTreeNodeCommand
+            var addFieldCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "add_field",
                 Text = "Add Field",
@@ -48,7 +48,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
                     var existingField = artifact.GetFields().FirstOrDefault(f => f.PropertyName == propertyName);
                     if (existingField == null)
                     {
-                        addFieldCommand.SubCommands.Add(new ArtifactTreeNodeCommand
+                        addFieldCommand.SubCommands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
                         {
                             Id = $"add_field_{propertyName}",
                             Text = propertyName,
@@ -71,7 +71,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
 
             if (addFieldCommand.SubCommands.Count == 0)
             {
-                addFieldCommand.SubCommands.Add(new ArtifactTreeNodeCommand
+                addFieldCommand.SubCommands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
                 {
                     Id = "no_properties",
                     Text = "(No available properties)",
@@ -82,7 +82,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             commands.Add(addFieldCommand);
 
             // Add all fields command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "add_all_fields",
                 Text = "Add All Fields",
@@ -112,10 +112,8 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
                 }
             });
 
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
             // Rename command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_RENAME)
             {
                 Id = "rename_editview",
                 Text = "Rename",
@@ -127,10 +125,8 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
                 }
             });
 
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
             // Properties command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "editview_properties",
                 Text = "Properties",

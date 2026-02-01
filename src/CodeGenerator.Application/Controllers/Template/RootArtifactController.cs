@@ -22,7 +22,7 @@ namespace CodeGenerator.Application.Controllers.Template
 
         protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(RootArtifact artifact)
         {
-            yield return new ArtifactTreeNodeCommand
+            yield return new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "create_folder",
                 Text = "Create Folder",

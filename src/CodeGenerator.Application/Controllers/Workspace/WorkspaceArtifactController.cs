@@ -33,7 +33,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             var commands = new List<ArtifactTreeNodeCommand>();
 
             // Rename command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_RENAME)
             {
                 Id = "rename_workspace",
                 Text = "Rename",
@@ -44,15 +44,13 @@ namespace CodeGenerator.Application.Controllers.Workspace
                     await Task.CompletedTask;
                 }
             });
-
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
+            var DATASOURCE_COMMANDS = "DatasourceCommands";
             // Add datasource submenu
             var addDatasourceSubCommands = new List<ArtifactTreeNodeCommand>();
             
             foreach (var typeInfo in _datasourceFactory.GetAvailableTypes())
             {
-                addDatasourceSubCommands.Add(new ArtifactTreeNodeCommand
+                addDatasourceSubCommands.Add(new ArtifactTreeNodeCommand(DATASOURCE_COMMANDS)
                 {
                     Id = $"add_datasource_{typeInfo.TypeId}",
                     Text = typeInfo.DisplayName,
@@ -63,19 +61,17 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
             if (addDatasourceSubCommands.Any())
             {
-                commands.Add(new ArtifactTreeNodeCommand
+                commands.Add(new ArtifactTreeNodeCommand(DATASOURCE_COMMANDS)
                 {
                     Id = "add_datasource",
                     Text = "Add Datasource",
                     IconKey = "plus",
                     SubCommands = addDatasourceSubCommands
                 });
-
-                commands.Add(ArtifactTreeNodeCommand.Separator);
             }
-
+            var WORKSPACE_COMMANDS = "WorkspaceCommands";
             // Workspace commands
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(WORKSPACE_COMMANDS)
             {
                 Id = "save_workspace",
                 Text = "Save Workspace",
@@ -83,7 +79,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 Execute = async (a) => await TreeViewController.SaveWorkspaceAsync()
             });
 
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(WORKSPACE_COMMANDS)
             {
                 Id = "workspace_properties",
                 Text = "Properties",

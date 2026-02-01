@@ -11,14 +11,14 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Scopes
 {
-    public class ScopesContainerController : ArtifactControllerBase<WorkspaceTreeViewController, ScopesContainerArtifact>
+    public class SubScopesContainerController : ArtifactControllerBase<WorkspaceTreeViewController, SubScopesContainerArtifact>
     {
-        public ScopesContainerController(WorkspaceTreeViewController treeViewController, ILogger<ScopesContainerController> logger)
+        public SubScopesContainerController(WorkspaceTreeViewController treeViewController, ILogger<SubScopesContainerController> logger)
             : base(treeViewController, logger)
         {
         }
 
-        protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(ScopesContainerArtifact artifact)
+        protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(SubScopesContainerArtifact artifact)
         {
             yield return new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
@@ -29,7 +29,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Scopes
             };
         }
 
-        private Task AddScopeAsync(ScopesContainerArtifact artifact)
+        private Task AddScopeAsync(SubScopesContainerArtifact artifact)
         {
             artifact.AddScope("New Scope");
             return Task.CompletedTask;

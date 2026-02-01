@@ -5,6 +5,8 @@ namespace CodeGenerator.Domain.CodeElements
     /// </summary>
     public abstract class CodeElement
     {
+        public string? RawCode { get; set; }
+
         /// <summary>
         /// Optional name of the code element
         /// </summary>

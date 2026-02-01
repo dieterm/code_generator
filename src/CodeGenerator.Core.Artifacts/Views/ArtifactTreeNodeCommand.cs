@@ -7,6 +7,7 @@ namespace CodeGenerator.Core.Artifacts;
 /// </summary>
 public class ArtifactTreeNodeCommand
 {
+    
     /// <summary>
     /// Unique identifier for the command
     /// </summary>
@@ -23,6 +24,12 @@ public class ArtifactTreeNodeCommand
     public string? IconKey { get; init; }
 
     /// <summary>
+    /// Gets the name of the group associated with this instance.
+    /// This is used to categorize commands in the UI, Context menus, etc.
+    /// </summary>
+    public string GroupName { get; init; }
+
+    /// <summary>
     /// Execute the command
     /// </summary>
     public Func<IArtifact, Task>? Execute { get; init; }
@@ -37,13 +44,21 @@ public class ArtifactTreeNodeCommand
     /// </summary>
     public List<ArtifactTreeNodeCommand>? SubCommands { get; init; }
 
+    public ArtifactTreeNodeCommand(string groupName)
+    {
+        if (string.IsNullOrWhiteSpace(groupName))
+            throw new ArgumentNullException(nameof(groupName), "Group name cannot be null or whitespace.");
+        
+        GroupName = groupName;
+    }
+
     /// <summary>
     /// Is this a separator
     /// </summary>
-    public bool IsSeparator { get; init; }
+    //public bool IsSeparator { get; init; }
 
     /// <summary>
     /// Create a separator command
     /// </summary>
-    public static ArtifactTreeNodeCommand Separator => new() { IsSeparator = true };
+    //public static ArtifactTreeNodeCommand Separator => new() { IsSeparator = true };
 }

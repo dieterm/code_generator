@@ -28,7 +28,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             var commands = new List<ArtifactTreeNodeCommand>();
 
             // Add State command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "add_state",
                 Text = "Add State",

@@ -79,6 +79,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
                 //ServiceProviderHolder.ServiceProvider.GetRequiredService<DomainsContainerController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<ScopesContainerController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<SubScopesContainerController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<ScopeArtifactController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<DomainController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<EntitiesContainerController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityController>(),

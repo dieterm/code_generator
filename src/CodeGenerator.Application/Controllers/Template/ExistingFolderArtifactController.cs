@@ -25,7 +25,7 @@ namespace CodeGenerator.Application.Controllers.Template
 
         protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(ExistingFolderArtifact folderArtifact)
         {
-            var createTemplateCommand = new ArtifactTreeNodeCommand
+            var createTemplateCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "create_template",
                 Text = "Create Template",
@@ -37,7 +37,7 @@ namespace CodeGenerator.Application.Controllers.Template
             var templateEngines = templateEngineManager.TemplateEngines.OfType<IFileBasedTemplateEngine>().ToArray();
             foreach (var engine in templateEngines)
             {
-                createTemplateCommand.SubCommands.Add(new ArtifactTreeNodeCommand
+                createTemplateCommand.SubCommands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
                 {
                     Id = $"create_template_{engine.Id}",
                     Text = engine.DisplayName,
@@ -55,10 +55,8 @@ namespace CodeGenerator.Application.Controllers.Template
                 });
             }
             yield return createTemplateCommand;
-            // add seperator
-            yield return ArtifactTreeNodeCommand.Separator;
-
-            yield return new ArtifactTreeNodeCommand
+           
+            yield return new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "create_folder",
                 Text = "Create Folder",
@@ -73,7 +71,7 @@ namespace CodeGenerator.Application.Controllers.Template
                     TreeViewController.RequestBeginRename(newFolderArtifact);
                 }
             };
-            yield return new ArtifactTreeNodeCommand
+            yield return new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "open_folder",
                 Text = "Open in Explorer",

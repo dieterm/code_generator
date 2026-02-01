@@ -31,7 +31,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             var commands = new List<ArtifactTreeNodeCommand>();
 
             // Rename command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_RENAME)
             {
                 Id = "rename_relation",
                 Text = "Rename",

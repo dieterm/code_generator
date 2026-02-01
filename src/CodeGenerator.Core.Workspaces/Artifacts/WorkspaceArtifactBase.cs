@@ -55,5 +55,11 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             }
             return childArtifact;
         }
+
+        public WorkspaceArtifact GetWorkspace()
+        {
+            return FindAncesterOfType<WorkspaceArtifact>() 
+                ?? throw new InvalidOperationException("Artifact is not part of a workspace.");
+        }
     }
 }

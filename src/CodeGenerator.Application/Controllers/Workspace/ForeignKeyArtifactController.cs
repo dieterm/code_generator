@@ -25,7 +25,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             var commands = new List<ArtifactTreeNodeCommand>();
 
             // Rename command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_RENAME)
             {
                 Id = "rename_foreignkey",
                 Text = "Rename",

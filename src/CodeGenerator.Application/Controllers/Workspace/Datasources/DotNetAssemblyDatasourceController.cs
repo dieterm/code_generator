@@ -34,7 +34,7 @@ public class DotNetAssemblyDatasourceController : ArtifactControllerBase<Workspa
         var commands = new List<ArtifactTreeNodeCommand>();
 
         // Rename command
-        commands.Add(new ArtifactTreeNodeCommand
+        commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_RENAME)
         {
             Id = "rename_datasource",
             Text = "Rename",
@@ -46,10 +46,9 @@ public class DotNetAssemblyDatasourceController : ArtifactControllerBase<Workspa
             }
         });
 
-        commands.Add(ArtifactTreeNodeCommand.Separator);
-
+       
         // Refresh assembly command
-        commands.Add(new ArtifactTreeNodeCommand
+        commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
         {
             Id = "refresh_assembly",
             Text = "Refresh",
@@ -61,10 +60,8 @@ public class DotNetAssemblyDatasourceController : ArtifactControllerBase<Workspa
             }
         });
 
-        commands.Add(ArtifactTreeNodeCommand.Separator);
-
         // Properties command
-        commands.Add(new ArtifactTreeNodeCommand
+        commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
         {
             Id = "datasource_properties",
             Text = "Properties",

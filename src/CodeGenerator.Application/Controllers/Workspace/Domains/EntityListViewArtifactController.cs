@@ -33,7 +33,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             var entity = artifact.FindAncesterOfType<EntityArtifact>();
 
             // Add Column command with property selection
-            var addColumnCommand = new ArtifactTreeNodeCommand
+            var addColumnCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "add_column",
                 Text = "Add Column",
@@ -54,7 +54,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
                         var existingColumn = artifact.GetColumns().FirstOrDefault(c => c.PropertyPath == propertyPath);
                         if (existingColumn == null)
                         {
-                            addColumnCommand.SubCommands.Add(new ArtifactTreeNodeCommand
+                            addColumnCommand.SubCommands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
                             {
                                 Id = $"add_column_{propertyPath}",
                                 Text = propertyPath,
@@ -79,17 +79,13 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
                     }
                 }
 
-                // Add separator if we have properties
-                if (addColumnCommand.SubCommands.Count > 0 && entity.GetRelations().Any())
-                {
-                    addColumnCommand.SubCommands.Add(ArtifactTreeNodeCommand.Separator);
-                }
+
 
                 // Add relation properties
                 foreach (var relation in entity.GetRelations())
                 {
                     var relationPropertyPath = $"{relation.SourcePropertyName}";
-                    addColumnCommand.SubCommands.Add(new ArtifactTreeNodeCommand
+                    addColumnCommand.SubCommands.Add(new ArtifactTreeNodeCommand("Relation")
                     {
                         Id = $"add_column_rel_{relation.Id}",
                         Text = $"[Relation] {relationPropertyPath}",
@@ -115,7 +111,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
 
             if (addColumnCommand.SubCommands.Count == 0)
             {
-                addColumnCommand.SubCommands.Add(new ArtifactTreeNodeCommand
+                addColumnCommand.SubCommands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
                 {
                     Id = "no_properties",
                     Text = "(No available properties - set DefaultState first)",
@@ -126,7 +122,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             commands.Add(addColumnCommand);
 
             // Add all columns command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "add_all_columns",
                 Text = "Add All Columns",
@@ -160,10 +156,8 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
                 }
             });
 
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
             // Rename command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_RENAME)
             {
                 Id = "rename_listview",
                 Text = "Rename",
@@ -175,10 +169,9 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
                 }
             });
 
-            commands.Add(ArtifactTreeNodeCommand.Separator);
 
             // Properties command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "listview_properties",
                 Text = "Properties",

@@ -37,7 +37,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
                 foreach (var typeInfo in categoryGroup.OrderBy(t => t.DisplayName))
                 {
-                    categoryCommands.Add(new ArtifactTreeNodeCommand
+                    categoryCommands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
                     {
                         Id = $"add_datasource_{typeInfo.TypeId}",
                         Text = typeInfo.DisplayName,
@@ -46,7 +46,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                     });
                 }
 
-                commands.Add(new ArtifactTreeNodeCommand
+                commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
                 {
                     Id = $"add_datasource_category_{categoryGroup.Key.Replace(" ", "_").ToLowerInvariant()}",
                     Text = $"Add {categoryGroup.Key}",

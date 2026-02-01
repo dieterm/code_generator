@@ -2,6 +2,7 @@ using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
+using DocumentFormat.OpenXml.Bibliography;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Domains
@@ -30,7 +31,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             var commands = new List<ArtifactTreeNodeCommand>();
 
             // Control Type submenu
-            var controlTypeCommand = new ArtifactTreeNodeCommand
+            var controlTypeCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "set_control_type",
                 Text = "Set Control Type",
@@ -41,7 +42,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             foreach (var controlType in Enum.GetValues<DataFieldControlType>())
             {
                 var ct = controlType;
-                controlTypeCommand.SubCommands.Add(new ArtifactTreeNodeCommand
+                controlTypeCommand.SubCommands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
                 {
                     Id = $"set_control_{ct}",
                     Text = ct.ToString(),
@@ -55,11 +56,9 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             }
 
             commands.Add(controlTypeCommand);
-
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
+            var UP_DOWN_GROUP = "Move";
             // Move Up command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(UP_DOWN_GROUP)
             {
                 Id = "move_up",
                 Text = "Move Up",
@@ -84,7 +83,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             });
 
             // Move Down command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(UP_DOWN_GROUP)
             {
                 Id = "move_down",
                 Text = "Move Down",
@@ -108,10 +107,8 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
                 }
             });
 
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
             // Properties command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "field_properties",
                 Text = "Properties",

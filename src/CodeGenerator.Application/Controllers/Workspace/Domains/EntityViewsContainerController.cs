@@ -30,7 +30,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             var entity = artifact.FindAncesterOfType<EntityArtifact>();
 
             // Add Edit View command with state selection submenu
-            var addEditViewCommand = new ArtifactTreeNodeCommand
+            var addEditViewCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "add_editview",
                 Text = "Add Edit View",
@@ -44,7 +44,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
                 {
                     var stateId = state.Id;
                     var stateName = state.Name;
-                    addEditViewCommand.SubCommands.Add(new ArtifactTreeNodeCommand
+                    addEditViewCommand.SubCommands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
                     {
                         Id = $"add_editview_for_{stateId}",
                         Text = $"For State: {stateName}",
@@ -66,7 +66,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
 
             if (addEditViewCommand.SubCommands.Count == 0)
             {
-                addEditViewCommand.SubCommands.Add(new ArtifactTreeNodeCommand
+                addEditViewCommand.SubCommands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
                 {
                     Id = "no_states",
                     Text = "(No states available - add states first)",
@@ -77,7 +77,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             commands.Add(addEditViewCommand);
 
             // Add List View command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "add_listview",
                 Text = "Add List View",
@@ -93,7 +93,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             });
 
             // Add Select View command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "add_selectview",
                 Text = "Add Select View",

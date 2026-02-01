@@ -47,7 +47,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
         {
             var commands = new List<ArtifactTreeNodeCommand>();
 
-            var createObjectCommand = new ArtifactTreeNodeCommand
+            var createObjectCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "create_object",
                 Text = "Create object",
@@ -55,7 +55,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 SubCommands = new List<ArtifactTreeNodeCommand>()
             };
 
-            var newEntityCommand = new ArtifactTreeNodeCommand
+            var newEntityCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "new_entity",
                 Text = "New Entity",
@@ -67,7 +67,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             var domains = TreeViewController.CurrentWorkspace!.Scopes.Select(s => s.Domain).ToList();
             foreach (var domain in domains)
             {
-                var domainCommand = new ArtifactTreeNodeCommand
+                var domainCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
                 {
                     Id = $"new_entity_{domain.Id}",
                     Text = domain.Name,
@@ -84,7 +84,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             commands.Add(createObjectCommand);
 
             // Generate Script command
-            var generateScriptCommand = new ArtifactTreeNodeCommand
+            var generateScriptCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "generate_script",
                 Text = "Generate script",
@@ -94,7 +94,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
             foreach (var db in RelationalDatabases.All)
             {
-                var dbCommand = new ArtifactTreeNodeCommand
+                var dbCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
                 {
                     Id = $"generate_script_{db.Id}",
                     Text = db.Name,
@@ -117,10 +117,9 @@ namespace CodeGenerator.Application.Controllers.Workspace
             }
             commands.Add(generateScriptCommand);
 
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
+            var ADD_CHILD_COMMANDS = "AddChildCommands";
             // Add Column command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ADD_CHILD_COMMANDS)
             {
                 Id = "add_column",
                 Text = "Add Column",
@@ -136,7 +135,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             });
 
             // Add Index command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ADD_CHILD_COMMANDS)
             {
                 Id = "add_index",
                 Text = "Add Index",
@@ -152,7 +151,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             });
 
             // Add Foreign Key command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ADD_CHILD_COMMANDS)
             {
                 Id = "add_foreignkey",
                 Text = "Add Foreign Key",
@@ -167,10 +166,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 }
             });
 
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
             // Rename command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_RENAME)
             {
                 Id = "rename_table",
                 Text = "Rename",
@@ -182,10 +179,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 }
             });
 
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
             // Convert to View command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "convert_to_view",
                 Text = "Convert to View",
@@ -328,7 +323,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
         }
         private ArtifactTreeNodeCommand CreateScriptCommand(CreateScriptCommandInfo commandInfo, TableArtifact artifact)
         {
-            return new ArtifactTreeNodeCommand
+            return new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = $"generate_script_{commandInfo.Database.Id}_{commandInfo.Action}",
                 Text = commandInfo.Text,

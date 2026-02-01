@@ -44,10 +44,6 @@ namespace CodeGenerator.Application.Controllers.Base
                 var clipboardCommands = GetClipboardCommands(typedArtifact);
                 if (clipboardCommands.Any())
                 {
-                    if (commands.Any())
-                    {
-                        commands.Add(ArtifactTreeNodeCommand.Separator);
-                    }
                     commands.AddRange(clipboardCommands);
                 }
                 
@@ -68,7 +64,7 @@ namespace CodeGenerator.Application.Controllers.Base
             // Cut command
             if (CanCut(artifact))
             {
-                commands.Add(new ArtifactTreeNodeCommand
+                commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_EDIT)
                 {
                     Id = "cut",
                     Text = "Cut",
@@ -81,7 +77,7 @@ namespace CodeGenerator.Application.Controllers.Base
             // Copy command
             if (CanCopy(artifact))
             {
-                commands.Add(new ArtifactTreeNodeCommand
+                commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_EDIT)
                 {
                     Id = "copy",
                     Text = "Copy",
@@ -95,7 +91,7 @@ namespace CodeGenerator.Application.Controllers.Base
             var clipboardArtifact = ClipboardService.GetArtifact();
             if (clipboardArtifact != null && CanPaste(clipboardArtifact, artifact))
             {
-                commands.Add(new ArtifactTreeNodeCommand
+                commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_EDIT)
                 {
                     Id = "paste",
                     Text = "Paste",
@@ -119,11 +115,7 @@ namespace CodeGenerator.Application.Controllers.Base
             // Delete command
             if (CanDelete(artifact))
             {
-                if (commands.Any())
-                {
-                    commands.Add(ArtifactTreeNodeCommand.Separator);
-                }
-                commands.Add(new ArtifactTreeNodeCommand
+                commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_DELETE)
                 {
                     Id = "delete",
                     Text = "Delete",

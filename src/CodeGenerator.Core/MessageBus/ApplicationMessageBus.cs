@@ -1,4 +1,5 @@
-﻿using CodeGenerator.Core.Events.Application;
+﻿using CodeGenerator.Application.ViewModels;
+using CodeGenerator.Core.Events.Application;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,11 @@ namespace CodeGenerator.Core.MessageBus
         public void ReportTaskProgress(string taskName, int? percentComplete)
         {
             Publish(new ReportTaskProgressEvent(taskName, percentComplete));
+        }
+
+        public void ShowArtifactPreview(ArtifactPreviewViewModel viewModel)
+        {
+            Publish(new ShowArtifactPreviewEvent(viewModel));
         }
     }
 }

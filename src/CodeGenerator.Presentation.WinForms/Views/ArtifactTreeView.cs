@@ -2,9 +2,11 @@ using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.ViewModels.Base;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.Events;
+using CodeGenerator.Core.Artifacts.Views;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
 using CodeGenerator.Shared.Views.TreeNode;
+using DocumentFormat.OpenXml.Office2010.CustomUI;
 using Syncfusion.Windows.Forms.Tools;
 using System.ComponentModel;
 
@@ -305,7 +307,12 @@ public partial class ArtifactTreeView : UserControl
             artifact.EndEdit(oldName, newName);
         }
     }
-
+    /// <summary>
+    /// There are 2 places where the context menu is shown:
+    /// 1. When right-clicking on a tree node
+    /// 2. When the treeviewcontroller fires the ContextMenuRequested event
+    /// This method handles the first case
+    /// </summary>
     private void ContextMenu_Opening(object? sender, CancelEventArgs e)
     {
         if (_viewModel?.SelectedArtifact == null)
@@ -315,12 +322,7 @@ public partial class ArtifactTreeView : UserControl
         }
 
         var commands = _viewModel.GetContextMenuCommands(_viewModel.SelectedArtifact);
-        ContextMenu.Items.Clear();
-
-        foreach (var command in commands)
-        {
-            ContextMenu.Items.Add(CreateMenuItem(command, _viewModel.SelectedArtifact));
-        }
+        RefreshContextMenu(commands, _viewModel.SelectedArtifact);
 
         if (ContextMenu.Items.Count == 0)
         {
@@ -328,27 +330,60 @@ public partial class ArtifactTreeView : UserControl
         }
     }
 
-    private void ShowContextMenu(ArtifactContextMenuEventArgs e)
+    private void RefreshContextMenu(IEnumerable<ArtifactTreeNodeCommand> commands, IArtifact artifact)
     {
-        var contextMenu = new ContextMenuStrip();
+        // Clear previous items instead of creating a new ContextMenuStrip
+        ContextMenu.Items.Clear();
 
-        foreach (var command in e.Commands)
+        // group commands by GroupName
+        // add seperator between each group
+        // put "Default" group first, then "Edit", "Rename", "Manage", "Delete"
+        var commandGroups = new List<ArtifactTreeNodeCommandGroup>();
+        foreach (var command in commands)
         {
-            contextMenu.Items.Add(CreateMenuItem(command, e.Artifact));
+            if (!commandGroups.Any(c => c.Name == command.GroupName))
+            {
+                commandGroups.Add(new ArtifactTreeNodeCommandGroup(command.GroupName));
+            }
+            commandGroups.Single(c => c.Name == command.GroupName).Commands.Add(command);
         }
 
-        if (contextMenu.Items.Count > 0)
+        foreach (var commandGroup in commandGroups.OrderBy(c => c.SortOrder))
         {
-            contextMenu.Show(TreeView, new Point(e.X, e.Y));
+            if (ContextMenu.Items.Count > 0)
+            {
+                ContextMenu.Items.Add(new ToolStripSeparator());
+            }
+
+            foreach (var command in commandGroup.Commands)
+            {
+                ContextMenu.Items.Add(CreateMenuItem(command, artifact));
+            }
+        }
+    }
+
+    /// <summary>
+    /// There are 2 places where the context menu is shown:
+    /// 1. When right-clicking on a tree node
+    /// 2. When the treeviewcontroller fires the ContextMenuRequested event
+    /// This method handles the second case
+    /// </summary>
+    private void ShowContextMenu(ArtifactContextMenuEventArgs e)
+    {
+        RefreshContextMenu(e.Commands, e.Artifact);
+       
+        if (ContextMenu.Items.Count > 0)
+        {
+            ContextMenu.Show(TreeView, new Point(e.X, e.Y));
         }
     }
 
     private ToolStripItem CreateMenuItem(ArtifactTreeNodeCommand command, IArtifact artifact)
     {
-        if (command.IsSeparator)
-        {
-            return new ToolStripSeparator();
-        }
+        //if (command.IsSeparator)
+        //{
+        //    return new ToolStripSeparator();
+        //}
 
         var menuItem = new ToolStripMenuItem(command.Text);
 

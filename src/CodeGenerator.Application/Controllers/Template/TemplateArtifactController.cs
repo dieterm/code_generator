@@ -48,7 +48,7 @@ namespace CodeGenerator.Application.Controllers.Template
 
         protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(TemplateArtifact templateArtifact)
         {
-            yield return new ArtifactTreeNodeCommand
+            yield return new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "edit_template",
                 Text = "Edit Template",
@@ -75,7 +75,7 @@ namespace CodeGenerator.Application.Controllers.Template
             var templateDefinitionFilePath = TemplateDefinition.GetDefinitionFilePath(templateArtifact.FilePath);
             if (File.Exists(templateDefinitionFilePath))
             {
-                yield return new ArtifactTreeNodeCommand
+                yield return new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
                 {
                     Id = "edit_template_definition",
                     Text = "Edit Template Definition",
@@ -98,7 +98,7 @@ namespace CodeGenerator.Application.Controllers.Template
                     }
                 };
             }
-            yield return new ArtifactTreeNodeCommand
+            yield return new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "execute_template",
                 Text = "Execute",
@@ -111,9 +111,8 @@ namespace CodeGenerator.Application.Controllers.Template
                 }
             };
 
-            yield return ArtifactTreeNodeCommand.Separator;
 
-            yield return new ArtifactTreeNodeCommand
+            yield return new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "open_template_folder",
                 Text = "Open Containing Folder",

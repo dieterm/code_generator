@@ -31,7 +31,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             var commands = new List<ArtifactTreeNodeCommand>();
 
             // Toggle Primary Key command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "toggle_primary_key",
                 Text = artifact.IsPrimaryKey ? "Remove Primary Key" : "Set as Primary Key",
@@ -44,10 +44,9 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 }
             });
 
-            commands.Add(ArtifactTreeNodeCommand.Separator);
 
             // Rename command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_RENAME)
             {
                 Id = "rename_column",
                 Text = "Rename",

@@ -22,7 +22,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             var commands = new List<ArtifactTreeNodeCommand>();
 
             // Add Column command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "add_column",
                 Text = "Add Column",
@@ -38,7 +38,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             });
 
             // Add Index command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "add_index",
                 Text = "Add Index",
@@ -53,10 +53,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 }
             });
 
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
             // Rename command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_RENAME)
             {
                 Id = "rename_view",
                 Text = "Rename",
@@ -68,10 +66,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 }
             });
 
-            commands.Add(ArtifactTreeNodeCommand.Separator);
-
             // Convert to Table command
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "convert_to_table",
                 Text = "Convert to Table",

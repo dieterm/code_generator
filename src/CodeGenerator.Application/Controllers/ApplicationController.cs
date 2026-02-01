@@ -87,6 +87,10 @@ namespace CodeGenerator.Application.Controllers
                     }
                 }
             });
+            _messageBus.Subscribe<ShowArtifactPreviewEvent>((e) =>
+            {
+                ServiceProviderHolder.GetRequiredService<IWindowManagerService>().ShowArtifactPreview(e.ViewModel);
+            });
         }
 
         public void StartApplication()

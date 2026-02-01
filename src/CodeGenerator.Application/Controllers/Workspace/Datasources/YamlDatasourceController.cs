@@ -36,7 +36,7 @@ public class YamlDatasourceController : ArtifactControllerBase<WorkspaceTreeView
         var commands = new List<ArtifactTreeNodeCommand>();
 
         // Rename command
-        commands.Add(new ArtifactTreeNodeCommand
+        commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_RENAME)
         {
             Id = "rename_datasource",
             Text = "Rename",
@@ -48,11 +48,10 @@ public class YamlDatasourceController : ArtifactControllerBase<WorkspaceTreeView
             }
         });
 
-        commands.Add(ArtifactTreeNodeCommand.Separator);
         // View/Edit file command
         if (System.IO.File.Exists(artifact.FilePath))
         {
-            commands.Add(new ArtifactTreeNodeCommand
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
                 Id = "edit_datasource",
                 Text = "View/Edit file",
@@ -72,7 +71,7 @@ public class YamlDatasourceController : ArtifactControllerBase<WorkspaceTreeView
             });
         }
         // Refresh file command
-        commands.Add(new ArtifactTreeNodeCommand
+        commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
         {
             Id = "refresh_file",
             Text = "Refresh",
@@ -84,10 +83,8 @@ public class YamlDatasourceController : ArtifactControllerBase<WorkspaceTreeView
             }
         });
 
-        commands.Add(ArtifactTreeNodeCommand.Separator);
-
         // Properties command
-        commands.Add(new ArtifactTreeNodeCommand
+        commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
         {
             Id = "datasource_properties",
             Text = "Properties",
