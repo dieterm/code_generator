@@ -11,6 +11,8 @@ De ArtifactContext property op een WorkspaceArtifact kan gebruikt worden om:
 - bv. Layer: de resulterende architectuurlaag van het artifact (Application, Presentation, Domain, Infrastructure, ...)
 - bv. OutputPath: de output path voor gegenereerde bestanden
 
+## Add ScopeArtifact NamespacePattern property
+
 ## ProgrammingLanguageCodeGenerator regisration
 Registreer ProgrammingLanguageCodeGenerator per programmeertaal via DI-container,
 ipv via CSharpCodeGeneratorExtensions.RegisterCSharpCodeGenerator();

@@ -1,5 +1,6 @@
 ﻿using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Core.Workspaces.ViewModels;
 using CodeGenerator.Shared;
@@ -16,6 +17,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
 {
     public class DomainArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
+        public const string CONTEXT_PARAMETER_DOMAIN_NAME = "DomainName";
         public const string DEFAULT_DOMAIN_NAME_APPLICATION = "Application";
         public const string DEFAULT_DOMAIN_NAME_SHARED = "Shared";
 
@@ -71,25 +73,25 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
         /// <summary>
         /// Default namespace of the domain
         /// </summary>
-        public string DefaultNamespacePattern
+        public string NamespacePattern
         {
-            get { return GetValue<string>(nameof(DefaultNamespacePattern)); }
-            set { SetValue(nameof(DefaultNamespacePattern), value); }
+            get { return GetValue<string>(nameof(NamespacePattern)); }
+            set { SetValue(nameof(NamespacePattern), value); }
         }
 
-        public string DefaultNamespace         
+        public string Namespace         
         {
             get
             {
-                var namespacePattern = DefaultNamespacePattern;
+                var namespacePattern = NamespacePattern;
                 if (string.IsNullOrWhiteSpace(namespacePattern))
                     return string.Empty;
 
                 var paremeteraisedString = new ParameterizedString(namespacePattern);
                 var parameters = new Dictionary<string, string>
                 {
-                    { DomainEditViewModel.DEFAULT_NAMESPACE_PARAMETER_DOMAIN_NAME, Name },
-                    { DomainEditViewModel.DEFAULT_NAMESPACE_PARAMETER_WORKSPACE_ROOT_NAMESPACE, GetWorkspaceRootNamespace() }
+                    { DomainArtifact.CONTEXT_PARAMETER_DOMAIN_NAME, Name },
+                    { WorkspaceArtifact.CONTEXT_PARAMETER_WORKSPACE_ROOT_NAMESPACE, GetWorkspaceRootNamespace() }
                 };
 
                 return paremeteraisedString.GetOutput(parameters);
@@ -159,6 +161,28 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
         public void AddValueType(ValueTypeArtifact valueTypeArtifact)
         {
             ValueTypes.AddValueType(valueTypeArtifact);
+        }
+
+        protected override WorkspaceArtifactContext? GetOwnContext()
+        {
+            var namespaceParameters = new Dictionary<string, string>
+            {
+                { CONTEXT_PARAMETER_DOMAIN_NAME, Name },
+            };
+            return new WorkspaceArtifactContext
+            {
+                Namespace = Namespace,
+                NamespaceParameters = new System.Collections.ObjectModel.ReadOnlyDictionary<string, string>(namespaceParameters)
+            };
+        }
+
+        public ScopeArtifact? Scope
+        {
+            get { 
+                if (Parent is DomainsContainerArtifact domainsContainer && domainsContainer.Parent is ScopeArtifact scope)
+                    return scope;
+                return null;
+            }
         }
     }
 }

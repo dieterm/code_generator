@@ -28,8 +28,8 @@ namespace CodeGenerator.Generators.DotNet
     {
         public const string ProjectNamePattern_LayerParameter = "Layer";
         public const string ProjectNamePattern_ScopeParameter = "Scope";
-        public const string ProjectNamePattern_LanguageParameter = WorkspaceArtifact.ProjectNamePattern_LanguageParameter;
-        public const string ProjectNamePattern_WorkspaceNamespaceParameter = WorkspaceArtifact.ProjectNamePattern_WorkspaceNamespaceParameter;
+        public const string ProjectNamePattern_LanguageParameter = WorkspaceArtifact.CONTEXT_PARAMETER_LANGUAGE;
+        public const string ProjectNamePattern_WorkspaceNamespaceParameter = WorkspaceArtifact.CONTEXT_PARAMETER_WORKSPACE_ROOT_NAMESPACE;
         // "{WorkspaceNamespace}.{Layer}.{Scope}"
         public const string ProjectNamePattern_DefaultValue = $"{{{ProjectNamePattern_WorkspaceNamespaceParameter}}}.{{{ProjectNamePattern_LayerParameter}}}.{{{ProjectNamePattern_ScopeParameter}}}";
         private readonly GeneratorSettings _settings;

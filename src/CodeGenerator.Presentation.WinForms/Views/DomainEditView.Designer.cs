@@ -20,7 +20,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             lblTitle = new Label();
             txtName = new SingleLineTextField();
             txtDescription = new SingleLineTextField();
-            txtDefaultNamespace = new ParameterizedStringField();
+            txtNamespace = new ParameterizedStringField();
             tableLayoutPanel = new TableLayoutPanel();
             tableLayoutPanel.SuspendLayout();
             SuspendLayout();
@@ -43,7 +43,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel.Controls.Add(txtName, 0, 0);
             tableLayoutPanel.Controls.Add(txtDescription, 0, 1);
-            tableLayoutPanel.Controls.Add(txtDefaultNamespace, 0, 2);
+            tableLayoutPanel.Controls.Add(txtNamespace, 0, 2);
             tableLayoutPanel.Location = new Point(10, 40);
             tableLayoutPanel.Name = "tableLayoutPanel";
             tableLayoutPanel.RowCount = 3;
@@ -73,12 +73,12 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // 
             // txtDefaultNamespace
             // 
-            txtDefaultNamespace.Dock = DockStyle.Top;
-            txtDefaultNamespace.Label = "Default Namespace:";
-            txtDefaultNamespace.Location = new Point(3, 115);
-            txtDefaultNamespace.Name = "txtDefaultNamespace";
-            txtDefaultNamespace.Size = new Size(374, 80);
-            txtDefaultNamespace.TabIndex = 2;
+            txtNamespace.Dock = DockStyle.Top;
+            txtNamespace.Label = "Default Namespace:";
+            txtNamespace.Location = new Point(3, 115);
+            txtNamespace.Name = "txtDefaultNamespace";
+            txtNamespace.Size = new Size(374, 80);
+            txtNamespace.TabIndex = 2;
             // 
             // DomainEditView
             // 
@@ -100,6 +100,6 @@ namespace CodeGenerator.Presentation.WinForms.Views
         private TableLayoutPanel tableLayoutPanel;
         private SingleLineTextField txtName;
         private SingleLineTextField txtDescription;
-        private ParameterizedStringField txtDefaultNamespace;
+        private ParameterizedStringField txtNamespace;
     }
 }

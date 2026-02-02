@@ -42,7 +42,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // Bind fields to their view models
             txtName.BindViewModel(_viewModel.NameField);
             txtDescription.BindViewModel(_viewModel.DescriptionField);
-            txtDefaultNamespace.BindViewModel(_viewModel.DefaultNamespaceField);
+            txtNamespace.BindViewModel(_viewModel.NamespaceField);
 
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
         }

@@ -108,5 +108,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
             TreeViewController.ShowArtifactDetailsView(_editViewModel!);
             return Task.CompletedTask;
         }
+
+
     }
 }

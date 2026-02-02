@@ -15,79 +15,23 @@ namespace CodeGenerator.Core.Workspaces.ViewModels
     /// </summary>
     public class DomainEditViewModel : ViewModelBase
     {
-        public const string DEFAULT_NAMESPACE_PARAMETER_WORKSPACE_ROOT_NAMESPACE = "WorkspaceRootNamespace";
-        public const string DEFAULT_NAMESPACE_PARAMETER_DOMAIN_NAME = "DomainName";
         private DomainArtifact? _domain;
-        private WorkspaceArtifact? _currentWorkspace;
         private bool _isLoading;
 
         public DomainEditViewModel()
         {
             NameField = new SingleLineTextFieldModel { Label = "Domain Name", Name = nameof(DomainArtifact.Name) };
             DescriptionField = new SingleLineTextFieldModel { Label = "Description", Name = nameof(DomainArtifact.Description) };
-            DefaultNamespaceField = new ParameterizedStringFieldModel
+            NamespaceField = new ParameterizedStringFieldModel
             {
                 Label = "Default Namespace",
-                Name = nameof(DomainArtifact.DefaultNamespacePattern)
+                Name = nameof(DomainArtifact.NamespacePattern)
             };
-
-            // Add workspace root namespace parameter
-            var workspaceRootNamespace = GetWorkspaceRootNamespace();
-            DefaultNamespaceField.AddParameter(new ParameterizedStringParameter
-            {
-                Parameter = DEFAULT_NAMESPACE_PARAMETER_WORKSPACE_ROOT_NAMESPACE,
-                ExampleValue = workspaceRootNamespace
-            });
-
-            DefaultNamespaceField.AddParameter(new ParameterizedStringParameter
-            {
-                Parameter = DEFAULT_NAMESPACE_PARAMETER_DOMAIN_NAME,
-                ExampleValue = string.Empty
-            });
 
             // Subscribe to field changes
             NameField.PropertyChanged += OnFieldChanged;
             DescriptionField.PropertyChanged += OnFieldChanged;
-            DefaultNamespaceField.PropertyChanged += OnFieldChanged;
-
-            // Observe Workspace.RootNamespace property for changes
-            var workspaceTreeViewController = ServiceProviderHolder.GetRequiredService<IWorkspaceContextProvider>();
-            workspaceTreeViewController.WorkspaceChanged += WorkspaceTreeViewController_WorkspaceChanged;
-            WorkspaceTreeViewController_WorkspaceChanged(null, workspaceTreeViewController.CurrentWorkspace);
-        }
-
-        private void WorkspaceTreeViewController_WorkspaceChanged(object? sender, WorkspaceArtifact? newWorkspace)
-        {
-            if (_currentWorkspace != null)
-            {
-                _currentWorkspace.PropertyChanged -= CurrentWorkspace_PropertyChanged;
-            }
-            _currentWorkspace = newWorkspace;
-            if (_currentWorkspace != null)
-            {
-                _currentWorkspace.PropertyChanged += CurrentWorkspace_PropertyChanged;
-            }
-        }
-
-        private void CurrentWorkspace_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if(e.PropertyName== nameof(WorkspaceArtifact.RootNamespace))
-            {
-                UpdateWorkspaceRootNamespaceParameter();
-            }
-        }
-
-        private string GetWorkspaceRootNamespace()
-        {
-            try
-            {
-                var workspaceContext = ServiceProviderHolder.GetRequiredService<IWorkspaceContextProvider>();
-                return workspaceContext.CurrentWorkspace?.RootNamespace ?? "MyCompany.MyProduct";
-            }
-            catch
-            {
-                return "MyCompany.MyProduct";
-            }
+            NamespaceField.PropertyChanged += OnFieldChanged;
         }
 
         /// <summary>
@@ -98,10 +42,11 @@ namespace CodeGenerator.Core.Workspaces.ViewModels
             get => _domain;
             set
             {
-                if (_domain != null)
+                if (_domain != null && _domain != value)
                 {
                     _domain.PropertyChanged -= Domain_PropertyChanged;
                 }
+
                 if (SetProperty(ref _domain, value))
                 {
                     LoadFromDomain();
@@ -115,10 +60,22 @@ namespace CodeGenerator.Core.Workspaces.ViewModels
 
         private void Domain_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            var domain = sender as DomainArtifact;
             if (e.PropertyName == nameof(DomainArtifact.Name))
             {
-                NameField.Value = _domain?.Name;
-                UpdateDomainNameParameter();
+                NameField.Value = domain!.Name;
+            }
+            else if(e.PropertyName == nameof(DomainArtifact.Description))
+            {
+                DescriptionField.Value = domain!.Description;
+            }
+            else if (e.PropertyName == nameof(DomainArtifact.NamespacePattern))
+            {
+                NamespaceField.Value = domain!.NamespacePattern;
+            }
+            else if (e.PropertyName == nameof(DomainArtifact.Context))
+            {
+                UpdateNamespaceParameters();
             }
         }
 
@@ -135,7 +92,7 @@ namespace CodeGenerator.Core.Workspaces.ViewModels
         /// <summary>
         /// Default namespace field with parameter support
         /// </summary>
-        public ParameterizedStringFieldModel DefaultNamespaceField { get; }
+        public ParameterizedStringFieldModel NamespaceField { get; }
 
         /// <summary>
         /// Event raised when any field value changes
@@ -151,10 +108,12 @@ namespace CodeGenerator.Core.Workspaces.ViewModels
             {
                 NameField.Value = _domain.Name;
                 DescriptionField.Value = _domain.Description;
-                DefaultNamespaceField.Value = _domain.DefaultNamespacePattern;
-
-                // Refresh the domain name parameter
-                UpdateDomainNameParameter();
+                
+                NamespaceField.Parameters.Clear();
+                UpdateNamespaceParameters();
+               
+                NamespaceField.Value = _domain.NamespacePattern;
+                
             }
             finally
             {
@@ -162,27 +121,27 @@ namespace CodeGenerator.Core.Workspaces.ViewModels
             }
         }
 
-        private void UpdateWorkspaceRootNamespaceParameter()
+        private void UpdateNamespaceParameters()
         {
-            var workspaceRootNamespace = GetWorkspaceRootNamespace();
-            var parameter = DefaultNamespaceField.Parameters.FirstOrDefault(p => p.Parameter == DEFAULT_NAMESPACE_PARAMETER_WORKSPACE_ROOT_NAMESPACE);
-            if (parameter != null)
+            if(_domain==null) return;
+            foreach (var (paramName, paramValue) in _domain.Context!.NamespaceParameters)
             {
-                parameter.ExampleValue = workspaceRootNamespace;
-                DefaultNamespaceField.RefreshParameterizedString();
+                var existingParameter = NamespaceField.Parameters.FirstOrDefault(p => p.Parameter == paramName);
+                if (existingParameter != null)
+                {
+                    existingParameter.ExampleValue = paramValue;
+                } 
+                else
+                {
+                    NamespaceField.AddParameter(new ParameterizedStringParameter
+                    {
+                        Parameter = paramName,
+                        ExampleValue = paramValue
+                    });
+                }
+                    
             }
         }
-
-        private void UpdateDomainNameParameter()
-        {
-            var parameter = DefaultNamespaceField.Parameters.FirstOrDefault(p => p.Parameter == DEFAULT_NAMESPACE_PARAMETER_DOMAIN_NAME);
-            if (parameter != null)
-            {
-                parameter.ExampleValue = _domain?.Name ?? string.Empty;
-                DefaultNamespaceField.RefreshParameterizedString();
-            }
-        }
-
         private void OnFieldChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (_isLoading || _domain == null) return;
@@ -203,7 +162,7 @@ namespace CodeGenerator.Core.Workspaces.ViewModels
             {
                 nameof(DomainArtifact.Name) => _domain.Name,
                 nameof(DomainArtifact.Description) => _domain.Description,
-                nameof(DomainArtifact.DefaultNamespacePattern) => _domain.DefaultNamespacePattern,
+                nameof(DomainArtifact.NamespacePattern) => _domain.NamespacePattern,
                 _ => null
             };
         }
@@ -214,7 +173,16 @@ namespace CodeGenerator.Core.Workspaces.ViewModels
 
             _domain.Name = !string.IsNullOrWhiteSpace(NameField.Value as string) ? NameField.Value as string : "Domain";
             _domain.Description = DescriptionField.Value?.ToString() ?? string.Empty;
-            _domain.DefaultNamespacePattern = DefaultNamespaceField.Value?.ToString() ?? string.Empty;
+            _domain.NamespacePattern = NamespaceField.Value?.ToString() ?? string.Empty;
+        }
+
+        public override void DisposeViewModel()
+        {
+            if(_domain != null)
+            {
+                _domain.PropertyChanged -= Domain_PropertyChanged;
+            }
+            base.DisposeViewModel();
         }
     }
 }

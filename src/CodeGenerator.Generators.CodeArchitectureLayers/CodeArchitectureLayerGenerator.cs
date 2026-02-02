@@ -72,7 +72,7 @@ namespace CodeGenerator.Generators.CodeArchitectureLayers
                     { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_WorkspaceNamespaceParameter, args.Result.Workspace.RootNamespace },
                     { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_LayerParameter, LayerName },
                     { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_ScopeParameter, scope.Name },
-                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_DomainNamespaceParameter, scope.Namespace }
+                    { CodeArchitectureLayerGeneratorSettings.FolderNamePattern_DomainNamespaceParameter, scope.NamespacePattern }
                 };
                 var folderName = folderNamePattern.GetOutput(parameters);
                 var scopeFolderArtifact = new FolderArtifact(folderName);

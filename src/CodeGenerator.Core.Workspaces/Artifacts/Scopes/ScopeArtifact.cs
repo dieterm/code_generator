@@ -24,7 +24,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
         {
             Name = name;
             
-            AddChild(new DomainArtifact("Domain"));
+            AddChild(new DomainsContainerArtifact());
             AddChild(new InfrastructuresContainerArtifact());
             AddChild(new ApplicationsContainerArtifact());
             AddChild(new PresentationsContainerArtifact());
@@ -36,7 +36,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
         public ScopeArtifact(ArtifactState state)
             : base(state) 
         {
-            EnsureChildArtifactExists<DomainArtifact>(() => new DomainArtifact("Domain"));
+            EnsureChildArtifactExists<DomainsContainerArtifact>();
             EnsureChildArtifactExists<InfrastructuresContainerArtifact>();
             EnsureChildArtifactExists<ApplicationsContainerArtifact>();
             EnsureChildArtifactExists<PresentationsContainerArtifact>();
@@ -68,13 +68,13 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
         /// <summary>
         /// Default namespace of the scope
         /// </summary>
-        public string Namespace
+        public string NamespacePattern
         {
-            get { return GetValue<string>(nameof(Namespace)); }
-            set { SetValue(nameof(Namespace), value); }
+            get { return GetValue<string>(nameof(NamespacePattern)); }
+            set { SetValue(nameof(NamespacePattern), value); }
         }
 
-        public DomainArtifact Domain { get { return Children.OfType<DomainArtifact>().FirstOrDefault()!; } }
+        public DomainsContainerArtifact Domains { get { return Children.OfType<DomainsContainerArtifact>().FirstOrDefault()!; } }
         public InfrastructuresContainerArtifact Infrastructure { get { return Children.OfType<InfrastructuresContainerArtifact>().FirstOrDefault()!; } }
         public ApplicationsContainerArtifact Applications { get { return Children.OfType<ApplicationsContainerArtifact>().FirstOrDefault()!; } }
         public PresentationsContainerArtifact Presentations { get { return Children.OfType<PresentationsContainerArtifact>().FirstOrDefault()!; } }
@@ -82,7 +82,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
 
         public bool CanBeginEdit()
         {
-            return IsDefaultScope();
+            return !IsDefaultScope();
         }
 
         /// <summary>
@@ -101,6 +101,70 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
         public bool Validating(string newName)
         {
             return !string.IsNullOrWhiteSpace(newName) && newName != DEFAULT_SCOPE_SHARED && newName != DEFAULT_SCOPE_APPLICATION;
+        }
+
+        protected override WorkspaceArtifactContext? GetOwnContext()
+        {
+            var namespaceParameters = new Dictionary<string, string>();
+            namespaceParameters.Add("ScopeName", Name);
+            namespaceParameters.Add("ScopeNamespace", GetResultingNamespace() ?? string.Empty);
+            namespaceParameters.Add("ParentScopeNamespace", GetParentScope()?.GetResultingNamespace() ?? string.Empty);
+            return new WorkspaceArtifactContext
+            {
+                Scope = this,
+                Namespace = GetResultingNamespace(),
+                NamespaceParameters = new System.Collections.ObjectModel.ReadOnlyDictionary<string, string>(namespaceParameters)
+            };
+        }
+
+        public ScopeArtifact? GetParentScope()
+        {
+            if (Parent is SubScopesContainerArtifact subScopesContainer && subScopesContainer.Parent is ScopeArtifact parentScope)
+            {
+                return parentScope;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public string? GetResultingNamespace()
+        {
+            if (Parent is ScopesContainerArtifact scopesContainer && scopesContainer.Parent is WorkspaceArtifact workspace)
+            {
+                var rootNamespace = workspace.RootNamespace;
+                if (!string.IsNullOrWhiteSpace(rootNamespace))
+                {
+                    if (!string.IsNullOrWhiteSpace(NamespacePattern))
+                        return $"{rootNamespace}.{NamespacePattern}";
+                    else
+                        return rootNamespace;
+                }
+                else
+                {
+                    return NamespacePattern;
+                }
+            }
+            else if (Parent is SubScopesContainerArtifact subScopesContainer && subScopesContainer.Parent is ScopeArtifact parentScope)
+            {
+                var parentNamespace = parentScope.GetResultingNamespace();
+                if (!string.IsNullOrWhiteSpace(parentNamespace))
+                {
+                    if (!string.IsNullOrWhiteSpace(NamespacePattern))
+                        return $"{parentNamespace}.{NamespacePattern}";
+                    else
+                        return parentNamespace;
+                }
+                else
+                {
+                    return NamespacePattern;
+                }
+            }
+            else
+            {
+                return NamespacePattern;
+            }
         }
     }
 }

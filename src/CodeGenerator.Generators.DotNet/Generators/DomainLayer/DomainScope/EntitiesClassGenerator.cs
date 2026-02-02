@@ -67,8 +67,7 @@ namespace CodeGenerator.Generators.DotNet.Generators.DomainLayer.DomainScope
                 _logger.LogError("DomainArtifactRefDecorator not found on layer artifact.");
                 throw new InvalidOperationException("DomainArtifactRefDecorator not found on layer artifact.");
             }
-            _logger.LogInformation("Generating entity classes for domain {DomainName} on layer {LayerName} scope {Scope}.", scopeArtifactRefDecorator.ScopeArtifact.Domain.Name, layerArtifact.Layer, layerArtifact.Scope);
-            var domainArtifact = scopeArtifactRefDecorator.ScopeArtifact.Domain;
+            var domainsContainerArtifact = scopeArtifactRefDecorator.ScopeArtifact.Domains;
 
             var settings = GetSettings();
             var entitiesSettings = new EntitiesClassGeneratorSettings(settings);
@@ -90,7 +89,11 @@ namespace CodeGenerator.Generators.DotNet.Generators.DomainLayer.DomainScope
                 _logger.LogError("No template engine found for template ID {TemplateId}.", entitiesSettings.TemplateId);
                 throw new InvalidOperationException($"No template engine found for template ID {entitiesSettings.TemplateId}.");
             }
-            foreach (var entityArtifact in domainArtifact.Entities.GetEntities())
+            foreach(var domainArtifact in domainsContainerArtifact) 
+            {
+                _logger.LogInformation("Generating entity classes for domain {DomainName} on layer {LayerName} scope {Scope}.", domainArtifact.Name, layerArtifact.Layer, layerArtifact.Scope);
+
+                foreach (var entityArtifact in domainArtifact.Entities.GetEntities())
             {
                 var templateInstance = templateEngine.CreateTemplateInstance(template);
                 
@@ -172,6 +175,7 @@ namespace CodeGenerator.Generators.DotNet.Generators.DomainLayer.DomainScope
                 {
                     AddChildArtifactToParent(dotNetProjectArtifact, artifact, e.Result);
                 }
+            }
             }
 
         }

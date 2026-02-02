@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Artifacts\DomainsContainerArtifact.cs" />
     <Compile Remove="Models\ColumnDefinition.cs" />
     <Compile Remove="Models\IndexDefinition.cs" />
     <Compile Remove="Models\TableDefinition.cs" />

@@ -3,6 +3,7 @@ using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Core.Workspaces.MessageBus.EventHandlers;
 using CodeGenerator.Core.Workspaces.Settings;
+using CodeGenerator.Core.Workspaces.ViewModels;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection;
 using CodeGenerator.Shared;
@@ -15,8 +16,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
     /// </summary>
     public partial class WorkspaceArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
-        public const string ProjectNamePattern_LanguageParameter = "Language";
-        public const string ProjectNamePattern_WorkspaceNamespaceParameter = "WorkspaceNamespace";
+        public const string CONTEXT_PARAMETER_WORKSPACE_ROOT_NAMESPACE = "WorkspaceRootNamespace";
+        public const string CONTEXT_PARAMETER_LANGUAGE = "Language";
 
         public WorkspaceArtifact(string name = "Workspace")
         {
@@ -54,9 +55,12 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         public string Name
         {
             get => GetValue<string>(nameof(Name));
-            set { 
-                if(SetValue(nameof(Name), value))
+            set
+            {
+                if (SetValue(nameof(Name), value)) { 
                     RaisePropertyChangedEvent(nameof(TreeNodeText));
+                    RaiseContextChanged();
+                }
             }
         }
 
@@ -66,7 +70,12 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         public string RootNamespace
         {
             get => GetValue<string>(nameof(RootNamespace));
-            set { SetValue(nameof(RootNamespace), value); }
+            set { 
+                if (SetValue(nameof(RootNamespace), value))
+                {
+                    RaiseContextChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -75,7 +84,12 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         public string OutputDirectory
         {
             get => GetValue<string>(nameof(OutputDirectory));
-            set { SetValue(nameof(OutputDirectory), value); }
+            set {
+                if (SetValue(nameof(OutputDirectory), value))
+                {
+                    RaiseContextChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -179,6 +193,19 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         public void EndEdit(string oldName, string newName)
         {
             Name = newName;
+        }
+
+        protected override WorkspaceArtifactContext GetOwnContext()
+        {
+            var namespaceParameters = new Dictionary<string, string>();
+            namespaceParameters.Add(CONTEXT_PARAMETER_WORKSPACE_ROOT_NAMESPACE, RootNamespace);
+            namespaceParameters.Add(CONTEXT_PARAMETER_LANGUAGE, DefaultLanguage);
+            return new WorkspaceArtifactContext
+            {
+                NamespaceParameters = new System.Collections.ObjectModel.ReadOnlyDictionary<string, string>(namespaceParameters),
+                Namespace = RootNamespace,
+                OutputPath = OutputDirectory                
+            };
         }
     }
 }
