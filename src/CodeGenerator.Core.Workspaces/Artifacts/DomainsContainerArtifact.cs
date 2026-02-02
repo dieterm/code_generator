@@ -2,6 +2,7 @@
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
+using CodeGenerator.Domain.CodeArchitecture;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Core.Workspaces.Artifacts
 {
-    public class DomainsContainerArtifact : WorkspaceArtifactBase, IEnumerable<DomainArtifact>
+    public class DomainsContainerArtifact : WorkspaceArtifactBase, IEnumerable<DomainArtifact>, ILayerArtifact
     {
         public DomainsContainerArtifact()
             : base()
@@ -30,6 +31,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
 
         public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("boxes");
 
+        public string LayerName => CodeArchitectureLayerArtifact.DOMAIN_LAYER;
+
         public void AddDomain(string domainName)
         {
             AddChild(new DomainArtifact(domainName));
@@ -43,6 +46,14 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        protected override WorkspaceArtifactContext? GetOwnContext()
+        {
+            return new WorkspaceArtifactContext
+            {
+                Namespace = (Parent as WorkspaceArtifactBase).Context.Namespace + "." + LayerName
+            };
         }
     }
 }

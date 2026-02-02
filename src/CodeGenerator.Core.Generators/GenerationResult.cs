@@ -1,5 +1,6 @@
 using CodeGenerator.Core.Artifacts.CodeGeneration;
 using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Core.Workspaces.Generators;
 
 namespace CodeGenerator.Core.Generators;
@@ -19,11 +20,18 @@ public class GenerationResult
 
     private void InitializeDotNetProjectReferences()
     {
-        foreach(var scope in this.Workspace.Scopes)
+        InitializeDotNetProjectReferences(this.Workspace.Scopes);
+        
+    }
+
+    private void InitializeDotNetProjectReferences(IEnumerable<ScopeArtifact> scopes)
+    {
+        foreach (var scope in scopes)
         {
             var projectReference = new ScopeDotNetProjectReferences(scope);
-            // TODO: Add support for subscopes
             this.DotNetProjectReferences.Add(projectReference);
+            // add sub-scope references
+            InitializeDotNetProjectReferences(scope.SubScopes);
         }
     }
 

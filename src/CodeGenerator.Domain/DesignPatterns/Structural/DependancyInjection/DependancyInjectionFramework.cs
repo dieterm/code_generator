@@ -258,6 +258,7 @@ namespace CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection
             {
                 IsExtensionMethodThis = true
             });
+            method.Parameters.Add(new ParameterElement("configuration", new TypeReference("IConfiguration")));
             method.IsExtensionMethod = true;
 
             // Build method body

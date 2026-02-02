@@ -5,6 +5,9 @@ using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Generators.MessageBus;
 using CodeGenerator.Core.Generators.Settings;
 using CodeGenerator.Core.MessageBus;
+using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
+using CodeGenerator.Core.Workspaces.Generators;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.DotNet;
 using CodeGenerator.Generators.DotNet.Events;
@@ -178,8 +181,9 @@ namespace CodeGenerator.Generators.DotNet.Generators
             int currentProjectIndex = 0;
             foreach (var projectRef in solutionArtifact.ProjectReferences)
             {
-                var layerArtifact = projectRef.ProjectArtifact.Parent as CodeArchitectureLayerArtifact;
-                var solutionSubFolder = layerArtifact?.Scope ?? "UnknownScope";
+                var projectFolderArtifact = projectRef.ProjectArtifact.Parent as FolderArtifact;
+                //var scopeArtifact = projectFolderArtifact?.GetDecoratorOfType<LayerArtifactRefDecorator>()?.LayerArtifact.Parent as ScopeArtifact;
+                var solutionSubFolder = projectRef.ProjectArtifact.SolutionSubFolder;
                 _logger.LogInformation($"Adding project {projectRef.ProjectArtifact.Name} to solution {solutionArtifact.Name} in folder {solutionSubFolder}.");
                 var projectFilePath = projectRef.ProjectArtifact.GetProjectFilePath();
                 await _dotNetProjectService.AddProjectToSolutionAsync(solutionFilePath, solutionSubFolder, projectFilePath);

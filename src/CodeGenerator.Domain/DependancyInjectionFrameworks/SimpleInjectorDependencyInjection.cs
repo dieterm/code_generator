@@ -269,7 +269,7 @@ return container;";
 
         public override string? GenerateModuleRegistrationMethodCall(string methodName, string builderVariableName = "services")
         {
-            return $"{builderVariableName}.{methodName}();";
+            return $"{builderVariableName}.{methodName}(configuration);";
         }
 
         #endregion

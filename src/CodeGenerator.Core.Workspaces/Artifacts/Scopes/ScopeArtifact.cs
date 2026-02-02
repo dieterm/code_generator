@@ -172,6 +172,23 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
             }
         }
 
+        /// <summary>
+        /// Solution sub-folder for this scope used to organize projects in visual studio solution file
+        /// </summary>
+        /// <returns></returns>
+        public string GetSolutionSubFolder()
+        {
+            if(GetParentScope() ==null)
+                return Name;
+            else 
+                return $"{GetParentScope()!.GetSolutionSubFolder()}\\{Name}";
+        }
+
+        public IEnumerable<ILayerArtifact> GetLayers()
+        {
+            return Children.OfType<ILayerArtifact>().ToArray();
+        }
+
         //public string? GetResultingNamespace()
         //{
         //    if (Parent is ScopesContainerArtifact scopesContainer && scopesContainer.Parent is WorkspaceArtifact workspace)

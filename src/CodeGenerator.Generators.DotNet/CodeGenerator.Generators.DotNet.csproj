@@ -7,6 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Generators\ApplicationLayer\**" />
+    <Compile Remove="Generators\DomainLayer\**" />
+    <Compile Remove="Generators\InfrastructureLayer\**" />
+    <Compile Remove="Generators\PresentationLayer\**" />
+    <EmbeddedResource Remove="Generators\ApplicationLayer\**" />
+    <EmbeddedResource Remove="Generators\DomainLayer\**" />
+    <EmbeddedResource Remove="Generators\InfrastructureLayer\**" />
+    <EmbeddedResource Remove="Generators\PresentationLayer\**" />
+    <None Remove="Generators\ApplicationLayer\**" />
+    <None Remove="Generators\DomainLayer\**" />
+    <None Remove="Generators\InfrastructureLayer\**" />
+    <None Remove="Generators\PresentationLayer\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="DotNetProjectGeneratorSettings.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CodeGenerator.Core.Artifacts\CodeGenerator.Core.Artifacts.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Generators\CodeGenerator.Core.Generators.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Templates\CodeGenerator.Core.Templates.csproj" />

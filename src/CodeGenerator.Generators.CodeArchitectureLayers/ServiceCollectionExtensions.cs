@@ -1,8 +1,4 @@
 using CodeGenerator.Core.Generators;
-using CodeGenerator.Generators.CodeArchitectureLayers.ApplicationLayer;
-using CodeGenerator.Generators.CodeArchitectureLayers.DomainLayer;
-using CodeGenerator.Generators.CodeArchitectureLayers.InfrastructureLayer;
-using CodeGenerator.Generators.CodeArchitectureLayers.PresentationLayer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,10 +17,7 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration)
     {
         // Register Generators
-        services.AddTransient<IMessageBusAwareGenerator, DomainLayerGenerator>();
-        services.AddTransient<IMessageBusAwareGenerator, ApplicationLayerGenerator>();
-        services.AddTransient<IMessageBusAwareGenerator, InfrastructureLayerGenerator>();
-        services.AddTransient<IMessageBusAwareGenerator, PresentationLayerGenerator>();
+        services.AddTransient<IMessageBusAwareGenerator, CodeArchitectureLayerGenerator>();
 
         return services;
     }

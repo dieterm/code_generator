@@ -3,7 +3,6 @@ using CodeGenerator.Core.Settings.Generators;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Templates.Settings;
 using CodeGenerator.Generators.DotNet.Generators;
-using CodeGenerator.Generators.DotNet.Generators.PresentationLayer.ApplicationScope;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +30,7 @@ namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication
             var descriptionObj = new GeneratorSettingsDescription(id, name, description);
             var templateId = TemplateIdParser.BuildGeneratorTemplateId(id, TEMPLATE_ID);
             descriptionObj.Templates.Add(new TemplateRequirement(templateId, TEMPLATE_ID, null, TemplateType.Folder));
-            descriptionObj.DependingGeneratorIds.Add(PresentationLayerApplicationScopeDotNetProjectGenerator.GENERATOR_ID);
+           // descriptionObj.DependingGeneratorIds.Add(PresentationLayerApplicationScopeDotNetProjectGenerator.GENERATOR_ID);
             return descriptionObj;
         }
     }

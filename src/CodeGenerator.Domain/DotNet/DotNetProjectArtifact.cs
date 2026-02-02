@@ -71,6 +71,18 @@ namespace CodeGenerator.Domain.DotNet
         }
 
         /// <summary>
+        /// eg. "{scopeName}" or "{parentScopeName}/{scopeName}"
+        /// </summary>
+        public string SolutionSubFolder
+        {
+            get { return GetValue<string>(nameof(SolutionSubFolder)); }
+            set
+            {
+                SetValue(nameof(SolutionSubFolder), value);
+            }
+        }
+
+        /// <summary>
         /// Get the programming language of the project.
         /// underlying value is stored as the command line argument representation (for serializablity)
         /// </summary>
@@ -112,6 +124,8 @@ namespace CodeGenerator.Domain.DotNet
 
         private ITreeNodeIcon _treeNodeIcon;
         public override ITreeNodeIcon TreeNodeIcon { get { return _treeNodeIcon; } }
+
+        
 
         /// <summary>
         /// Get the resulting folderpath by traversing ancestors to find the FolderArtifactDecorator

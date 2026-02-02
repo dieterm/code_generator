@@ -1,9 +1,13 @@
-﻿using CodeGenerator.Core.Generators;
+﻿using CodeGenerator.Core.Artifacts.FileSystem;
+using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Generators.MessageBus;
 using CodeGenerator.Core.Generators.Settings;
+using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.CodeElements;
 using CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection;
+using CodeGenerator.Domain.DotNet;
 using CodeGenerator.Generators.DotNet.Events;
 using CodeGenerator.Shared;
 using System;
@@ -17,10 +21,13 @@ namespace CodeGenerator.Generators.DotNet.Generators
     public class DependancyInjectionGenerator : GeneratorBase
     {
         public const string PLACEHOLDER_DI_CONTAINER_SETUP = "DiContainerSetup";
+        public const string PLACEHOLDER_DI_CONTAINER_SETUP_USINGS = "DiContainerSetupUsings";
+
 
         private readonly DependancyInjectionFrameworkManager _diManager;
         private Action<DotNetProjectArtifactCreatedEventArgs>? _unsubscribe_dotnet_project_created_handler;
         private Action<RequestingPlaceholderContentEventArgs>? _unsubscribe_requesting_dicontainersetup_content_handler;
+        private Action<RequestingPlaceholderContentEventArgs>? _unsubscribe_requesting_dicontainersetupusings_content_handler;
 
         public DependancyInjectionGenerator(DependancyInjectionFrameworkManager dependancyInjectionFrameworkManager)
         {
@@ -32,7 +39,47 @@ namespace CodeGenerator.Generators.DotNet.Generators
             _unsubscribe_dotnet_project_created_handler = messageBus.Subscribe<DotNetProjectArtifactCreatedEventArgs>(
                (e) => OnDotNetProjectCreated(e)
             );
+            // PLACEHOLDER_DI_CONTAINER_SETUP
             _unsubscribe_requesting_dicontainersetup_content_handler = messageBus.Subscribe<RequestingPlaceholderContentEventArgs>(OnRequestingDiContainerSetupPlaceholder, DiContainerSetupFilter);
+            // PLACEHOLDER_DI_CONTAINER_SETUP_USINGS
+            _unsubscribe_requesting_dicontainersetupusings_content_handler += messageBus.Subscribe<RequestingPlaceholderContentEventArgs>(OnRequestingDiContainerSetupUsingsPlaceholder, DiContainerSetupUsingsFilter);
+        }
+
+        private bool DiContainerSetupUsingsFilter(RequestingPlaceholderContentEventArgs args)
+        {
+            return args.PlaceHolderName == PLACEHOLDER_DI_CONTAINER_SETUP_USINGS;
+        }
+
+        private void OnRequestingDiContainerSetupUsingsPlaceholder(RequestingPlaceholderContentEventArgs args)
+        {
+            // enumerate all namespaces of all scopes and subscopes
+            var workspace = args.Result.Workspace;
+            if (workspace == null) throw new ApplicationException("Workspace information is missing in the event args.");
+            var usings = new StringBuilder();
+            foreach (var scope in workspace.Scopes)
+            {
+                AppendModuleRegistrationUsings(workspace, usings, scope);
+                //foreach (var layer in workspace.CodeArchitecture.Layers)
+                //{
+                //    var layerName = (layer.CreateLayer(scope.Name) as CodeArchitectureLayerArtifact).Layer;
+                //    var methodName = diFramework.GenerateModuleRegistrationMethodName(scope.Name, layerName);
+                //    code.AppendLine("            " + diFramework.GenerateModuleRegistrationMethodCall(methodName));
+                //}
+                //AppendGenerateModuleRegistrationMethodCalls(workspace, diFramework, code, scope);
+            }
+            args.AddContent(this, usings.ToString());
+        }
+
+        private void AppendModuleRegistrationUsings(WorkspaceArtifact workspace, StringBuilder usings, ScopeArtifact scope)
+        {
+            foreach (var layer in scope.GetLayers())
+            {
+                usings.AppendLine($"using {(layer as WorkspaceArtifactBase)?.Context?.Namespace};");
+            }
+            foreach (var subScope in scope.SubScopes)
+            {
+                AppendModuleRegistrationUsings(workspace, usings, subScope);
+            }
         }
 
         private void OnRequestingDiContainerSetupPlaceholder(RequestingPlaceholderContentEventArgs args)
@@ -54,32 +101,32 @@ namespace CodeGenerator.Generators.DotNet.Generators
                 throw new NotImplementedException();
 
             var code = new StringBuilder();
+            var indent = "    ";
             // create container builder
             // eg. "var services = new ServiceCollection();"
-            code.AppendLine("            " + diFramework.GenerateContainerBuilderCreation());
+            code.AppendLine(indent + diFramework.GenerateContainerBuilderCreation());
 
             // add all module registration method calls
             foreach (var scope in workspace.Scopes)
             {
-                foreach(var layer in workspace.CodeArchitecture.Layers)
-                {
-                    var layerName = (layer.CreateLayer(scope.Name) as CodeArchitectureLayerArtifact).Layer;
-                    var methodName = diFramework.GenerateModuleRegistrationMethodName(scope.Name, layerName);
-                    code.AppendLine("            "+diFramework.GenerateModuleRegistrationMethodCall(methodName));
-                }
-                foreach(var subScope in scope.SubScopes)
-                {
-                    foreach (var layer in workspace.CodeArchitecture.Layers)
-                    {
-                        var layerName = (layer.CreateLayer(scope.Name) as CodeArchitectureLayerArtifact).Layer;
-                        var methodName = diFramework.GenerateModuleRegistrationMethodName(subScope.Name, layerName);
-                        code.AppendLine("            " + diFramework.GenerateModuleRegistrationMethodCall(methodName));
-                    }
-                }
+                AppendGenerateModuleRegistrationMethodCalls(workspace, diFramework, code, scope, indent);
             }
-            code.AppendLine("            " + diFramework.GenerateBuildContainer());
+            code.AppendLine(indent + diFramework.GenerateBuildContainer());
 
             args.AddContent(this, code.ToString());
+        }
+
+        private static void AppendGenerateModuleRegistrationMethodCalls(WorkspaceArtifact workspace, DependancyInjectionFramework diFramework, StringBuilder code, ScopeArtifact scope, string indent)
+        {
+            foreach (var layer in scope.GetLayers())
+            {
+                var methodName = diFramework.GenerateModuleRegistrationMethodName(scope.Name, layer.LayerName);
+                code.AppendLine(indent + diFramework.GenerateModuleRegistrationMethodCall(methodName));
+            }
+            foreach (var subScope in scope.SubScopes)
+            {
+                AppendGenerateModuleRegistrationMethodCalls(workspace, diFramework, code, subScope, indent);
+            }
         }
 
         private bool DiContainerSetupFilter(RequestingPlaceholderContentEventArgs args)
@@ -89,12 +136,21 @@ namespace CodeGenerator.Generators.DotNet.Generators
 
         private void OnDotNetProjectCreated(DotNetProjectArtifactCreatedEventArgs e)
         {
+            var dotNetProject = e.DotNetProjectArtifact;
+            
+            var projectFolderArtifact = dotNetProject.Parent as FolderArtifact;
+            var layerArtifact = projectFolderArtifact?.GetDecoratorOfType<LayerArtifactRefDecorator>()?.LayerArtifact;//.Parent as ScopeArtifact;
+            var layerNamespace = (layerArtifact as WorkspaceArtifactBase).Context?.Namespace;
+
             // setup dependancy injection
             var diFramework = _diManager.GetFrameworkById(e.Result.Workspace.DependencyInjectionFrameworkId);
             if (diFramework == null) throw new ApplicationException($"Dependancy injection framework with id '{e.Result.Workspace.DependencyInjectionFrameworkId}' not found.");
+            
+            // add required nuget packages to the project
+            diFramework.GetRequiredNuGetPackages().ToList().ForEach(pkg => dotNetProject.AddNuGetPackage(pkg));
+            diFramework.GetOptionalNuGetPackages().ToList().ForEach(pkg => dotNetProject.AddNuGetPackage(pkg));
             // TODO: Unify language usage
             ProgrammingLanguage language = ProgrammingLanguage.CSharp;
-
             var workspaceLanguage = e.Result.Workspace.DefaultLanguage;
             if (workspaceLanguage == CodeGenerator.Domain.ProgrammingLanguages.CSharp.CSharpLanguage.Instance.Id)
             {
@@ -115,8 +171,9 @@ namespace CodeGenerator.Generators.DotNet.Generators
                 new ServiceRegistration { ServiceType = new TypeReference("IMyRepository"), ImplementationType = new TypeReference("MyRepository"), Lifetime = ServiceLifetime.Singleton },
             });
             var diClass = diFramework.GenerateServiceCollectionExtensionsClass("DiContainerExtentions",moduleRegistrations);
-            codeFileArtifact.CodeFile.AddNamespace("MyNamespace", diClass);
-                
+            codeFileArtifact.CodeFile.AddNamespace(layerNamespace, diClass);
+            codeFileArtifact.CodeFile.Usings.AddRange(diFramework.GetExtensionMethodUsings().Select(x => new UsingElement(x)));
+            codeFileArtifact.CodeFile.Usings.AddRange(diFramework.GetRequiredUsings().Select(x => new UsingElement(x)));
             AddChildArtifactToParent(e.DotNetProjectArtifact, codeFileArtifact, e.Result);
             
         }
@@ -132,6 +189,11 @@ namespace CodeGenerator.Generators.DotNet.Generators
             {
                 messageBus.Unsubscribe(_unsubscribe_requesting_dicontainersetup_content_handler);
                 _unsubscribe_requesting_dicontainersetup_content_handler = null;
+            }
+            if (_unsubscribe_requesting_dicontainersetupusings_content_handler != null)
+            {
+                messageBus.Unsubscribe(_unsubscribe_requesting_dicontainersetupusings_content_handler);
+                _unsubscribe_requesting_dicontainersetupusings_content_handler = null;
             }
         }
 

@@ -1,8 +1,10 @@
 ﻿# 2/2/2026
+## ADD embedded resources to RibbonProject template
+
 ## DONE: GenerationOrchestrator 
 TODO: controleren waarom deze als Transient en niet als Singleton geregistreerd is in DI-container
 
-## WorkspaceArtifact.ArtifactContext
+## DONE: WorkspaceArtifact.ArtifactContext
 
 De ArtifactContext property op een WorkspaceArtifact kan gebruikt worden om:
 - bv. Namespace: de resulterende namespace voor dit artifact
@@ -11,13 +13,13 @@ De ArtifactContext property op een WorkspaceArtifact kan gebruikt worden om:
 - bv. Layer: de resulterende architectuurlaag van het artifact (Application, Presentation, Domain, Infrastructure, ...)
 - bv. OutputPath: de output path voor gegenereerde bestanden
 
-## Add ScopeArtifact NamespacePattern property
+## DONE: Add ScopeArtifact NamespacePattern property
 
 ## ProgrammingLanguageCodeGenerator regisration
 Registreer ProgrammingLanguageCodeGenerator per programmeertaal via DI-container,
 ipv via CSharpCodeGeneratorExtensions.RegisterCSharpCodeGenerator();
 
-## Verwijder de LayerArtifact in de Generation TreeView
+## DONE: Verwijder de LayerArtifact in de Generation TreeView
 Gebruik in de plaats decorators op de LayerArtifact om de scope en layer op te slaan
 Gebruik een WorkspaceArtifactReferenceDecorator om een link te leggen naar een workspace artifact
 

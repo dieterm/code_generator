@@ -5,6 +5,8 @@ using CodeGenerator.Core.Generators.MessageBus;
 using CodeGenerator.Core.Generators.Settings;
 using CodeGenerator.Core.Settings.Generators;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.DotNet;
 using CodeGenerator.Shared;
@@ -32,10 +34,12 @@ namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication
 
             if (args.Artifact is DotNetProjectArtifact projectArtifact)
             {
-                if(projectArtifact.Parent is CodeArchitectureLayerArtifact layerArtifact)
+                if(projectArtifact.Parent is FolderArtifact folderArtifact && folderArtifact.HasDecorator<LayerArtifactRefDecorator>())
                 {
-                    var layer = layerArtifact.Layer;
-                    var scope = layerArtifact.Scope;
+                    var layerArtifact = folderArtifact.GetDecoratorOfType<LayerArtifactRefDecorator>()?.LayerArtifact;
+                    var scopeArtifact = layerArtifact?.Parent as ScopeArtifact;
+                    var layer = layerArtifact?.LayerName;
+                    var scope = scopeArtifact?.Name;
                     if(layer == CodeArchitectureLayerArtifact.PRESENTATION_LAYER &&
                        scope == CodeArchitectureLayerArtifact.APPLICATION_SCOPE)
                     {

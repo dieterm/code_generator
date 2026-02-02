@@ -13,6 +13,7 @@ namespace CodeGenerator.Domain.DotNet
         public static NuGetPackage Microsoft_Extensions_Configuration { get; } = new NuGetPackage { PackageId = "Microsoft.Extensions.Configuration", Version = "8.0.0" };
         public static NuGetPackage Microsoft_Extensions_Configuration_Json { get; } = new NuGetPackage { PackageId = "Microsoft.Extensions.Configuration.Json", Version = "8.0.1" };
         public static NuGetPackage Microsoft_Extensions_DependencyInjection { get; } = new NuGetPackage { PackageId = "Microsoft.Extensions.DependencyInjection", Version = "8.0.1" };
+        public static NuGetPackage Microsoft_Extensions_DependencyInjection_Abstractions { get; } = new NuGetPackage { PackageId = "Microsoft.Extensions.DependencyInjection.Abstractions", Version = "8.0.2" };
         public static NuGetPackage Microsoft_Extensions_Hosting { get; } = new NuGetPackage { PackageId = "Microsoft.Extensions.Hosting", Version = "8.0.1" };
         public static NuGetPackage Microsoft_Extensions_Logging { get; } = new NuGetPackage { PackageId = "Microsoft.Extensions.Logging", Version = "8.0.1" };
         public static NuGetPackage Microsoft_Extensions_Logging_Debug { get; } = new NuGetPackage { PackageId = "Microsoft.Extensions.Logging.Debug", Version = "8.0.1" };
@@ -28,6 +29,6 @@ namespace CodeGenerator.Domain.DotNet
         public static NuGetPackage Syncfusion_Edit_Windows { get; } = new NuGetPackage { PackageId = "Syncfusion.Edit.Windows", Version = Syncfusion_Version };
         public static NuGetPackage Syncfusion_Grouping_Base { get; } = new NuGetPackage { PackageId = "Syncfusion.Grouping.Base", Version = Syncfusion_Version };
         public static NuGetPackage Syncfusion_Office2019Theme_WinForms { get; } = new NuGetPackage { PackageId = "Syncfusion.Office2019Theme.WinForms", Version = Syncfusion_Version };
-
+        
     }
 }

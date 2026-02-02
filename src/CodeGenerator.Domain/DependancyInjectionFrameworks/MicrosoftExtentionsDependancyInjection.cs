@@ -31,16 +31,10 @@ namespace CodeGenerator.Domain.DependancyInjectionFrameworks
 
         public override IEnumerable<NuGetPackage> GetRequiredNuGetPackages()
         {
-            yield return new NuGetPackage
-            {
-                PackageId = "Microsoft.Extensions.DependencyInjection",
-                Version = "8.0.0"
-            };
-            yield return new NuGetPackage
-            {
-                PackageId = "Microsoft.Extensions.DependencyInjection.Abstractions",
-                Version = "8.0.0"
-            };
+            yield return NuGetPackages.Microsoft_Extensions_Configuration;
+            yield return NuGetPackages.Microsoft_Extensions_DependencyInjection;
+            yield return NuGetPackages.Microsoft_Extensions_DependencyInjection_Abstractions;
+           
         }
 
         public override IEnumerable<NuGetPackage> GetOptionalNuGetPackages()
@@ -217,7 +211,7 @@ namespace CodeGenerator.Domain.DependancyInjectionFrameworks
 
         public override string? GenerateModuleRegistrationMethodCall(string methodName, string builderVariableName = "services")
         {
-            return $"{builderVariableName}.{methodName}();";
+            return $"{builderVariableName}.{methodName}(configuration);";
         }
 
         #endregion
