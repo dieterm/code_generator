@@ -12,7 +12,6 @@
 /src/Templates/CSharp/ProjectXYZ.Shared
 /src/Templates/CSharp/WinForms/ProjectXYZ.UserControls
 /src/CodeGenerator.Presentation.WinForms/SyncfusionLicenseKey.txt
-/docs/Add Enum type.txt
-/docs/Nieuw ValueType Artifact.txt
 /src/Templates/CSharp/WinForms/ProjectXYZ.Presentation.WinForms/Resources/lucide-icons
 /src/Templates/Generators/WinformsRibbonApplicationGenerator/WinformsRibbonApplication/Resources/lucide-icons
+/docs/*.txt

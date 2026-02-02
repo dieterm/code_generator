@@ -77,7 +77,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<IndexArtifactController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<ForeignKeyArtifactController>(),
 
-                //ServiceProviderHolder.ServiceProvider.GetRequiredService<DomainsContainerController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<DomainsContainerController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<ScopesContainerController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<SubScopesContainerController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<ScopeArtifactController>(),

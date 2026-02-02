@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,6 +41,22 @@ namespace CodeGenerator.Shared.Models
             if(string.IsNullOrWhiteSpace(ParameterFormat))
                 throw new InvalidOperationException("ParameterFormat cannot be null or whitespace.");
         }
+        /// <summary>
+        /// eg. $"{Layer}.{Scope}" -> "Application.Shared"
+        /// </summary>
+        public string GetOutput(ReadOnlyDictionary<string, string> parameterValues)
+        {
+            AssertParameterFormatRequired();
+            if (Template == null) return null;
+            var output = Template;
+            foreach (var (key, value) in parameterValues)
+            {
+                var parmeterPattern = ParameterFormat.Replace(ParameterTemplatePlaceholder, key);
+                output = output.Replace(parmeterPattern, parameterValues[key]);
+            }
+            return output;
+        }
+
         /// <summary>
         /// eg. $"{Layer}.{Scope}" -> "Application.Shared"
         /// </summary>

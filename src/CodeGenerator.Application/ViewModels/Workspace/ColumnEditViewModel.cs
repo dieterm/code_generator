@@ -237,36 +237,36 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             _column.DefaultValue = DefaultValueField.Value?.ToString();
         }
 
-        private string BuildFullDataType()
-        {
-            var baseType = DataTypeField.Value?.ToString() ?? "varchar";
+        //private string BuildFullDataType()
+        //{
+        //    var baseType = DataTypeField.Value?.ToString() ?? "varchar";
             
-            // Add length/precision based on type
-            if (RequiresLength(baseType))
-            {
-                var length = MaxLengthField.Value is int len ? len : 255;
-                return $"{baseType}({length})";
-            }
-            else if (RequiresPrecisionScale(baseType))
-            {
-                var precision = PrecisionField.Value is int prec ? prec : 18;
-                var scale = ScaleField.Value is int s ? s : 2;
-                return $"{baseType}({precision},{scale})";
-            }
+        //    // Add length/precision based on type
+        //    if (RequiresLength(baseType))
+        //    {
+        //        var length = MaxLengthField.Value is int len ? len : 255;
+        //        return $"{baseType}({length})";
+        //    }
+        //    else if (RequiresPrecisionScale(baseType))
+        //    {
+        //        var precision = PrecisionField.Value is int prec ? prec : 18;
+        //        var scale = ScaleField.Value is int s ? s : 2;
+        //        return $"{baseType}({precision},{scale})";
+        //    }
 
-            return baseType;
-        }
+        //    return baseType;
+        //}
 
-        private bool RequiresLength(string dataType)
-        {
-            var lengthTypes = new[] { "char", "varchar", "nchar", "nvarchar", "binary", "varbinary" };
-            return lengthTypes.Contains(dataType.ToLowerInvariant());
-        }
+        //private bool RequiresLength(string dataType)
+        //{
+        //    var lengthTypes = new[] { "char", "varchar", "nchar", "nvarchar", "binary", "varbinary" };
+        //    return lengthTypes.Contains(dataType.ToLowerInvariant());
+        //}
 
-        private bool RequiresPrecisionScale(string dataType)
-        {
-            var precisionTypes = new[] { "decimal", "numeric" };
-            return precisionTypes.Contains(dataType.ToLowerInvariant());
-        }
+        //private bool RequiresPrecisionScale(string dataType)
+        //{
+        //    var precisionTypes = new[] { "decimal", "numeric" };
+        //    return precisionTypes.Contains(dataType.ToLowerInvariant());
+        //}
     }
 }

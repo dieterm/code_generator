@@ -109,7 +109,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IndexArtifactController>();
         services.AddSingleton<ForeignKeyArtifactController>();
 
-        //services.AddSingleton<DomainsContainerController>();
+        services.AddSingleton<DomainsContainerController>();
         services.AddSingleton<ScopesContainerController>();
         services.AddSingleton<SubScopesContainerController>();
         services.AddSingleton<ScopeArtifactController>();

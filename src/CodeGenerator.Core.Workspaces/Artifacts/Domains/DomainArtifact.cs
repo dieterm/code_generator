@@ -25,7 +25,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
             : base()
         {
             Name = name;
-            
+            NamespacePattern = $"{{{ScopeArtifact.CONTEXT_PARAMETER_SCOPE_NAMESPACE}}}.{{{CONTEXT_PARAMETER_DOMAIN_NAME}}}";
+
             EnsureEntitiesContainerExists();
             EnsureValueTypesContainerExists();
             
@@ -58,6 +59,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
             {
                 SetValue(nameof(Name), value);
                 RaisePropertyChangedEvent(nameof(TreeNodeText));
+                RaiseContextChanged();
             }
         }
 

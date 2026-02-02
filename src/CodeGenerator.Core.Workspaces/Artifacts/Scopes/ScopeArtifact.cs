@@ -1,6 +1,7 @@
 ﻿using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
+using CodeGenerator.Shared.Models;
 using CodeGenerator.Shared.Views.TreeNode;
 using System;
 using System.Collections.Generic;
@@ -14,15 +15,24 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
 {
     public class ScopeArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
+        public const string CONTEXT_PARAMETER_SCOPE_NAME = "ScopeName";
+        public const string CONTEXT_PARAMETER_SCOPE_NAMESPACE = "ScopeNamespace";
+        public const string CONTEXT_PARAMETER_PARENT_SCOPE_NAME = "ParentScopeName";
+        public const string CONTEXT_PARAMETER_PARENT_SCOPE_NAMESPACE = "ParentScopeNamespace";
+
         public const string DEFAULT_SCOPE_SHARED = "Shared";
         public static Color  DEFAULT_SCOPE_SHARED_COLOR = Color.Blue;
+
         public const string DEFAULT_SCOPE_APPLICATION = "Application";
         public static Color  DEFAULT_SCOPE_APPLICATION_COLOR = Color.Green;
-
+        private bool _setNamespacePatternOnFirstRead = false;
         public ScopeArtifact(string name)
             : base()
         {
             Name = name;
+            // we cannot set a default NamespacePattern in the constructor as it depends on the parent scope (which is not known at construction time)
+            // so we use a flag to set it on first read
+            _setNamespacePatternOnFirstRead = true;
             
             AddChild(new DomainsContainerArtifact());
             AddChild(new InfrastructuresContainerArtifact());
@@ -60,8 +70,10 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
             get { return GetValue<string>(nameof(Name)); }
             set
             {
-                SetValue<string>(nameof(Name), value);
-                RaisePropertyChangedEvent(nameof(TreeNodeText));
+                if (SetValue<string>(nameof(Name), value)) { 
+                    RaisePropertyChangedEvent(nameof(TreeNodeText));
+                    RaiseContextChanged();
+                }
             }
         }
 
@@ -70,9 +82,36 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
         /// </summary>
         public string NamespacePattern
         {
-            get { return GetValue<string>(nameof(NamespacePattern)); }
+            get {
+                // we cannot set a default value in the constructor as it depends on the parent scope (which is not known at construction time)
+                // so we use a flag to set it on first read
+                if (_setNamespacePatternOnFirstRead)
+                {
+                    _setNamespacePatternOnFirstRead = false;
+                    if(GetParentScope()==null)
+                        NamespacePattern = $"{{{WorkspaceArtifact.CONTEXT_PARAMETER_WORKSPACE_ROOT_NAMESPACE}}}.{{{CONTEXT_PARAMETER_SCOPE_NAME}}}";
+                    else
+                        NamespacePattern = $"{{{CONTEXT_PARAMETER_PARENT_SCOPE_NAMESPACE}}}.{{{CONTEXT_PARAMETER_SCOPE_NAME}}}";
+                }
+                return GetValue<string>(nameof(NamespacePattern)); 
+            }
             set { SetValue(nameof(NamespacePattern), value); }
         }
+        private bool _isGettingOwnNamespace = false;
+        /// <summary>
+        /// The resulting namespace after parameterization
+        /// </summary>
+        public string Namespace
+        {
+            get {
+                _isGettingOwnNamespace = true;
+                var parameterisedString = new ParameterizedString(NamespacePattern);
+                var output = parameterisedString.GetOutput(Context.NamespaceParameters);
+                _isGettingOwnNamespace = false;
+                return output;
+            }
+        }
+
 
         public DomainsContainerArtifact Domains { get { return Children.OfType<DomainsContainerArtifact>().FirstOrDefault()!; } }
         public InfrastructuresContainerArtifact Infrastructure { get { return Children.OfType<InfrastructuresContainerArtifact>().FirstOrDefault()!; } }
@@ -106,13 +145,17 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
         protected override WorkspaceArtifactContext? GetOwnContext()
         {
             var namespaceParameters = new Dictionary<string, string>();
-            namespaceParameters.Add("ScopeName", Name);
-            namespaceParameters.Add("ScopeNamespace", GetResultingNamespace() ?? string.Empty);
-            namespaceParameters.Add("ParentScopeNamespace", GetParentScope()?.GetResultingNamespace() ?? string.Empty);
+            namespaceParameters.Add(CONTEXT_PARAMETER_SCOPE_NAME, Name);
+            if (!_isGettingOwnNamespace) { 
+                namespaceParameters.Add(CONTEXT_PARAMETER_SCOPE_NAMESPACE, Namespace);
+            }
+            namespaceParameters.Add(CONTEXT_PARAMETER_PARENT_SCOPE_NAME, GetParentScope()?.Name ?? string.Empty);
+            namespaceParameters.Add(CONTEXT_PARAMETER_PARENT_SCOPE_NAMESPACE, GetParentScope()?.Namespace ?? string.Empty);
+               
             return new WorkspaceArtifactContext
             {
                 Scope = this,
-                Namespace = GetResultingNamespace(),
+                Namespace = _isGettingOwnNamespace ? null : Namespace,
                 NamespaceParameters = new System.Collections.ObjectModel.ReadOnlyDictionary<string, string>(namespaceParameters)
             };
         }
@@ -129,42 +172,42 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
             }
         }
 
-        public string? GetResultingNamespace()
-        {
-            if (Parent is ScopesContainerArtifact scopesContainer && scopesContainer.Parent is WorkspaceArtifact workspace)
-            {
-                var rootNamespace = workspace.RootNamespace;
-                if (!string.IsNullOrWhiteSpace(rootNamespace))
-                {
-                    if (!string.IsNullOrWhiteSpace(NamespacePattern))
-                        return $"{rootNamespace}.{NamespacePattern}";
-                    else
-                        return rootNamespace;
-                }
-                else
-                {
-                    return NamespacePattern;
-                }
-            }
-            else if (Parent is SubScopesContainerArtifact subScopesContainer && subScopesContainer.Parent is ScopeArtifact parentScope)
-            {
-                var parentNamespace = parentScope.GetResultingNamespace();
-                if (!string.IsNullOrWhiteSpace(parentNamespace))
-                {
-                    if (!string.IsNullOrWhiteSpace(NamespacePattern))
-                        return $"{parentNamespace}.{NamespacePattern}";
-                    else
-                        return parentNamespace;
-                }
-                else
-                {
-                    return NamespacePattern;
-                }
-            }
-            else
-            {
-                return NamespacePattern;
-            }
-        }
+        //public string? GetResultingNamespace()
+        //{
+        //    if (Parent is ScopesContainerArtifact scopesContainer && scopesContainer.Parent is WorkspaceArtifact workspace)
+        //    {
+        //        var rootNamespace = workspace.RootNamespace;
+        //        if (!string.IsNullOrWhiteSpace(rootNamespace))
+        //        {
+        //            if (!string.IsNullOrWhiteSpace(NamespacePattern))
+        //                return $"{rootNamespace}.{NamespacePattern}";
+        //            else
+        //                return rootNamespace;
+        //        }
+        //        else
+        //        {
+        //            return NamespacePattern;
+        //        }
+        //    }
+        //    else if (Parent is SubScopesContainerArtifact subScopesContainer && subScopesContainer.Parent is ScopeArtifact parentScope)
+        //    {
+        //        var parentNamespace = parentScope.GetResultingNamespace();
+        //        if (!string.IsNullOrWhiteSpace(parentNamespace))
+        //        {
+        //            if (!string.IsNullOrWhiteSpace(NamespacePattern))
+        //                return $"{parentNamespace}.{NamespacePattern}";
+        //            else
+        //                return parentNamespace;
+        //        }
+        //        else
+        //        {
+        //            return NamespacePattern;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return NamespacePattern;
+        //    }
+        //}
     }
 }

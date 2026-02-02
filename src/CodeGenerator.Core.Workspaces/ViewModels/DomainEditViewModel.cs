@@ -139,8 +139,8 @@ namespace CodeGenerator.Core.Workspaces.ViewModels
                         ExampleValue = paramValue
                     });
                 }
-                    
             }
+            NamespaceField.RefreshParameterizedString();
         }
         private void OnFieldChanged(object? sender, PropertyChangedEventArgs e)
         {

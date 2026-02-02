@@ -135,6 +135,11 @@ namespace CodeGenerator.Presentation.WinForms.Views
                 detailsControl = new ForeignKeyEditView();
                 ((ForeignKeyEditView)detailsControl).BindViewModel(foreignKeyViewModel);
             }
+            else if (_viewModel?.DetailsViewModel is ScopeEditViewModel scopeViewModel)
+            {
+                detailsControl = new ScopeEditView();
+                ((ScopeEditView)detailsControl).BindViewModel(scopeViewModel);
+            }
             else if (_viewModel?.DetailsViewModel is DomainEditViewModel domainViewModel)
             {
                 detailsControl = new DomainEditView();
