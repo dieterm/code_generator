@@ -57,7 +57,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             if(_workspaceTreeViewController.CurrentWorkspace==null)
                 return;
             var dotNetProjectService = ServiceProviderHolder.GetRequiredService<DotNetProjectService>();
-            var workspaceOutputDirectory = _workspaceTreeViewController.CurrentWorkspace.DefaultOutputDirectory;
+            var workspaceOutputDirectory = _workspaceTreeViewController.CurrentWorkspace.OutputDirectory;
 
             var supportedLanguages = new Dictionary<string, List<DotNetLanguage>>();
             var supportedFrameworks = new Dictionary<string, List<TargetFramework>>();

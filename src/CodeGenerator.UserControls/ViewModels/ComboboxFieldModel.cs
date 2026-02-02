@@ -60,6 +60,7 @@ namespace CodeGenerator.UserControls.ViewModels
                             if (item.Value != null && item.Value.Equals(value))
                             {
                                 SelectedItem = item;
+                                _isChangingValues = false;
                                 return;
                             }
                         }

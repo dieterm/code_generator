@@ -16,12 +16,16 @@ namespace CodeGenerator.Core.Generators
         public GeneratorMessageBus? MessageBus { get; private set; }
         public GeneratorSettingsDescription SettingsDescription { get; set; }
 
+        /// <inheritdoc/>
+        public string Id => SettingsDescription.Id;
+
+        /// <summary>
+        /// Base constructor.
+        /// Initializes the SettingsDescription by calling ConfigureSettingsDescription().
+        /// </summary>
         protected GeneratorBase()
         {
             SettingsDescription = ConfigureSettingsDescription();
-            var settingsManager = ServiceProviderHolder.GetRequiredService<GeneratorSettingsManager>();
-            settingsManager.SettingsSaved += (sender, e) => RefreshEnabledState();
-            RefreshEnabledState();
         }
 
         protected abstract GeneratorSettingsDescription ConfigureSettingsDescription();
@@ -29,6 +33,7 @@ namespace CodeGenerator.Core.Generators
         protected virtual GeneratorSettings GetSettings()
         {
             var settingsManager = ServiceProviderHolder.GetRequiredService<GeneratorSettingsManager>();
+            
             var settings = settingsManager.GetGeneratorSettings(this.SettingsDescription.Id);
             return settings;
         }
@@ -48,8 +53,13 @@ namespace CodeGenerator.Core.Generators
         public virtual void Initialize(GeneratorMessageBus messageBus)
         {
             MessageBus = messageBus;
+            // set initial Enabled state
             RefreshEnabledState();
-            
+
+            var settingsManager = ServiceProviderHolder.GetRequiredService<GeneratorSettingsManager>();
+            // subscribe to settings saved event to update Enabled state
+            settingsManager.SettingsSaved += (sender, e) => RefreshEnabledState();
+
         }
 
         public abstract void SubscribeToEvents(GeneratorMessageBus messageBus);

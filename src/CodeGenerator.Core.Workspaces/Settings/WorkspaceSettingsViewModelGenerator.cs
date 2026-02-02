@@ -2,6 +2,7 @@
 using CodeGenerator.Core.Settings.Models;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.CodeArchitecture;
+using CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection;
 using CodeGenerator.Domain.DotNet;
 using CodeGenerator.Shared;
 using CodeGenerator.UserControls.ViewModels;
@@ -122,7 +123,34 @@ namespace CodeGenerator.Core.Workspaces.Settings
             var defaultTemplateFolderSetting = new SettingsItem<FolderFieldModel>(defaultTemplateFolderField, nameof(_settings.DefaultTemplateFolder), "Default Template Folder");
             workspaceSection.Items.Add(defaultTemplateFolderSetting);
 
+            //DefaultDependencyInjectionFrameworkId:ComboboxFieldModel
+            var diFrameworkManager = ServiceProviderHolder.GetRequiredService<DependancyInjectionFrameworkManager>();
+            var allFrameworks = diFrameworkManager.Frameworks;
+            var defaultDIFrameworkField = new ComboboxFieldModel
+            {
+                Label = "Default Dependency Injection Framework",
+                Name = nameof(_settings.DefaultDependencyInjectionFrameworkId),
+                IsRequired = false,
+                Items = allFrameworks.Select(def => new ComboboxItem { Value = def.Id, DisplayName = def.Name }).ToList(),
+                Value = _settings.DefaultDependencyInjectionFrameworkId
+            };
+            defaultDIFrameworkField.PropertyChanged += DefaultDependencyInjectionFrameworkIdField_PropertyChanged;
+            defaultDIFrameworkField.Disposed += DefaultDependencyInjectionFrameworkIdField_Disposed;
+            var defaultDIFrameworkSetting = new SettingsItem<ComboboxFieldModel>(defaultDIFrameworkField, nameof(_settings.DefaultDependencyInjectionFrameworkId), "Default Dependency Injection Framework", _settings.DefaultDependencyInjectionFrameworkId);
+            workspaceSection.Items.Add(defaultDIFrameworkSetting);
+
             return workspaceSection;
+        }
+
+        private void DefaultDependencyInjectionFrameworkIdField_Disposed(object? sender, EventArgs e)
+        {
+            ((ComboboxFieldModel)sender!).PropertyChanged -= DefaultDependencyInjectionFrameworkIdField_PropertyChanged;
+            ((ComboboxFieldModel)sender!).Disposed -= DefaultDependencyInjectionFrameworkIdField_Disposed;
+        }
+
+        private void DefaultDependencyInjectionFrameworkIdField_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            _settings.DefaultDependencyInjectionFrameworkId = ((ComboboxFieldModel)sender!).Value as string;
         }
 
         private void DefaultTemplateFolderField_Disposed(object? sender, EventArgs e)

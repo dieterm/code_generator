@@ -8,6 +8,12 @@ namespace CodeGenerator.Core.Generators;
 /// </summary>
 public interface IMessageBusAwareGenerator 
 {
+    /// <summary>
+    /// Unique identifier of this generator.
+    /// Shortcut for SettingsDescription.Id
+    /// </summary>
+    string Id { get; }
+
     GeneratorSettingsDescription SettingsDescription { get; }
 
     /// <summary>

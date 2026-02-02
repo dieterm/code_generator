@@ -23,6 +23,8 @@ namespace CodeGenerator.Presentation.WinForms.Views
             folderOutputDirectory = new FolderField();
             cbxTargetFramework = new ComboboxField();
             cbxLanguage = new ComboboxField();
+            cbxCodeArchitecture = new ComboboxField();
+            cbxDependencyInjectionFramework = new ComboboxField();
             tableLayoutPanel = new TableLayoutPanel();
             tableLayoutPanel.SuspendLayout();
             SuspendLayout();
@@ -48,15 +50,19 @@ namespace CodeGenerator.Presentation.WinForms.Views
             tableLayoutPanel.Controls.Add(folderOutputDirectory, 0, 2);
             tableLayoutPanel.Controls.Add(cbxTargetFramework, 0, 3);
             tableLayoutPanel.Controls.Add(cbxLanguage, 0, 4);
+            tableLayoutPanel.Controls.Add(cbxCodeArchitecture, 0, 5);
+            tableLayoutPanel.Controls.Add(cbxDependencyInjectionFramework, 0, 6);
             tableLayoutPanel.Location = new Point(10, 40);
             tableLayoutPanel.Name = "tableLayoutPanel";
-            tableLayoutPanel.RowCount = 5;
+            tableLayoutPanel.RowCount = 7;
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.Size = new Size(380, 300);
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tableLayoutPanel.Size = new Size(380, 400);
             tableLayoutPanel.TabIndex = 1;
             // 
             // txtName
@@ -104,6 +110,24 @@ namespace CodeGenerator.Presentation.WinForms.Views
             cbxLanguage.Size = new Size(374, 50);
             cbxLanguage.TabIndex = 4;
             // 
+            // cbxCodeArchitecture
+            // 
+            cbxCodeArchitecture.Dock = DockStyle.Top;
+            cbxCodeArchitecture.Label = "Code Architecture:";
+            cbxCodeArchitecture.Location = new Point(3, 283);
+            cbxCodeArchitecture.Name = "cbxCodeArchitecture";
+            cbxCodeArchitecture.Size = new Size(374, 50);
+            cbxCodeArchitecture.TabIndex = 5;
+            // 
+            // cbxDependencyInjectionFramework
+            // 
+            cbxDependencyInjectionFramework.Dock = DockStyle.Top;
+            cbxDependencyInjectionFramework.Label = "Dependency Injection Framework:";
+            cbxDependencyInjectionFramework.Location = new Point(3, 339);
+            cbxDependencyInjectionFramework.Name = "cbxDependencyInjectionFramework";
+            cbxDependencyInjectionFramework.Size = new Size(374, 50);
+            cbxDependencyInjectionFramework.TabIndex = 6;
+            // 
             // WorkspaceEditView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -112,7 +136,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             Controls.Add(lblTitle);
             Name = "WorkspaceEditView";
             Padding = new Padding(10);
-            Size = new Size(400, 350);
+            Size = new Size(400, 460);
             tableLayoutPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -127,5 +151,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
         private FolderField folderOutputDirectory;
         private ComboboxField cbxTargetFramework;
         private ComboboxField cbxLanguage;
+        private ComboboxField cbxCodeArchitecture;
+        private ComboboxField cbxDependencyInjectionFramework;
     }
 }

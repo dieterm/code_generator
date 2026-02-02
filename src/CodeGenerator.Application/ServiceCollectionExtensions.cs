@@ -33,7 +33,9 @@ using CodeGenerator.Core.Workspaces.Datasources.Yaml;
 using CodeGenerator.Core.Workspaces.MessageBus;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Core.Workspaces.Settings;
+using CodeGenerator.Domain;
 using CodeGenerator.Domain.CodeArchitecture;
+using CodeGenerator.Domain.ProgrammingLanguages.CSharp;
 using CodeGenerator.Generators.CodeArchitectureLayers;
 using CodeGenerator.Presentation.WinForms.ViewModels;
 using CodeGenerator.Shared.Ribbon;
@@ -41,7 +43,6 @@ using CodeGenerator.TemplateEngines.DotNetProject;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-
 namespace CodeGenerator.Application;
 
 /// <summary>
@@ -56,6 +57,9 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        // Register Domain services
+        services.AddDomainServices(configuration);
+        CSharpCodeGeneratorExtensions.RegisterCSharpCodeGenerator();
         // Register ViewModels
         services.AddTransient<MainViewModel>();
         services.AddTransient<DomainSchemaTreeViewModel>();
@@ -152,7 +156,7 @@ public static class ServiceCollectionExtensions
 
         // Register Services
         services.AddSingleton<DomainSchemaParser>();
-        services.AddTransient<GeneratorOrchestrator>();
+        services.AddSingleton<GeneratorOrchestrator>();
         services.AddSingleton<CodeArchitectureManager>();
         // Settings Managers
         services.AddSingleton<ApplicationSettingsManager>();

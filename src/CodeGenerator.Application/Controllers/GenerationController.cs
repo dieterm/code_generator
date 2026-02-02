@@ -26,10 +26,11 @@ namespace CodeGenerator.Application.Controllers
         private readonly GenerationResultTreeViewModel _treeViewModel;
         private readonly GenerationRibbonViewModel _generationRibbonViewModel;
         private readonly ArtifactPreviewViewModel _artifactPreviewViewModel;
-
-        public GenerationController(ArtifactPreviewViewModel artifactPreviewViewModel, GenerationResultTreeViewModel treeViewModel, GenerationRibbonViewModel generationRibbonViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IMessageBoxService messageService, ApplicationMessageBus messageBus, IFileSystemDialogService fileSystemDialogService, ILogger<GenerationController> logger)
+        private readonly GeneratorOrchestrator _generatorOrchestrator;
+        public GenerationController(GeneratorOrchestrator generatorOrchestrator, ArtifactPreviewViewModel artifactPreviewViewModel, GenerationResultTreeViewModel treeViewModel, GenerationRibbonViewModel generationRibbonViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IMessageBoxService messageService, ApplicationMessageBus messageBus, IFileSystemDialogService fileSystemDialogService, ILogger<GenerationController> logger)
             : base(windowManagerService, ribbonBuilder, messageBus, messageService, fileSystemDialogService,logger)
         {
+            _generatorOrchestrator = generatorOrchestrator ?? throw new ArgumentNullException(nameof(generatorOrchestrator));
             _treeViewModel = treeViewModel ?? throw new ArgumentNullException(nameof(treeViewModel));
             _artifactPreviewViewModel = artifactPreviewViewModel ?? throw new ArgumentNullException(nameof(artifactPreviewViewModel));
             _generationRibbonViewModel = generationRibbonViewModel ?? throw new ArgumentNullException(nameof(generationRibbonViewModel));
@@ -42,6 +43,8 @@ namespace CodeGenerator.Application.Controllers
             _generationRibbonViewModel.StartGenerationRequested += OnGenerateRequested;
             _generationRibbonViewModel.StartPreviewRequested += OnGeneratePreviewRequested;
             _generationRibbonViewModel.CancelGenerationRequested += OnCancelGenerationRequested;
+
+            _generatorOrchestrator.Initialize();
         }
 
         private void OnArtifactSelected(object? sender, GenerationResultTreeViewModel.ArtifactSelectedEventArgs e)
@@ -112,10 +115,12 @@ namespace CodeGenerator.Application.Controllers
             {
                 _generationRibbonViewModel.IsGenerating = true;
 
-                var generatorOrchestrator = ServiceProviderHolder.GetRequiredService<GeneratorOrchestrator>();
                 var workspaceContextProvider = ServiceProviderHolder.GetRequiredService<IWorkspaceContextProvider>();
+                if (workspaceContextProvider.CurrentWorkspace == null)
+                    return;
+
                 _logger.LogInformation("Starting code generation process...");
-                var generationResult = await generatorOrchestrator.GenerateAsync(workspaceContextProvider.CurrentWorkspace, false, progress, cancellationToken);
+                var generationResult = await _generatorOrchestrator.GenerateAsync(workspaceContextProvider.CurrentWorkspace, false, progress, cancellationToken);
                 _treeViewModel.GenerationResult = generationResult;
                 _windowManagerService.ShowGenerationTreeView(_treeViewModel);
                 _logger.LogInformation("Code generation process completed successfully.");

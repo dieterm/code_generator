@@ -75,6 +75,10 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
         }
 
         public DomainArtifact Domain { get { return Children.OfType<DomainArtifact>().FirstOrDefault()!; } }
+        public InfrastructuresContainerArtifact Infrastructure { get { return Children.OfType<InfrastructuresContainerArtifact>().FirstOrDefault()!; } }
+        public ApplicationsContainerArtifact Applications { get { return Children.OfType<ApplicationsContainerArtifact>().FirstOrDefault()!; } }
+        public PresentationsContainerArtifact Presentations { get { return Children.OfType<PresentationsContainerArtifact>().FirstOrDefault()!; } }
+        public SubScopesContainerArtifact SubScopes { get { return Children.OfType<SubScopesContainerArtifact>().FirstOrDefault()!; } }
 
         public bool CanBeginEdit()
         {

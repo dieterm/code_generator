@@ -18,19 +18,15 @@ public class GeneratorOrchestrator
     private readonly IEnumerable<IMessageBusAwareGenerator> _messageBusAwareGenerators;
     private readonly GeneratorMessageBus _messageBus;
     private readonly ILogger<GeneratorOrchestrator> _logger;
-    private readonly DomainSchemaParser _schemaparser;
 
     public GeneratorOrchestrator(
         IEnumerable<IMessageBusAwareGenerator> messageBusAwareGenerators,
         GeneratorMessageBus messageBus,
-        DomainSchemaParser schemaparser,
         ILogger<GeneratorOrchestrator> logger)
     {
         _messageBus = messageBus;
         _logger = logger;
         _messageBusAwareGenerators = messageBusAwareGenerators;
-        _schemaparser = schemaparser;
-        InitializeGenerators();
         _messageBus.BeforeEventPublished += _messageBus_BeforeEventPublished;
         _messageBus.AfterEventPublished += _messageBus_AfterEventPublished;
     }
@@ -39,21 +35,21 @@ public class GeneratorOrchestrator
     {
         if(e is CreatedArtifactEventArgs createdArtifactEventArgs)
         {
-            _logger.LogInformation("AfterEventPublished: Artifact created: '{ArtifactId}' of type {ArtifactType} - {ArtifactContent}", 
+            _logger.LogDebug("AfterEventPublished: Artifact created: '{ArtifactId}' of type {ArtifactType} - {ArtifactContent}", 
                 createdArtifactEventArgs.Artifact.Id, 
                 createdArtifactEventArgs.Artifact.GetType().Name,
                 createdArtifactEventArgs.Artifact.ToString());
         } 
         else if(e is CreatingArtifactEventArgs creatingArtifactEventArgs)
         {
-            _logger.LogInformation("AfterEventPublished: Creating artifact: '{ArtifactId}' of type {ArtifactType} - {ArtifactContent}", 
+            _logger.LogDebug("AfterEventPublished: Creating artifact: '{ArtifactId}' of type {ArtifactType} - {ArtifactContent}", 
                 creatingArtifactEventArgs.Artifact.Id, 
                 creatingArtifactEventArgs.Artifact.GetType().Name,
                 creatingArtifactEventArgs.Artifact.ToString());
         } 
         else
         {
-            _logger.LogInformation("AfterEventPublished: Published event of type {EventType}", e.GetType().Name);
+            _logger.LogDebug("AfterEventPublished: Published event of type {EventType}", e.GetType().Name);
         }
     }
 
@@ -61,21 +57,21 @@ public class GeneratorOrchestrator
     {
         if (e is CreatedArtifactEventArgs createdArtifactEventArgs)
         {
-            _logger.LogInformation("BeforeEventPublished:Artifact created: '{ArtifactId}' of type {ArtifactType} - {ArtifactContent}",
+            _logger.LogDebug("BeforeEventPublished:Artifact created: '{ArtifactId}' of type {ArtifactType} - {ArtifactContent}",
                 createdArtifactEventArgs.Artifact.Id,
                 createdArtifactEventArgs.Artifact.GetType().Name,
                 createdArtifactEventArgs.Artifact.ToString());
         }
         else if (e is CreatingArtifactEventArgs creatingArtifactEventArgs)
         {
-            _logger.LogInformation("BeforeEventPublished: Creating artifact: '{ArtifactId}' of type {ArtifactType} - {ArtifactContent}",
+            _logger.LogDebug("BeforeEventPublished: Creating artifact: '{ArtifactId}' of type {ArtifactType} - {ArtifactContent}",
                 creatingArtifactEventArgs.Artifact.Id,
                 creatingArtifactEventArgs.Artifact.GetType().Name,
                 creatingArtifactEventArgs.Artifact.ToString());
         }
         else
         {
-            _logger.LogInformation("BeforeEventPublished: Publishing event of type {EventType}", e.GetType().Name);
+            _logger.LogDebug("BeforeEventPublished: Publishing event of type {EventType}", e.GetType().Name);
         }
     }
     /// <summary>
@@ -83,15 +79,22 @@ public class GeneratorOrchestrator
     /// </summary>
     public GeneratorMessageBus MessageBus => _messageBus;
 
-    private void InitializeGenerators()
+    /// <summary>
+    /// Initialize all message bus aware generators
+    /// </summary>
+    public void Initialize()
     {
-        var settingsManager = ServiceProviderHolder.GetRequiredService<GeneratorSettingsManager>();
+        // first initialize generators
         foreach (var generator in _messageBusAwareGenerators)
         {
-            var settings = settingsManager.GetGeneratorSettings(generator.SettingsDescription.Id);
-            if (settings == null || !settings.Enabled) continue;
-
             generator.Initialize(_messageBus);
+            
+            _logger.LogDebug("Initialized message bus aware generator: {GeneratorName}", generator.SettingsDescription.Name);
+        }
+
+        // then subscribe to events
+        foreach (var generator in _messageBusAwareGenerators)
+        {
             generator.SubscribeToEvents(_messageBus);
 
             _logger.LogDebug("Initialized message bus aware generator: {GeneratorName}", generator.SettingsDescription.Name);
@@ -105,7 +108,7 @@ public class GeneratorOrchestrator
             generator.UnsubscribeFromEvents(_messageBus);
         }
     }
-
+    public GenerationResult? CurrentGenerationResult { get; private set; }
     /// <summary>
     /// Run all enabled generators
     /// </summary>
@@ -117,10 +120,19 @@ public class GeneratorOrchestrator
     {
         // report starting
         var startTime = DateTime.UtcNow;
-        // create root artifact
-        var rootArtifact = new RootArtifact("Output", WorkspaceSettings.Instance.DefaultOutputDirectory);
-        var result = new GenerationResult(rootArtifact, workspaceArtifact, previewOnly);
         
+        // create root artifact
+        var rootArtifact = new RootArtifact("Output", workspaceArtifact.OutputDirectory);
+        var result = new GenerationResult(rootArtifact, workspaceArtifact, previewOnly);
+
+        // first check if output directory is set
+        if (string.IsNullOrWhiteSpace(workspaceArtifact.OutputDirectory))
+        {
+            result.Errors.Add($"Workspace OutputDirectory not set.");
+            return result;
+        }
+
+        CurrentGenerationResult = result;
         try
         {
             progress?.Report(new GenerationProgress
@@ -167,20 +179,23 @@ public class GeneratorOrchestrator
             result.Errors.Add($"Error during root artifact creation: {ex.Message}");
             result.Success = false;
         }
-
-        var endTime = DateTime.UtcNow;
-        result.Duration = endTime - startTime;
-        
-        UnsubscribeGenerators();
-        
-        progress.Report(new GenerationProgress
+        finally
         {
-            CurrentStep = "Completed",
-            Message = "Root artifact generation completed",
-            PercentComplete = 100,
-            Phase = GenerationPhase.Completed,
-            IsIndeterminate = false
-        });
+            MessageBus.Publish(new GenerationCompletedEventArgs(result));
+
+            var endTime = DateTime.UtcNow;
+            result.Duration = endTime - startTime;
+            CurrentGenerationResult = null;
+
+            progress?.Report(new GenerationProgress
+            {
+                CurrentStep = "Completed",
+                Message = "Root artifact generation completed",
+                PercentComplete = 100,
+                Phase = GenerationPhase.Completed,
+                IsIndeterminate = false
+            });
+        }
 
         return result;
     }

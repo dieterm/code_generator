@@ -165,6 +165,7 @@ public class ScribanTemplateEngine : FileBasedTemplateEngine<ScribanTemplate, Sc
     public const string FUNCTION_NOW = "now";
     public const string FUNCTION_UTC_NOW = "utc_now";
     public const string FUNCTION_IF_EMPTY = "if_empty";
+    public const string FUNCTION_PLACEHOLDER_CONTENT = "placeholder_content";
     public static string[] BuildinFunctions { get; } = new[]
     {
         FUNCTION_PASCAL_CASE,
@@ -180,7 +181,8 @@ public class ScribanTemplateEngine : FileBasedTemplateEngine<ScribanTemplate, Sc
         FUNCTION_SQL_TYPE,
         FUNCTION_NOW,
         FUNCTION_UTC_NOW,
-        FUNCTION_IF_EMPTY
+        FUNCTION_IF_EMPTY,
+        FUNCTION_PLACEHOLDER_CONTENT
     };
     public static Dictionary<string, string> BuildinFunctionsTooltips { get; } = new Dictionary<string, string>();
 
@@ -237,6 +239,13 @@ public class ScribanTemplateEngine : FileBasedTemplateEngine<ScribanTemplate, Sc
         _globalFunctions.Import(FUNCTION_IF_EMPTY, new Func<string, string, string>((value, defaultValue) =>
             string.IsNullOrEmpty(value) ? defaultValue : value));
         BuildinFunctionsTooltips.Add(FUNCTION_IF_EMPTY, $"{FUNCTION_IF_EMPTY} <value:text> <defaultValue:text> -> returns defaultValue if value is null or empty");
+
+        // Placeholder content request function
+        _globalFunctions.Import(FUNCTION_PLACEHOLDER_CONTENT, new Func<string, string>((placeholderName) => { 
+            var content = ServiceProviderHolder.GetRequiredService<GeneratorMessageBus>().RequestPlaceholderContent(placeholderName);
+            return content;
+        }));
+        BuildinFunctionsTooltips.Add(FUNCTION_PLACEHOLDER_CONTENT, $"{FUNCTION_PLACEHOLDER_CONTENT} <placeholderName:text> -> requests placeholder content from the message bus");
 
         ScribanIntellisenceSupport.CreateGlobalFunctionStatements(BuildinFunctions, BuildinFunctionsTooltips);
     }

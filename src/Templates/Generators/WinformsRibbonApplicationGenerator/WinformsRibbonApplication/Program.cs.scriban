@@ -21,8 +21,32 @@ namespace {{ Namespace }}
             {
                 return;
             }
+			
+			// Build configuration
+			var configuration = new ConfigurationBuilder()
+				.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+				.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+				.Build();
+				
+			{{~ placeholder_content "DiContainerSetup" }}
+			
+			// Store service provider for global access
+			ServiceProviderHolder.Initialize(serviceProvider);
+			
+            // Application.Run(new MainView());
+			// Get application controller and start
+			using (var scope = serviceProvider.CreateScope())
+			{
+				var applicationController = ServiceProviderHolder.GetRequiredService<ApplicationController>();
+				applicationController.Initialize();
+				applicationController.StartApplication();
+			}
 
-            Application.Run(new MainView());
+			// Dispose service provider
+			if (serviceProvider is IDisposable disposable)
+			{
+				disposable.Dispose();
+			}
         }
 
         private static bool ConfigureSyncfusionFramework()

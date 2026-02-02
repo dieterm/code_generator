@@ -42,9 +42,11 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // Bind fields to their view models
             txtName.BindViewModel(_viewModel.NameField);
             txtRootNamespace.BindViewModel(_viewModel.RootNamespaceField);
-            folderOutputDirectory.BindViewModel(_viewModel.DefaultOutputDirectoryField);
+            folderOutputDirectory.BindViewModel(_viewModel.OutputDirectoryField);
             cbxTargetFramework.BindViewModel(_viewModel.DefaultTargetFrameworkField);
             cbxLanguage.BindViewModel(_viewModel.DefaultLanguageField);
+            cbxCodeArchitecture.BindViewModel(_viewModel.CodeArchitectureField);
+            cbxDependencyInjectionFramework.BindViewModel(_viewModel.DependencyInjectionFrameworkField);
 
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;
         }

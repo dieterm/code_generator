@@ -111,7 +111,7 @@ namespace CodeGenerator.Core.Workspaces.Services
             {
                 WorkspaceFilePath = filePath,
                 RootNamespace = workspaceSettings.RootNamespace,
-                DefaultOutputDirectory = workspaceSettings.DefaultOutputDirectory,
+                OutputDirectory = workspaceSettings.DefaultOutputDirectory,
                 DefaultTargetFramework = workspaceSettings.DefaultTargetFramework,
                 DefaultLanguage = workspaceSettings.DefaultLanguage
             };

@@ -1,5 +1,6 @@
 ﻿using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Services;
+using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Settings.Application;
 using CodeGenerator.Core.Settings.Generators;
@@ -23,10 +24,10 @@ namespace CodeGenerator.Application.Controllers
         private readonly TemplateManager _templateManager;
         private readonly TemplateEngineSettingsManager _templateEngineSettingsManager;
 
-		public SettingsController(TemplateEngineSettingsManager templateEngineSettingsManager, TemplateManager templateManager, ApplicationSettingsManager applicationSettingsManager, WorkspaceSettingsManager workspaceSettingsManager, GeneratorSettingsManager generatorSettingsManager, SettingsViewModel settingsViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IMessageBoxService messageBoxService, IFileSystemDialogService fileSystemDialogService, ApplicationMessageBus messageBus, ILogger<SettingsController> logger)
+		public SettingsController( TemplateEngineSettingsManager templateEngineSettingsManager, TemplateManager templateManager, ApplicationSettingsManager applicationSettingsManager, WorkspaceSettingsManager workspaceSettingsManager, GeneratorSettingsManager generatorSettingsManager, SettingsViewModel settingsViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IMessageBoxService messageBoxService, IFileSystemDialogService fileSystemDialogService, ApplicationMessageBus messageBus, ILogger<SettingsController> logger)
 			: base(windowManagerService, ribbonBuilder, messageBus, messageBoxService, fileSystemDialogService, logger)
 		{
-            _templateEngineSettingsManager = templateEngineSettingsManager;
+			_templateEngineSettingsManager = templateEngineSettingsManager;
 			_settingsViewModel = settingsViewModel;
 			_applicationSettingsManager = applicationSettingsManager;
 			_workspaceSettingsManager = workspaceSettingsManager;
@@ -46,7 +47,7 @@ namespace CodeGenerator.Application.Controllers
             _templateEngineSettingsManager.DiscoverAndRegisterTemplateEngines();
             _generatorSettingsManager.LoadSettings();
             _generatorSettingsManager.DiscoverAndRegisterGenerators();
-			
+
 
             if (Directory.Exists(_workspaceSettingsManager.Settings.DefaultTemplateFolder)) {
                 WorkspaceSettingsDefaultTemplateFolder = _workspaceSettingsManager.Settings.DefaultTemplateFolder;

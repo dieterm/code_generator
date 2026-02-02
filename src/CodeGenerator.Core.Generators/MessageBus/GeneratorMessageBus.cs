@@ -1,4 +1,6 @@
+using CodeGenerator.Core.Generators.MessageBus;
 using CodeGenerator.Core.MessageBus;
+using CodeGenerator.Shared;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Core.Generators;
@@ -14,4 +16,12 @@ public class GeneratorMessageBus : MessageBus<GeneratorContextEventArgs>
         
     }
 
+    public string RequestPlaceholderContent(string placeholderName)
+    {
+        var result = ServiceProviderHolder.GetRequiredService<GeneratorOrchestrator>().CurrentGenerationResult;
+        if(result==null) throw new InvalidOperationException("No current generation result available to request placeholder content.");
+        var eventArgs = new RequestingPlaceholderContentEventArgs(placeholderName, result);
+        Publish(eventArgs);
+        return string.Join(Environment.NewLine, eventArgs.Content.Values);
+    }
 }

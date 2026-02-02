@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CodeGenerator.Core.Generators.MessageBus
+{
+    public class GenerationCompletedEventArgs : GeneratorContextEventArgs
+    {
+        public GenerationCompletedEventArgs(GenerationResult result) 
+            : base(result)
+        {
+        }
+    }
+}

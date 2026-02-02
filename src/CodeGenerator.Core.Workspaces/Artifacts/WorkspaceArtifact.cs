@@ -3,6 +3,9 @@ using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Core.Workspaces.MessageBus.EventHandlers;
 using CodeGenerator.Core.Workspaces.Settings;
+using CodeGenerator.Domain.CodeArchitecture;
+using CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.Views.TreeNode;
 
 namespace CodeGenerator.Core.Workspaces.Artifacts
@@ -20,10 +23,11 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             Name = name;
             
             RootNamespace = WorkspaceSettings.Instance.RootNamespace;
-            DefaultOutputDirectory = WorkspaceSettings.Instance.DefaultOutputDirectory;
+            OutputDirectory = WorkspaceSettings.Instance.DefaultOutputDirectory;
             DefaultTargetFramework = WorkspaceSettings.Instance.DefaultTargetFramework;
             DefaultLanguage = WorkspaceSettings.Instance.DefaultLanguage;
-            //WorkspaceFilePath = string.Empty;
+            DependencyInjectionFrameworkId = WorkspaceSettings.Instance.DefaultDependencyInjectionFrameworkId;
+            CodeArchitectureId = WorkspaceSettings.Instance.DefaultCodeArchitectureId;
 
             EnsureChildArtifactExists<DatasourcesContainerArtifact>();
             EnsureChildArtifactExists<ScopesContainerArtifact>();
@@ -68,10 +72,10 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         /// <summary>
         /// Default output directory for generated code
         /// </summary>
-        public string DefaultOutputDirectory
+        public string OutputDirectory
         {
-            get => GetValue<string>(nameof(DefaultOutputDirectory));
-            set { SetValue(nameof(DefaultOutputDirectory), value); }
+            get => GetValue<string>(nameof(OutputDirectory));
+            set { SetValue(nameof(OutputDirectory), value); }
         }
 
         /// <summary>
@@ -90,6 +94,47 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         {
             get => GetValue<string>(nameof(DefaultLanguage));
             set { SetValue(nameof(DefaultLanguage), value); }
+        }
+
+        public string? CodeArchitectureId
+        {
+            get => GetValue<string?>(nameof(CodeArchitectureId));
+            set { SetValue(nameof(CodeArchitectureId), value); }
+        }
+
+        public CodeArchitecture? CodeArchitecture
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(CodeArchitectureId))
+                    return null;
+                var architectureManager = ServiceProviderHolder.GetRequiredService<CodeArchitectureManager>();
+                //var allArchitectures = architectureManager.GetAllArchitectures();
+                return architectureManager.GetById(CodeArchitectureId);
+            }
+        }
+
+        /// <summary>
+        /// The ID of the dependency injection framework to use for code generation
+        /// </summary>
+        public string? DependencyInjectionFrameworkId
+        {
+            get => GetValue<string?>(nameof(DependencyInjectionFrameworkId));
+            set { SetValue(nameof(DependencyInjectionFrameworkId), value); }
+        }
+
+        /// <summary>
+        /// Get the dependency injection framework instance for this workspace
+        /// </summary>
+        public DependancyInjectionFramework? DependencyInjectionFramework
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(DependencyInjectionFrameworkId))
+                    return null;
+                var frameworkManager = ServiceProviderHolder.GetRequiredService<DependancyInjectionFrameworkManager>();
+                return frameworkManager.GetFrameworkById(DependencyInjectionFrameworkId);
+            }
         }
 
         /// <summary>

@@ -51,6 +51,7 @@ public static class ServiceCollectionExtensions
 
         services.AddTransient<IMessageBusAwareGenerator, EntitiesClassGenerator>();
         services.AddTransient<IMessageBusAwareGenerator, DotNetSolutionGenerator>();
+        services.AddTransient<IMessageBusAwareGenerator, DependancyInjectionGenerator>();
 
         services.AddSingleton<IWorkspaceMessageBusSubscriber, EntityArtifactSubscriber>();
         return services;

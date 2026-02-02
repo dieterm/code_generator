@@ -1,5 +1,6 @@
 ﻿using CodeGenerator.Core.Settings.Application;
 using CodeGenerator.Domain.CodeArchitecture;
+using CodeGenerator.Domain.DependancyInjectionFrameworks;
 using CodeGenerator.Shared;
 using System;
 using System.Collections.Generic;
@@ -132,6 +133,14 @@ namespace CodeGenerator.Core.Workspaces.Settings
             }
         }
 
+        [UserScopedSetting]
+        [DefaultSettingValue(MicrosoftExtensionsDependencyInjection.FRAMEWORK_ID)]
+        public string DefaultDependencyInjectionFrameworkId
+        {
+            get { return (string)this[nameof(DefaultDependencyInjectionFrameworkId)]; }
+            set { this[nameof(DefaultDependencyInjectionFrameworkId)] = value; }
+        }   
+        
         #endregion
 
         #region Helper Methods

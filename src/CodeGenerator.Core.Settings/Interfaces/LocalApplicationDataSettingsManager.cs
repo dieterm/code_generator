@@ -14,7 +14,18 @@ namespace CodeGenerator.Core.Settings.Interfaces
     {
         public event EventHandler? SettingsSaved;
         private TSettings _settings;
-        public TSettings Settings => _settings;
+        private bool _settingsLoaded = false;
+        public TSettings Settings { get { return EnsureSettingsLoaded(); } }
+
+        private TSettings EnsureSettingsLoaded()
+        {
+            if(!_settingsLoaded || _settings==null)
+            {
+                LoadSettings();
+                _settingsLoaded = true;
+            }
+            return _settings!;
+        }
 
         private readonly string _settingsFilePath;
         protected readonly ILogger _logger;
@@ -33,7 +44,14 @@ namespace CodeGenerator.Core.Settings.Interfaces
         {
             _settingsFilePath = settingsFilePath;
             _logger = logger;
-            _settings = CreateDefaultSettings();
+            //if(File.Exists(_settingsFilePath))
+            //{
+            //    LoadSettings();
+            //}
+            //else
+            //{
+            //    _settings = CreateDefaultSettings();
+            //}
         }
         protected virtual string SettingsModelName => typeof(TSettings).Name;
         #region File Path

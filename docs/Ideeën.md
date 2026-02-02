@@ -1,4 +1,45 @@
-﻿Maak voor ieder programmeerconcept een aparte Artifact.
+﻿# 2/2/2026
+## DONE: GenerationOrchestrator 
+TODO: controleren waarom deze als Transient en niet als Singleton geregistreerd is in DI-container
+
+## WorkspaceArtifact.ArtifactContext
+
+De ArtifactContext property op een WorkspaceArtifact kan gebruikt worden om:
+- bv. Namespace: de resulterende namespace voor dit artifact
+- bv. NamespaceParameters: lijst met namespace parameters om te gebruiken in NamespacePattern-property
+- bv. Scope: de resulterende scope van het artifact (Application, Shared, Geoservice, ...)
+- bv. Layer: de resulterende architectuurlaag van het artifact (Application, Presentation, Domain, Infrastructure, ...)
+- bv. OutputPath: de output path voor gegenereerde bestanden
+
+## ProgrammingLanguageCodeGenerator regisration
+Registreer ProgrammingLanguageCodeGenerator per programmeertaal via DI-container,
+ipv via CSharpCodeGeneratorExtensions.RegisterCSharpCodeGenerator();
+
+## Verwijder de LayerArtifact in de Generation TreeView
+Gebruik in de plaats decorators op de LayerArtifact om de scope en layer op te slaan
+Gebruik een WorkspaceArtifactReferenceDecorator om een link te leggen naar een workspace artifact
+
+## ArtifactTreeView baseclass
+ArtifactTreeViewController<TTreeViewModel, TArtifactBase> 
+	where TArtifactBase : IArtifact
+	where TTreeViewModel : IArtifactTreeViewModel
+
+Elke Artifact in de ArtifactTreeView erft van een baseclass
+- WorkspaceTreeView 
+	- WorkspaceArtifactBase = abstract
+		- WorkspaceArtifact : concrete
+		- WorkspaceArtifactReferenceDecorator : concrete
+- TemplateTreeView
+	- TemplateArtifactBase = abstract
+		- TemplateArtifact : concrete
+		- TemplateArtifactReferenceDecorator : concrete
+- GenerationTreeView
+	- GenerationArtifactBase = abstract
+		- GenerationArtifact : concrete
+		- GenerationArtifactReferenceDecorator : concrete
+--------------
+# Structuur voor codegeneratie framework
+Maak voor ieder programmeerconcept een aparte Artifact.
 Zet properties rechtstreeks op de Artifact, niet via decorators.
 
 ```

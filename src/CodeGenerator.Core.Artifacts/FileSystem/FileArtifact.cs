@@ -45,8 +45,11 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
         {
             RaisePropertyChangedEvent(nameof(FullPath));
         }
-
-        public string FileName { 
+        /// <summary>
+        /// Filename (with extension) of the file artifact.<br />
+        /// eg. "MyClass.cs"
+        /// </summary>
+        public virtual string FileName { 
             get{ return _fileArtifactDecorator.FileName; } 
             set{ _fileArtifactDecorator.FileName = value; }
         }
@@ -87,7 +90,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
             base.RemoveDecorator(decorator);
         }
 
-        public void SetTextContent(string content)
+        public virtual void SetTextContent(string content)
         {
             AddOrGetDecorator<TextContentDecorator>(() => new TextContentDecorator(TEXT_CONTENT_DECORATOR_KEY))
                 .Content = content;
@@ -99,7 +102,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
         /// Otherwise, if the ExistingFileArtifactDecorator is set and has a valid file path, the content of the existing file is read and returned.<br/>
         /// If neither decorator is set, null is returned.
         /// </summary>
-        public string? GetTextContent()
+        public virtual string? GetTextContent()
         {
             var textDecorator = GetDecoratorOfType<TextContentDecorator>();
             if(textDecorator!=null) return textDecorator.Content;
