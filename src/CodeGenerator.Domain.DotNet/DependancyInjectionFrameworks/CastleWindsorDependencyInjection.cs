@@ -9,7 +9,7 @@ namespace CodeGenerator.Domain.DependancyInjectionFrameworks
     /// Castle Windsor dependency injection framework implementation.
     /// A mature, feature-rich IoC container with excellent AOP support via Castle DynamicProxy.
     /// </summary>
-    public class CastleWindsorDependencyInjection : DependancyInjectionFramework
+    public class CastleWindsorDependencyInjection : DotNetDependancyInjectionFramework
     {
         public const string FRAMEWORK_ID = "CastleWindsor";
 

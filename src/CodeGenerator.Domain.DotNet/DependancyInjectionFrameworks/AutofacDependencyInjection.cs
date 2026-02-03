@@ -9,7 +9,7 @@ namespace CodeGenerator.Domain.DependancyInjectionFrameworks
     /// Autofac dependency injection framework implementation.
     /// A feature-rich DI container with support for modules, property injection, interceptors, and assembly scanning.
     /// </summary>
-    public class AutofacDependencyInjection : DependancyInjectionFramework
+    public class AutofacDependencyInjection : DotNetDependancyInjectionFramework
     {
         public const string FRAMEWORK_ID = "Autofac";
 

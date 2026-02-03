@@ -2,6 +2,7 @@
 using CodeGenerator.Core.Generators.MessageBus;
 using CodeGenerator.Core.Generators.Settings;
 using CodeGenerator.Core.Settings.Generators;
+using CodeGenerator.Core.Templates;
 using CodeGenerator.Shared;
 using System;
 using System.Collections.Generic;
@@ -104,6 +105,38 @@ namespace CodeGenerator.Core.Generators
         protected void NotifyArtifactCreating(IArtifact artifact, GenerationResult result)
         {
             MessageBus.Publish(new CreatingArtifactEventArgs(result, artifact));
+        }
+
+        protected TTemplateInstance GetTemplateInstance<TTemplate, TTemplateInstance>(string templateName, params string[] subfolders)
+            where TTemplate : class, ITemplate
+            where TTemplateInstance : class, ITemplateInstance
+        {
+            var templateId = TemplateIdParser.BuildGeneratorTemplateId(this.Id, templateName, subfolders);
+            var templateManager = ServiceProviderHolder.GetRequiredService<TemplateManager>();
+            var template = templateManager.GetTemplateById(templateId) as TTemplate;
+            if (template == null) throw new ApplicationException($"{templateName} template with id '{templateId}' not found.");
+            var templateEngineManager = ServiceProviderHolder.GetRequiredService<TemplateEngineManager>();
+            var templateEngine = templateEngineManager.GetTemplateEnginesForTemplate(template).FirstOrDefault();
+            if (templateEngine == null) throw new ApplicationException($"No template engine found for template id '{templateId}'.");
+            var templateInstance = templateEngine.CreateTemplateInstance(template) as TTemplateInstance;
+            if (templateInstance == null) throw new ApplicationException($"Template instance was not created or not of type {nameof(TTemplateInstance)}.");
+
+            return templateInstance;
+        }
+
+        protected void AddTemplateOutputToArtifact(TemplateOutput output, IArtifact parentArtifact, GenerationResult result)
+        {
+            if (output.Succeeded)
+            {
+                foreach (var artifact in output.Artifacts)
+                {
+                    AddChildArtifactToParent(parentArtifact, artifact, result);
+                }
+            }
+            else
+            {
+                result.Errors.AddRange(output.Errors);
+            }
         }
     }
 }

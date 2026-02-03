@@ -16,6 +16,11 @@
     <EmbeddedResource Remove="Views\TemplateTreeView.resx" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Build" Version="18.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Build.Locator" Version="1.11.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.11" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
@@ -48,6 +53,8 @@
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.SqlServer\CodeGenerator.Core.Workspaces.Datasources.SqlServer.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Xml\CodeGenerator.Core.Workspaces.Datasources.Xml.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Yaml\CodeGenerator.Core.Workspaces.Datasources.Yaml.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Domain.DotNet\CodeGenerator.Domain.DotNet.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Domain\CodeGenerator.Domain.csproj" />
     <ProjectReference Include="..\CodeGenerator.Shared\CodeGenerator.Shared.csproj" />
     <ProjectReference Include="..\CodeGenerator.TemplateEngines.DotNetProject\CodeGenerator.TemplateEngines.DotNetProject.csproj" />
     <ProjectReference Include="..\CodeGenerator.TemplateEngines.PlantUML\CodeGenerator.TemplateEngines.PlantUML.csproj" />

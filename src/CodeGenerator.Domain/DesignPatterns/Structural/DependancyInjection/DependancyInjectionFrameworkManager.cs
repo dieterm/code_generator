@@ -1,5 +1,4 @@
-﻿using CodeGenerator.Domain.DependancyInjectionFrameworks;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,21 +20,11 @@ namespace CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection
         public IReadOnlyList<DependancyInjectionFramework> Frameworks => _frameworks.AsReadOnly();
 
         /// <summary>
-        /// The default DI framework (Microsoft.Extensions.DependencyInjection)
-        /// </summary>
-        public DependancyInjectionFramework DefaultFramework => 
-            _frameworks.FirstOrDefault(f => f.Id == MicrosoftExtensionsDependencyInjection.FRAMEWORK_ID) 
-            ?? _frameworks.First();
-
-        /// <summary>
         /// DI Framework manager constructor with optional initial frameworks
         /// </summary>
-        public DependancyInjectionFrameworkManager(IEnumerable<DependancyInjectionFramework>? frameworks = null)
+        public DependancyInjectionFrameworkManager(IEnumerable<DependancyInjectionFramework> frameworks)
         {
-            if (frameworks != null)
-            {
-                _frameworks.AddRange(frameworks);
-            }
+            _frameworks.AddRange(frameworks);
         }
 
         /// <summary>
@@ -103,23 +92,6 @@ namespace CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection
                 return _frameworks.Remove(framework);
             }
             return false;
-        }
-
-        /// <summary>
-        /// Create a new manager with all built-in frameworks registered
-        /// </summary>
-        public static DependancyInjectionFrameworkManager CreateWithBuiltInFrameworks()
-        {
-            var manager = new DependancyInjectionFrameworkManager();
-            
-            // Register all built-in frameworks
-            manager.RegisterFramework(new MicrosoftExtensionsDependencyInjection());
-            manager.RegisterFramework(new AutofacDependencyInjection());
-            manager.RegisterFramework(new SimpleInjectorDependencyInjection());
-            manager.RegisterFramework(new NinjectDependencyInjection());
-            manager.RegisterFramework(new CastleWindsorDependencyInjection());
-
-            return manager;
         }
 
         /// <summary>

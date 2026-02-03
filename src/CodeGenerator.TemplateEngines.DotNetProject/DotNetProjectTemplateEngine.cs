@@ -3,6 +3,7 @@ using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Settings;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Domain.DotNet;
+using CodeGenerator.Domain.DotNet.ProjectType;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Models;
 using CodeGenerator.TemplateEngines.DotNetProject.Models;
@@ -48,10 +49,10 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
         public override void Initialize()
         {
             var templateManager = ServiceProviderHolder.GetRequiredService<TemplateManager>();
-            foreach (var projectType in DotNetProjectType.AllTypes)
+            foreach (var projectType in DotNetProjectTypes.AllTypes)
             {
-                var templateName = $"{projectType}_{DotNetLanguages.CSharp.Id}";
-                templateManager.RegisterRequiredTemplate(TemplateIdParser.BuildTemplateEngineTemplateId(Id, templateName, projectType));
+                var templateName = $"{projectType.Id}_{DotNetLanguages.CSharp.Id}";
+                templateManager.RegisterRequiredTemplate(TemplateIdParser.BuildTemplateEngineTemplateId(Id, templateName, projectType.Id));
             }
         }
 

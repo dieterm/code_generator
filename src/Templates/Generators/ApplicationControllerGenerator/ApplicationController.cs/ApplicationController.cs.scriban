@@ -1,0 +1,39 @@
+using Microsoft.Extensions.Logging;
+
+namespace {{ Namespace }}
+{
+    public class ApplicationController {{~ if ControllerBaseClass }} : {{ ControllerBaseClass }}{{ end }}
+    {
+        private readonly MainViewModel _mainViewModel;
+        private readonly IApplicationService _applicationService;
+        private readonly ILogger _logger;
+
+
+        public ApplicationController(MainViewModel viewModel ILogger<ApplicationController> logger) 
+{{- if ControllerBaseClass }}        	: base(logger){{ end }}
+        {
+            _mainViewModel = viewModel;
+						_logger = logger;
+        }
+
+        public void StartApplication()
+        {
+						_mainViewModel.ClosingRequested += OnClosingRequested;
+
+            _applicationService.RunApplication(_mainViewModel);
+            // we never get here, because RunApplication is blocking in Gui-loop
+        }
+
+        private void OnClosingRequested(object? sender, EventArgs e)
+        { 
+            _mainViewModel.IsClosing = true;
+            _applicationService.ExitApplication();
+        }
+
+        public override void Dispose()
+        {
+            // Unsubscribe from events
+            _mainViewModel.ClosingRequested -= OnClosingRequested;
+        }
+    }
+}

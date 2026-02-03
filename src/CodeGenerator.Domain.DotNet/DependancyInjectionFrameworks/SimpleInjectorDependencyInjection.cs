@@ -9,7 +9,7 @@ namespace CodeGenerator.Domain.DependancyInjectionFrameworks
     /// Simple Injector dependency injection framework implementation.
     /// Known for its speed, strict validation, and diagnostic capabilities.
     /// </summary>
-    public class SimpleInjectorDependencyInjection : DependancyInjectionFramework
+    public class SimpleInjectorDependencyInjection : DotNetDependancyInjectionFramework
     {
         public const string FRAMEWORK_ID = "SimpleInjector";
 

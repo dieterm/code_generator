@@ -36,7 +36,10 @@ namespace CodeGenerator.Presentation.WinForms
             
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(File.ReadAllText(licensesPath));
             SkinManager.LoadAssembly(typeof(Syncfusion.WinForms.Themes.Office2019Theme).Assembly);
-            
+
+            // Eenmalig bij applicatie start - VOOR je MSBuild gebruikt
+            Microsoft.Build.Locator.MSBuildLocator.RegisterDefaults();
+
             // Build configuration
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)

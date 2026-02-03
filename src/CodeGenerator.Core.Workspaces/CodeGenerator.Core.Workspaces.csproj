@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CodeGenerator.Core.Settings\CodeGenerator.Core.Settings.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Domain.DotNet\CodeGenerator.Domain.DotNet.csproj" />
     <ProjectReference Include="..\CodeGenerator.Domain\CodeGenerator.Domain.csproj" />
     <ProjectReference Include="..\CodeGenerator.Shared\CodeGenerator.Shared.csproj" />
   </ItemGroup>

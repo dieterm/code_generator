@@ -72,6 +72,9 @@ namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication
             projectArtifact.AddNuGetPackage(NuGetPackages.Microsoft_Extensions_Logging);
             projectArtifact.AddNuGetPackage(NuGetPackages.Microsoft_Extensions_Logging_Debug);
 
+            projectArtifact.AddEmbeddedResource(new EmbeddedResource("Resources\\LucideIcons_#000000.resx"));
+            projectArtifact.AddEmbeddedResource(new EmbeddedResource("Resources\\LucideIcons_#ffffff.resx"));
+
             var settings = GetSettings();
             var templateId = TemplateIdParser.BuildGeneratorTemplateId(this.SettingsDescription.Id, WinformsRibbonApplicationGeneratorSettings.TEMPLATE_ID);
             var template = settings.Templates.FirstOrDefault(t => t.TemplateId == templateId);
@@ -115,17 +118,6 @@ namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication
                 
                 if(templateEngine is IFileBasedTemplateEngine fileBasedTemplateEngine)
                 {
-                    //// Check for template definition
-                    //var definitionFilePath = TemplateDefinition.GetDefinitionFilePath(file);
-                    //if (File.Exists(definitionFilePath))
-                    //{
-                    //    var templateDefinition = TemplateDefinition.LoadFromFile(definitionFilePath);
-                    //    if (templateDefinition != null)
-                    //    {
-                    //        // You can use templateDefinition as needed
-                    //    }
-                    //}
-
                     var template = fileBasedTemplateEngine.CreateTemplateFromFile(file);
                     if (template is ScribanFileTemplate scribanTemplate)
                     {

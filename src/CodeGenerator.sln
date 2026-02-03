@@ -176,6 +176,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "05 ProgrammingLanguageCodeG
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Domain.ProgrammingLanguages.CSharp", "CodeGenerator.Domain.ProgrammingLanguages.CSharp\CodeGenerator.Domain.ProgrammingLanguages.CSharp.csproj", "{18E9BEF7-08A8-4DDD-81A1-683264EA08E1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Domain.DotNet", "CodeGenerator.Domain.DotNet\CodeGenerator.Domain.DotNet.csproj", "{AA077307-4856-486E-93A5-3993302CF53D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -341,6 +343,10 @@ Global
 		{18E9BEF7-08A8-4DDD-81A1-683264EA08E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18E9BEF7-08A8-4DDD-81A1-683264EA08E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18E9BEF7-08A8-4DDD-81A1-683264EA08E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA077307-4856-486E-93A5-3993302CF53D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA077307-4856-486E-93A5-3993302CF53D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA077307-4856-486E-93A5-3993302CF53D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA077307-4856-486E-93A5-3993302CF53D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

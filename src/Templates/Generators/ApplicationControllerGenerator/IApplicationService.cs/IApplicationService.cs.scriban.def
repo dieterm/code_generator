@@ -1,7 +1,7 @@
 {
-  "templateName": "LucideIcons_#000000.Designer.cs",
-  "displayName": "LucideIcons_#000000.Designer.cs",
-  "description": "Template: LucideIcons_#000000.Designer.cs",
+  "templateName": "IApplicationService.cs",
+  "displayName": "IApplicationService.cs.scriban",
+  "description": null,
   "category": null,
   "tags": null,
   "version": null,
@@ -9,8 +9,8 @@
   "parameters": [
     {
       "name": "Namespace",
-      "description": "Parameter \u0027Namespace\u0027 of type \u0027String\u0027",
-      "fullyQualifiedAssemblyTypeName": "System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
+      "description": null,
+      "fullyQualifiedAssemblyTypeName": "System.String",
       "required": false,
       "defaultValue": null,
       "allowedValues": null,

@@ -79,18 +79,45 @@ namespace CodeGenerator.Generators.DotNet.Generators
                     // Application -> Infrastructure
                     if (scope.DotNetProjectArtifacts.TryGetValue(CodeArchitectureLayerArtifact.INFRASTRUCTURE_LAYER, out DotNetProjectArtifact? infrastructureProject))
                     {
-                        infrastructureProject.ProjectReferences.Add(new DotNetProjectReference(applicationProject));
+                        applicationProject.AddProjectReference(new DotNetProjectReference(infrastructureProject));
                     }
                     // Application -> Domain
                     if (scope.DotNetProjectArtifacts.TryGetValue(CodeArchitectureLayerArtifact.DOMAIN_LAYER, out DotNetProjectArtifact? domainProject))
                     {
-                        domainProject.ProjectReferences.Add(new DotNetProjectReference(applicationProject));
+                        applicationProject.AddProjectReference(new DotNetProjectReference(domainProject));
                     }
+                }
 
-                    // Presentation -> Application
-                    if (scope.DotNetProjectArtifacts.TryGetValue(CodeArchitectureLayerArtifact.PRESENTATION_LAYER, out DotNetProjectArtifact? presentationProject))
+                if (scope.DotNetProjectArtifacts.TryGetValue(CodeArchitectureLayerArtifact.INFRASTRUCTURE_LAYER, out DotNetProjectArtifact? infrastructureProject2))
+                {
+                    // Infrastructure -> Domain
+                    if (scope.DotNetProjectArtifacts.TryGetValue(CodeArchitectureLayerArtifact.DOMAIN_LAYER, out DotNetProjectArtifact? domainProject))
                     {
-                        presentationProject.ProjectReferences.Add(new DotNetProjectReference(applicationProject));
+                        infrastructureProject2.AddProjectReference(new DotNetProjectReference(domainProject));
+                    }
+                }
+
+                if (scope.DotNetProjectArtifacts.TryGetValue(CodeArchitectureLayerArtifact.PRESENTATION_LAYER, out DotNetProjectArtifact? presentationProject))
+                {
+                    // Presentation -> Application
+                    if (scope.DotNetProjectArtifacts.TryGetValue(CodeArchitectureLayerArtifact.APPLICATION_LAYER, out DotNetProjectArtifact? applicationProject2))
+                    {
+                        presentationProject.AddProjectReference(new DotNetProjectReference(applicationProject2));
+                    }
+                }
+                if(scope.ScopeArtifact.Name!= CodeArchitectureLayerArtifact.SHARED_SCOPE)
+                {
+                    // Other scopes (eg. ScopeA, ScopeB, etc) -> Shared
+                    var sharedScope = references.FirstOrDefault(s => s.ScopeArtifact.Name == CodeArchitectureLayerArtifact.SHARED_SCOPE);
+                    if (sharedScope != null)
+                    {
+                        foreach (var (layer, sharedProjectArtifact) in sharedScope.DotNetProjectArtifacts)
+                        {
+                            if (scope.DotNetProjectArtifacts.TryGetValue(layer, out DotNetProjectArtifact? targetProject))
+                            {
+                                targetProject.AddProjectReference(new DotNetProjectReference(sharedProjectArtifact));
+                            }
+                        }
                     }
                 }
             }
@@ -98,53 +125,48 @@ namespace CodeGenerator.Generators.DotNet.Generators
             // 2. Cross-scope references (eg. Application.Shared -> Application.Application)
             var appScopeReferences = references[CodeArchitectureLayerArtifact.APPLICATION_SCOPE];
 
+            // loop over <ns>.Application.Domain, <ns>.Application.Infrastructure, <ns>.Application.Presentation, <ns>.Application.Application
             foreach (var (layer, layerArtifact) in appScopeReferences.DotNetProjectArtifacts)
             {
+                // get all other scopes except Application (eg. Shared, ScopeA, ScopeB, ScopeB/SubScope1, etc)
                 foreach (var targetScope in references.Where(s => s.ScopeArtifact.Name != CodeArchitectureLayerArtifact.APPLICATION_SCOPE))
                 {
+                    // Shared.<layer> -> Application.<layer>
+                    // ScopeA.<layer> -> Application.<layer>
+                    // ...
                     if (targetScope.DotNetProjectArtifacts.TryGetValue(layer, out DotNetProjectArtifact? targetProject))
                     {
-                        layerArtifact.ProjectReferences.Add(new DotNetProjectReference(targetProject));
+                        layerArtifact.AddProjectReference(new DotNetProjectReference(targetProject));
                     }
                 }
             }
+            // Application layer should have a reference to the Domain and Infrastructure layer
+            // TODO: add reference from <scope>.Application -> <scope>.Domain
+
+
 
             // 3. Generate the updated project files with the references
             foreach (var scope in references)
             {
                 foreach (var (_, projectArtifact) in scope.DotNetProjectArtifacts)
                 {
-                    var dotNetProjectTemplate = new DotNetProjectTemplate(projectArtifact.ProjectType, projectArtifact.Language, projectArtifact.TargetFramework);
-                    var dotNetProjectTemplateInstance = new DotNetProjectTemplateInstance(dotNetProjectTemplate, projectArtifact.Name);
-                    foreach (var nugetPackage in projectArtifact.NuGetPackages)
-                    {
-                        dotNetProjectTemplateInstance.Packages.Add(nugetPackage);
-                    }
-                    foreach (var projectReference in projectArtifact.ProjectReferences)
-                    {
-                        dotNetProjectTemplateInstance.ProjectReferences.Add(projectReference);
-                    }
-                    if (!e.Result.PreviewOnly)
-                    {
-                        dotNetProjectTemplateInstance.OutputDirectory = projectArtifact.FindAncesterOfType<FolderArtifact>()?.FullPath;
-                    }
                     var messageBus = ServiceProviderHolder.GetRequiredService<ApplicationMessageBus>();
                     messageBus.Publish(new ReportTaskProgressEvent($"Updating {projectArtifact.Name} .NET project with references...", null));
-                    // Use await for proper async handling - no deadlock risk
-                    var result = _dotNetProjectTemplateEngine.RenderAsync(dotNetProjectTemplateInstance, CancellationToken.None).GetAwaiter().GetResult();
+                    var projectFilePath = projectArtifact.GetProjectFilePath();
+                    var errorMessage = projectArtifact.SaveProjectFile(projectFilePath, _logger);
+
                     messageBus.Publish(new ReportTaskProgressEvent($"Finished updating {projectArtifact.Name} .NET project.", null));
-                    if (result.Succeeded)
+                    
+                    if (errorMessage==null)
                     {
                         // for now, only add the project file as child artifact
-                        var projectFileArtifact = result.Artifacts.OfType<FileArtifact>().FirstOrDefault(f => f.FileName.EndsWith(projectArtifact.Language.ProjectFileExtension));
+                        var projectFileArtifact = new ExistingFileArtifact(projectFilePath);
+                        projectFileArtifact.SetTextContent(File.ReadAllText(projectFilePath));    
                         AddChildArtifactToParent(projectArtifact, projectFileArtifact, e.Result);
                     }
                     else
                     {
-                        foreach (var error in result.Errors)
-                        {
-                            e.Result.Errors.Add(error);
-                        }
+                        e.Result.Errors.Add(errorMessage);
                     }
                 }
             }

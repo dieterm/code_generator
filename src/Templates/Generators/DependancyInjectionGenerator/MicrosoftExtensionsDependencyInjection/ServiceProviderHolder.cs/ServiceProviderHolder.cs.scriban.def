@@ -1,0 +1,45 @@
+{
+  "templateName": "ServiceProviderHolder.cs",
+  "displayName": "ServiceProviderHolder.cs.scriban",
+  "description": null,
+  "category": null,
+  "tags": null,
+  "version": null,
+  "author": null,
+  "parameters": [
+    {
+      "name": "Namespace",
+      "description": "Namespace",
+      "fullyQualifiedAssemblyTypeName": "System.String",
+      "required": true,
+      "defaultValue": "MyWorkspace.Shared.Domain",
+      "allowedValues": null,
+      "label": "Namespace",
+      "tooltip": null,
+      "displayOrder": 0,
+      "validationPattern": null,
+      "minValue": null,
+      "maxValue": null,
+      "tableDataFilter": null,
+      "tableDataMaxRows": null,
+      "isTemplateDatasourceArtifactData": false
+    },
+    {
+      "name": "ClassName",
+      "description": "ClassName",
+      "fullyQualifiedAssemblyTypeName": "System.String",
+      "required": false,
+      "defaultValue": "ServiceProviderHolder",
+      "allowedValues": null,
+      "label": "ClassName",
+      "tooltip": null,
+      "displayOrder": 1,
+      "validationPattern": null,
+      "minValue": null,
+      "maxValue": null,
+      "tableDataFilter": null,
+      "tableDataMaxRows": null,
+      "isTemplateDatasourceArtifactData": false
+    }
+  ]
+}

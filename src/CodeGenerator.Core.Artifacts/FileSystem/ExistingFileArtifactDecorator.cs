@@ -35,6 +35,12 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
             var fileArtifact = this.Artifact as FileArtifact;
 
             if (fileArtifact != null) {
+
+                if (string.Equals(FilePath, fileArtifact.FullPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    // If source and target are the same, the file is already at it's place, so we can skip the copy operation.
+                    return Task.CompletedTask;
+                }
                 // use the filename from the FileArtifactDecorator
                 File.Copy(FilePath, fileArtifact.FullPath, true);
                 return Task.CompletedTask;

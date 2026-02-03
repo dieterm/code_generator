@@ -9,7 +9,7 @@ namespace CodeGenerator.Domain.DependancyInjectionFrameworks
     /// Ninject dependency injection framework implementation.
     /// Known for its readable syntax and contextual binding capabilities.
     /// </summary>
-    public class NinjectDependencyInjection : DependancyInjectionFramework
+    public class NinjectDependencyInjection : DotNetDependancyInjectionFramework
     {
         public const string FRAMEWORK_ID = "Ninject";
 

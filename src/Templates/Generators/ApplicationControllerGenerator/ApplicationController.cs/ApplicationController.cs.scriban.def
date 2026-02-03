@@ -1,0 +1,45 @@
+{
+  "templateName": "ApplicationController.cs",
+  "displayName": "ApplicationController.cs.scriban",
+  "description": null,
+  "category": null,
+  "tags": null,
+  "version": null,
+  "author": null,
+  "parameters": [
+    {
+      "name": "Namespace",
+      "description": null,
+      "fullyQualifiedAssemblyTypeName": "System.String",
+      "required": false,
+      "defaultValue": null,
+      "allowedValues": null,
+      "label": "Namespace",
+      "tooltip": null,
+      "displayOrder": 0,
+      "validationPattern": null,
+      "minValue": null,
+      "maxValue": null,
+      "tableDataFilter": null,
+      "tableDataMaxRows": null,
+      "isTemplateDatasourceArtifactData": false
+    },
+    {
+      "name": "ControllerBaseClass",
+      "description": null,
+      "fullyQualifiedAssemblyTypeName": "System.String",
+      "required": false,
+      "defaultValue": null,
+      "allowedValues": null,
+      "label": null,
+      "tooltip": null,
+      "displayOrder": 1,
+      "validationPattern": null,
+      "minValue": null,
+      "maxValue": null,
+      "tableDataFilter": null,
+      "tableDataMaxRows": null,
+      "isTemplateDatasourceArtifactData": false
+    }
+  ]
+}

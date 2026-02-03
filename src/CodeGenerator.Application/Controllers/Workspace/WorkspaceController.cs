@@ -8,6 +8,7 @@ using CodeGenerator.Core.Settings.Application;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.MessageBus;
 using CodeGenerator.Domain.DotNet;
+using CodeGenerator.Domain.DotNet.ProjectType;
 using CodeGenerator.Presentation.WinForms.ViewModels;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Ribbon;
@@ -61,40 +62,37 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
             var supportedLanguages = new Dictionary<string, List<DotNetLanguage>>();
             var supportedFrameworks = new Dictionary<string, List<TargetFramework>>();
-            var totalCombinations = DotNetProjectType.AllTypes.Length * TargetFrameworks.AllFrameworks.Length;// * DotNetLanguages.AllLanguages.Count;
+            var totalCombinations = DotNetProjectTypes.AllTypes.Length * TargetFrameworks.AllFrameworks.Length;// * DotNetLanguages.AllLanguages.Count;
             var counter = 0;
-            foreach (var projectType in DotNetProjectType.AllTypes)
+            foreach (var projectType in DotNetProjectTypes.AllTypes)
             {
-                supportedLanguages.Add(projectType, new List<DotNetLanguage>());
-                supportedFrameworks.Add(projectType, new List<TargetFramework>());
-                //foreach(var targetFramework in DotNetProjectType.ProjectTypeSupportedFrameworks[projectType])
-                foreach (var targetFramework in DotNetProjectType.ProjectTypeSupportedFrameworks[projectType])
+                supportedLanguages.Add(projectType.Id, new List<DotNetLanguage>());
+                supportedFrameworks.Add(projectType.Id, new List<TargetFramework>());
+                
+                foreach (var targetFramework in projectType.SupportedFrameworks)
                 {
                     counter++;
-                    _logger.LogInformation("Creating project {Counter}/{Total} : {ProjectType} {TargetFramework}", counter, totalCombinations, projectType, targetFramework);
+                    _logger.LogInformation("Creating project {Counter}/{Total} : {ProjectType} {TargetFramework}", counter, totalCombinations, projectType.Id, targetFramework);
                     var language = DotNetLanguages.CSharp;
-                    //foreach(var language in DotNetLanguages.AllLanguages)
-                   // {
-                        
-                        var folderName = $"{projectType}.{targetFramework.Id}.{language.Id}";
-                        var projectDirectory = System.IO.Path.Combine(workspaceOutputDirectory, folderName);
-                        try
-                        {
-                            _logger.LogInformation(projectDirectory);
-                            Directory.CreateDirectory(projectDirectory);
-                            await dotNetProjectService.CreateProjectAsync("ProjectXYZ", projectDirectory, projectType, targetFramework.DotNetCommandLineArgument, language.DotNetCommandLineArgument);
+                    
+                    var folderName = $"{projectType.Id}.{targetFramework.Id}.{language.Id}";
+                    var projectDirectory = System.IO.Path.Combine(workspaceOutputDirectory, folderName);
+                    try
+                    {
+                        _logger.LogInformation(projectDirectory);
+                        Directory.CreateDirectory(projectDirectory);
+                        await dotNetProjectService.CreateProjectAsync("ProjectXYZ", projectDirectory, projectType.Id, targetFramework.DotNetCommandLineArgument, language.DotNetCommandLineArgument);
 
-                            supportedLanguages[projectType].Add(language);
-                            supportedFrameworks[projectType].Add(targetFramework);
-                        }
-                        catch (Exception ex)
-                        {
-                            if(Directory.Exists(projectDirectory))
-                                Directory.Delete(projectDirectory);
+                        supportedLanguages[projectType.Id].Add(language);
+                        supportedFrameworks[projectType.Id].Add(targetFramework);
+                    }
+                    catch (Exception ex)
+                    {
+                        if(Directory.Exists(projectDirectory))
+                            Directory.Delete(projectDirectory);
 
-                            _logger.LogError(ex, "Failed to create project {ProjectType} {TargetFramework} {Language}", projectType, targetFramework, language.DotNetCommandLineArgument);
-                        }
-                    //}
+                        _logger.LogError(ex, "Failed to create project {ProjectType} {TargetFramework} {Language}", projectType.Id, targetFramework, language.DotNetCommandLineArgument);
+                    }
                 }
             }
 

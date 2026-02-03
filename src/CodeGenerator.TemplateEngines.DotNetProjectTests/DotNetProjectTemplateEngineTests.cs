@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Domain.DotNet;
+using CodeGenerator.Domain.DotNet.ProjectType;
 using CodeGenerator.TemplateEngines.DotNetProject;
 using CodeGenerator.TemplateEngines.DotNetProject.Services;
 using Microsoft.Extensions.Logging;
@@ -32,7 +33,7 @@ namespace CodeGenerator.TemplateEngines.DotNetProject.Tests
         public async Task RenderAsyncTest()
         {
             var engine = GetEngine();
-            var template = new DotNetProjectTemplate("dotnetconsoleapplication", DotNetProjectType.ConsoleApp, DotNetLanguages.CSharp, TargetFrameworks.Net8);
+            var template = new DotNetProjectTemplate("dotnetconsoleapplication", DotNetProjectTypes.ConsoleApp.Id, DotNetLanguages.CSharp, TargetFrameworks.Net8);
             var templateInstance = new DotNetProjectTemplateInstance(template, "TestConsoleApp");
 
             var result = await engine.RenderAsync(templateInstance, CancellationToken.None);
@@ -53,7 +54,7 @@ namespace CodeGenerator.TemplateEngines.DotNetProject.Tests
         public async Task RenderAsyncClass1CsRemovedTest()
         {
             var engine = GetEngine();
-            var template = new DotNetProjectTemplate("dotnetconsoleapplication", DotNetProjectType.ClassLib, DotNetLanguages.CSharp, TargetFrameworks.Net8);
+            var template = new DotNetProjectTemplate("dotnetconsoleapplication", DotNetProjectTypes.ClassLib.Id, DotNetLanguages.CSharp, TargetFrameworks.Net8);
             var templateInstance = new DotNetProjectTemplateInstance(template, "TestLibrary");
 
             var result = await engine.RenderAsync(templateInstance, CancellationToken.None);

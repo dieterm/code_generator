@@ -29,7 +29,7 @@ namespace CodeGenerator.Core.Artifacts
         T? FindAncestor<T>() where T : class, IArtifactDecorator;
         IArtifact? FindAncestorArtifact<T>() where T : class, IArtifactDecorator;
         IEnumerable<T> FindDescendantDecorators<T>() where T : class, IArtifactDecorator;
-        IEnumerable<IArtifact> FindDescendants<T>() where T : class, IArtifactDecorator;
+        IEnumerable<T> FindDescendants<T>() where T : class, IArtifact;
         Task GenerateAsync(IProgress<ArtifactGenerationProgress> progress, CancellationToken cancellationToken = default);
         Task GenerateSelfAsync(IProgress<ArtifactGenerationProgress> progress, CancellationToken cancellationToken = default);
         IEnumerable<IArtifact> GetAllDescendants();

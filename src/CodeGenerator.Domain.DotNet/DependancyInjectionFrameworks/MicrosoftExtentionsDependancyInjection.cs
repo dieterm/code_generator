@@ -9,7 +9,7 @@ namespace CodeGenerator.Domain.DependancyInjectionFrameworks
     /// Microsoft.Extensions.DependencyInjection implementation.
     /// The default DI framework provided by Microsoft as part of the .NET ecosystem.
     /// </summary>
-    public class MicrosoftExtensionsDependencyInjection : DependancyInjectionFramework
+    public class MicrosoftExtensionsDependencyInjection : DotNetDependancyInjectionFramework
     {
         public const string FRAMEWORK_ID = "MicrosoftExtensionsDependencyInjection";
 

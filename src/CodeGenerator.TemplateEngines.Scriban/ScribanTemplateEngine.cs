@@ -2,10 +2,12 @@ using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Templates.Settings;
+using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Shared;
 using CodeGenerator.TemplateEngines.Scriban;
 using Microsoft.Extensions.Logging;
+using Namotion.Reflection;
 using Scriban;
 using Scriban.Runtime;
 using System.Collections.Concurrent;
@@ -247,7 +249,23 @@ public class ScribanTemplateEngine : FileBasedTemplateEngine<ScribanTemplate, Sc
         }));
         BuildinFunctionsTooltips.Add(FUNCTION_PLACEHOLDER_CONTENT, $"{FUNCTION_PLACEHOLDER_CONTENT} <placeholderName:text> -> requests placeholder content from the message bus");
 
-        ScribanIntellisenceSupport.CreateGlobalFunctionStatements(BuildinFunctions, BuildinFunctionsTooltips);
+        _globalFunctions.Import(typeof(WorkspaceTemplateHelpers));
+        // use reflection to get all static methodds of WorkspaceTemplateHelpers and add them to BuildInFuictionsTooltips
+        var helperMethods = typeof(WorkspaceTemplateHelpers).GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+        var workspaceHelperFunctions = new List<string>();
+        foreach (var method in helperMethods)
+        {
+            if (!BuildinFunctionsTooltips.ContainsKey(method.Name))
+            {
+                // convert methodname to snake case and add to BuildinFunctionsTooltips
+                var snakeCaseName = _templateHelper.SnakeCase(method.Name);
+                workspaceHelperFunctions.Add(snakeCaseName);
+                var summary = method.GetXmlDocsSummary();
+                BuildinFunctionsTooltips.Add(snakeCaseName, $"{snakeCaseName} -> {summary} (WorkspaceTemplateHelpers)");
+            }
+        }
+
+        ScribanIntellisenceSupport.CreateGlobalFunctionStatements(workspaceHelperFunctions.Concat(BuildinFunctions).ToArray(), BuildinFunctionsTooltips);
     }
 
     private static TemplateHelpers _templateHelper = new TemplateHelpers();

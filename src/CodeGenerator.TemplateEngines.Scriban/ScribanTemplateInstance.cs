@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Core.Templates;
+using CodeGenerator.Shared;
 
 namespace CodeGenerator.TemplateEngines.Scriban
 {
@@ -34,6 +35,17 @@ namespace CodeGenerator.TemplateEngines.Scriban
                 }
             }
             Parameters[key] = value;
+        }
+
+        public Task<TemplateOutput> RenderAsync(CancellationToken cancellationToken)
+        {
+            var templateEngineManager = ServiceProviderHolder.GetRequiredService<TemplateEngineManager>();
+            var scribanTemplateEngine = templateEngineManager.GetTemplateEnginesForTemplate(_template)
+                .OfType<ScribanTemplateEngine>()
+                .FirstOrDefault();
+            if (scribanTemplateEngine == null)
+                throw new ApplicationException($"No Scriban template engine found for template id '{_template.TemplateId}'.");
+            return scribanTemplateEngine.RenderAsync(this, cancellationToken);
         }
     }
 }

@@ -1,0 +1,50 @@
+using {{ get_shared_application_namespace }}.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace {{ Namespace }}
+{
+    public class MainViewModel : ViewModelBase
+    {
+        /// <summary>
+        /// Event raised when closing is requested. 
+        /// Subscribe to this to handle unsaved changes confirmation.
+        /// </summary>
+        public event EventHandler? ClosingRequested;
+
+        // Commands
+        public RelayCommand ExitCommand { get; }
+        
+        private string? _statusLabel;
+        public string? StatusLabel{
+            get => _statusLabel;
+            set => SetProperty(ref _statusLabel, value);
+        }
+
+        private string? _progressLabel;
+        public string? ProgressLabel
+        {
+            get => _progressLabel;
+            set => SetProperty(ref _progressLabel, value);
+        }
+
+        private int? _progressValue;
+        public int? ProgressValue
+        {
+            get => _progressValue;
+            set => SetProperty(ref _progressValue, value);
+        }
+
+        public bool IsClosing { get; internal set; }
+
+        // Constructor
+        public MainViewModel()
+        {
+            ExitCommand = new RelayCommand(_ => ClosingRequested?.Invoke(this, EventArgs.Empty));
+        }
+    }
+
+}

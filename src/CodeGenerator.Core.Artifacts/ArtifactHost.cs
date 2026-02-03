@@ -170,7 +170,7 @@ namespace CodeGenerator.Core.Artifacts
             return ((IArtifact)Artifact).FindDescendantDecorators<T>();
         }
 
-        IEnumerable<IArtifact> IArtifact.FindDescendants<T>()
+        IEnumerable<T> IArtifact.FindDescendants<T>()
         {
             return ((IArtifact)Artifact).FindDescendants<T>();
         }

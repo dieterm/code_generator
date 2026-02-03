@@ -5,7 +5,9 @@ using CodeGenerator.Core.Generators.MessageBus;
 using CodeGenerator.Core.Generators.Settings;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Generators;
+using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.DotNet;
+using CodeGenerator.Domain.DotNet.ProjectType;
 using CodeGenerator.Generators.DotNet.Events;
 
 namespace CodeGenerator.Generators.DotNet.Generators
@@ -56,7 +58,12 @@ namespace CodeGenerator.Generators.DotNet.Generators
 
             foreach (var layer in layers)
             {
-                var projectType = (layer== scopeArtifact.Presentations) ? DotNetProjectType.WinFormsLib : DotNetProjectType.ClassLib;
+                // layer = presentation && scope = application -> winformsexe
+                // layer = presentation && scope != application -> winformslib
+                // layer != presentation -> classlib
+                DotNetProjectType projectType = (layer == scopeArtifact.Presentations) ? 
+                    (scopeArtifact.Name== CodeArchitectureLayerArtifact.APPLICATION_SCOPE ? DotNetProjectTypes.WinFormsExe : DotNetProjectTypes.WinFormsLib) : 
+                    DotNetProjectTypes.ClassLib;
                 var folderName = scopeArtifact.Namespace+"."+(layer as ILayerArtifact)!.LayerName;
                 var layerFolderArtifact = new FolderArtifact(folderName);
                 layerFolderArtifact.AddDecorator(new LayerArtifactRefDecorator(nameof(LayerArtifactRefDecorator), layer as ILayerArtifact));

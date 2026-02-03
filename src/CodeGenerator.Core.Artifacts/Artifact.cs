@@ -287,12 +287,24 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
         }
     }
 
-    public IEnumerable<IArtifact> FindDescendants<T>() where T : class, IArtifactDecorator
+    //public IEnumerable<IArtifact> FindDescendantDecorators<T>() where T : class, IArtifactDecorator
+    //{
+    //    foreach (var child in Children)
+    //    {
+    //        if (child.HasDecorator<T>())
+    //            yield return child;
+
+    //        foreach (var descendant in child.FindDescendantDecorators<T>())
+    //            yield return descendant;
+    //    }
+    //}
+
+    public IEnumerable<T> FindDescendants<T>() where T : class, IArtifact
     {
         foreach (var child in Children)
         {
-            if (child.HasDecorator<T>())
-                yield return child;
+            if (child is T childAsT)
+                yield return childAsT;
 
             foreach (var descendant in child.FindDescendants<T>())
                 yield return descendant;

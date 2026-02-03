@@ -59,6 +59,7 @@ public static class ServiceCollectionExtensions
     {
         // Register Domain services
         services.AddDomainServices(configuration);
+        services.AddDomainDotNetServices(configuration);
         CSharpCodeGeneratorExtensions.RegisterCSharpCodeGenerator();
         // Register ViewModels
         services.AddTransient<MainViewModel>();
