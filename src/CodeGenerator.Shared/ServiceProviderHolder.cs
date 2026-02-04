@@ -51,4 +51,9 @@ public static class ServiceProviderHolder
     {
         return ServiceProvider.CreateScope();
     }
+
+    public static T? GetKeyedService<T>(object? serviceKey)
+    {
+        return ServiceProvider.GetKeyedService<T>(serviceKey);
+    }
 }

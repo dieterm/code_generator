@@ -11,4 +11,11 @@
     <ProjectReference Include="..\CodeGenerator.Core\CodeGenerator.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CodeArchitecture\HexagonArchitecture\" />
+    <Folder Include="CodeArchitecture\CleanArchitecture\" />
+    <Folder Include="CodeArchitecture\NTierArchitecture\" />
+    <Folder Include="CodeArchitecture\OnionArchitecture\" />
+  </ItemGroup>
+
 </Project>

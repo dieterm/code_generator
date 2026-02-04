@@ -1,5 +1,30 @@
-﻿# 2/2/2026
-## ADD embedded resources to RibbonProject template
+﻿# 4/2/2026
+## Settings-mechanisme
+Ieder object in de applicatie erft over van ObjectBase-class.
+De ObjectBase-class heeft twee methodes:
+- GetSettings<T>(string key, T? defaultValue=default)
+- GetTypeSetting<T>(string key, T? defaultValue=default)
+- GetInstanceSetting<T>(string key, T? defaultValue=default)
+- SetInstanceSetting<T>(string key, T value)
+- SetTypeSetting<T>(string key, T value)
+De GetSettings-methode haalt een settings-object op via de SettingsProvider.
+Probeert eerst de settings via InstanceSettings op te halen.
+- Als er geen InstanceSettings zijn, wordt er gekeken naar TypeSettings.
+De ObjectBase-class heeft property:
+- SettingsProvider: IObjectBaseSettingsProvider
+- SettingsInstanceId: string (unieke id per instantie van ObjectBase)
+
+De IObjectBaseSettingsProvider heeft methodes:
+- GetInstanceSetting<T>(string instanceId, string key, T? defaultValue=default)
+- GetTypeSetting<T>(Type type, string key, T? defaultValue=default)
+- SetInstanceSetting<T>(string instanceId, string key, T value)
+- SetTypeSetting<T>(Type type, string key, T value)
+De IObjectBaseSettingsProvider heeft events:
+- InstanceSettingChanged(string instanceId, string key, object? newValue)
+- TypeSettingChanged(Type type, string key, object? newValue)
+
+# 2/2/2026
+## DONE: ADD embedded resources to RibbonProject template
 
 ## DONE: GenerationOrchestrator 
 TODO: controleren waarom deze als Transient en niet als Singleton geregistreerd is in DI-container

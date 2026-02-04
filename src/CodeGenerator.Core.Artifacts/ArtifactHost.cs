@@ -33,7 +33,7 @@ namespace CodeGenerator.Core.Artifacts
 
         public bool IsStateChanged => ((IMementoObject)Artifact).IsStateChanged;
 
-        public Dictionary<string, object?> Properties => ((IMementoObject)Artifact).Properties;
+        public IReadOnlyDictionary<string, object?> Properties => ((IMementoObject)Artifact).Properties;
 
         
 
