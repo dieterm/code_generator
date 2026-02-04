@@ -36,7 +36,7 @@ namespace CodeGenerator.Generators.DotNet.Workspace
         {
             // use CodeGenerator.Domain.CodeElements to generate a C# class based on the entity artifact
             // use artifact.Name, artifact.States, artifact.Relations, etc. to build the class
-            var workspace = artifact.GetWorkspace();
+            var workspace = artifact.Workspace;
             var codeFileElement = new CodeFileElement($"{artifact.Name}.cs", ProgrammingLanguage.CSharp);
             var classElement = new Domain.CodeElements.ClassElement
             {

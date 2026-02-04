@@ -19,10 +19,7 @@ namespace CodeGenerator.Core.Artifacts
         IEnumerable<IArtifactDecorator> Decorators { get; }
         string Id { get; }
         IArtifact? Parent { get; }
-        //ITreeNodeIcon TreeNodeIcon { get; }
-        //string TreeNodeText { get; }
-
-        void AddChild(IArtifact child);
+        T AddChild<T>(T child) where T : class, IArtifact;
         T AddDecorator<T>(T decorator) where T : IArtifactDecorator;
         T AddOrGetDecorator<T>(Func<T> decoratorFactory) where T : class, IArtifactDecorator;
         object? CreatePreview();

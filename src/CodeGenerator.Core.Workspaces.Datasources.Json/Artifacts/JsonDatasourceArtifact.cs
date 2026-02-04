@@ -29,16 +29,17 @@ public class JsonDatasourceArtifact : DatasourceArtifact
         return new JsonTableTemplateDatasourceProviderDecorator(JsonTemplateDatasourceProviderDecorator_ID);
     }
 
-    public override void AddChild(IArtifact child)
+    public override T AddChild<T>(T child)
     {
         base.AddChild(child);
         if (child is TableArtifact tableArtifact)
         {
             // first check if it already has the decorator (from memento state restore)
             if (tableArtifact.GetTemplateDatasourceProviderDecorator() != null)
-                return;
+                return child;
             tableArtifact.AddDecorator(CreateTableArtifactTemplateDatasourceProviderDecorator());
         }
+        return child;
     }
 
     public override void RemoveChild(IArtifact child)

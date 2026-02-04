@@ -10,16 +10,21 @@ using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
+using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Core.Workspaces.MessageBus;
 using CodeGenerator.Core.Workspaces.Services;
+using CodeGenerator.Core.Workspaces.Settings;
+using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.ViewModels;
 using DocumentFormat.OpenXml.Office2013.Drawing.Chart;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 
 namespace CodeGenerator.Application.Controllers.Workspace
 {
@@ -77,7 +82,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<IndexArtifactController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<ForeignKeyArtifactController>(),
 
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<DomainsContainerController>(),
+                ServiceProviderHolder.ServiceProvider.GetRequiredService<DomainLayerController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<ScopesContainerController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<SubScopesContainerController>(),
                 ServiceProviderHolder.ServiceProvider.GetRequiredService<ScopeArtifactController>(),
@@ -171,8 +176,10 @@ namespace CodeGenerator.Application.Controllers.Workspace
         {
             Logger.LogInformation("Creating new workspace '{Name}' in {Directory}", name, directory);
             
-            CurrentWorkspace = await _workspaceFileService.CreateNewAsync(directory, name, cancellationToken);
-
+            var filePath = _workspaceFileService.GetFilePath(directory, name);
+            CurrentWorkspace = CreateNewWorkspaceArtifact(name, filePath);
+            await _workspaceFileService.SaveAsync(CurrentWorkspace, filePath, cancellationToken);
+            
             // Set workspace directory on TemplateManager (ensures template folders exist)
             _templateManager.SetWorkspaceDirectory(CurrentWorkspace.WorkspaceDirectory);
 
@@ -181,6 +188,51 @@ namespace CodeGenerator.Application.Controllers.Workspace
             HasUnsavedChanges = false;
             ObserveWorkspaceChanges(CurrentWorkspace);
             return CurrentWorkspace;
+        }
+
+        private WorkspaceArtifact CreateNewWorkspaceArtifact(string workspaceName, string filePath) {
+            
+            // get default settings for new workspace
+            var workspaceSettings = WorkspaceSettings.Instance;
+            var workspace = new WorkspaceArtifact(workspaceName)
+            {
+                WorkspaceFilePath = filePath,
+                RootNamespace = workspaceSettings.RootNamespace,
+                OutputDirectory = workspaceSettings.DefaultOutputDirectory,
+                DefaultTargetFramework = workspaceSettings.DefaultTargetFramework,
+                DefaultLanguage = workspaceSettings.DefaultLanguage,
+                CodeArchitectureId = workspaceSettings.DefaultCodeArchitectureId,
+                DependencyInjectionFrameworkId = workspaceSettings.DefaultDependencyInjectionFrameworkId
+            };
+
+
+            var datasourcesContainer = workspace.AddChild(new DatasourcesContainerArtifact());
+            var scopesContainer = workspace.AddChild(new ScopesContainerArtifact());
+
+            var sharedScopes = scopesContainer.AddChild(new ScopeArtifact(ScopeArtifact.DEFAULT_SCOPE_SHARED));
+            var applicationScopes = scopesContainer.AddChild(new ScopeArtifact(ScopeArtifact.DEFAULT_SCOPE_APPLICATION));
+            var allScopes = new List<ScopeArtifact> { sharedScopes, applicationScopes };
+            
+            var codeArchitectureManager = ServiceProviderHolder.GetRequiredService<CodeArchitectureManager>();
+            var codeArchitecture = codeArchitectureManager.GetById(WorkspaceSettings.Instance.DefaultCodeArchitectureId);
+            if (codeArchitecture != null)
+            {
+                foreach (var scope in allScopes)
+                {
+                    foreach (var layerFactory in codeArchitecture.Layers)
+                    {
+                        var layerArtifact = layerFactory.CreateLayer(scope.Name);
+                        scope.AddChild(layerArtifact);
+                    }
+                    scope.AddChild(new SubScopesContainerArtifact());
+                }
+            }
+
+            
+
+
+
+            return workspace;
         }
 
         private void ObserveWorkspaceChanges(WorkspaceArtifact workspace)
@@ -309,46 +361,6 @@ namespace CodeGenerator.Application.Controllers.Workspace
         }
 
 
-
-        /// <summary>
-        /// Notify that an artifact property has changed
-        /// </summary>
-        //public void OnArtifactPropertyChanged(IArtifact artifact, string propertyName, object? newValue)
-        //{
-        //    Logger.LogDebug("Artifact property changed: {PropertyName} = {NewValue}", propertyName, newValue);
-        //    ArtifactPropertyChanged?.Invoke(this, new ArtifactPropertyChangedEventArgs(artifact, propertyName, newValue));
-        //}
-
-        /// <summary>
-        /// Notify that a child artifact was added
-        /// </summary>
-        //public void OnArtifactAdded(IArtifact parent, IArtifact child)
-        //{
-        //    Logger.LogDebug("Artifact added: {ChildId} to parent {ParentId}", child.Id, parent.Id);
-        //    ArtifactAdded?.Invoke(this, new ArtifactChildChangedEventArgs(parent, child));
-        //}
-
-        /// <summary>
-        /// Notify that a child artifact was removed
-        /// </summary>
-        //public void OnArtifactRemoved(IArtifact parent, IArtifact child)
-        //{
-        //    Logger.LogDebug("Artifact removed: {ChildId} from parent {ParentId}", child.Id, parent.Id);
-        //    ArtifactRemoved?.Invoke(this, new ArtifactChildChangedEventArgs(parent, child));
-        //}
-
-        /// <summary>
-        /// Request the UI to begin rename editing for an artifact
-        /// </summary>
-        //public void RequestBeginRename(IArtifact artifact)
-        //{
-        //    Logger.LogDebug("Requesting rename for artifact: {Id}", artifact.Id);
-        //    BeginRenameRequested?.Invoke(this, artifact);
-        //}
-        
-        /// <summary>
-        /// Show or refresh the workspace tree view
-        /// </summary>
         private void ShowWorkspaceTreeView()
         {
             WindowManagerService.ShowWorkspaceTreeView(TreeViewModel!);

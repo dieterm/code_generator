@@ -62,7 +62,7 @@ namespace CodeGenerator.Generators.DotNet.Generators
                 // layer = presentation && scope != application -> winformslib
                 // layer != presentation -> classlib
                 DotNetProjectType projectType = (layer == scopeArtifact.Presentations) ? 
-                    (scopeArtifact.Name== CodeArchitectureLayerArtifact.APPLICATION_SCOPE ? DotNetProjectTypes.WinFormsExe : DotNetProjectTypes.WinFormsLib) : 
+                    (scopeArtifact.Name== CodeArchitectureScopes.APPLICATION_SCOPE ? DotNetProjectTypes.WinFormsExe : DotNetProjectTypes.WinFormsLib) : 
                     DotNetProjectTypes.ClassLib;
                 var folderName = scopeArtifact.Namespace+"."+(layer as ILayerArtifact)!.LayerName;
                 var layerFolderArtifact = new FolderArtifact(folderName);

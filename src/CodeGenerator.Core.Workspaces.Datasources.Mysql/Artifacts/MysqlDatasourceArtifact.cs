@@ -39,23 +39,24 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts
             return new MysqlViewTemplateDatasourceProviderDecorator(MysqlTemplateDatasourceProviderDecorator_ID);
         }
 
-        public override void AddChild(IArtifact child)
+        public override T AddChild<T>(T child)
         {
             base.AddChild(child);
             if(child is TableArtifact tableArtifact)
             {
                 // first check if it already has the decorator (from memento state restore)
                 if (tableArtifact.GetTemplateDatasourceProviderDecorator() != null)
-                    return;
+                    return child;
                 tableArtifact.AddDecorator(CreateTableArtifactTemplateDatasourceProviderDecorator());
             }
             else if(child is ViewArtifact viewArtifact)
             {
                 // first check if it already has the decorator (from memento state restore)
                 if (viewArtifact.GetTemplateDatasourceProviderDecorator() != null)
-                    return;
+                    return child;
                 viewArtifact.AddDecorator(CreateViewArtifactTemplateDatasourceProviderDecorator());
             }
+            return child;
         }
 
         public override void RemoveChild(IArtifact child)

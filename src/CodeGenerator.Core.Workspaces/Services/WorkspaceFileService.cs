@@ -14,6 +14,9 @@ namespace CodeGenerator.Core.Workspaces.Services
     /// </summary>
     public class WorkspaceFileService
     {
+        public const string WorkspaceFileExtension = ".cg";
+        public const string CodeGeneratorFileDialogFilter = $"CodeGenerator Workspace Files (*{WorkspaceFileExtension})|*{WorkspaceFileExtension}|All Files (*.*)|*.*";
+
         private readonly ILogger<WorkspaceFileService> _logger;
         private readonly IDatasourceFactory _datasourceFactory;
 
@@ -23,9 +26,8 @@ namespace CodeGenerator.Core.Workspaces.Services
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             Converters = { new DictionaryStringObjectJsonConverter() }
         };
-
-        public const string WorkspaceFileExtension = ".codegenerator";
-
+        
+        
         public WorkspaceFileService(ILogger<WorkspaceFileService> logger, IDatasourceFactory datasourceFactory)
         {
             _logger = logger;
@@ -72,7 +74,7 @@ namespace CodeGenerator.Core.Workspaces.Services
         }
 
         /// <summary>
-        /// Save a workspace to a .codegenerator file
+        /// Save a workspace to a .cg file
         /// </summary>
         public async Task SaveAsync(WorkspaceArtifact workspace, string? filePath = null, CancellationToken cancellationToken = default)
         {
@@ -85,6 +87,12 @@ namespace CodeGenerator.Core.Workspaces.Services
 
             _logger.LogInformation("Saving workspace to {FilePath}", targetPath);
 
+            var directory = Path.GetDirectoryName(targetPath);
+            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
             var workspaceState = (ArtifactState)workspace.CaptureState();
             var json = JsonSerializer.Serialize(workspaceState, JsonOptions);
             await File.WriteAllTextAsync(targetPath, json, cancellationToken);
@@ -94,34 +102,41 @@ namespace CodeGenerator.Core.Workspaces.Services
             _logger.LogInformation("Saved workspace '{Name}'", workspace.Name);
         }
 
-        /// <summary>
-        /// Create a new workspace in a directory
-        /// </summary>
-        public async Task<WorkspaceArtifact> CreateNewAsync(string directory, string name = "Workspace", CancellationToken cancellationToken = default)
+        public string GetFilePath(string directory, string name)
         {
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
-
-            var filePath = Path.Combine(directory, WorkspaceFileExtension);
-            // get default settings for new workspace
-            var workspaceSettings = WorkspaceSettings.Instance;
-            var workspace = new WorkspaceArtifact(name)
-            {
-                WorkspaceFilePath = filePath,
-                RootNamespace = workspaceSettings.RootNamespace,
-                OutputDirectory = workspaceSettings.DefaultOutputDirectory,
-                DefaultTargetFramework = workspaceSettings.DefaultTargetFramework,
-                DefaultLanguage = workspaceSettings.DefaultLanguage
-            };
-
-            await SaveAsync(workspace, filePath, cancellationToken);
-
-            _logger.LogInformation("Created new workspace '{Name}' at {Directory}", name, directory);
-
-            return workspace;
+            return Path.Combine(directory, $"{name}{WorkspaceFileExtension}");
         }
+
+        ///// <summary>
+        ///// Create a new workspace in a directory
+        ///// </summary>
+        //public async Task<WorkspaceArtifact> CreateNewAsync(string directory, string name = "Workspace", CancellationToken cancellationToken = default)
+        //{
+        //    if (!Directory.Exists(directory))
+        //    {
+        //        Directory.CreateDirectory(directory);
+        //    }
+
+        //    var filePath = Path.Combine(directory,$"{name}{WorkspaceFileExtension}");
+        //    // get default settings for new workspace
+        //    var workspaceSettings = WorkspaceSettings.Instance;
+        //    var workspace = new WorkspaceArtifact(name)
+        //    {
+        //        WorkspaceFilePath = filePath,
+        //        RootNamespace = workspaceSettings.RootNamespace,
+        //        OutputDirectory = workspaceSettings.DefaultOutputDirectory,
+        //        DefaultTargetFramework = workspaceSettings.DefaultTargetFramework,
+        //        DefaultLanguage = workspaceSettings.DefaultLanguage,
+        //        CodeArchitectureId = workspaceSettings.DefaultCodeArchitectureId,
+        //        DependencyInjectionFrameworkId = workspaceSettings.DefaultDependencyInjectionFrameworkId
+        //    };
+
+        //    await SaveAsync(workspace, filePath, cancellationToken);
+
+        //    _logger.LogInformation("Created new workspace '{Name}' at {Directory}", name, directory);
+
+        //    return workspace;
+        //}
 
         /// <summary>
         /// Check if a directory contains a workspace
@@ -138,6 +153,16 @@ namespace CodeGenerator.Core.Workspaces.Services
         public string GetWorkspaceFilePath(string directory)
         {
             return Path.Combine(directory, WorkspaceFileExtension);
+        }
+
+        /// <summary>
+        /// Returns a default filename for new workspaces.
+        /// Eg. "NewWorkspace.cg"
+        /// </summary>
+        /// <returns></returns>
+        public static string? GetDefaultFilename()
+        {
+            return $"NewWorkspace{WorkspaceFileExtension}";
         }
     }
 }

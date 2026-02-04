@@ -74,41 +74,41 @@ namespace CodeGenerator.Generators.DotNet.Generators
             // 1. Scope layers
             foreach (var scope in references)
             {
-                if (scope.DotNetProjectArtifacts.TryGetValue(CodeArchitectureLayerArtifact.APPLICATION_LAYER, out DotNetProjectArtifact? applicationProject))
+                if (scope.DotNetProjectArtifacts.TryGetValue(OnionCodeArchitecture.APPLICATION_LAYER, out DotNetProjectArtifact? applicationProject))
                 {
                     // Application -> Infrastructure
-                    if (scope.DotNetProjectArtifacts.TryGetValue(CodeArchitectureLayerArtifact.INFRASTRUCTURE_LAYER, out DotNetProjectArtifact? infrastructureProject))
+                    if (scope.DotNetProjectArtifacts.TryGetValue(OnionCodeArchitecture.INFRASTRUCTURE_LAYER, out DotNetProjectArtifact? infrastructureProject))
                     {
                         applicationProject.AddProjectReference(new DotNetProjectReference(infrastructureProject));
                     }
                     // Application -> Domain
-                    if (scope.DotNetProjectArtifacts.TryGetValue(CodeArchitectureLayerArtifact.DOMAIN_LAYER, out DotNetProjectArtifact? domainProject))
+                    if (scope.DotNetProjectArtifacts.TryGetValue(OnionCodeArchitecture.DOMAIN_LAYER, out DotNetProjectArtifact? domainProject))
                     {
                         applicationProject.AddProjectReference(new DotNetProjectReference(domainProject));
                     }
                 }
 
-                if (scope.DotNetProjectArtifacts.TryGetValue(CodeArchitectureLayerArtifact.INFRASTRUCTURE_LAYER, out DotNetProjectArtifact? infrastructureProject2))
+                if (scope.DotNetProjectArtifacts.TryGetValue(OnionCodeArchitecture.INFRASTRUCTURE_LAYER, out DotNetProjectArtifact? infrastructureProject2))
                 {
                     // Infrastructure -> Domain
-                    if (scope.DotNetProjectArtifacts.TryGetValue(CodeArchitectureLayerArtifact.DOMAIN_LAYER, out DotNetProjectArtifact? domainProject))
+                    if (scope.DotNetProjectArtifacts.TryGetValue(OnionCodeArchitecture.DOMAIN_LAYER, out DotNetProjectArtifact? domainProject))
                     {
                         infrastructureProject2.AddProjectReference(new DotNetProjectReference(domainProject));
                     }
                 }
 
-                if (scope.DotNetProjectArtifacts.TryGetValue(CodeArchitectureLayerArtifact.PRESENTATION_LAYER, out DotNetProjectArtifact? presentationProject))
+                if (scope.DotNetProjectArtifacts.TryGetValue(OnionCodeArchitecture.PRESENTATION_LAYER, out DotNetProjectArtifact? presentationProject))
                 {
                     // Presentation -> Application
-                    if (scope.DotNetProjectArtifacts.TryGetValue(CodeArchitectureLayerArtifact.APPLICATION_LAYER, out DotNetProjectArtifact? applicationProject2))
+                    if (scope.DotNetProjectArtifacts.TryGetValue(OnionCodeArchitecture.APPLICATION_LAYER, out DotNetProjectArtifact? applicationProject2))
                     {
                         presentationProject.AddProjectReference(new DotNetProjectReference(applicationProject2));
                     }
                 }
-                if(scope.ScopeArtifact.Name!= CodeArchitectureLayerArtifact.SHARED_SCOPE)
+                if(scope.ScopeArtifact.Name!= CodeArchitectureScopes.SHARED_SCOPE)
                 {
                     // Other scopes (eg. ScopeA, ScopeB, etc) -> Shared
-                    var sharedScope = references.FirstOrDefault(s => s.ScopeArtifact.Name == CodeArchitectureLayerArtifact.SHARED_SCOPE);
+                    var sharedScope = references.FirstOrDefault(s => s.ScopeArtifact.Name == CodeArchitectureScopes.SHARED_SCOPE);
                     if (sharedScope != null)
                     {
                         foreach (var (layer, sharedProjectArtifact) in sharedScope.DotNetProjectArtifacts)
@@ -123,13 +123,13 @@ namespace CodeGenerator.Generators.DotNet.Generators
             }
 
             // 2. Cross-scope references (eg. Application.Shared -> Application.Application)
-            var appScopeReferences = references[CodeArchitectureLayerArtifact.APPLICATION_SCOPE];
+            var appScopeReferences = references[CodeArchitectureScopes.APPLICATION_SCOPE];
 
             // loop over <ns>.Application.Domain, <ns>.Application.Infrastructure, <ns>.Application.Presentation, <ns>.Application.Application
             foreach (var (layer, layerArtifact) in appScopeReferences.DotNetProjectArtifacts)
             {
                 // get all other scopes except Application (eg. Shared, ScopeA, ScopeB, ScopeB/SubScope1, etc)
-                foreach (var targetScope in references.Where(s => s.ScopeArtifact.Name != CodeArchitectureLayerArtifact.APPLICATION_SCOPE))
+                foreach (var targetScope in references.Where(s => s.ScopeArtifact.Name != CodeArchitectureScopes.APPLICATION_SCOPE))
                 {
                     // Shared.<layer> -> Application.<layer>
                     // ScopeA.<layer> -> Application.<layer>

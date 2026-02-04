@@ -175,7 +175,7 @@ namespace CodeGenerator.Generators.DotNet.Generators
             AddChildArtifactToParent(e.DotNetProjectArtifact, codeFileArtifact, e.Result);
 
             // Create ServiceProviderHolder class in Shared.Domain project
-            if (e.Scope == CodeArchitectureLayerArtifact.SHARED_SCOPE && e.Layer == CodeArchitectureLayerArtifact.DOMAIN_LAYER)
+            if (e.Scope == CodeArchitectureScopes.SHARED_SCOPE && e.Layer == OnionCodeArchitecture.DOMAIN_LAYER)
             { 
                 var serviceProviderHolderTemplateId = TemplateIdParser.BuildGeneratorTemplateId(
                     nameof(DependancyInjectionGenerator),

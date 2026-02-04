@@ -135,11 +135,6 @@ namespace CodeGenerator.Core.Artifacts
             }
         }
 
-        public void AddChild(IArtifact child)
-        {
-            Artifact.AddChild(child);
-        }
-
         public T AddDecorator<T>(T decorator) where T : IArtifactDecorator
         {
             return Artifact.AddDecorator<T>(decorator);
@@ -248,6 +243,11 @@ namespace CodeGenerator.Core.Artifacts
         T? IArtifact.GetDecoratorLikeType<T>() where T : class
         {
             return ((IArtifact)Artifact).GetDecoratorLikeType<T>();
+        }
+
+        T IArtifact.AddChild<T>(T child)
+        {
+            return ((IArtifact)Artifact).AddChild(child);
         }
     }
 }

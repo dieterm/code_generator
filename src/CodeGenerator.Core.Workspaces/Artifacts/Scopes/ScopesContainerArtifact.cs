@@ -14,17 +14,12 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
     {
         public ScopesContainerArtifact()
         {
-            AddChild(new ScopeArtifact(ScopeArtifact.DEFAULT_SCOPE_SHARED));
-            AddChild(new ScopeArtifact(ScopeArtifact.DEFAULT_SCOPE_APPLICATION));
-
             PublishArtifactConstructionEvent();
         }
 
         public ScopesContainerArtifact(ArtifactState state)
             : base(state) 
         {
-            EnsureChildArtifactExists<ScopeArtifact>(() => new ScopeArtifact(ScopeArtifact.DEFAULT_SCOPE_SHARED), (s) => s.Name == ScopeArtifact.DEFAULT_SCOPE_SHARED);
-            EnsureChildArtifactExists<ScopeArtifact>(() => new ScopeArtifact(ScopeArtifact.DEFAULT_SCOPE_APPLICATION), (s) => s.Name == ScopeArtifact.DEFAULT_SCOPE_APPLICATION);
             PublishArtifactConstructionEvent();
         }
 

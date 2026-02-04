@@ -1,5 +1,8 @@
 ﻿using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Core.Workspaces.Settings;
+using CodeGenerator.Domain.CodeArchitecture;
+using CodeGenerator.Shared;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,7 +32,16 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
 
         public void AddScope(string scopeName)
         {
-            AddChild(new ScopeArtifact(scopeName));
+            var scope = AddChild(new ScopeArtifact(scopeName));
+
+            var codeArchitecture = Workspace!.CodeArchitecture!;
+
+            foreach (var layerFactory in codeArchitecture.Layers)
+            {
+                var layerArtifact = layerFactory.CreateLayer(scope.Name);
+                scope.AddChild(layerArtifact);
+            }
+            scope.AddChild(new SubScopesContainerArtifact());
         }
 
         #region Implement IEnumerable<ScopeArtifact>

@@ -148,11 +148,12 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
         }
     }
 
-    public virtual void AddChild(IArtifact child)
+    public virtual T AddChild<T>(T child) where T : class,IArtifact
     {
-        ((Artifact)child).Parent = this;
+        ((Artifact)(object)child).Parent = this;
         _children.Add(child);
         OnChildAdded(child);
+        return child;
     }
 
     public virtual void RemoveChild(IArtifact child)

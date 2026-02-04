@@ -8,76 +8,29 @@ namespace CodeGenerator.Domain.CodeArchitecture
 {
     public class CodeArchitectureManager
     {
-        public CodeArchitecture OnionArchitecture { get; }
-        public CodeArchitecture HexagonArchitecture { get; }
-        public CodeArchitecture CleanArchitecture { get; }
-        public CodeArchitectureManager() { 
-            OnionArchitecture = CreateOnionArchitecture();
-            HexagonArchitecture = CreateHexagonArchitecture();
-            CleanArchitecture = CreateCleanArchitecture();
+        public OnionCodeArchitecture OnionArchitecture { get; }
+        public HexagonCodeArchitecture HexagonArchitecture { get; }
+        public CleanCodeArchitecture CleanArchitecture { get; }
+        public NTierCodeArchitecture NTierArchitecture { get; }
+
+        public CodeArchitectureManager() {
+            OnionArchitecture = new OnionCodeArchitecture();
+            HexagonArchitecture = new HexagonCodeArchitecture();
+            CleanArchitecture = new CleanCodeArchitecture();
+            NTierArchitecture = new NTierCodeArchitecture();
         }
 
-        public IEnumerable<CodeArchitecture> GetAllArchitectures()
+        public ICodeArchitecture? GetById(string codeArchitectureId)
         {
-            return new List<CodeArchitecture>
-            {
-                OnionArchitecture,
-                HexagonArchitecture,
-                CleanArchitecture
-            };
+            return GetAllArchitectures().Single(a => a.Id.Equals(codeArchitectureId, StringComparison.OrdinalIgnoreCase));
         }
 
-        public CodeArchitecture CreateOnionArchitecture()
+        public IEnumerable<ICodeArchitecture> GetAllArchitectures()
         {
-            // Implementation for creating an Onion Architecture
-            return new CodeArchitecture(
-                id: "onion",
-                name: "Onion Architecture",
-                layers: new List<ICodeArchitectureLayerFactory>
-                {
-                    new ApplicationLayerFactory(),
-                    new DomainLayerFactory(),
-                    new InfrastructureLayerFactory(),
-                    new PresentationLayerFactory()
-                }
-            );
-        }
-
-        public CodeArchitecture CreateHexagonArchitecture()
-        {
-            // Implementation for creating a Hexagonal Architecture
-            return new CodeArchitecture(
-                id: "hexagon",
-                name: "Hexagonal Architecture",
-                layers: new List<ICodeArchitectureLayerFactory>
-                {
-                    new ApplicationLayerFactory(),
-                    new DomainLayerFactory(),
-                    new InfrastructureLayerFactory()
-                }
-            );
-        }
-
-        // CleanArchitecture can be added similarly
-        public CodeArchitecture CreateCleanArchitecture()
-        {
-            // Implementation for creating a Clean Architecture
-            return new CodeArchitecture(
-                id: "clean",
-                name: "Clean Architecture",
-                layers: new List<ICodeArchitectureLayerFactory>
-                {
-                    new ApplicationLayerFactory(),
-                    new DomainLayerFactory(),
-                    new InfrastructureLayerFactory(),
-                    new PresentationLayerFactory()
-                }
-            );
-        }
-
-        public CodeArchitecture? GetById(string defaultCodeArchitectureId)
-        {
-            return GetAllArchitectures().Single(a => a.Id.Equals(defaultCodeArchitectureId, StringComparison.OrdinalIgnoreCase));
+            yield return OnionArchitecture;
+            yield return HexagonArchitecture;
+            yield return CleanArchitecture;
+            yield return NTierArchitecture;
         }
     }
 }

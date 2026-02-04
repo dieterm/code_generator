@@ -53,7 +53,7 @@ namespace CodeGenerator.Core.Workspaces.Services
         /// </summary>
         public static string? GetSharedDomainNamespace()
         {
-            return GetLayerNamespace(CodeArchitectureLayerArtifact.SHARED_SCOPE, CodeArchitectureLayerArtifact.DOMAIN_LAYER);
+            return GetLayerNamespace(CodeArchitectureScopes.SHARED_SCOPE, OnionCodeArchitecture.DOMAIN_LAYER);
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace CodeGenerator.Core.Workspaces.Services
         /// <returns></returns>
         public static string? GetSharedApplicationNamespace()
         {
-            return GetLayerNamespace(CodeArchitectureLayerArtifact.SHARED_SCOPE, CodeArchitectureLayerArtifact.APPLICATION_LAYER);
+            return GetLayerNamespace(CodeArchitectureScopes.SHARED_SCOPE, OnionCodeArchitecture.APPLICATION_LAYER);
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace CodeGenerator.Core.Workspaces.Services
         /// </summary>
         public static string? GetApplicationApplicationNamespace()
         {
-            return GetLayerNamespace(CodeArchitectureLayerArtifact.APPLICATION_SCOPE, CodeArchitectureLayerArtifact.APPLICATION_LAYER);
+            return GetLayerNamespace(CodeArchitectureScopes.APPLICATION_SCOPE, OnionCodeArchitecture.APPLICATION_LAYER);
         }
     }
 }

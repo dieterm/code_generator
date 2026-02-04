@@ -2,6 +2,7 @@ using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Workspaces.MessageBus;
 using CodeGenerator.Generators.DotNet.Generators;
 using CodeGenerator.Generators.DotNet.WinformsRibbonApplication;
+using CodeGenerator.Generators.DotNet.WinformsRibbonApplication.Workspace.Subscribers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,7 +23,11 @@ public static class ServiceCollectionExtensions
         // Register Generators
         services.AddTransient<IMessageBusAwareGenerator, WinformsRibbonApplicationGenerator>();
 
-        services.AddSingleton<IWorkspaceMessageBusSubscriber, PresentationsContainerArtifactSubscriber>();
+        services.AddSingleton<IWorkspaceMessageBusSubscriber, OnionPresentationLayerContextMenuOpeningSubscriber>();
+        services.AddSingleton<IWorkspaceMessageBusSubscriber, ViewsContainerToPresentationLayerArtifactChildAddedSubscriber>();
+        services.AddSingleton<IWorkspaceMessageBusSubscriber, ViewModelsContainerToApplicationLayerArtifactChildAddedSubscriber>();
+        services.AddSingleton<IWorkspaceMessageBusSubscriber, ControllersContainerToApplicationLayerArtifactChildAddedSubscriber>();
+
         return services;
     }
 }

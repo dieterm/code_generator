@@ -181,7 +181,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
         public ScopeArtifact? Scope
         {
             get { 
-                if (Parent is DomainsContainerArtifact domainsContainer && domainsContainer.Parent is ScopeArtifact scope)
+                if (Parent is OnionDomainLayerArtifact domainsContainer && domainsContainer.Parent is ScopeArtifact scope)
                     return scope;
                 return null;
             }

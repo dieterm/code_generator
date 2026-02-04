@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CodeGenerator.Shared;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,17 +8,17 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Domain.CodeArchitecture
 {
-    public class CodeArchitecture
+    public class CodeArchitecture<TFactory> : ICodeArchitecture where TFactory : ICodeArchitectureLayerFactory
     {
-        public CodeArchitecture(string id, string name, IEnumerable<ICodeArchitectureLayerFactory> layers)
+        public CodeArchitecture(string id, string name)
         {
             Id = id;
             Name = name;
-            Layers = layers;
         }
         public string Id { get; }
         public string Name { get;  }
-        public IEnumerable<ICodeArchitectureLayerFactory> Layers { get; }
+        public IEnumerable<TFactory> Layers { get { return ServiceProviderHolder.GetServices<TFactory>(); } }
 
+        IEnumerable<ICodeArchitectureLayerFactory> ICodeArchitecture.Layers => Layers.Cast<ICodeArchitectureLayerFactory>();
     }
 }

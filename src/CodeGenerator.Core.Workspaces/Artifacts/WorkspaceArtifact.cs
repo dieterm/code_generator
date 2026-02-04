@@ -30,17 +30,12 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             DependencyInjectionFrameworkId = WorkspaceSettings.Instance.DefaultDependencyInjectionFrameworkId;
             CodeArchitectureId = WorkspaceSettings.Instance.DefaultCodeArchitectureId;
 
-            EnsureChildArtifactExists<DatasourcesContainerArtifact>();
-            EnsureChildArtifactExists<ScopesContainerArtifact>();
-
             PublishArtifactConstructionEvent();
         }
 
         public WorkspaceArtifact(ArtifactState state)
             : base(state)
         {
-            EnsureChildArtifactExists<DatasourcesContainerArtifact>();
-            EnsureChildArtifactExists<ScopesContainerArtifact>();
 
             PublishArtifactConstructionEvent();
         }
@@ -116,7 +111,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             set { SetValue(nameof(CodeArchitectureId), value); }
         }
 
-        public CodeArchitecture? CodeArchitecture
+        public ICodeArchitecture? CodeArchitecture
         {
             get
             {
@@ -195,6 +190,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             Name = newName;
         }
 
+        public override WorkspaceArtifact? Workspace => this;
         protected override WorkspaceArtifactContext GetOwnContext()
         {
             var namespaceParameters = new Dictionary<string, string>();

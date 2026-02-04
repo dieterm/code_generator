@@ -22,11 +22,11 @@ namespace CodeGenerator.Core.Workspaces.MessageBus
             _subscribers.ForEach(subscriber => subscriber.Subscribe(this));
         }
 
-        public ArtifactConstructionEventArgs PublishArtifactConstruction(IArtifact artifact)
+        public void PublishArtifactConstruction(IArtifact artifact)
         {
             var eventArgs = new ArtifactConstructionEventArgs(artifact);
             Publish(eventArgs);
-            return eventArgs;
+            //return eventArgs;//
         }
 
         public ArtifactContextMenuOpeningEventArgs PublishArtifactContextMenuOpening(IArtifact artifact, List<ArtifactTreeNodeCommand> commands)
@@ -34,6 +34,12 @@ namespace CodeGenerator.Core.Workspaces.MessageBus
             var eventArgs = new ArtifactContextMenuOpeningEventArgs(artifact, commands);
             Publish(eventArgs);
             return eventArgs;
+        }
+
+        public void PublishArtifactChildAdded(WorkspaceArtifactBase parentArtifact, WorkspaceArtifactBase childArtifact)
+        {
+            var eventArgs = new ArtifactChildAddedEventArgs(parentArtifact, childArtifact);
+            Publish(eventArgs);
         }
 
         public void Dispose()

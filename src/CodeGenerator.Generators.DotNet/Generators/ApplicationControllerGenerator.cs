@@ -37,8 +37,8 @@ namespace CodeGenerator.Generators.DotNet.Generators
             if (!Enabled) 
                 return false;
 
-            return args.Layer == CodeArchitectureLayerArtifact.APPLICATION_LAYER &&
-                   args.Scope == CodeArchitectureLayerArtifact.APPLICATION_SCOPE;
+            return args.Layer == OnionCodeArchitecture.APPLICATION_LAYER &&
+                   args.Scope == CodeArchitectureScopes.APPLICATION_SCOPE;
         }
 
         private async Task OnDotNetProjectCreated(DotNetProjectArtifactCreatedEventArgs e)

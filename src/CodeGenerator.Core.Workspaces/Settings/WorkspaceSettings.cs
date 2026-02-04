@@ -153,7 +153,7 @@ namespace CodeGenerator.Core.Workspaces.Settings
             Save();
         }
 
-        public CodeArchitecture GetDefaultCodeArchitecture()
+        public ICodeArchitecture GetDefaultCodeArchitecture()
         {
             var manager = ServiceProviderHolder.GetRequiredService<CodeArchitectureManager>();
             var architecture = manager.GetById(DefaultCodeArchitectureId);

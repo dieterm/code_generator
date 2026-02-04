@@ -12,17 +12,110 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Core.Workspaces.Artifacts
 {
-    public abstract class WorkspaceArtifactBase : Artifact
+    public abstract class WorkspaceArtifactBase : Artifact, IDisposable
     {
+        public event EventHandler? AttachedToWorkspace;
+        public event EventHandler? DetachedFromWorkspace;
+        private WorkspaceArtifactBase? _observingParent;
+        private WorkspaceArtifact? _workspace;
+
         public WorkspaceArtifactBase()
         {
-            
+            ParentChanged += WorkspaceArtifactBase_ParentChanged;
+            ChildAdded += WorkspaceArtifactBase_ChildAdded;
         }
-        protected WorkspaceArtifactBase(ArtifactState state)
-            : base(state)
-        {
 
+
+        protected WorkspaceArtifactBase(ArtifactState state)
+    :       base(state)
+        {
+            ParentChanged += WorkspaceArtifactBase_ParentChanged;
+            ChildAdded += WorkspaceArtifactBase_ChildAdded;
         }
+        
+        private void WorkspaceArtifactBase_ChildAdded(object? sender, Core.Artifacts.Events.ChildAddedEventArgs e)
+        {
+            var messageBus = ServiceProviderHolder.GetRequiredService<WorkspaceMessageBus>();
+            if (e.ChildArtifact is WorkspaceArtifactBase childArtifact && sender is WorkspaceArtifactBase parentArtifact)
+            {
+                messageBus.PublishArtifactChildAdded(parentArtifact, childArtifact);
+            }
+        }
+        #region Workspace Access
+        public virtual WorkspaceArtifact? Workspace { get { return _workspace; } }
+        private void WorkspaceArtifactBase_ParentChanged(object? sender, ParentChangedEventArgs e)
+        {
+            if(_observingParent != null)
+            {
+                if(_workspace != null)
+                {
+                    _observingParent.DetachedFromWorkspace -= ObservingParent_DetachedFromWorkspace;
+                    _workspace = null;
+                    OnDetachedFromWorkspace();
+                }
+                else 
+                { 
+                    _observingParent.AttachedToWorkspace -= ObservingParent_AttachedToWorkspace;
+                }
+                _observingParent = null;
+            }
+            if (e.NewParent is WorkspaceArtifactBase observableParent)
+            {
+                _observingParent = observableParent;
+                if(_observingParent.Workspace != null)
+                {
+                    _workspace = _observingParent.Workspace;
+                    _observingParent.DetachedFromWorkspace += ObservingParent_DetachedFromWorkspace;
+                    RaisePropertyChangedEvent(nameof(Workspace));
+                    OnAttachedToWorkspace();
+                } 
+                else
+                {
+                    _observingParent.AttachedToWorkspace += ObservingParent_AttachedToWorkspace;
+                }
+            } 
+        }
+
+        private void ObservingParent_AttachedToWorkspace(object? sender, EventArgs e)
+        {
+            if(_workspace != _observingParent!.Workspace)
+            {
+                _workspace = _observingParent.Workspace;
+                RaisePropertyChangedEvent(nameof(Workspace));
+            }
+            if (_workspace != null) { 
+                OnAttachedToWorkspace();
+                _observingParent.AttachedToWorkspace -= ObservingParent_AttachedToWorkspace;
+                _observingParent.DetachedFromWorkspace += ObservingParent_DetachedFromWorkspace;
+            }
+            else
+            {
+                // This should not happen, but just in case, we won't attach to workspace if it's null
+                throw new InvalidOperationException("Parent reported attached to workspace, but workspace is null.");
+            }
+        }
+
+        private void ObservingParent_DetachedFromWorkspace(object? sender, EventArgs e)
+        {
+            _workspace = null;
+            OnDetachedFromWorkspace();
+            _observingParent!.DetachedFromWorkspace -= ObservingParent_DetachedFromWorkspace;
+            _observingParent.AttachedToWorkspace += ObservingParent_AttachedToWorkspace;
+        }
+
+
+
+        protected void OnAttachedToWorkspace()
+        {
+            AttachedToWorkspace?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected void OnDetachedFromWorkspace()
+        {
+            DetachedFromWorkspace?.Invoke(this, EventArgs.Empty);
+        }
+        
+        #endregion
 
         public WorkspaceArtifactContext? Context { get { return GetResultingContext(); } }
 
@@ -117,10 +210,10 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             return childArtifact;
         }
 
-        public WorkspaceArtifact GetWorkspace()
+        public void Dispose()
         {
-            return FindAncesterOfType<WorkspaceArtifact>() 
-                ?? throw new InvalidOperationException("Artifact is not part of a workspace.");
+            ParentChanged -= WorkspaceArtifactBase_ParentChanged;
+            ChildAdded -= WorkspaceArtifactBase_ChildAdded;
         }
     }
 }

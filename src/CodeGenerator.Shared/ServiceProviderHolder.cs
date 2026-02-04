@@ -56,4 +56,14 @@ public static class ServiceProviderHolder
     {
         return ServiceProvider.GetKeyedService<T>(serviceKey);
     }
+
+    public static IEnumerable<T> GetKeyedServices<T>(object? serviceKey)
+    {
+        return ServiceProvider.GetKeyedServices<T>(serviceKey);
+    }
+
+    public static IEnumerable<T> GetServices<T>()
+    {
+        return ServiceProvider.GetServices<T>();
+    }
 }

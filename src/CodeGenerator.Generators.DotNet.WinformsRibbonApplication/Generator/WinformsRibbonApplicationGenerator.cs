@@ -40,8 +40,8 @@ namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication
                     var scopeArtifact = layerArtifact?.Parent as ScopeArtifact;
                     var layer = layerArtifact?.LayerName;
                     var scope = scopeArtifact?.Name;
-                    if(layer == CodeArchitectureLayerArtifact.PRESENTATION_LAYER &&
-                       scope == CodeArchitectureLayerArtifact.APPLICATION_SCOPE)
+                    if(layer == OnionCodeArchitecture.PRESENTATION_LAYER &&
+                       scope == CodeArchitectureScopes.APPLICATION_SCOPE)
                     {
                         return true;
                     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeGenerator.Core.Artifacts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ namespace CodeGenerator.Domain.CodeArchitecture
 {
     public interface ICodeArchitectureLayerFactory
     {
-        CodeArchitectureLayerArtifact CreateLayer(string scope);
+        public string LayerName { get; }
+        IArtifact CreateLayer(string scope);
     }
 }

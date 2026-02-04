@@ -7,6 +7,7 @@ using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Settings.Application;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.MessageBus;
+using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Domain.DotNet;
 using CodeGenerator.Domain.DotNet.ProjectType;
 using CodeGenerator.Presentation.WinForms.ViewModels;
@@ -25,8 +26,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
 {
     public class WorkspaceController : CoreControllerBase
     {
-        public const string CodeGeneratorFileDialogFilter = "CodeGenerator Workspace Files (*.codegenerator)|*.codegenerator|All Files (*.*)|*.*";
-
+        
         private readonly WorkspaceRibbonViewModel _workspaceRibbonViewModel;
         private readonly WorkspaceTreeViewController _workspaceTreeViewController;
         private readonly WorkspaceMessageBus _workspaceMessageBus;
@@ -156,7 +156,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             if (!HandleUnsavedChanges())
                 return;
 
-            var filePath = _fileSystemDialogService.SaveFile(CodeGeneratorFileDialogFilter, null, "myworkspace.codegenerator");
+            var filePath = _fileSystemDialogService.SaveFile(WorkspaceFileService.CodeGeneratorFileDialogFilter, null, WorkspaceFileService.GetDefaultFilename());
             if (filePath == null)
                 return; // User cancelled
 
@@ -178,7 +178,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             if (!HandleUnsavedChanges())
                 return;
 
-            var filePath = _fileSystemDialogService.OpenFile(CodeGeneratorFileDialogFilter);
+            var filePath = _fileSystemDialogService.OpenFile(WorkspaceFileService.CodeGeneratorFileDialogFilter);
             if (filePath == null)
                 return; // User cancelled
 
@@ -243,7 +243,21 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
         private void OnSaveAsRequested(object? sender, EventArgs e)
         {
-            var filePath = _fileSystemDialogService.SaveFile(CodeGeneratorFileDialogFilter, null, "myworkspace.codegenerator");
+            // Default filename is eg. myworkspace.cg
+            var defaultFileName = WorkspaceFileService.GetDefaultFilename();
+
+            // if workspace already has a name of filepath, use that as default filename
+            if (_workspaceTreeViewController.CurrentWorkspace != null)
+            { 
+                defaultFileName = $"{_workspaceTreeViewController.CurrentWorkspace.Name}{WorkspaceFileService.WorkspaceFileExtension}";
+                if(!string.IsNullOrEmpty(_workspaceTreeViewController.CurrentWorkspace.WorkspaceFilePath))
+                {
+                    defaultFileName = System.IO.Path.GetFileName(_workspaceTreeViewController.CurrentWorkspace.WorkspaceFilePath);
+                }
+            }
+
+            // Prompt user for save location
+            var filePath = _fileSystemDialogService.SaveFile(WorkspaceFileService.CodeGeneratorFileDialogFilter, null, defaultFileName);
             if (filePath == null)
                 return; // User cancelled
 
