@@ -9,7 +9,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
     /// Defines which columns to show in a data grid (e.g., Syncfusion SfDataGrid).
     /// Uses properties from the entity's DefaultState and relations.
     /// </summary>
-    public class EntityListViewArtifact : Artifact, IEditableTreeNode
+    public class EntityListViewArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
         public EntityListViewArtifact(string name)
             : base()

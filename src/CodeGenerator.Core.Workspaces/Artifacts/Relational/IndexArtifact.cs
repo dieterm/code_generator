@@ -8,7 +8,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
     /// <summary>
     /// Represents a database index
     /// </summary>
-    public class IndexArtifact : Artifact, IEditableTreeNode
+    public class IndexArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
         public IndexArtifact(string name, bool isUnique = false)
         {

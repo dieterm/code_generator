@@ -10,7 +10,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
 /// <summary>
 /// Controller for PostgreSQL datasource artifacts
 /// </summary>
-public class PostgreSqlDatasourceController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, PostgreSqlDatasourceArtifact>
+public class PostgreSqlDatasourceController : WorkspaceArtifactControllerBase<PostgreSqlDatasourceArtifact>
 {
     private PostgreSqlDatasourceEditViewModel? _editViewModel;
 

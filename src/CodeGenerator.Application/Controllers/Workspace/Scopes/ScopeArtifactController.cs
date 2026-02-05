@@ -14,7 +14,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Scopes
     /// <summary>
     /// Controller for ScopeArtifact
     /// </summary>
-    public class ScopeArtifactController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, ScopeArtifact>
+    public class ScopeArtifactController : WorkspaceArtifactControllerBase<ScopeArtifact>
     {
         private ScopeEditViewModel? _editViewModel;
 

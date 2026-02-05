@@ -8,7 +8,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
     /// Represents a select view definition for an entity.
     /// Defines which properties to use for DisplayMember and ValueMember in a combobox.
     /// </summary>
-    public class EntitySelectViewArtifact : Artifact, IEditableTreeNode
+    public class EntitySelectViewArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
         public EntitySelectViewArtifact(string name)
             : base()

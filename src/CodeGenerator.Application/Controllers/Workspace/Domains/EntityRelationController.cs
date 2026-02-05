@@ -10,7 +10,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
     /// <summary>
     /// Controller for EntityRelationArtifact
     /// </summary>
-    public class EntityRelationController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, EntityRelationArtifact>
+    public class EntityRelationController : WorkspaceArtifactControllerBase<EntityRelationArtifact>
     {
         private EntityRelationEditViewModel? _editViewModel;
 

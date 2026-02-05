@@ -10,7 +10,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
 /// <summary>
 /// Controller for .NET Assembly datasource artifacts
 /// </summary>
-public class DotNetAssemblyDatasourceController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, DotNetAssemblyDatasourceArtifact>
+public class DotNetAssemblyDatasourceController : WorkspaceArtifactControllerBase<DotNetAssemblyDatasourceArtifact>
 {
     private DotNetAssemblyDatasourceEditViewModel? _editViewModel;
 

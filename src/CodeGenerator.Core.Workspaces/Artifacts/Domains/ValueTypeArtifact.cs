@@ -7,7 +7,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
     /// <summary>
     /// Represents a value type in the domain
     /// </summary>
-    public class ValueTypeArtifact : Artifact, IEditableTreeNode
+    public class ValueTypeArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
         public ValueTypeArtifact(string name)
             : base()

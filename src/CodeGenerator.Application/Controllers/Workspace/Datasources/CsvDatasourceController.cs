@@ -12,7 +12,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
 /// <summary>
 /// Controller for CSV datasource artifacts
 /// </summary>
-public class CsvDatasourceController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, CsvDatasourceArtifact>
+public class CsvDatasourceController : WorkspaceArtifactControllerBase<CsvDatasourceArtifact>
 {
     private CsvDatasourceEditViewModel? _editViewModel;
 

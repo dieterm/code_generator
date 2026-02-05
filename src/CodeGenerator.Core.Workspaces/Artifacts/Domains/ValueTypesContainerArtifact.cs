@@ -8,7 +8,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
     /// <summary>
     /// Container artifact for value types
     /// </summary>
-    public class ValueTypesContainerArtifact : Artifact, IEnumerable<ValueTypeArtifact>
+    public class ValueTypesContainerArtifact : WorkspaceArtifactBase, IEnumerable<ValueTypeArtifact>
     {
         public ValueTypesContainerArtifact()
             : base()

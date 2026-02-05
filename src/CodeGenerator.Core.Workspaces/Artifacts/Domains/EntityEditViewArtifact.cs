@@ -8,7 +8,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
     /// Represents an edit view definition for an entity state.
     /// Defines which fields/controls to show when editing an entity state.
     /// </summary>
-    public class EntityEditViewArtifact : Artifact, IEditableTreeNode
+    public class EntityEditViewArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
         public EntityEditViewArtifact(string name)
             : base()

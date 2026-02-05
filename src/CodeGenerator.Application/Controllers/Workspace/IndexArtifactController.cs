@@ -9,7 +9,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// <summary>
     /// Controller for IndexArtifact
     /// </summary>
-    public class IndexArtifactController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, IndexArtifact>
+    public class IndexArtifactController : WorkspaceArtifactControllerBase<IndexArtifact>
     {
         private IndexEditViewModel? _editViewModel;
 

@@ -8,7 +8,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
     /// <summary>
     /// Represents a database column
     /// </summary>
-    public class ColumnArtifact : Artifact, IEditableTreeNode
+    public class ColumnArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
         public ColumnArtifact(string name, string dataType, bool isNullable = true)
         {

@@ -12,7 +12,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// <summary>
     /// Controller for ColumnArtifact
     /// </summary>
-    public class ColumnArtifactController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, ColumnArtifact>
+    public class ColumnArtifactController : WorkspaceArtifactControllerBase<ColumnArtifact>
     {
         private readonly IDatasourceFactory _datasourceFactory;
         private ColumnEditViewModel? _editViewModel;

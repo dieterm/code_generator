@@ -8,7 +8,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
     /// <summary>
     /// Base class for all datasource artifacts
     /// </summary>
-    public abstract class DatasourceArtifact : Artifact, IEditableTreeNode
+    public abstract class DatasourceArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
         protected DatasourceArtifact(string name, string? description = null)
         {

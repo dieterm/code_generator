@@ -9,7 +9,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
     /// <summary>
     /// Represents a database foreign key constraint
     /// </summary>
-    public class ForeignKeyArtifact : Artifact, IEditableTreeNode
+    public class ForeignKeyArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
         public ForeignKeyArtifact(string name)
         {

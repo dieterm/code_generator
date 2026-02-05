@@ -13,7 +13,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
 /// <summary>
 /// Controller for JSON datasource artifacts
 /// </summary>
-public class JsonDatasourceController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, JsonDatasourceArtifact>
+public class JsonDatasourceController : WorkspaceArtifactControllerBase<JsonDatasourceArtifact>
 {
     private JsonDatasourceEditViewModel? _editViewModel;
 

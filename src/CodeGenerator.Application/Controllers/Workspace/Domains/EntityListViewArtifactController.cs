@@ -9,7 +9,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
     /// <summary>
     /// Controller for EntityListViewArtifact
     /// </summary>
-    public class EntityListViewArtifactController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, EntityListViewArtifact>
+    public class EntityListViewArtifactController : WorkspaceArtifactControllerBase<EntityListViewArtifact>
     {
         private EntityListViewEditViewModel? _editViewModel;
 

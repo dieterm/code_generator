@@ -8,7 +8,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
     /// <summary>
     /// Container artifact for entity relations
     /// </summary>
-    public class EntityRelationsContainerArtifact : Artifact, IEnumerable<EntityRelationArtifact>
+    public class EntityRelationsContainerArtifact : WorkspaceArtifactBase, IEnumerable<EntityRelationArtifact>
     {
         public EntityRelationsContainerArtifact()
             : base()

@@ -8,7 +8,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
     /// <summary>
     /// Represents a database view
     /// </summary>
-    public class ViewArtifact : Artifact, IEditableTreeNode
+    public class ViewArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
         public ViewArtifact(string name, string schema = TableArtifact.DEFAULT_SCHEMA)
         {

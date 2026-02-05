@@ -8,7 +8,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
     /// <summary>
     /// Represents a property of an entity state
     /// </summary>
-    public class PropertyArtifact : Artifact, IEditableTreeNode
+    public class PropertyArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
         public PropertyArtifact(string name, string dataType, bool isNullable = true)
             : base()

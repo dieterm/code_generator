@@ -12,7 +12,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
 /// <summary>
 /// Controller for XML datasource artifacts
 /// </summary>
-public class XmlDatasourceController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, XmlDatasourceArtifact>
+public class XmlDatasourceController : WorkspaceArtifactControllerBase<XmlDatasourceArtifact>
 {
     private XmlDatasourceEditViewModel? _editViewModel;
 

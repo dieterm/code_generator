@@ -12,7 +12,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
     /// <summary>
     /// Represents a database table
     /// </summary>
-    public class TableArtifact : Artifact, IEditableTreeNode
+    public class TableArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
         public const string DEFAULT_SCHEMA = "";
 

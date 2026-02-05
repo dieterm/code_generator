@@ -7,7 +7,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
     /// <summary>
     /// Container artifact for entity views (EditView, ListView, SelectView)
     /// </summary>
-    public class EntityViewsContainerArtifact : Artifact
+    public class EntityViewsContainerArtifact : WorkspaceArtifactBase
     {
         public EntityViewsContainerArtifact()
             : base()

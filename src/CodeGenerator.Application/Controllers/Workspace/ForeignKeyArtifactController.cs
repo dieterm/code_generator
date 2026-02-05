@@ -9,7 +9,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// <summary>
     /// Controller for ForeignKeyArtifact
     /// </summary>
-    public class ForeignKeyArtifactController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, ForeignKeyArtifact>
+    public class ForeignKeyArtifactController : WorkspaceArtifactControllerBase<ForeignKeyArtifact>
     {
         private ForeignKeyEditViewModel? _editViewModel;
 

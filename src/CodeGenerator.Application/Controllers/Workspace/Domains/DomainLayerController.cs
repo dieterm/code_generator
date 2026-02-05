@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Domains
 {
-    public class DomainLayerController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, OnionDomainLayerArtifact>
+    public class DomainLayerController : WorkspaceArtifactControllerBase<OnionDomainLayerArtifact>
     {
         public DomainLayerController(WorkspaceTreeViewController treeViewController, ILogger<DomainLayerController> logger)
             : base(treeViewController, logger)
