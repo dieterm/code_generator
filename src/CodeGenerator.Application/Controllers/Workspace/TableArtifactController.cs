@@ -20,7 +20,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// <summary>
     /// Controller for TableArtifact
     /// </summary>
-    public class TableArtifactController : ArtifactControllerBase<WorkspaceTreeViewController, TableArtifact>
+    public class TableArtifactController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, TableArtifact>
     {
         private TableEditViewModel? _editViewModel;
         private readonly TemplateEngineManager _templateEngineManager;

@@ -8,7 +8,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// <summary>
     /// Controller for ViewArtifact
     /// </summary>
-    public class ViewArtifactController : ArtifactControllerBase<WorkspaceTreeViewController, ViewArtifact>
+    public class ViewArtifactController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, ViewArtifact>
     {
         public ViewArtifactController(
             WorkspaceTreeViewController workspaceController,

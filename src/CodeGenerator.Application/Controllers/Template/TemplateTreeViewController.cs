@@ -48,14 +48,11 @@ namespace CodeGenerator.Application.Controllers.Template
 
         protected override IEnumerable<IArtifactController> LoadArtifactControllers()
         {
-            // TemplateArtifactController
-            return new IArtifactController[]
-            {
-                ServiceProviderHolder.GetRequiredService<RootArtifactController>(),
-                ServiceProviderHolder.GetRequiredService<TemplateArtifactController>(),
-                ServiceProviderHolder.GetRequiredService<ExistingFolderArtifactController>(),
-            };
+            // Get all registered ITemplateArtifactController implementations from DI container
+            var controllers = ServiceProviderHolder.GetServices<ITemplateArtifactController>();
+            return controllers;
         }
+
         private TargetTemplateFolder _targetTemplateFolder;
         public TargetTemplateFolder TargetTemplateFolder {
             get { return _targetTemplateFolder; }

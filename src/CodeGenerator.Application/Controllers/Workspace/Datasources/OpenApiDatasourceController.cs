@@ -12,7 +12,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
 /// <summary>
 /// Controller for OpenAPI datasource artifacts
 /// </summary>
-public class OpenApiDatasourceController : ArtifactControllerBase<WorkspaceTreeViewController, OpenApiDatasourceArtifact>
+public class OpenApiDatasourceController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, OpenApiDatasourceArtifact>
 {
     private OpenApiDatasourceEditViewModel? _editViewModel;
 

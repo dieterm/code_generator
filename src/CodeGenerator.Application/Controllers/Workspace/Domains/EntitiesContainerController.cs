@@ -9,7 +9,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
     /// <summary>
     /// Controller for EntitiesContainerArtifact
     /// </summary>
-    public class EntitiesContainerController : ArtifactControllerBase<WorkspaceTreeViewController, EntitiesContainerArtifact>
+    public class EntitiesContainerController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, EntitiesContainerArtifact>
     {
         public EntitiesContainerController(
             WorkspaceTreeViewController workspaceController,

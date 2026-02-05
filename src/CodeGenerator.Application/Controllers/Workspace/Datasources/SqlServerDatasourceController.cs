@@ -10,7 +10,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
 /// <summary>
 /// Controller for SQL Server datasource artifacts
 /// </summary>
-public class SqlServerDatasourceController : ArtifactControllerBase<WorkspaceTreeViewController, SqlServerDatasourceArtifact>
+public class SqlServerDatasourceController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, SqlServerDatasourceArtifact>
 {
     private SqlServerDatasourceEditViewModel? _editViewModel;
 

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Scopes
 {
-    public class ScopesContainerController : ArtifactControllerBase<WorkspaceTreeViewController, ScopesContainerArtifact>
+    public class ScopesContainerController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, ScopesContainerArtifact>
     {
         public ScopesContainerController(WorkspaceTreeViewController treeViewController, ILogger<ScopesContainerController> logger)
             : base(treeViewController, logger)

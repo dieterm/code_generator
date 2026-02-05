@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Application.Controllers.Template
 {
-    public class TemplateArtifactController : ArtifactControllerBase<TemplateTreeViewController, TemplateArtifact>
+    public class TemplateArtifactController : TemplateArtifactControllerBase<TemplateTreeViewController, TemplateArtifact>
     {
         private TemplateParametersViewModel? _editViewModel;
         private readonly WorkspaceTreeViewController _workspaceController;

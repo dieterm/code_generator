@@ -10,7 +10,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Datasources
     /// <summary>
     /// Controller for MySQL datasource artifacts
     /// </summary>
-    public class MysqlDatasourceController : ArtifactControllerBase<WorkspaceTreeViewController, MysqlDatasourceArtifact>
+    public class MysqlDatasourceController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, MysqlDatasourceArtifact>
     {
         private MysqlDatasourceEditViewModel? _editViewModel;
 

@@ -10,7 +10,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
 /// <summary>
 /// Controller for Excel datasource artifacts
 /// </summary>
-public class ExcelDatasourceController : ArtifactControllerBase<WorkspaceTreeViewController, ExcelDatasourceArtifact>
+public class ExcelDatasourceController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, ExcelDatasourceArtifact>
 {
     private ExcelDatasourceEditViewModel? _editViewModel;
 

@@ -12,12 +12,10 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// Controller for WorkspaceArtifact
     /// Handles context menus and detail views for the workspace root node
     /// </summary>
-    public class WorkspaceArtifactController : ArtifactControllerBase<WorkspaceTreeViewController, WorkspaceArtifact>
+    public class WorkspaceArtifactController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, WorkspaceArtifact>
     {
         private readonly IDatasourceFactory _datasourceFactory;
         private WorkspaceEditViewModel? _editViewModel;
-
-        //protected WorkspaceTreeViewController TreeViewController => (WorkspaceTreeViewController)base.TreeViewController;
 
         public WorkspaceArtifactController(
             IDatasourceFactory datasourceFactory, 

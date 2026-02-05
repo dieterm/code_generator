@@ -62,50 +62,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
         /// </summary>
         protected override IEnumerable<IArtifactController> LoadArtifactControllers()
         {
-            var controllers = new List<IArtifactController>
-            {
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<WorkspaceArtifactController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<DatasourcesContainerController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<MysqlDatasourceController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<SqlServerDatasourceController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<PostgreSqlDatasourceController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<ExcelDatasourceController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<CsvDatasourceController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<JsonDatasourceController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<XmlDatasourceController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<YamlDatasourceController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<DotNetAssemblyDatasourceController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<OpenApiDatasourceController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<TableArtifactController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<ViewArtifactController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<ColumnArtifactController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<IndexArtifactController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<ForeignKeyArtifactController>(),
-
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<DomainLayerController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<ScopesContainerController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<SubScopesContainerController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<ScopeArtifactController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<DomainController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntitiesContainerController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityStatesContainerController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityStateController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<PropertyController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityRelationsContainerController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityRelationController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<ValueTypesContainerController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<ValueTypeController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityViewsContainerController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityEditViewArtifactController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityEditViewFieldController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityListViewArtifactController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntityListViewColumnController>(),
-                ServiceProviderHolder.ServiceProvider.GetRequiredService<EntitySelectViewArtifactController>(),
-
-                // Add other controllers here as needed
-            };
-
+            // Get all registered IWorkspaceArtifactController from DI-container
+            var controllers = ServiceProviderHolder.GetServices<IWorkspaceArtifactController>();
             // Register required templates from all controllers
             foreach (var controller in controllers)
             {

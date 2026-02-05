@@ -12,7 +12,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
 /// <summary>
 /// Controller for YAML datasource artifacts
 /// </summary>
-public class YamlDatasourceController : ArtifactControllerBase<WorkspaceTreeViewController, YamlDatasourceArtifact>
+public class YamlDatasourceController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, YamlDatasourceArtifact>
 {
     private YamlDatasourceEditViewModel? _editViewModel;
 

@@ -91,50 +91,50 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<TemplateTreeViewController>();
 
         // Workspace Artifact Controllers
-        services.AddSingleton<WorkspaceArtifactController>();
+        services.AddSingleton<IWorkspaceArtifactController, WorkspaceArtifactController>();
 
-        services.AddSingleton<DatasourcesContainerController>();
-        services.AddSingleton<MysqlDatasourceController>();
-        services.AddSingleton<SqlServerDatasourceController>();
-        services.AddSingleton<PostgreSqlDatasourceController>();
-        services.AddSingleton<ExcelDatasourceController>();
-        services.AddSingleton<CsvDatasourceController>();
-        services.AddSingleton<JsonDatasourceController>();
-        services.AddSingleton<XmlDatasourceController>();
-        services.AddSingleton<YamlDatasourceController>();
-        services.AddSingleton<DotNetAssemblyDatasourceController>();
-        services.AddSingleton<OpenApiDatasourceController>();
-        services.AddSingleton<TableArtifactController>();
-        services.AddSingleton<ViewArtifactController>();
-        services.AddSingleton<ColumnArtifactController>();
-        services.AddSingleton<IndexArtifactController>();
-        services.AddSingleton<ForeignKeyArtifactController>();
+        services.AddSingleton<IWorkspaceArtifactController, DatasourcesContainerController>();
+        services.AddSingleton<IWorkspaceArtifactController, MysqlDatasourceController>();
+        services.AddSingleton<IWorkspaceArtifactController, SqlServerDatasourceController>();
+        services.AddSingleton<IWorkspaceArtifactController, PostgreSqlDatasourceController>();
+        services.AddSingleton<IWorkspaceArtifactController, ExcelDatasourceController>();
+        services.AddSingleton<IWorkspaceArtifactController, CsvDatasourceController>();
+        services.AddSingleton<IWorkspaceArtifactController, JsonDatasourceController>();
+        services.AddSingleton<IWorkspaceArtifactController, XmlDatasourceController>();
+        services.AddSingleton<IWorkspaceArtifactController, YamlDatasourceController>();
+        services.AddSingleton<IWorkspaceArtifactController, DotNetAssemblyDatasourceController>();
+        services.AddSingleton<IWorkspaceArtifactController, OpenApiDatasourceController>();
+        services.AddSingleton<IWorkspaceArtifactController, TableArtifactController>();
+        services.AddSingleton<IWorkspaceArtifactController, ViewArtifactController>();
+        services.AddSingleton<IWorkspaceArtifactController, ColumnArtifactController>();
+        services.AddSingleton<IWorkspaceArtifactController, IndexArtifactController>();
+        services.AddSingleton<IWorkspaceArtifactController, ForeignKeyArtifactController>();
 
-        services.AddSingleton<DomainLayerController>();
-        services.AddSingleton<ScopesContainerController>();
-        services.AddSingleton<SubScopesContainerController>();
-        services.AddSingleton<ScopeArtifactController>();
-        services.AddSingleton<DomainController>();
-        services.AddSingleton<EntitiesContainerController>();
-        services.AddSingleton<EntityController>();
-        services.AddSingleton<EntityStatesContainerController>();
-        services.AddSingleton<EntityStateController>();
-        services.AddSingleton<PropertyController>();
-        services.AddSingleton<EntityRelationsContainerController>();
-        services.AddSingleton<EntityRelationController>();
-        services.AddSingleton<ValueTypesContainerController>();
-        services.AddSingleton<ValueTypeController>();
-        services.AddSingleton<EntityViewsContainerController>();
-        services.AddSingleton<EntityEditViewArtifactController>();
-        services.AddSingleton<EntityEditViewFieldController>();
-        services.AddSingleton<EntityListViewArtifactController>();
-        services.AddSingleton<EntityListViewColumnController>();
-        services.AddSingleton<EntitySelectViewArtifactController>();
+        services.AddSingleton<IWorkspaceArtifactController, DomainLayerController>();
+        services.AddSingleton<IWorkspaceArtifactController, ScopesContainerController>();
+        services.AddSingleton<IWorkspaceArtifactController, SubScopesContainerController>();
+        services.AddSingleton<IWorkspaceArtifactController, ScopeArtifactController>();
+        services.AddSingleton<IWorkspaceArtifactController, DomainController>();
+        services.AddSingleton<IWorkspaceArtifactController, EntitiesContainerController>();
+        services.AddSingleton<IWorkspaceArtifactController, EntityController>();
+        services.AddSingleton<IWorkspaceArtifactController, EntityStatesContainerController>();
+        services.AddSingleton<IWorkspaceArtifactController, EntityStateController>();
+        services.AddSingleton<IWorkspaceArtifactController, PropertyController>();
+        services.AddSingleton<IWorkspaceArtifactController, EntityRelationsContainerController>();
+        services.AddSingleton<IWorkspaceArtifactController, EntityRelationController>();
+        services.AddSingleton<IWorkspaceArtifactController, ValueTypesContainerController>();
+        services.AddSingleton<IWorkspaceArtifactController, ValueTypeController>();
+        services.AddSingleton<IWorkspaceArtifactController, EntityViewsContainerController>();
+        services.AddSingleton<IWorkspaceArtifactController, EntityEditViewArtifactController>();
+        services.AddSingleton<IWorkspaceArtifactController, EntityEditViewFieldController>();
+        services.AddSingleton<IWorkspaceArtifactController, EntityListViewArtifactController>();
+        services.AddSingleton<IWorkspaceArtifactController, EntityListViewColumnController>();
+        services.AddSingleton<IWorkspaceArtifactController, EntitySelectViewArtifactController>();
 
         // Template Artifact Controllers
-        services.AddSingleton<RootArtifactController>();
-        services.AddSingleton<TemplateArtifactController>();
-        services.AddSingleton<ExistingFolderArtifactController>();
+        services.AddSingleton<ITemplateArtifactController, RootArtifactController>();
+        services.AddSingleton<ITemplateArtifactController, TemplateArtifactController>();
+        services.AddSingleton<ITemplateArtifactController, ExistingFolderArtifactController>();
 
         // Register Datasource Providers
         services.AddMysqlDatasourceServices(configuration);

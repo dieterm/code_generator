@@ -11,7 +11,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
     /// <summary>
     /// Controller for ValueTypeArtifact
     /// </summary>
-    public class ValueTypeController : ArtifactControllerBase<WorkspaceTreeViewController, ValueTypeArtifact>
+    public class ValueTypeController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, ValueTypeArtifact>
     {
         private ValueTypeEditViewModel? _editViewModel;
 

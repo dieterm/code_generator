@@ -11,7 +11,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
     /// <summary>
     /// Controller for PropertyArtifact
     /// </summary>
-    public class PropertyController : ArtifactControllerBase<WorkspaceTreeViewController, PropertyArtifact>
+    public class PropertyController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController, PropertyArtifact>
     {
         private PropertyEditViewModel? _editViewModel;
 

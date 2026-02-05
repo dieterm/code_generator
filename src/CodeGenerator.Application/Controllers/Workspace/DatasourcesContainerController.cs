@@ -10,7 +10,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// Controller for DatasourcesContainerArtifact
     /// Handles context menus for the datasources container node
     /// </summary>
-    public class DatasourcesContainerController : ArtifactControllerBase<WorkspaceTreeViewController,DatasourcesContainerArtifact>
+    public class DatasourcesContainerController : WorkspaceArtifactControllerBase<WorkspaceTreeViewController,DatasourcesContainerArtifact>
     {
         private readonly IDatasourceFactory _datasourceFactory;
 
