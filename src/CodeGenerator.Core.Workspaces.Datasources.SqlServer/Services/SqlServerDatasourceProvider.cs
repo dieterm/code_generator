@@ -88,12 +88,6 @@ public class SqlServerDatasourceProvider : IDatasourceProvider
         };
     }
 
-    public Type? GetControllerType()
-    {
-        // Controller will be registered separately
-        return null;
-    }
-
     public IEnumerable<GenericDataType> GetSupportedColumnDataTypes()
     {
         return Domain.Databases.RelationalDatabases.SqlServerDatabase.Instance.DataTypeMappings

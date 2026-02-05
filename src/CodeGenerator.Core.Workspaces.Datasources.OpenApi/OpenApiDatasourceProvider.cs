@@ -62,12 +62,6 @@ public class OpenApiDatasourceProvider : IDatasourceProvider
         };
     }
 
-    public Type? GetControllerType()
-    {
-        // Controller will be registered separately
-        return null;
-    }
-
     public IEnumerable<GenericDataType> GetSupportedColumnDataTypes()
     {
         // OpenAPI supports various data types

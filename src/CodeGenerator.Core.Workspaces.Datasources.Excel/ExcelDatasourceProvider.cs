@@ -67,12 +67,6 @@ public class ExcelDatasourceProvider : IDatasourceProvider
         };
     }
 
-    public Type? GetControllerType()
-    {
-        // Controller will be registered separately
-        return null;
-    }
-
     public IEnumerable<GenericDataType> GetSupportedColumnDataTypes()
     {
         // Excel doesn't have a fixed set of data types - return common types

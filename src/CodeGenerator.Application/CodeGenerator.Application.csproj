@@ -27,6 +27,7 @@
     <ProjectReference Include="..\CodeGenerator.Core.Settings\CodeGenerator.Core.Settings.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Templates\CodeGenerator.Core.Templates.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Csv\CodeGenerator.Core.Workspaces.Datasources.Csv.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Directory\CodeGenerator.Core.Workspaces.Datasources.Directory.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly\CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Json\CodeGenerator.Core.Workspaces.Datasources.Json.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.OpenApi\CodeGenerator.Core.Workspaces.Datasources.OpenApi.csproj" />
@@ -38,6 +39,7 @@
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.PostgreServer\CodeGenerator.Core.Workspaces.Datasources.PostgreServer.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.SqlServer\CodeGenerator.Core.Workspaces.Datasources.SqlServer.csproj" />
     <ProjectReference Include="..\CodeGenerator.Generators.CodeArchitectureLayers\CodeGenerator.Generators.CodeArchitectureLayers.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Generators.DotNet.SharedScope\CodeGenerator.Generators.DotNet.SharedScope.csproj" />
     <ProjectReference Include="..\CodeGenerator.Generators.DotNet.WinformsRibbonApplication\CodeGenerator.Generators.DotNet.WinformsRibbonApplication.csproj" />
     <ProjectReference Include="..\CodeGenerator.Generators.DotNet\CodeGenerator.Generators.DotNet.csproj" />
     <ProjectReference Include="..\CodeGenerator.Shared\CodeGenerator.Shared.csproj" />

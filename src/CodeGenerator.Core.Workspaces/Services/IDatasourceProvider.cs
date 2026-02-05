@@ -36,11 +36,6 @@ namespace CodeGenerator.Core.Workspaces.Services
         /// </summary>
         DatasourceDefinition CreateDefinition(DatasourceArtifact datasource);
 
-        /// <summary>
-        /// Get the controller type for this datasource (for handling context menus, etc.)
-        /// </summary>
-        Type? GetControllerType();
-
         IEnumerable<GenericDataType> GetSupportedColumnDataTypes();
     }
 }

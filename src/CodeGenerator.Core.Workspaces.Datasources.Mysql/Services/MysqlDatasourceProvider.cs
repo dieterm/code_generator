@@ -83,12 +83,6 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
             };
         }
 
-        public Type? GetControllerType()
-        {
-            // Controller will be registered separately
-            return null;
-        }
-
         public IEnumerable<GenericDataType> GetSupportedColumnDataTypes()
         {
             return Domain.Databases.RelationalDatabases.MysqlDatabase.Instance.DataTypeMappings.Select(m => m.GenericType).Distinct();

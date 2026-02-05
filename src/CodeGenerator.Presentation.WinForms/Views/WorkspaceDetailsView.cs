@@ -1,6 +1,7 @@
 ﻿using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Core.Workspaces.Datasources.Csv.ViewModels;
+using CodeGenerator.Core.Workspaces.Datasources.Directory.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Excel.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Json.ViewModels;
@@ -119,6 +120,11 @@ namespace CodeGenerator.Presentation.WinForms.Views
             {
                 detailsControl = new OpenApiDatasourceEditView();
                 ((OpenApiDatasourceEditView)detailsControl).BindViewModel(openApiViewModel);
+            }
+            else if (_viewModel?.DetailsViewModel is DirectoryDatasourceEditViewModel directoryViewModel)
+            {
+                detailsControl = new DirectoryDatasourceEditView();
+                ((DirectoryDatasourceEditView)detailsControl).BindViewModel(directoryViewModel);
             }
             else if (_viewModel?.DetailsViewModel is ColumnEditViewModel columnViewModel)
             {

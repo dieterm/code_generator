@@ -21,6 +21,7 @@ using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Templates.Settings;
 using CodeGenerator.Core.Workspaces;
 using CodeGenerator.Core.Workspaces.Datasources.Csv;
+using CodeGenerator.Core.Workspaces.Datasources.Directory;
 using CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly;
 using CodeGenerator.Core.Workspaces.Datasources.Excel;
 using CodeGenerator.Core.Workspaces.Datasources.Json;
@@ -104,6 +105,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IWorkspaceArtifactController, YamlDatasourceController>();
         services.AddSingleton<IWorkspaceArtifactController, DotNetAssemblyDatasourceController>();
         services.AddSingleton<IWorkspaceArtifactController, OpenApiDatasourceController>();
+        services.AddSingleton<IWorkspaceArtifactController, DirectoryDatasourceController>();
         services.AddSingleton<IWorkspaceArtifactController, TableArtifactController>();
         services.AddSingleton<IWorkspaceArtifactController, ViewArtifactController>();
         services.AddSingleton<IWorkspaceArtifactController, ColumnArtifactController>();
@@ -147,7 +149,8 @@ public static class ServiceCollectionExtensions
         services.AddYamlDatasourceServices(configuration);
         services.AddDotNetAssemblyDatasourceServices(configuration);
         services.AddOpenApiDatasourceServices(configuration);
-        
+        services.AddDirectoryDatasourceServices(configuration);
+
         // Register Message Bus systems
         services.AddSingleton<ApplicationMessageBus>();
         services.AddSingleton<GeneratorMessageBus>();
@@ -188,6 +191,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.PlantUML.PlantUmlTemplateEngine>();
         
         services.AddDotNetWinformsRibbonApplicationGeneratorServices(configuration);
+        services.AddDotNetSharedScopeGeneratorServices(configuration);
 
         // Add logging
         services.AddLogging(builder =>

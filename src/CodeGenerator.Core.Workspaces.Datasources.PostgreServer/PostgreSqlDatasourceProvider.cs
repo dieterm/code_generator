@@ -87,12 +87,6 @@ public class PostgreSqlDatasourceProvider : IDatasourceProvider
         };
     }
 
-    public Type? GetControllerType()
-    {
-        // Controller will be registered separately
-        return null;
-    }
-
     public IEnumerable<GenericDataType> GetSupportedColumnDataTypes()
     {
         return Domain.Databases.RelationalDatabases.PostgreSqlDatabase.Instance.DataTypeMappings

@@ -62,12 +62,6 @@ public class DotNetAssemblyDatasourceProvider : IDatasourceProvider
         };
     }
 
-    public Type? GetControllerType()
-    {
-        // Controller will be registered separately
-        return null;
-    }
-
     public IEnumerable<GenericDataType> GetSupportedColumnDataTypes()
     {
         // .NET types map to various generic data types
