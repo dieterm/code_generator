@@ -29,6 +29,14 @@ public class RibbonToolStripBuilder
     }
 
     /// <summary>
+    /// Adds a dropdown button to the toolstrip
+    /// </summary>
+    public RibbonDropDownButtonBuilder AddDropDownButton(string name, string text)
+    {
+        return new RibbonDropDownButtonBuilder(this, name, text);
+    }
+
+    /// <summary>
     /// Adds a separator to the toolstrip
     /// </summary>
     public RibbonToolStripBuilder AddSeparator()

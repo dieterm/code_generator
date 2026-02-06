@@ -18,6 +18,7 @@ using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Ribbon;
+using CodeGenerator.Shared.UndoRedo;
 using CodeGenerator.Shared.ViewModels;
 using DocumentFormat.OpenXml.Office2013.Drawing.Chart;
 using DocumentFormat.OpenXml.Wordprocessing;
@@ -39,9 +40,16 @@ namespace CodeGenerator.Application.Controllers.Workspace
         private readonly WorkspaceFileService _workspaceFileService;
         private readonly TemplateManager _templateManager;
         private readonly WorkspaceMessageBus _workspaceMessageBus;
+        private readonly UndoRedoManager _undoRedoManager;
         private ArtifactDetailsViewModel? _workspaceDetailsViewModel;
 
+        /// <summary>
+        /// The UndoRedoManager for this workspace
+        /// </summary>
+        public UndoRedoManager UndoRedoManager => _undoRedoManager;
+
         public WorkspaceTreeViewController(
+            UndoRedoManager undoRedoManager,
             WorkspaceMessageBus workspaceMessageBus,
             TemplateManager templateManager,
             IDatasourceFactory datasourceFactory,
@@ -52,6 +60,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             ILogger<WorkspaceTreeViewController> logger)
             : base(windowManagerService, messageBoxService, logger)
         {
+            _undoRedoManager = undoRedoManager;
             _workspaceMessageBus = workspaceMessageBus;
             _datasourceFactory = datasourceFactory;
             _workspaceFileService = workspaceFileService;

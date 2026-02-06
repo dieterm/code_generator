@@ -1,8 +1,11 @@
 ﻿using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Core.Workspaces.MessageBus;
 using CodeGenerator.Core.Workspaces.MessageBus.Events;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Memento;
+using CodeGenerator.Shared.UndoRedo;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,8 +26,38 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         {
             ParentChanged += WorkspaceArtifactBase_ParentChanged;
             ChildAdded += WorkspaceArtifactBase_ChildAdded;
+            PropertyChanging += WorkspaceArtifactBase_PropertyChanging;
         }
 
+        private void WorkspaceArtifactBase_PropertyChanging(object? sender, System.ComponentModel.PropertyChangingEventArgs e)
+        {
+            var artifact = (sender as WorkspaceArtifactBase)!;
+            // We only want to record changes for artifacts that are part of a workspace,
+            // as only those are relevant for undo/redo and we want to avoid recording changes
+            // for artifacts that are not yet fully initialized
+            // (e.g. during construction when they are not yet part of a workspace)
+            if (artifact.Workspace == null) return; // Only record changes if artifact is part of a workspace
+
+            var cancelableArgs = (e as CancelablePropertyChangingEventArgs)!;
+            var undoRedoManager = ServiceProviderHolder.GetRequiredService<UndoRedoManager>();
+            
+            var oldValue = cancelableArgs.OldValue;
+            var newValue = cancelableArgs.NewValue;
+            
+            // Property change opnemen
+            undoRedoManager.RecordAction(new PropertyChangeAction(
+                artifact, e.PropertyName!, oldValue, newValue,
+                (target, prop, value) => ((WorkspaceArtifactBase)target).SetValue<object>(prop, value)));
+
+            //// Batch van wijzigingen
+            //using (new UndoRedoBatchScope(undoRedoManager, "Rename entity"))
+            //{
+            //    entity.Name = "NewName";
+            //    entity.Description = "Updated";
+            //}
+        }
+
+   
 
         protected WorkspaceArtifactBase(ArtifactState state)
     :       base(state)
@@ -40,6 +73,37 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             {
                 messageBus.PublishArtifactChildAdded(parentArtifact, childArtifact);
             }
+
+            if (Workspace == null) return;
+            // record action for undo/redo
+            ServiceProviderHolder.GetRequiredService<UndoRedoManager>().RecordAction(new ChildChangeAction(
+                sender!,
+                e.ChildArtifact,
+                ChildChangeType.Added,
+                addChild: (parent, child) =>
+                {
+                    var workspaceParent = (WorkspaceArtifactBase)parent;
+                    var workspaceChild = (WorkspaceArtifactBase)child;
+                    workspaceParent.AddChild(workspaceChild);
+                    if (workspaceParent.Workspace != null)
+                    {
+                        var messageBus = ServiceProviderHolder.GetRequiredService<WorkspaceMessageBus>();
+                        messageBus.PublishArtifactChildAdded(workspaceParent, workspaceChild);
+                    }
+                },
+                removeChild: (parent, child) =>
+                {
+                    var workspaceParent = (WorkspaceArtifactBase)parent;
+                    var workspaceChild = (WorkspaceArtifactBase)child;
+                    workspaceParent.RemoveChild(workspaceChild);
+                    if (workspaceParent.Workspace != null)
+                    {
+                        var messageBus = ServiceProviderHolder.GetRequiredService<WorkspaceMessageBus>();
+                        messageBus.PublishArtifactChildRemoved(workspaceParent, workspaceChild);
+                    }
+                }
+            ));
+            
         }
         #region Workspace Access
         public virtual WorkspaceArtifact? Workspace { get { return _workspace; } }

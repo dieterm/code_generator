@@ -42,6 +42,12 @@ namespace CodeGenerator.Core.Workspaces.MessageBus
             Publish(eventArgs);
         }
 
+        public void PublishArtifactChildRemoved(WorkspaceArtifactBase parentArtifact, WorkspaceArtifactBase childArtifact)
+        {
+            var eventArgs = new ArtifactChildRemovedEventArgs(parentArtifact, childArtifact);
+            Publish(eventArgs);
+        }
+
         public void Dispose()
         {
             _subscribers.ForEach(subscriber => subscriber.Unsubscribe(this));

@@ -46,6 +46,7 @@ using CodeGenerator.Domain.ProgrammingLanguages.CSharp;
 using CodeGenerator.Generators.CodeArchitectureLayers;
 using CodeGenerator.Presentation.WinForms.ViewModels;
 using CodeGenerator.Shared.Ribbon;
+using CodeGenerator.Shared.UndoRedo;
 using CodeGenerator.TemplateEngines.DotNetProject;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -182,6 +183,9 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ApplicationMessageBus>();
         services.AddSingleton<GeneratorMessageBus>();
         services.AddSingleton<WorkspaceMessageBus>();
+        
+        // Register Undo/Redo
+        services.AddSingleton<UndoRedoManager>();
         
         services.AddWorkspaceServices(configuration);
 

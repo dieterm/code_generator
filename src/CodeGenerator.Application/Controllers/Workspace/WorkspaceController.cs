@@ -13,6 +13,7 @@ using CodeGenerator.Domain.DotNet.ProjectType;
 using CodeGenerator.Presentation.WinForms.ViewModels;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Ribbon;
+using CodeGenerator.Shared.UndoRedo;
 using CodeGenerator.TemplateEngines.DotNetProject.Services;
 using Microsoft.Extensions.Logging;
 using System;
@@ -30,11 +31,13 @@ namespace CodeGenerator.Application.Controllers.Workspace
         private readonly WorkspaceRibbonViewModel _workspaceRibbonViewModel;
         private readonly WorkspaceTreeViewController _workspaceTreeViewController;
         private readonly WorkspaceMessageBus _workspaceMessageBus;
+        private readonly UndoRedoManager _undoRedoManager;
         public bool HasUnsavedChanges { get {return _workspaceTreeViewController.HasUnsavedChanges; } }
 
-        public WorkspaceController(WorkspaceMessageBus workspaceMessageBus, WorkspaceTreeViewController workspaceTreeViewController, WorkspaceRibbonViewModel workspaceRibbonViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<WorkspaceController> logger) 
+        public WorkspaceController(UndoRedoManager undoRedoManager, WorkspaceMessageBus workspaceMessageBus, WorkspaceTreeViewController workspaceTreeViewController, WorkspaceRibbonViewModel workspaceRibbonViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<WorkspaceController> logger) 
             : base(windowManagerService, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
         {
+            _undoRedoManager = undoRedoManager ?? throw new ArgumentNullException(nameof(undoRedoManager));
             _workspaceMessageBus = workspaceMessageBus;
             _workspaceRibbonViewModel = workspaceRibbonViewModel;
             _workspaceTreeViewController = workspaceTreeViewController;
@@ -51,9 +54,14 @@ namespace CodeGenerator.Application.Controllers.Workspace
             _workspaceRibbonViewModel.RequestShowTemplates += OnRequestShowTemplates;
             _workspaceRibbonViewModel.RequestUndo += OnRequestUndo;
             _workspaceRibbonViewModel.RequestRedo += OnRequestRedo;
+            _workspaceRibbonViewModel.RequestUndoMultiple += OnRequestUndoMultiple;
+            _workspaceRibbonViewModel.RequestRedoMultiple += OnRequestRedoMultiple;
         }
 
-        private async void OnRequestRedo(object? sender, EventArgs e)
+
+
+        [Obsolete]
+        private async Task GenerateAllDotNetProjectCombinations()
         {
             if(_workspaceTreeViewController.CurrentWorkspace==null)
                 return;
@@ -140,10 +148,39 @@ namespace CodeGenerator.Application.Controllers.Workspace
             }
             Debug.WriteLine(sb.ToString());
         }
-
+        private async void OnRequestRedo(object? sender, EventArgs e)
+        {
+            if (_undoRedoManager.CanRedo)
+            {
+                _undoRedoManager.Redo();
+                _logger.LogDebug("Redo performed: {Description}", _undoRedoManager.UndoDescription);
+            }
+        }
         private void OnRequestUndo(object? sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            if (_undoRedoManager.CanUndo)
+            {
+                _undoRedoManager.Undo();
+                _logger.LogDebug("Undo performed: {Description}", _undoRedoManager.RedoDescription);
+            }
+        }
+
+        private void OnRequestUndoMultiple(object? sender, int count)
+        {
+            if (_undoRedoManager.CanUndo)
+            {
+                _undoRedoManager.Undo(count);
+                _logger.LogDebug("Undo performed: {Count} actions", count);
+            }
+        }
+
+        private void OnRequestRedoMultiple(object? sender, int count)
+        {
+            if (_undoRedoManager.CanRedo)
+            {
+                _undoRedoManager.Redo(count);
+                _logger.LogDebug("Redo performed: {Count} actions", count);
+            }
         }
 
         private void OnRequestShowTemplates(object? sender, EventArgs e)
@@ -170,6 +207,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             }
 
             await _workspaceTreeViewController.CreateWorkspaceAsync(directory, fileName);
+            _undoRedoManager.Clear();
             _messageBus.ReportApplicationStatus($"Created new workspace: {fileName}");
         }
 
@@ -186,6 +224,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             {
                 ApplicationSettings.Instance.AddRecentFile(filePath);
                 await _workspaceTreeViewController.LoadWorkspaceAsync(filePath);
+                _undoRedoManager.Clear();
                 
                 _messageBus.ReportApplicationStatus($"Loaded workspace: {System.IO.Path.GetFileNameWithoutExtension(filePath)}");
             }
@@ -309,6 +348,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             try
             {
                 await _workspaceTreeViewController.LoadWorkspaceAsync(filePath);
+                _undoRedoManager.Clear();
                 _messageBus.ReportApplicationStatus($"Loaded workspace: {System.IO.Path.GetFileNameWithoutExtension(filePath)}");
             }
             catch (Exception ex)
@@ -356,16 +396,18 @@ namespace CodeGenerator.Application.Controllers.Workspace
                     .Build();
 
             workspaceTabBuilder.AddToolStrip("toolstripWorkspaceUndoRedo", "History")
-                    .AddButton("btnUndo", "Undo")
+                    .AddDropDownButton("btnUndo", "Undo")
                         .WithSize(RibbonButtonSize.Large)
                         .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
                         .WithImage("undo")
                         .WithCommand(_workspaceRibbonViewModel.UndoCommand)
-                    .AddButton("btnRedo", "Redo")
+                        .WithDropDownItemsProvider(() => _workspaceRibbonViewModel.GetUndoDropDownItems())
+                    .AddDropDownButton("btnRedo", "Redo")
                         .WithSize(RibbonButtonSize.Large)
                         .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
                         .WithImage("redo")
                         .WithCommand(_workspaceRibbonViewModel.RedoCommand)
+                        .WithDropDownItemsProvider(() => _workspaceRibbonViewModel.GetRedoDropDownItems())
                     .Build();
 
             workspaceTabBuilder.Build();
@@ -378,16 +420,22 @@ namespace CodeGenerator.Application.Controllers.Workspace
             _workspaceRibbonViewModel.RequestOpenWorkspace -= OnRequestOpenWorkspace;
             _workspaceRibbonViewModel.RequestNewWorkspace -= OnRequestNewWorkspace;
             _workspaceRibbonViewModel.RequestShowTemplates -= OnRequestShowTemplates;
+            _workspaceRibbonViewModel.RequestUndo -= OnRequestUndo;
+            _workspaceRibbonViewModel.RequestRedo -= OnRequestRedo;
+            _workspaceRibbonViewModel.RequestUndoMultiple -= OnRequestUndoMultiple;
+            _workspaceRibbonViewModel.RequestRedoMultiple -= OnRequestRedoMultiple;
         }
 
         public void CloseWorkspace()
         {
             _workspaceTreeViewController.CloseWorkspace();
+            _undoRedoManager.Clear();
         }
 
         public async Task LoadWorkspaceAsync(string filePath)
         {
             await _workspaceTreeViewController.LoadWorkspaceAsync(filePath);
+            _undoRedoManager.Clear();
         }
     }
 }

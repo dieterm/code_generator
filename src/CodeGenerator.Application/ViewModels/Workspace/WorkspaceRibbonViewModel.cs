@@ -1,6 +1,8 @@
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Ribbon;
+using CodeGenerator.Shared.UndoRedo;
 using CodeGenerator.Shared.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -14,6 +16,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
     public class WorkspaceRibbonViewModel : ViewModelBase
     {
         private readonly IWorkspaceContextProvider _workspaceContextProvider;
+        private readonly UndoRedoManager _undoRedoManager;
         
         // Events
         public event EventHandler? RequestNewWorkspace;
@@ -23,6 +26,8 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         public event EventHandler? RequestShowTemplates;
         public event EventHandler? RequestUndo;
         public event EventHandler? RequestRedo;
+        public event EventHandler<int>? RequestUndoMultiple;
+        public event EventHandler<int>? RequestRedoMultiple;
 
         // Commands
         public ICommand NewWorkspaceCommand { get; }
@@ -33,19 +38,27 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         public ICommand UndoCommand { get; }
         public ICommand RedoCommand { get; }
 
-        public WorkspaceRibbonViewModel(IWorkspaceContextProvider workspaceContextProvider)
+        public WorkspaceRibbonViewModel(IWorkspaceContextProvider workspaceContextProvider, UndoRedoManager undoRedoManager)
         {
             _workspaceContextProvider = workspaceContextProvider;
+            _undoRedoManager = undoRedoManager;
             _workspaceContextProvider.WorkspaceChanged += OnWorkspaceChanged;
             _workspaceContextProvider.WorkspaceHasUnsavedChangesChanged += OnWorkspaceHasUnsavedChangesChanged;
+            _undoRedoManager.HistoryChanged += OnUndoRedoHistoryChanged;
 
             NewWorkspaceCommand = new RelayCommand((e) => RequestNewWorkspace?.Invoke(this, EventArgs.Empty), CanRequestNewWorkspace);
             OpenWorkspaceCommand = new RelayCommand((e) => RequestOpenWorkspace?.Invoke(this, EventArgs.Empty), CanRequestOpenWorkspace);
             SaveWorkspaceCommand = new RelayCommand((e) => RequestSaveWorkspace?.Invoke(this, EventArgs.Empty), CanRequestSaveWorkspace);
             CloseWorkspaceCommand = new RelayCommand((e) => RequestCloseWorkspace?.Invoke(this, EventArgs.Empty), CanRequestCloseWorkspace);
             ShowTemplatesCommand = new RelayCommand((e) => RequestShowTemplates?.Invoke(this, EventArgs.Empty), CanShowTemplates);
-            UndoCommand = new RelayCommand((e) => RequestUndo?.Invoke(this, EventArgs.Empty));
-            RedoCommand = new RelayCommand((e) => RequestRedo?.Invoke(this, EventArgs.Empty));
+            UndoCommand = new RelayCommand((e) => RequestUndo?.Invoke(this, EventArgs.Empty), _ => _undoRedoManager.CanUndo);
+            RedoCommand = new RelayCommand((e) => RequestRedo?.Invoke(this, EventArgs.Empty), _ => _undoRedoManager.CanRedo);
+        }
+
+        private void OnUndoRedoHistoryChanged(object? sender, EventArgs e)
+        {
+            (UndoCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            (RedoCommand as RelayCommand)?.RaiseCanExecuteChanged();
         }
 
         private void OnWorkspaceHasUnsavedChangesChanged(object? sender, EventArgs e)
@@ -90,6 +103,48 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         private bool CanShowTemplates(object? arg)
         {
             return _workspaceContextProvider.CurrentWorkspace != null;
+        }
+
+        /// <summary>
+        /// Returns the dropdown items provider for the Undo history dropdown.
+        /// Each item shows an action description; clicking it undoes up to and including that action.
+        /// </summary>
+        public IEnumerable<RibbonDropDownItemViewModel> GetUndoDropDownItems()
+        {
+            var index = 0;
+            foreach (var description in _undoRedoManager.GetUndoHistory())
+            {
+                var capturedIndex = index + 1;
+                yield return new RibbonDropDownItemViewModel
+                {
+                    Name = $"undoItem_{index}",
+                    Text = description,
+                    Tag = capturedIndex,
+                    ClickHandler = (item) => RequestUndoMultiple?.Invoke(this, capturedIndex)
+                };
+                index++;
+            }
+        }
+
+        /// <summary>
+        /// Returns the dropdown items provider for the Redo history dropdown.
+        /// Each item shows an action description; clicking it redoes up to and including that action.
+        /// </summary>
+        public IEnumerable<RibbonDropDownItemViewModel> GetRedoDropDownItems()
+        {
+            var index = 0;
+            foreach (var description in _undoRedoManager.GetRedoHistory())
+            {
+                var capturedIndex = index + 1;
+                yield return new RibbonDropDownItemViewModel
+                {
+                    Name = $"redoItem_{index}",
+                    Text = description,
+                    Tag = capturedIndex,
+                    ClickHandler = (item) => RequestRedoMultiple?.Invoke(this, capturedIndex)
+                };
+                index++;
+            }
         }
     }
 }

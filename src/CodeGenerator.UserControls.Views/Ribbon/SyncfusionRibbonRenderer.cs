@@ -190,6 +190,7 @@ public class SyncfusionRibbonRenderer : IRibbonRenderer
     {
         return viewModel switch
         {
+            RibbonDropDownButtonViewModel dropDownVm => CreateDropDownButton(dropDownVm),
             RibbonButtonViewModel buttonVm => CreateButton(buttonVm),
             RibbonSeparatorViewModel => new System.Windows.Forms.ToolStripSeparator(),
             _ => null
@@ -207,7 +208,7 @@ public class SyncfusionRibbonRenderer : IRibbonRenderer
             DisplayStyle = ConvertDisplayStyle(viewModel.DisplayStyle),
             ImageTransparentColor = Color.Magenta
         };
-
+       
         if (viewModel.HiddenWhenDisabled) { 
             button.EnabledChanged += (s, e) =>
             {
@@ -258,5 +259,134 @@ public class SyncfusionRibbonRenderer : IRibbonRenderer
             RibbonButtonDisplayStyle.ImageAndText => System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText,
             _ => System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText
         };
+    }
+
+    private System.Windows.Forms.ToolStripSplitButton CreateDropDownButton(RibbonDropDownButtonViewModel viewModel)
+    {
+        var button = new System.Windows.Forms.ToolStripSplitButton
+        {
+            Name = viewModel.Name,
+            Text = viewModel.Text,
+            Enabled = viewModel.Enabled,
+            Visible = viewModel.Visible,
+            DisplayStyle = ConvertDisplayStyle(viewModel.DisplayStyle),
+            ImageTransparentColor = Color.Magenta
+        };
+
+        if (viewModel.HiddenWhenDisabled)
+        {
+            button.EnabledChanged += (s, e) =>
+            {
+                button.Visible = button.Enabled;
+            };
+        }
+
+        if (viewModel.Command != null)
+        {
+            // Use ButtonClick so only the main button area triggers the command,
+            // not the dropdown arrow
+            button.ButtonClick += (s, e) =>
+            {
+                if (viewModel.Command.CanExecute(viewModel.CommandParameter))
+                    viewModel.Command.Execute(viewModel.CommandParameter);
+            };
+
+            // Sync enabled state with command
+            viewModel.Command.CanExecuteChanged += (s, e) =>
+            {
+                if (button.IsDisposed) return;
+                var canExecute = viewModel.Command.CanExecute(viewModel.CommandParameter);
+                if (button.Owner?.InvokeRequired == true)
+                    button.Owner.Invoke(() => button.Enabled = canExecute);
+                else
+                    button.Enabled = canExecute;
+            };
+
+            button.Enabled = viewModel.Command.CanExecute(viewModel.CommandParameter);
+        }
+
+        if (viewModel.ImageData != null)
+        {
+            SetImageFromModel(() => viewModel.ImageData, img => button.Image = img, viewModel.Name);
+        }
+
+        if (!string.IsNullOrEmpty(viewModel.ToolTipText))
+        {
+            button.ToolTipText = viewModel.ToolTipText;
+        }
+
+        // Apply size
+        if (viewModel.Size == RibbonButtonSize.Large)
+        {
+            button.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            button.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+        }
+
+        // Wire up click handler (main button area only)
+        if (viewModel.ClickHandler != null)
+        {
+            button.ButtonClick += (sender, e) => viewModel.ClickHandler(e);
+        }
+
+        // Populate static dropdown items
+        PopulateDropDownItems(button, viewModel.DropDownItems);
+
+        // If a dynamic provider is set, repopulate on each dropdown opening
+        if (viewModel.DropDownItemsProvider != null)
+        {
+            button.DropDownOpening += (s, e) =>
+            {
+                button.DropDownItems.Clear();
+                var items = viewModel.DropDownItemsProvider();
+                foreach (var item in items)
+                {
+                    button.DropDownItems.Add(CreateDropDownMenuItem(item));
+                }
+            };
+        }
+
+        return button;
+    }
+
+    private void PopulateDropDownItems(System.Windows.Forms.ToolStripSplitButton button, IEnumerable<RibbonDropDownItemViewModel> items)
+    {
+        foreach (var item in items)
+        {
+            button.DropDownItems.Add(CreateDropDownMenuItem(item));
+        }
+    }
+
+    private System.Windows.Forms.ToolStripItem CreateDropDownMenuItem(RibbonDropDownItemViewModel viewModel)
+    {
+        if (viewModel.IsSeparator)
+        {
+            return new System.Windows.Forms.ToolStripSeparator();
+        }
+
+        var menuItem = new System.Windows.Forms.ToolStripMenuItem
+        {
+            Name = viewModel.Name,
+            Text = viewModel.Text,
+            Enabled = viewModel.Enabled,
+            Visible = viewModel.Visible,
+            Tag = viewModel.Tag
+        };
+
+        if (viewModel.ImageData != null)
+        {
+            SetImageFromModel(() => viewModel.ImageData, img => menuItem.Image = img, viewModel.Name);
+        }
+
+        if (!string.IsNullOrEmpty(viewModel.ToolTipText))
+        {
+            menuItem.ToolTipText = viewModel.ToolTipText;
+        }
+
+        if (viewModel.ClickHandler != null)
+        {
+            menuItem.Click += (sender, e) => viewModel.ClickHandler(viewModel);
+        }
+
+        return menuItem;
     }
 }
