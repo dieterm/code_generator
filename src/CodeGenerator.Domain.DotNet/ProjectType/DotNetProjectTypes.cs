@@ -20,10 +20,16 @@ namespace CodeGenerator.Domain.DotNet.ProjectType
         {
             ClassLib,
             WinFormsLib,
+            WinFormsExe,
             WpfLib,
             ConsoleApp,
             BlazorWebApp,
             MsTestProject
         };
+
+        public static DotNetProjectType GetById(string v)
+        {
+            return AllTypes.First(t => t.Id == v);
+        }
     }
 }

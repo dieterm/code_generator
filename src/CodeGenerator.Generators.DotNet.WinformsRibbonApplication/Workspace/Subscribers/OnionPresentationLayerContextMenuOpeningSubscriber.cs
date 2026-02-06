@@ -1,9 +1,11 @@
 ﻿using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
+using CodeGenerator.Core.Workspaces.Artifacts.VVMC;
 using CodeGenerator.Core.Workspaces.MessageBus;
 using CodeGenerator.Core.Workspaces.MessageBus.EventHandlers;
 using CodeGenerator.Core.Workspaces.MessageBus.Events;
+using CodeGenerator.Domain.DotNet.ProjectType;
 using CodeGenerator.Generators.DotNet.WinformsRibbonApplication.Workspace.Artifacts;
 using System;
 using System.Collections.Generic;
@@ -17,20 +19,43 @@ namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication.Workspace.Su
     {
         protected override void HandleArtifactContextMenuOpening(ArtifactContextMenuOpeningEventArgs args, OnionPresentationLayerArtifact artifact)
         {
-            if(artifact.Parent is ScopeArtifact scopeArtifact && scopeArtifact.Name == ScopeArtifact.DEFAULT_SCOPE_APPLICATION)
+            if(artifact.Parent is ScopeArtifact scopeArtifact)
             {
-                args.Commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
+                if (scopeArtifact.Name == ScopeArtifact.DEFAULT_SCOPE_APPLICATION)
                 {
-                    Id = "add_new_winforms_presentation",
-                    Text = "Add New Winforms Application",
-                    Execute = (art) =>
-                    {
-                        var newPresentation = new WinformsPresentationArtifact();
-                        art.AddChild(newPresentation);
-                        return Task.CompletedTask;
+                    if(!artifact.Children.OfType<WinformsPresentationArtifact>().Any(p => p.ProjectType == DotNetProjectTypes.WinFormsExe)) 
+                    { 
+                        args.Commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
+                        {
+                            Id = "add_new_winforms_executable",
+                            Text = "Add New Winforms Executable",
+                            Execute = (art) =>
+                            {
+                                var newPresentation = new WinformsPresentationArtifact(DotNetProjectTypes.WinFormsExe);
+                                art.AddChild(newPresentation);
+                                var viewsContainer = newPresentation.AddChild(new ViewsContainerArtifact());
+                                return Task.CompletedTask;
+                            }
+                        });
                     }
-                });
-     
+                }
+                else {
+                    if (!artifact.Children.OfType<WinformsPresentationArtifact>().Any(p => p.ProjectType == DotNetProjectTypes.WinFormsLib))
+                    {
+                        args.Commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
+                        {
+                            Id = "add_new_winforms_usercontrol_library",
+                            Text = "Add New Winforms Usercontrol Library",
+                            Execute = (art) =>
+                            {
+                                var newPresentation = new WinformsPresentationArtifact(DotNetProjectTypes.WinFormsLib);
+                                art.AddChild(newPresentation);
+                                var viewsContainer = newPresentation.AddChild(new ViewsContainerArtifact());
+                                return Task.CompletedTask;
+                            }
+                        });
+                    }
+                }
             }
         }
     }

@@ -8,7 +8,7 @@ namespace CodeGenerator.Domain.DotNet.ProjectType
 {
     public class WinFormsLibProjectType : DotNetProjectType
     {
-        public const string PROJECTTYPE_ID = "winforms";
+        public const string PROJECTTYPE_ID = "winforms_lib";
 
         private static readonly DotNetLanguage[] _supportedLanguages = new[] {
             DotNetLanguages.CSharp,

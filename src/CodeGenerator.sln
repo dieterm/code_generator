@@ -122,6 +122,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Behavioral", "Behavioral", 
 		..\docs\Design Patterns\Behavioral\Mediator.md = ..\docs\Design Patterns\Behavioral\Mediator.md
 		..\docs\Design Patterns\Behavioral\Memento.md = ..\docs\Design Patterns\Behavioral\Memento.md
 		..\docs\Design Patterns\Behavioral\Observer.md = ..\docs\Design Patterns\Behavioral\Observer.md
+		..\docs\Design Patterns\Behavioral\Specification.md = ..\docs\Design Patterns\Behavioral\Specification.md
 		..\docs\Design Patterns\Behavioral\State.md = ..\docs\Design Patterns\Behavioral\State.md
 		..\docs\Design Patterns\Behavioral\Strategy.md = ..\docs\Design Patterns\Behavioral\Strategy.md
 		..\docs\Design Patterns\Behavioral\TemplateMethod.md = ..\docs\Design Patterns\Behavioral\TemplateMethod.md

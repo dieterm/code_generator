@@ -1,5 +1,12 @@
 ﻿using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.Events;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.Factories;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.Repositories;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.Services;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.Specifications;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Core.Workspaces.ViewModels;
@@ -29,17 +36,26 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
 
             EnsureEntitiesContainerExists();
             EnsureValueTypesContainerExists();
-            
+            EnsureEventsContainerExists();
+            EnsureRepositoriesContainerExists();
+            EnsureServicesContainerExists();
+            EnsureSpecificationsContainerExists();
+            EnsureFactoriesContainerExists();
             PublishArtifactConstructionEvent();
         }
 
-
+        
 
         public DomainArtifact(ArtifactState state)
             : base(state)
         {
             EnsureEntitiesContainerExists();
             EnsureValueTypesContainerExists();
+            EnsureEventsContainerExists();
+            EnsureRepositoriesContainerExists();
+            EnsureServicesContainerExists();
+            EnsureSpecificationsContainerExists();
+            EnsureFactoriesContainerExists();
 
             PublishArtifactConstructionEvent();
         }
@@ -116,9 +132,48 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
         /// </summary>
         public ValueTypesContainerArtifact ValueTypes => EnsureValueTypesContainerExists();
 
+        public DomainEventsContainerArtifact Events => EnsureEventsContainerExists();
+        public DomainServicesContainerArtifact Services => EnsureServicesContainerExists();
+        public DomainRepositoriesContainerArtifact Repositories => EnsureRepositoriesContainerExists();
+        public DomainSpecificationsContainerArtifact Specifications => EnsureSpecificationsContainerExists();
+        public DomainFactoriesContainerArtifact Factories => EnsureFactoriesContainerExists();
+
+        private DomainFactoriesContainerArtifact EnsureFactoriesContainerExists()
+        {
+            var existing = Children.OfType<DomainFactoriesContainerArtifact>().SingleOrDefault();
+            if (existing == null)
+            {
+                existing = new DomainFactoriesContainerArtifact();
+                AddChild(existing);
+            }
+            return existing;
+        }
+
+        private DomainSpecificationsContainerArtifact EnsureSpecificationsContainerExists()
+        {
+            var existing = Children.OfType<DomainSpecificationsContainerArtifact>().SingleOrDefault();
+            if (existing == null)
+            {
+                existing = new DomainSpecificationsContainerArtifact();
+                AddChild(existing);
+            }
+            return existing;
+        }
+
+        private DomainEventsContainerArtifact EnsureEventsContainerExists()
+        {
+            var existing = Children.OfType<DomainEventsContainerArtifact>().SingleOrDefault();
+            if (existing == null)
+            {
+                existing = new DomainEventsContainerArtifact();
+                AddChild(existing);
+            }
+            return existing;
+        }
+
         private EntitiesContainerArtifact EnsureEntitiesContainerExists()
         {
-            var existing = Children.OfType<EntitiesContainerArtifact>().FirstOrDefault();
+            var existing = Children.OfType<EntitiesContainerArtifact>().SingleOrDefault();
             if (existing == null)
             {
                 existing = new EntitiesContainerArtifact();
@@ -130,11 +185,35 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
 
         private ValueTypesContainerArtifact EnsureValueTypesContainerExists()
         {
-            var existing = Children.OfType<ValueTypesContainerArtifact>().FirstOrDefault();
+            var existing = Children.OfType<ValueTypesContainerArtifact>().SingleOrDefault();
             if (existing == null)
             {
                 existing = new ValueTypesContainerArtifact();
                 // Automatically add ValueTypesContainerArtifact
+                AddChild(existing);
+            }
+            return existing;
+        }
+
+        private DomainServicesContainerArtifact EnsureServicesContainerExists()
+        {
+            var existing = Children.OfType<DomainServicesContainerArtifact>().SingleOrDefault();
+            if (existing == null)
+            {
+                existing = new DomainServicesContainerArtifact();
+                // Automatically add DomainServicesContainerArtifact
+                AddChild(existing);
+            }
+            return existing;
+        }
+
+        private DomainRepositoriesContainerArtifact EnsureRepositoriesContainerExists()
+        {
+            var existing = Children.OfType<DomainRepositoriesContainerArtifact>().SingleOrDefault();
+            if (existing == null)
+            {
+                existing = new DomainRepositoriesContainerArtifact();
+                // Automatically add DomainRepositoriesContainerArtifact
                 AddChild(existing);
             }
             return existing;

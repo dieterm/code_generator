@@ -2,13 +2,15 @@
 {
     public class CleanCodeArchitecture : CodeArchitecture<ICleanArchitectureLayerFactory>
     {
+        public const string ARCHITECTURE_ID = "clean";
+
         public const string ENTITIES_LAYER = "Entities";
         public const string USE_CASES_LAYER = "UseCases";
         public const string INTERFACE_ADAPTERS_LAYER = "InterfaceAdapters";
         public const string FRAMEWORKS_LAYER = "Frameworks";
 
         public CleanCodeArchitecture() 
-            : base("clean", "Clean Architecture")
+            : base(ARCHITECTURE_ID, "Clean Architecture")
         {
         }
 

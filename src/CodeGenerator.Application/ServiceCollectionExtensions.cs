@@ -4,6 +4,13 @@ using CodeGenerator.Application.Controllers.Template;
 using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Application.Controllers.Workspace.Datasources;
 using CodeGenerator.Application.Controllers.Workspace.Domains;
+using CodeGenerator.Application.Controllers.Workspace.Domains.Entities;
+using CodeGenerator.Application.Controllers.Workspace.Domains.Events;
+using CodeGenerator.Application.Controllers.Workspace.Domains.Factories;
+using CodeGenerator.Application.Controllers.Workspace.Domains.Repositories;
+using CodeGenerator.Application.Controllers.Workspace.Domains.Services;
+using CodeGenerator.Application.Controllers.Workspace.Domains.Specifications;
+using CodeGenerator.Application.Controllers.Workspace.Domains.ValueTypes;
 using CodeGenerator.Application.Controllers.Workspace.Scopes;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
@@ -130,6 +137,28 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IWorkspaceArtifactController, EntityListViewArtifactController>();
         services.AddSingleton<IWorkspaceArtifactController, EntityListViewColumnController>();
         services.AddSingleton<IWorkspaceArtifactController, EntitySelectViewArtifactController>();
+
+        // Domain Events Controllers
+        services.AddSingleton<IWorkspaceArtifactController, DomainEventsContainerController>();
+        services.AddSingleton<IWorkspaceArtifactController, DomainEventController>();
+
+        // Domain Repositories Controllers
+        services.AddSingleton<IWorkspaceArtifactController, DomainRepositoriesContainerController>();
+        services.AddSingleton<IWorkspaceArtifactController, DomainRepositoryController>();
+        services.AddSingleton<IWorkspaceArtifactController, DomainRepositoryMethodController>();
+
+        // Domain Services Controllers
+        services.AddSingleton<IWorkspaceArtifactController, DomainServicesContainerController>();
+        services.AddSingleton<IWorkspaceArtifactController, DomainServiceController>();
+        services.AddSingleton<IWorkspaceArtifactController, DomainServiceMethodController>();
+
+        // Domain Specifications Controllers
+        services.AddSingleton<IWorkspaceArtifactController, DomainSpecificationsContainerController>();
+        services.AddSingleton<IWorkspaceArtifactController, DomainSpecificationController>();
+
+        // Domain Factories Controllers
+        services.AddSingleton<IWorkspaceArtifactController, DomainFactoriesContainerController>();
+        services.AddSingleton<IWorkspaceArtifactController, DomainFactoryController>();
 
         // Template Artifact Controllers
         services.AddSingleton<ITemplateArtifactController, RootArtifactController>();

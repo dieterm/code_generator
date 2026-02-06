@@ -9,6 +9,7 @@ using CodeGenerator.Core.Artifacts.Events;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Core.Workspaces.MessageBus;
@@ -163,32 +164,18 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 DependencyInjectionFrameworkId = workspaceSettings.DefaultDependencyInjectionFrameworkId
             };
 
-
             var datasourcesContainer = workspace.AddChild(new DatasourcesContainerArtifact());
             var scopesContainer = workspace.AddChild(new ScopesContainerArtifact());
 
-            var sharedScopes = scopesContainer.AddChild(new ScopeArtifact(ScopeArtifact.DEFAULT_SCOPE_SHARED));
-            var applicationScopes = scopesContainer.AddChild(new ScopeArtifact(ScopeArtifact.DEFAULT_SCOPE_APPLICATION));
-            var allScopes = new List<ScopeArtifact> { sharedScopes, applicationScopes };
-            
             var codeArchitectureManager = ServiceProviderHolder.GetRequiredService<CodeArchitectureManager>();
             var codeArchitecture = codeArchitectureManager.GetById(WorkspaceSettings.Instance.DefaultCodeArchitectureId);
             if (codeArchitecture != null)
             {
-                foreach (var scope in allScopes)
-                {
-                    foreach (var layerFactory in codeArchitecture.Layers)
-                    {
-                        var layerArtifact = layerFactory.CreateLayer(scope.Name);
-                        scope.AddChild(layerArtifact);
-                    }
-                    scope.AddChild(new SubScopesContainerArtifact());
-                }
+                var sharedScope = codeArchitecture.ScopeFactory.CreateScopeArtifact(ScopeArtifact.DEFAULT_SCOPE_SHARED);
+                scopesContainer.AddChild(sharedScope);
+                var applicationScope = codeArchitecture.ScopeFactory.CreateScopeArtifact(ScopeArtifact.DEFAULT_SCOPE_APPLICATION);
+                scopesContainer.AddChild(applicationScope);
             }
-
-            
-
-
 
             return workspace;
         }

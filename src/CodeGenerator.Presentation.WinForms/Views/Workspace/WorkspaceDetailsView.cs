@@ -1,6 +1,8 @@
 ﻿using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Application.ViewModels.Workspace.Datasources;
 using CodeGenerator.Application.ViewModels.Workspace.Domains;
+using CodeGenerator.Application.ViewModels.Workspace.Domains.Factories;
+using CodeGenerator.Application.ViewModels.Workspace.Domains.Specifications;
 using CodeGenerator.Core.Workspaces.Datasources.Csv.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Directory.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly.ViewModels;
@@ -14,6 +16,8 @@ using CodeGenerator.Core.Workspaces.Datasources.Xml.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Yaml.ViewModels;
 using CodeGenerator.Core.Workspaces.ViewModels;
 using CodeGenerator.Presentation.WinForms.Views.Domains;
+using CodeGenerator.Presentation.WinForms.Views.Workspace.Domains.Factories;
+using CodeGenerator.Presentation.WinForms.Views.Workspace.Domains.Specifications;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
 using System.ComponentModel;
@@ -206,6 +210,16 @@ namespace CodeGenerator.Presentation.WinForms.Views
             {
                 detailsControl = new EntitySelectViewEditView();
                 ((EntitySelectViewEditView)detailsControl).BindViewModel(entitySelectViewViewModel);
+            }
+            else if (_viewModel?.DetailsViewModel is DomainSpecificationEditViewModel specificationViewModel)
+            {
+                detailsControl = new DomainSpecificationEditView();
+                ((DomainSpecificationEditView)detailsControl).BindViewModel(specificationViewModel);
+            }
+            else if (_viewModel?.DetailsViewModel is DomainFactoryEditViewModel factoryViewModel)
+            {
+                detailsControl = new DomainFactoryEditView();
+                ((DomainFactoryEditView)detailsControl).BindViewModel(factoryViewModel);
             }
             
             if (detailsControl != null)

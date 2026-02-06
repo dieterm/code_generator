@@ -3,6 +3,8 @@ using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.Events;
 using CodeGenerator.Core.Artifacts.Views;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes;
 using CodeGenerator.Domain.DataTypes;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;

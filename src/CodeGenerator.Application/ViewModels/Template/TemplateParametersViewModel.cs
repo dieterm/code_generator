@@ -32,6 +32,7 @@ public class TemplateParametersViewModel : ViewModelBase
         _editViewModel.SaveRequested += (s, e) => SaveParameterDefinitions();
         _executionViewModel.ExecuteRequested += (s, e) => ExecuteRequested?.Invoke(this, EventArgs.Empty);
         _executionViewModel.EditTemplateRequested += (s, e) => EditTemplateRequested?.Invoke(this, EventArgs.Empty);
+        _executionViewModel.SetDefaultsRequested += (s, e) => SetDefaultsRequested?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -125,15 +126,16 @@ public class TemplateParametersViewModel : ViewModelBase
     /// Event raised when the user requests to execute the template
     /// </summary>
     public event EventHandler? ExecuteRequested;
-    public event EventHandler EditTemplateRequested;
+    public event EventHandler? EditTemplateRequested;
+    public event EventHandler? SetDefaultsRequested;
 
     /// <summary>
     /// Raises the ExecuteRequested event
     /// </summary>
-    public void RequestExecute()
-    {
-        ExecutionViewModel.RequestExecute();
-    }
+    //public void RequestExecute()
+    //{
+    //    ExecutionViewModel.RequestExecute();
+    //}
 
     /// <summary>
     /// Toggle between edit mode and execution mode

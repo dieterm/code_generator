@@ -19,6 +19,8 @@ namespace CodeGenerator.Domain.CodeArchitecture
         public string Name { get;  }
         public IEnumerable<TFactory> Layers { get { return ServiceProviderHolder.GetServices<TFactory>(); } }
 
+        public IScopeArtifactFactory ScopeFactory { get { return ServiceProviderHolder.GetKeyedService<IScopeArtifactFactory>(Id)!; } }
+
         IEnumerable<ICodeArchitectureLayerFactory> ICodeArchitecture.Layers => Layers.Cast<ICodeArchitectureLayerFactory>();
     }
 }

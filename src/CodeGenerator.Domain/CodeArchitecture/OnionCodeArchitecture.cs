@@ -8,13 +8,15 @@ namespace CodeGenerator.Domain.CodeArchitecture
 {
     public class OnionCodeArchitecture : CodeArchitecture<IOnionArchitectureLayerFactory>
     {
+        public const string ARCHITECTURE_ID = "onion";
+
         public const string APPLICATION_LAYER = "Application";
         public const string DOMAIN_LAYER = "Domain";
         public const string INFRASTRUCTURE_LAYER = "Infrastructure";
         public const string PRESENTATION_LAYER = "Presentation";
 
         public OnionCodeArchitecture() 
-            : base("onion", "Onion Architecture")
+            : base(ARCHITECTURE_ID, "Onion Architecture")
         {
         
         }

@@ -1,5 +1,5 @@
 using CodeGenerator.Application.ViewModels.Workspace.Domains;
-using CodeGenerator.Core.Workspaces.Artifacts.Domains;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
 using CodeGenerator.UserControls.Views;

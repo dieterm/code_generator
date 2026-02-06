@@ -2,7 +2,7 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Workspaces.Artifacts;
-using CodeGenerator.Core.Workspaces.Artifacts.Domains;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Core.Workspaces.MessageBus.EventHandlers;
 using CodeGenerator.Core.Workspaces.MessageBus.Events;
 using CodeGenerator.Domain.CodeElements;

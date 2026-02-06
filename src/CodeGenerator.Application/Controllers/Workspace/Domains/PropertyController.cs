@@ -2,7 +2,7 @@ using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Core.Artifacts;
-using CodeGenerator.Core.Workspaces.Artifacts.Domains;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Domain.NamingConventions;
 using Microsoft.Extensions.Logging;
 

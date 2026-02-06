@@ -1,5 +1,6 @@
 ﻿using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.VVMC;
+using CodeGenerator.Core.Workspaces.Artifacts.VVMC.Controllers;
 using CodeGenerator.Core.Workspaces.MessageBus.EventHandlers;
 using CodeGenerator.Core.Workspaces.MessageBus.Events;
 using CodeGenerator.Domain.CodeArchitecture;
@@ -19,6 +20,10 @@ namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication.Workspace.Su
             if (layerArtifact.ScopeName == CodeArchitectureScopes.APPLICATION_SCOPE)
             {
                 controllersContainerArtifact.AddChild(new ApplicationControllerArtifact());
+            }
+            else
+            {
+                controllersContainerArtifact.AddChild(new ScopeControllerArtifact());
             }
         }
     }

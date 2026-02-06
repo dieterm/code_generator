@@ -27,8 +27,38 @@ namespace CodeGenerator.Application.Controllers.Template
                 _editViewModel.SetWorkspaceController(_workspaceController);
                 _editViewModel.ExecuteRequested += ParametersViewModel_ExecuteRequested;
                 _editViewModel.EditTemplateRequested += ParametersViewModel_EditTemplateRequested;
+                _editViewModel.SetDefaultsRequested += ParametersViewModel_SetDefaultsRequested;
             }
             _editViewModel.TemplateArtifact = templateArtifact;
+        }
+
+        private void ParametersViewModel_SetDefaultsRequested(object? sender, EventArgs e)
+        {
+            try
+            {
+                if (_editViewModel == null || _editViewModel.TemplateArtifact==null || _editViewModel.TemplateArtifact.Definition==null) return;
+                foreach(var field in _editViewModel.ExecutionViewModel.ParameterFields)
+                {
+                    try
+                    {
+                        var item = _editViewModel.TemplateArtifact.Definition.Parameters.Single(p => p.Name == field.Name);
+                        if (item != null)
+                        {
+                            item.DefaultValue = field.Value?.ToString();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogError(ex, "Failed to set default value for parameter {ParameterName}", field.Name);
+                    }
+                }
+                _editViewModel.TemplateArtifact.SaveDefinition(_editViewModel.TemplateArtifact.Definition);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to set default values for template {TemplateName}", _editViewModel?.TemplateArtifact?.FileName);
+                ServiceProviderHolder.GetRequiredService<IMessageBoxService>().ShowError($"Failed to set default values.\n\n{ex.Message}");
+            }
         }
 
         private async void ParametersViewModel_EditTemplateRequested(object? sender, EventArgs e)

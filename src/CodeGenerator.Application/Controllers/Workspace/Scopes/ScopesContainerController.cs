@@ -2,10 +2,14 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
+using CodeGenerator.Core.Workspaces.Settings;
+using CodeGenerator.Domain.CodeArchitecture;
+using CodeGenerator.Shared;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,9 +33,14 @@ namespace CodeGenerator.Application.Controllers.Workspace.Scopes
             };
         }
 
-        private Task AddScopeAsync(ScopesContainerArtifact artifact)
+        private Task AddScopeAsync(ScopesContainerArtifact scopesContainer)
         {
-            artifact.AddScope("New Scope");
+            var codeArchitecture = scopesContainer.Workspace!.CodeArchitecture;
+            if (codeArchitecture != null)
+            {
+                var newScope = codeArchitecture.ScopeFactory.CreateScopeArtifact("New scope");
+                scopesContainer.AddChild(newScope);
+            }
             return Task.CompletedTask;
         }
     }

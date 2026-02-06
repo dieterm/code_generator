@@ -2,12 +2,14 @@
 {
     public class NTierCodeArchitecture : CodeArchitecture<INTierArchitectureLayerFactory>
     {
+        public const string ARCHITECTURE_ID = "ntier";
+
         public const string PRESENTATION_LAYER = "Presentation";
         public const string BUSINESS_LAYER = "Business";
         public const string DATA_ACCESS_LAYER = "DataAccess";
 
         public NTierCodeArchitecture() 
-            : base("ntier", "N-Tier Architecture")
+            : base(ARCHITECTURE_ID, "N-Tier Architecture")
         {
         }
 

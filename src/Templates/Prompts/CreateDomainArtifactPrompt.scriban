@@ -1,0 +1,47 @@
+Maak een nieuwe '{{ ArtifactName}}Artifact' en '{{ ArtifactPluralName }}ContainerArtifact' aan in folder 
+"D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Core.Workspaces\Artifacts\{{SubfolderName}}\{{ FolderName }}".
+Kijk als voorbeeld naar de '{{ ExampleArtifactName }}Artifact' en '{{ ExampleArtifactPluralName }}ContainerArtifact' class.
+
+De belangrijkste properties voor een {{ ArtifactName}}Artifact zijn:
+- Name: string
+- Description : string
+- TreeNodeText => Name
+- TreeNodeIcon => new ResourceManagerTreeNodeIcon("{{ IconKey }}");
+- Voeg zelf nog relevante properties toe indien gewenst.
+
+De class moet ook de IEditableTreeNode-interface implementeren.
+
+Genereer een '{{ ArtifactName}}ArtifactController' die overerft van WorkspaceArtifactController in deze folder:
+D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Application\Controllers\Workspace\{{SubfolderName}}\{{ FolderName}}
+Kijk als voorbeeld naar de '{{ExampleArtifactName}}ArtifactController' class.
+
+Deze moet de volgende methodes overriden:
+- CanDelete
+- Delete
+
+Deze moet volgende ArtifactTreeNodeCommand teruggeven via methode GetCommands:
+- Rename
+
+Genereer een '{{ ArtifactPluralName}}ContainerController' die overerft van WorkspaceArtifactController in deze folder:
+D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Application\Controllers\Workspace\{{SubfolderName}}\{{ FolderName}}
+Kijk als voorbeeld naar de '{{ExampleArtifactPluralName}}ContainerController' class.
+
+Deze moet volgende ArtifactTreeNodeCommand teruggeven via methode GetCommands:
+- Add {{ ArtifactName }}
+
+Registreer de '{{ ArtifactPluralName}}ContainerController' en '{{ ArtifactName}}ArtifactController' in de dependancy container:
+D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Application\ServiceCollectionExtensions.cs
+
+Genereer een '{{ ArtifactName}}EditViewModel'-class in folder:
+D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Application\ViewModels\Workspace\{{SubfolderName}}\{{ FolderName}}
+Kijk als voorbeeld naar de '{{ ExampleArtifactName}}EditViewModel'-class.
+
+Genereer een '{{ ArtifactName}}EditView'-class in folder:
+D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Presentation.WinForms\Views\Workspace\{{SubfolderName}}\{{ FolderName}}
+Kijk als voorbeeld naar de '{{ ExampleArtifactName}}EditView'-class.
+
+Voeg de View en Viewmodel toe aan de functie ShowDetailsControl() in D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Presentation.WinForms\Views\Workspace\WorkspaceDetailsView.cs.
+
+Maak in de DomainArtifact-class een functie Ensure{{ ArtifactPluralName }}ContainerExists.
+Voeg deze toe aan de twee bestaande constructors.
+Voeg een property 'public {{ ArtifactPluralName }}ContainerArtifact {{ ArtifactPluralName }} => Ensure{{ ArtifactPluralName }}ContainerExists();'

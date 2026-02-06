@@ -30,6 +30,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
         {
             pnlParameters = new Panel();
             pnlFooter = new Panel();
+            btnSetDefaults = new Button();
             btnEditTemplate = new Button();
             btnExecute = new Button();
             pnlFooter.SuspendLayout();
@@ -47,6 +48,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // 
             // pnlFooter
             // 
+            pnlFooter.Controls.Add(btnSetDefaults);
             pnlFooter.Controls.Add(btnEditTemplate);
             pnlFooter.Controls.Add(btnExecute);
             pnlFooter.Dock = DockStyle.Bottom;
@@ -54,6 +56,16 @@ namespace CodeGenerator.Presentation.WinForms.Views
             pnlFooter.Name = "pnlFooter";
             pnlFooter.Size = new Size(300, 50);
             pnlFooter.TabIndex = 1;
+            // 
+            // btnSetDefaults
+            // 
+            btnSetDefaults.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btnSetDefaults.Location = new Point(12, 12);
+            btnSetDefaults.Name = "btnSetDefaults";
+            btnSetDefaults.Size = new Size(95, 30);
+            btnSetDefaults.TabIndex = 0;
+            btnSetDefaults.Text = "Set Defaults";
+            btnSetDefaults.UseVisualStyleBackColor = true;
             // 
             // btnEditTemplate
             // 
@@ -72,7 +84,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             btnExecute.Location = new Point(209, 12);
             btnExecute.Name = "btnExecute";
             btnExecute.Size = new Size(85, 30);
-            btnExecute.TabIndex = 0;
+            btnExecute.TabIndex = 2;
             btnExecute.Text = "Execute";
             btnExecute.UseVisualStyleBackColor = true;
             // 
@@ -92,6 +104,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
 
         private Panel pnlParameters;
         private Panel pnlFooter;
+        private Button btnSetDefaults;
         private Button btnEditTemplate;
         private Button btnExecute;
     }

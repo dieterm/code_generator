@@ -27,10 +27,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
 
         public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("volleyball");
 
-        public void AddScope(string scopeName)
-        {
-            AddChild(new ScopeArtifact(scopeName));
-        }
+
 
         #region Implement IEnumerable<ScopeArtifact>
         public IEnumerator<ScopeArtifact> GetEnumerator()

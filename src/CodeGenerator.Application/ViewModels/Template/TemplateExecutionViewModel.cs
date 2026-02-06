@@ -1,6 +1,8 @@
 using CodeGenerator.Application.ViewModels.Workspace;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
+using System.Windows.Input;
 
 namespace CodeGenerator.Application.ViewModels.Template;
 
@@ -15,6 +17,13 @@ public class TemplateExecutionViewModel : ViewModelBase
     private bool _isScribanTemplate;
     private string? _templateFilePath;
 
+    public TemplateExecutionViewModel()
+    {
+        ExecuteCommand = new RelayCommand(() => ExecuteRequested?.Invoke(this, EventArgs.Empty), () => CanExecute && !IsExecuting);
+        EditTemplateCommand = new RelayCommand(() => EditTemplateRequested?.Invoke(this, EventArgs.Empty), () => IsScribanTemplate && !string.IsNullOrEmpty(TemplateFilePath));
+        SetDefaultsCommand = new RelayCommand(() => SetDefaultsRequested?.Invoke(this, EventArgs.Empty), () => ParameterFields.Any() && !IsExecuting);
+    }
+
     /// <summary>
     /// List of parameter field view models for the UI
     /// </summary>
@@ -27,6 +36,7 @@ public class TemplateExecutionViewModel : ViewModelBase
             {
                 SubscribeToFieldChanges();
                 ValidateParameters();
+                SetDefaultsCommand.RaiseCanExecuteChanged();
             }
         }
     }
@@ -37,7 +47,13 @@ public class TemplateExecutionViewModel : ViewModelBase
     public bool CanExecute
     {
         get => _canExecute;
-        set => SetProperty(ref _canExecute, value);
+        set
+        {
+            if (SetProperty(ref _canExecute, value))
+            {
+                ExecuteCommand.RaiseCanExecuteChanged();
+            }
+        }
     }
 
     /// <summary>
@@ -51,6 +67,8 @@ public class TemplateExecutionViewModel : ViewModelBase
             if (SetProperty(ref _isExecuting, value))
             {
                 OnPropertyChanged(nameof(CanExecute));
+                ExecuteCommand.RaiseCanExecuteChanged();
+                SetDefaultsCommand.RaiseCanExecuteChanged();
             }
         }
     }
@@ -61,7 +79,13 @@ public class TemplateExecutionViewModel : ViewModelBase
     public bool IsScribanTemplate
     {
         get => _isScribanTemplate;
-        set => SetProperty(ref _isScribanTemplate, value);
+        set 
+        { 
+            if(SetProperty(ref _isScribanTemplate, value))
+            {
+                EditTemplateCommand.RaiseCanExecuteChanged();
+            }
+        }
     }
 
     /// <summary>
@@ -70,7 +94,13 @@ public class TemplateExecutionViewModel : ViewModelBase
     public string? TemplateFilePath
     {
         get => _templateFilePath;
-        set => SetProperty(ref _templateFilePath, value);
+        set 
+        { 
+            if(SetProperty(ref _templateFilePath, value))
+            {
+                EditTemplateCommand.RaiseCanExecuteChanged();
+            }
+        }
     }
 
     /// <summary>
@@ -84,26 +114,24 @@ public class TemplateExecutionViewModel : ViewModelBase
     public event EventHandler? EditTemplateRequested;
 
     /// <summary>
+    /// Event raised when the user requests to set default values for parameters
+    /// </summary>
+    public event EventHandler? SetDefaultsRequested;
+    
+    /// <summary>
     /// Raises the ExecuteRequested event
     /// </summary>
-    public void RequestExecute()
-    {
-        if (CanExecute && !IsExecuting)
-        {
-            ExecuteRequested?.Invoke(this, EventArgs.Empty);
-        }
-    }
-
+    public RelayCommand ExecuteCommand { get; }
+    
     /// <summary>
     /// Raises the EditTemplateRequested event
     /// </summary>
-    public void RequestEditTemplate()
-    {
-        if (IsScribanTemplate && !string.IsNullOrEmpty(TemplateFilePath))
-        {
-            EditTemplateRequested?.Invoke(this, EventArgs.Empty);
-        }
-    }
+    public RelayCommand EditTemplateCommand { get; }
+
+    /// <summary>
+    /// Command to set default values for all parameters
+    /// </summary>
+    public RelayCommand SetDefaultsCommand { get; }
 
     /// <summary>
     /// Subscribe to property changes on all fields to validate when values change

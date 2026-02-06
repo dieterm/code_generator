@@ -1,0 +1,10 @@
+{
+  "templateName": "CreateDomainArtifactPrompt",
+  "displayName": "CreateDomainArtifactPrompt.scriban",
+  "description": null,
+  "category": null,
+  "tags": null,
+  "version": null,
+  "author": null,
+  "parameters": []
+}

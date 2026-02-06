@@ -17,8 +17,6 @@ public partial class TemplateExecutionView : UserControl, IView<TemplateExecutio
     public TemplateExecutionView()
     {
         InitializeComponent();
-        btnExecute.Click += BtnExecute_Click;
-        btnEditTemplate.Click += BtnEditTemplate_Click;
         pnlParameters.Resize += PnlParameters_Resize;
     }
 
@@ -27,6 +25,9 @@ public partial class TemplateExecutionView : UserControl, IView<TemplateExecutio
         if (_viewModel != null)
         {
             _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
+            btnEditTemplate.Command = null;
+            btnExecute.Command = null;
+            btnSetDefaults.Command = null;
         }
 
         _viewModel = viewModel;
@@ -37,6 +38,9 @@ public partial class TemplateExecutionView : UserControl, IView<TemplateExecutio
             RebuildParameterControls();
             UpdateExecutingState();
             UpdateEditTemplateButtonVisibility();
+            btnEditTemplate.Command = _viewModel.EditTemplateCommand;
+            btnSetDefaults.Command = _viewModel.SetDefaultsCommand;
+            btnExecute.Command = _viewModel.ExecuteCommand;
         }
     }
 
@@ -180,6 +184,7 @@ public partial class TemplateExecutionView : UserControl, IView<TemplateExecutio
         btnExecute.Enabled = _viewModel.CanExecute && !_viewModel.IsExecuting;
         btnExecute.Text = _viewModel.IsExecuting ? "Executing..." : "Execute";
         btnEditTemplate.Enabled = !_viewModel.IsExecuting;
+        btnSetDefaults.Enabled = !_viewModel.IsExecuting;
 
         foreach (Control control in pnlParameters.Controls)
         {
@@ -194,13 +199,4 @@ public partial class TemplateExecutionView : UserControl, IView<TemplateExecutio
         btnEditTemplate.Visible = _viewModel.IsScribanTemplate;
     }
 
-    private void BtnExecute_Click(object? sender, EventArgs e)
-    {
-        _viewModel?.RequestExecute();
-    }
-
-    private void BtnEditTemplate_Click(object? sender, EventArgs e)
-    {
-        _viewModel?.RequestEditTemplate();
-    }
 }

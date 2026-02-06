@@ -2,12 +2,14 @@
 {
     public class HexagonCodeArchitecture : CodeArchitecture<IHexagonArchitectureLayerFactory>
     {
+        public const string ARCHITECTURE_ID = "hexagon";
+
         public const string CORE_LAYER = "Core";
         public const string PORTS_LAYER = "Ports";
         public const string ADAPTERS_LAYER = "Adapters";
 
         public HexagonCodeArchitecture() 
-            : base("hexagon", "Hexagonal Architecture")
+            : base(ARCHITECTURE_ID, "Hexagonal Architecture")
         {
         }
 

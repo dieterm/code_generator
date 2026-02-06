@@ -14,8 +14,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             // Implementation for creating a presentation layer artifact based on the scope
             var presentationLayer = new OnionPresentationLayerArtifact(scope);
 
-            var viewsContainer = presentationLayer.AddChild(new ViewsContainerArtifact());
-
+            
             switch (scope)
             {
                 case CodeArchitectureScopes.APPLICATION_SCOPE:
