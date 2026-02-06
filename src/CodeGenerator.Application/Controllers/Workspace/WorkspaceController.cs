@@ -329,22 +329,22 @@ namespace CodeGenerator.Application.Controllers.Workspace
                             .WithSize(RibbonButtonSize.Large)
                             .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
                             .WithImage("file_plus")
-                            .WithCommand(_workspaceRibbonViewModel.RequestNewWorkspaceCommand)
+                            .WithCommand(_workspaceRibbonViewModel.NewWorkspaceCommand)
                         .AddButton("btnOpen", "Open")
                             .WithSize(RibbonButtonSize.Large)
                             .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
                             .WithImage("folder_open")
-                            .WithCommand(_workspaceRibbonViewModel.RequestOpenWorkspaceCommand)
+                            .WithCommand(_workspaceRibbonViewModel.OpenWorkspaceCommand)
                         .AddButton("btnSave", "Save")
                             .WithSize(RibbonButtonSize.Large)
                             .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
                             .WithImage("save")
-                            .WithCommand(_workspaceRibbonViewModel.RequestSaveWorkspaceCommand)
+                            .WithCommand(_workspaceRibbonViewModel.SaveWorkspaceCommand)
                         .AddButton("btnClose", "Close")
                             .WithSize(RibbonButtonSize.Large)
                             .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
                             .WithImage("x")
-                            .WithCommand(_workspaceRibbonViewModel.RequestCloseWorkspaceCommand)
+                            .WithCommand(_workspaceRibbonViewModel.CloseWorkspaceCommand)
                         .Build();
 
             workspaceTabBuilder.AddToolStrip("toolstripWorkspaceTemplates", "Templates")
@@ -352,7 +352,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                         .WithSize(RibbonButtonSize.Large)
                         .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
                         .WithImage("file_code")
-                        .WithCommand(_workspaceRibbonViewModel.RequestShowTemplatesCommand)
+                        .WithCommand(_workspaceRibbonViewModel.ShowTemplatesCommand)
                     .Build();
 
             workspaceTabBuilder.AddToolStrip("toolstripWorkspaceUndoRedo", "History")
@@ -360,12 +360,12 @@ namespace CodeGenerator.Application.Controllers.Workspace
                         .WithSize(RibbonButtonSize.Large)
                         .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
                         .WithImage("undo")
-                        .WithCommand(_workspaceRibbonViewModel.RequestUndoCommand)
+                        .WithCommand(_workspaceRibbonViewModel.UndoCommand)
                     .AddButton("btnRedo", "Redo")
                         .WithSize(RibbonButtonSize.Large)
                         .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
                         .WithImage("redo")
-                        .WithCommand(_workspaceRibbonViewModel.RequestRedoCommand)
+                        .WithCommand(_workspaceRibbonViewModel.RedoCommand)
                     .Build();
 
             workspaceTabBuilder.Build();

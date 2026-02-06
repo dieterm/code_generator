@@ -25,13 +25,13 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         public event EventHandler? RequestRedo;
 
         // Commands
-        public ICommand RequestNewWorkspaceCommand { get; }
-        public ICommand RequestOpenWorkspaceCommand { get; }
-        public ICommand RequestSaveWorkspaceCommand { get; }
-        public ICommand RequestCloseWorkspaceCommand { get; }
-        public ICommand RequestShowTemplatesCommand { get; }
-        public ICommand RequestUndoCommand { get; }
-        public ICommand RequestRedoCommand { get; }
+        public ICommand NewWorkspaceCommand { get; }
+        public ICommand OpenWorkspaceCommand { get; }
+        public ICommand SaveWorkspaceCommand { get; }
+        public ICommand CloseWorkspaceCommand { get; }
+        public ICommand ShowTemplatesCommand { get; }
+        public ICommand UndoCommand { get; }
+        public ICommand RedoCommand { get; }
 
         public WorkspaceRibbonViewModel(IWorkspaceContextProvider workspaceContextProvider)
         {
@@ -39,13 +39,13 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             _workspaceContextProvider.WorkspaceChanged += OnWorkspaceChanged;
             _workspaceContextProvider.WorkspaceHasUnsavedChangesChanged += OnWorkspaceHasUnsavedChangesChanged;
 
-            RequestNewWorkspaceCommand = new RelayCommand((e) => RequestNewWorkspace?.Invoke(this, EventArgs.Empty), CanRequestNewWorkspace);
-            RequestOpenWorkspaceCommand = new RelayCommand((e) => RequestOpenWorkspace?.Invoke(this, EventArgs.Empty), CanRequestOpenWorkspace);
-            RequestSaveWorkspaceCommand = new RelayCommand((e) => RequestSaveWorkspace?.Invoke(this, EventArgs.Empty), CanRequestSaveWorkspace);
-            RequestCloseWorkspaceCommand = new RelayCommand((e) => RequestCloseWorkspace?.Invoke(this, EventArgs.Empty), CanRequestCloseWorkspace);
-            RequestShowTemplatesCommand = new RelayCommand((e) => RequestShowTemplates?.Invoke(this, EventArgs.Empty), CanShowTemplates);
-            RequestUndoCommand = new RelayCommand((e) => RequestUndo?.Invoke(this, EventArgs.Empty));
-            RequestRedoCommand = new RelayCommand((e) => RequestRedo?.Invoke(this, EventArgs.Empty));
+            NewWorkspaceCommand = new RelayCommand((e) => RequestNewWorkspace?.Invoke(this, EventArgs.Empty), CanRequestNewWorkspace);
+            OpenWorkspaceCommand = new RelayCommand((e) => RequestOpenWorkspace?.Invoke(this, EventArgs.Empty), CanRequestOpenWorkspace);
+            SaveWorkspaceCommand = new RelayCommand((e) => RequestSaveWorkspace?.Invoke(this, EventArgs.Empty), CanRequestSaveWorkspace);
+            CloseWorkspaceCommand = new RelayCommand((e) => RequestCloseWorkspace?.Invoke(this, EventArgs.Empty), CanRequestCloseWorkspace);
+            ShowTemplatesCommand = new RelayCommand((e) => RequestShowTemplates?.Invoke(this, EventArgs.Empty), CanShowTemplates);
+            UndoCommand = new RelayCommand((e) => RequestUndo?.Invoke(this, EventArgs.Empty));
+            RedoCommand = new RelayCommand((e) => RequestRedo?.Invoke(this, EventArgs.Empty));
         }
 
         private void OnWorkspaceHasUnsavedChangesChanged(object? sender, EventArgs e)
@@ -60,11 +60,11 @@ namespace CodeGenerator.Application.ViewModels.Workspace
 
         private void RaiseCanExecuteChanged()
         {
-            (RequestNewWorkspaceCommand as RelayCommand)?.RaiseCanExecuteChanged();
-            (RequestOpenWorkspaceCommand as RelayCommand)?.RaiseCanExecuteChanged();
-            (RequestSaveWorkspaceCommand as RelayCommand)?.RaiseCanExecuteChanged();
-            (RequestCloseWorkspaceCommand as RelayCommand)?.RaiseCanExecuteChanged();
-            (RequestShowTemplatesCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            (NewWorkspaceCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            (OpenWorkspaceCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            (SaveWorkspaceCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            (CloseWorkspaceCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            (ShowTemplatesCommand as RelayCommand)?.RaiseCanExecuteChanged();
         }
 
         private bool CanRequestNewWorkspace(object? arg)

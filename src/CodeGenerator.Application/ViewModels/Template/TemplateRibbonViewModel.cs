@@ -11,16 +11,16 @@ namespace CodeGenerator.Application.ViewModels.Template
 {
     public class TemplateRibbonViewModel : ViewModelBase
     {
-        public ICommand RequestShowTemplatesCommand { get; }
-        public ICommand RequestRefreshTemplatesCommand { get; }
+        public ICommand ShowTemplatesCommand { get; }
+        public ICommand RefreshTemplatesCommand { get; }
 
         public event EventHandler? RequestShowTemplates;
         public event EventHandler? RequestRefreshTemplates;
 
         public TemplateRibbonViewModel()
         {
-            RequestShowTemplatesCommand = new RelayCommand((e) => RequestShowTemplates?.Invoke(this, EventArgs.Empty));
-            RequestRefreshTemplatesCommand = new RelayCommand((e) => RequestRefreshTemplates?.Invoke(this, EventArgs.Empty));
+            ShowTemplatesCommand = new RelayCommand((e) => RequestShowTemplates?.Invoke(this, EventArgs.Empty));
+            RefreshTemplatesCommand = new RelayCommand((e) => RequestRefreshTemplates?.Invoke(this, EventArgs.Empty));
         }
     }
 }

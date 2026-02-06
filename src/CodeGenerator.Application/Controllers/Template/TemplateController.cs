@@ -64,13 +64,13 @@ public class TemplateController : CoreControllerBase
                         .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
                         .WithImage("file_code")
                         .WithToolTip("Browse and execute templates")
-                        .WithCommand(_templateRibbonViewModel.RequestShowTemplatesCommand)
+                        .WithCommand(_templateRibbonViewModel.ShowTemplatesCommand)
                     .AddButton("btnRefreshTemplates", "Refresh")
                         .WithSize(RibbonButtonSize.Small)
                         .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
                         .WithImage("refresh_cw")
                         .WithToolTip("Refresh template list")
-                        .WithCommand(_templateRibbonViewModel.RequestRefreshTemplatesCommand)
+                        .WithCommand(_templateRibbonViewModel.RefreshTemplatesCommand)
                 .EndToolStrip()
             .Build();
     }
