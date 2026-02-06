@@ -8,6 +8,7 @@ using CodeGenerator.UserControls;
 using CodeGenerator.UserControls.Ribbon;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using CodeGenerator.Presentation.WinForms.Views.Application;
 
 namespace CodeGenerator.Presentation.WinForms;
 
@@ -29,8 +30,10 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IRibbonRenderer, SyncfusionRibbonRenderer>();
         services.AddSharedUserControlViews();
         // Main form
-        var mainView = new MainView();
-        services.AddSingleton<MainView>(mainView);
+        //var mainView = new MainView();
+        //services.AddSingleton<MainView>(mainView);
+        //var mainView = new MainView();
+        services.AddSingleton<MainView>();
         services.AddSingleton<IWindowManagerService>((s) => new WindowManagerService(Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<MainView>(s)));
         // Resources
         services.AddSingleton<ITreeNodeIconResolver<ResourceManagerTreeNodeIcon>, ResourceManagerTreeNodeIconResolver>();

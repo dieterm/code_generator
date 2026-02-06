@@ -1,6 +1,5 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.CodeGeneration;
-using CodeGenerator.Core.DomainSchema.Services;
 using CodeGenerator.Core.Generators.MessageBus;
 using CodeGenerator.Core.Settings.Generators;
 using CodeGenerator.Core.Workspaces.Artifacts;

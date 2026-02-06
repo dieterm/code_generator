@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\Template\TemplateController.cs" />
     <Compile Remove="Controllers\Workspace\DomainsContainerController.cs" />
     <Compile Remove="ViewModels\UserControls\TableArtifactFieldModel.cs" />
     <Compile Remove="ViewModels\Workspace\WorkspaceDetailsViewModel.cs" />
@@ -21,7 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CodeGenerator.Core.Artifacts\CodeGenerator.Core.Artifacts.csproj" />
-    <ProjectReference Include="..\CodeGenerator.Core.DomainSchema\CodeGenerator.Core.DomainSchema.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Generators\CodeGenerator.Core.Generators.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.MessageBus\CodeGenerator.Core.MessageBus.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Settings\CodeGenerator.Core.Settings.csproj" />

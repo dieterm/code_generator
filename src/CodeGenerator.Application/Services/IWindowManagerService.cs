@@ -4,13 +4,14 @@ using CodeGenerator.Application.ViewModels.Template;
 using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Settings.ViewModels;
+using CodeGenerator.Shared.ViewModels;
 
 namespace CodeGenerator.Application.Services
 {
     public interface IWindowManagerService
     {
+        void ShowViewModel<TViewModel>(TViewModel viewModel) where TViewModel : ViewModelBase;
         void ShowArtifactPreview(ArtifactPreviewViewModel viewModel);
-        void ShowDomainSchemaTreeView(DomainSchemaTreeViewModel treeViewModel);
         void ShowGenerationTreeView(GenerationResultTreeViewModel treeViewModel);
         void ShowSettingsWindow(SettingsViewModel settingsViewModel);
         void ShowWorkspaceTreeView(WorkspaceTreeViewModel treeViewModel);

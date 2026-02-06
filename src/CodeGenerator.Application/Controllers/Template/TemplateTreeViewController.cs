@@ -104,31 +104,11 @@ namespace CodeGenerator.Application.Controllers.Template
                 Logger.LogInformation("Initialized default template folder: {Folder}", defaultFolder);
             }
         }
-        public void CreateRibbon()
-        {
-            _ribbonBuilder
-                .AddTab("tabTemplates", "Templates")
-                    .AddToolStrip("toolstripTemplates", "Templates")
-                        .AddButton("btnShowTemplates", "Browse Templates")
-                            .WithSize(RibbonButtonSize.Large)
-                            .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
-                            .WithImage("file_code")
-                            .WithToolTip("Browse and execute templates")
-                            .OnClick((e) => OnShowTemplatesRequested())
-                        .AddButton("btnRefreshTemplates", "Refresh")
-                            .WithSize(RibbonButtonSize.Small)
-                            .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
-                            .WithImage("refresh_cw")
-                            .WithToolTip("Refresh template list")
-                            .OnClick((e) => RefreshTemplates())
-                    .EndToolStrip()
-                .Build();
-        }
 
-        private void OnShowTemplatesRequested()
-        {
-            ShowTemplateTreeView(TargetTemplateFolder.Default);
-        }
+        //private void OnShowTemplatesRequested()
+        //{
+        //    ShowTemplateTreeView(TargetTemplateFolder.Default);
+        //}
 
 
         public void RefreshTemplates()

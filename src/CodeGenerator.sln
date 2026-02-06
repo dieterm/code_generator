@@ -31,8 +31,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core.Generato
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core.Templates", "CodeGenerator.Core.Templates\CodeGenerator.Core.Templates.csproj", "{69C87E27-34F2-4F0F-BC4B-7AD0CAD7AC62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core.DomainSchema", "CodeGenerator.Core.DomainSchema\CodeGenerator.Core.DomainSchema.csproj", "{832FE4D8-B076-46A2-AE90-E1614172C36D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Presentation.WinForms", "CodeGenerator.Presentation.WinForms\CodeGenerator.Presentation.WinForms.csproj", "{1161A673-9671-4CB2-8FAF-48DCFEC8EC1F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Application", "CodeGenerator.Application\CodeGenerator.Application.csproj", "{E146C9BF-65A0-45AD-9C15-E21CC768703E}"
@@ -228,10 +226,6 @@ Global
 		{69C87E27-34F2-4F0F-BC4B-7AD0CAD7AC62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69C87E27-34F2-4F0F-BC4B-7AD0CAD7AC62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69C87E27-34F2-4F0F-BC4B-7AD0CAD7AC62}.Release|Any CPU.Build.0 = Release|Any CPU
-		{832FE4D8-B076-46A2-AE90-E1614172C36D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{832FE4D8-B076-46A2-AE90-E1614172C36D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{832FE4D8-B076-46A2-AE90-E1614172C36D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{832FE4D8-B076-46A2-AE90-E1614172C36D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1161A673-9671-4CB2-8FAF-48DCFEC8EC1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1161A673-9671-4CB2-8FAF-48DCFEC8EC1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1161A673-9671-4CB2-8FAF-48DCFEC8EC1F}.Release|Any CPU.ActiveCfg = Release|Any CPU

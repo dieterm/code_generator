@@ -10,7 +10,6 @@ using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Application.ViewModels.Generation;
 using CodeGenerator.Application.ViewModels.Template;
 using CodeGenerator.Application.ViewModels.Workspace;
-using CodeGenerator.Core.DomainSchema.Services;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Interfaces;
 using CodeGenerator.Core.MessageBus;
@@ -64,7 +63,7 @@ public static class ServiceCollectionExtensions
         CSharpCodeGeneratorExtensions.RegisterCSharpCodeGenerator();
         // Register ViewModels
         services.AddTransient<MainViewModel>();
-        services.AddTransient<DomainSchemaTreeViewModel>();
+        
         services.AddTransient<GenerationResultTreeViewModel>();
         services.AddTransient<ArtifactPreviewViewModel>();
         services.AddTransient<SettingsViewModel>();
@@ -73,8 +72,6 @@ public static class ServiceCollectionExtensions
 
         // Register Controllers
         services.AddSingleton<ApplicationController>();
-        services.AddSingleton<DomainSchemaController>();
-        
         services.AddSingleton<GenerationController>();
         services.AddSingleton<GenerationRibbonViewModel>();
         
@@ -90,7 +87,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<WorkspaceRibbonViewModel>();
         // Register Template Controllers
         services.AddSingleton<TemplateTreeViewController>();
-
+        services.AddSingleton<TemplateRibbonViewModel>();
+        services.AddSingleton<TemplateController>();
         // Workspace Artifact Controllers
         services.AddSingleton<IWorkspaceArtifactController, WorkspaceArtifactController>();
 
@@ -159,7 +157,6 @@ public static class ServiceCollectionExtensions
         services.AddWorkspaceServices(configuration);
 
         // Register Services
-        services.AddSingleton<DomainSchemaParser>();
         services.AddSingleton<GeneratorOrchestrator>();
         services.AddSingleton<CodeArchitectureManager>();
         // Settings Managers

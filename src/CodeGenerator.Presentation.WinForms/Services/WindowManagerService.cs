@@ -8,6 +8,11 @@ using CodeGenerator.Shared.ExtensionMethods;
 using CodeGenerator.Presentation.WinForms.Views;
 using Syncfusion.Windows.Forms.Tools;
 using CodeGenerator.Application.ViewModels.Generation;
+using CodeGenerator.Shared.ViewModels;
+using CodeGenerator.Shared;
+using CodeGenerator.Shared.Views;
+using CodeGenerator.Presentation.WinForms.Views.Template;
+using CodeGenerator.Presentation.WinForms.Views.Application;
 
 
 namespace CodeGenerator.Presentation.WinForms.Services
@@ -24,28 +29,6 @@ namespace CodeGenerator.Presentation.WinForms.Services
         }
 
         #region IView IWindowManagerService
-        private DomainSchemaTreeView? _domainSchemaTreeView;
-        public void ShowDomainSchemaTreeView(DomainSchemaTreeViewModel treeViewModel)
-        {
-            if (_domainSchemaTreeView == null || _domainSchemaTreeView.IsDisposed)
-            {
-                _domainSchemaTreeView = new DomainSchemaTreeView();
-
-                dockingManager.DockControl(_domainSchemaTreeView, mainView, DockingStyle.Left, 4);
-                dockingManager.SetEnableDocking(_domainSchemaTreeView, true);
-                dockingManager.SetControlSize(_domainSchemaTreeView, new Size(300, mainView.Height - 50));
-                dockingManager.SetDockLabel(_domainSchemaTreeView, "Domain Schema");
-            }
-            else
-            {
-                dockingManager.SetDockVisibility(_domainSchemaTreeView, true);
-                //if (!_domainSchemaTreeView.Visible)
-                //{
-                //    dockingManager.DockControl(_domainSchemaTreeView, this, DockingStyle.Left, 4);
-                //}
-            }
-            _domainSchemaTreeView.BindViewModel(treeViewModel);
-        }
 
         private GenerationResultTreeView? _generationResultTreeView;
         public void ShowGenerationTreeView(GenerationResultTreeViewModel treeViewModel)
@@ -217,6 +200,11 @@ namespace CodeGenerator.Presentation.WinForms.Services
             }
 
             _templateDetailsView.BindViewModel(artifactDetailsViewModel);
+        }
+
+        public void ShowViewModel<TViewModel>(TViewModel viewModel) where TViewModel : ViewModelBase
+        {
+            var view = ServiceProviderHolder.GetRequiredService<IView<TViewModel>>();
         }
         #endregion
 

@@ -1,5 +1,5 @@
 using CodeGenerator.Application.Controllers.Base;
-using CodeGenerator.Application.ViewModels.Workspace;
+using CodeGenerator.Application.ViewModels.Workspace.Datasources;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using Microsoft.Extensions.Logging;

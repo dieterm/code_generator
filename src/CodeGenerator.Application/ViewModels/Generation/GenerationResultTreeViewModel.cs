@@ -1,5 +1,4 @@
 ﻿using CodeGenerator.Core.Artifacts;
-using CodeGenerator.Core.DomainSchema.Schema;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.ViewModels;

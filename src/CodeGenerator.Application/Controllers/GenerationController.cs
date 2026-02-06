@@ -4,7 +4,6 @@ using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Application.ViewModels.Generation;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.FileSystem;
-using CodeGenerator.Core.DomainSchema.Schema;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Workspaces.Services;

@@ -2,7 +2,6 @@
 using CodeGenerator.Application.Controllers.Template;
 using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Application.Events.Application;
-using CodeGenerator.Application.Events.DomainSchema;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Events.Application;
 using CodeGenerator.Core.Generators;
@@ -25,10 +24,10 @@ namespace CodeGenerator.Application.Controllers
         private readonly WorkspaceController _workspaceController;
         private readonly GenerationController _generationController;
         private readonly SettingsController _settingsController;
-        private readonly TemplateTreeViewController _templateController;
+        private readonly TemplateController _templateController;
 
 
-        public ApplicationController( MainViewModel viewModel, SettingsController settingsController, WorkspaceController workspaceController, GenerationController generationController, TemplateTreeViewController templateController, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IApplicationService applicationService, ApplicationMessageBus messageBus, IMessageBoxService messageBoxService, IFileSystemDialogService fileSystemDialogService, ILogger<ApplicationController> logger) 
+        public ApplicationController( MainViewModel viewModel, SettingsController settingsController, WorkspaceController workspaceController, GenerationController generationController, TemplateController templateController, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IApplicationService applicationService, ApplicationMessageBus messageBus, IMessageBoxService messageBoxService, IFileSystemDialogService fileSystemDialogService, ILogger<ApplicationController> logger) 
             : base(windowManagerService, ribbonBuilder, messageBus, messageBoxService, fileSystemDialogService, logger)
         {
             _mainViewModel = viewModel;
