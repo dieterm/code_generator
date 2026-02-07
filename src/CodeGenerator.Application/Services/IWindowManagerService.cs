@@ -19,5 +19,6 @@ namespace CodeGenerator.Application.Services
         void ShowTemplateTreeView(TemplateTreeViewModel treeViewModel);
         void ShowTemplateDetailsView(ArtifactDetailsViewModel artifactDetailsViewModel);
         void ShowScribanTemplateEditView(ScribanTemplateEditViewModel viewModel);
+        void ShowCopilotChatView(ViewModelBase viewModel);
     }
 }

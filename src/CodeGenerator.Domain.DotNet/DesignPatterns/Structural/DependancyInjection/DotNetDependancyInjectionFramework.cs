@@ -265,6 +265,7 @@ namespace CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection
                 Modifiers = ElementModifiers.Static,
                 Documentation = "Extension methods for registering services in the DI container"
             };
+            
 
             foreach (var module in moduleRegistrations)
             {

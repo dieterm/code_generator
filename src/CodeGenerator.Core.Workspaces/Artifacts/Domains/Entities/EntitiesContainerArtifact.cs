@@ -33,9 +33,9 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities
         /// <summary>
         /// Add an entity to this container
         /// </summary>
-        public void AddEntity(EntityArtifact entity)
+        public EntityArtifact AddEntity(EntityArtifact entity)
         {
-            AddChild(entity);
+            return AddChild(entity);
         }
 
         /// <summary>

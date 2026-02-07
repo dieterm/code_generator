@@ -14,11 +14,11 @@ namespace CodeGenerator.UserControls.Ribbon;
 /// </summary>
 public class SyncfusionRibbonRenderer : IRibbonRenderer
 {
-    private global::System.Resources.ResourceManager? _resourceManager;
+    private List<global::System.Resources.ResourceManager>? _resourceManagers = new List<global::System.Resources.ResourceManager>();
 
-    public IRibbonRenderer SetResourceManager(global::System.Resources.ResourceManager resourceManager)
+    public IRibbonRenderer AddResourceManager(global::System.Resources.ResourceManager resourceManager)
     {
-        _resourceManager = resourceManager;
+        _resourceManagers.Add(resourceManager);
         return this;
     }
 
@@ -28,13 +28,22 @@ public class SyncfusionRibbonRenderer : IRibbonRenderer
     /// </summary>
     public Image? GetResourceImage(string resourceKey)
     {
-        if(_resourceManager==null)
-            throw new InvalidOperationException("ResourceManager is not set. Call SyncfusionRibbonRenderer.SetResourceManager(...) first.");
+        if(!_resourceManagers.Any())
+            throw new InvalidOperationException("No ResourceManager is not set. Call SyncfusionRibbonRenderer.AddResourceManager(...) first.");
         
-        object? obj = _resourceManager.GetObject(resourceKey);
+        object? obj = null;
+        foreach (var resourceManager in _resourceManagers)
+        {
+            obj = resourceManager.GetObject(resourceKey);
+            if (obj != null)
+                break;
+        }
         if (obj == null)
             return null;
-
+        if(obj is System.Drawing.Icon icon)
+        {
+            return icon.ToBitmap();
+        }
         return (Image)obj;
     }
 

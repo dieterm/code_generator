@@ -13,6 +13,8 @@ using CodeGenerator.Shared;
 using CodeGenerator.Shared.Views;
 using CodeGenerator.Presentation.WinForms.Views.Template;
 using CodeGenerator.Presentation.WinForms.Views.Application;
+using CodeGenerator.Core.Copilot;
+using CodeGenerator.Core.Copilot.ViewModels;
 
 
 namespace CodeGenerator.Presentation.WinForms.Services
@@ -205,6 +207,18 @@ namespace CodeGenerator.Presentation.WinForms.Services
         public void ShowViewModel<TViewModel>(TViewModel viewModel) where TViewModel : ViewModelBase
         {
             var view = ServiceProviderHolder.GetRequiredService<IView<TViewModel>>();
+        }
+
+        private CopilotChatView? _copilotChatView;
+        public void ShowCopilotChatView(ViewModelBase viewModel)
+        {
+            var copilotViewModel = (viewModel as CopilotChatViewModel)!;
+            if (_copilotChatView == null || _copilotChatView.IsDisposed) {
+                _copilotChatView = new CopilotChatView();
+            }
+            _copilotChatView.BindViewModel(copilotViewModel);
+            dockingManager.DockAsDocument(_copilotChatView);
+            dockingManager.SetDockLabel(_copilotChatView, "Copilot Chat");
         }
         #endregion
 

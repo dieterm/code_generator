@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Shared.Controllers
 {
-    public abstract class ControllerBase : IDisposable
+    public abstract class ControllerBase : IDisposable, IControllerBase
     {
         public abstract void Initialize();
         /// <summary>

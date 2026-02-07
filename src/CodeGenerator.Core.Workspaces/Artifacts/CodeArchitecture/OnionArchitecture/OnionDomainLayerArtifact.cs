@@ -23,9 +23,9 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
 
         public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("boxes");
 
-        public void AddDomain(string domainName)
+        public DomainArtifact AddDomain(string domainName)
         {
-            AddChild(new DomainArtifact(domainName));
+            return AddChild(new DomainArtifact(domainName));
         }
 
         public IEnumerator<DomainArtifact> GetEnumerator()

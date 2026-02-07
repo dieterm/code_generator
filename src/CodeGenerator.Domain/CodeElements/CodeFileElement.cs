@@ -93,7 +93,8 @@ namespace CodeGenerator.Domain.CodeElements
         /// </summary>
         public CodeFileElement AddUsing(string @namespace)
         {
-            Usings.Add(new UsingElement(@namespace));
+            if(!Usings.Any(u => u.Namespace == @namespace))
+                Usings.Add(new UsingElement(@namespace));
             return this;
         }
 

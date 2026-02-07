@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Application.Controllers.Copilot;
 using CodeGenerator.Application.Controllers.Template;
 using CodeGenerator.Application.Events.Application;
 using CodeGenerator.Application.Services;
@@ -32,15 +33,17 @@ namespace CodeGenerator.Application.Controllers.Workspace
         private readonly WorkspaceTreeViewController _workspaceTreeViewController;
         private readonly WorkspaceMessageBus _workspaceMessageBus;
         private readonly UndoRedoManager _undoRedoManager;
+        private readonly ICopilotController _copilotController;
         public bool HasUnsavedChanges { get {return _workspaceTreeViewController.HasUnsavedChanges; } }
 
-        public WorkspaceController(UndoRedoManager undoRedoManager, WorkspaceMessageBus workspaceMessageBus, WorkspaceTreeViewController workspaceTreeViewController, WorkspaceRibbonViewModel workspaceRibbonViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<WorkspaceController> logger) 
+        public WorkspaceController(ICopilotController copilotController, UndoRedoManager undoRedoManager, WorkspaceMessageBus workspaceMessageBus, WorkspaceTreeViewController workspaceTreeViewController, WorkspaceRibbonViewModel workspaceRibbonViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<WorkspaceController> logger) 
             : base(windowManagerService, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
         {
             _undoRedoManager = undoRedoManager ?? throw new ArgumentNullException(nameof(undoRedoManager));
             _workspaceMessageBus = workspaceMessageBus;
             _workspaceRibbonViewModel = workspaceRibbonViewModel;
             _workspaceTreeViewController = workspaceTreeViewController;
+            _copilotController = copilotController;
         }
 
         public override void Initialize()
@@ -56,9 +59,15 @@ namespace CodeGenerator.Application.Controllers.Workspace
             _workspaceRibbonViewModel.RequestRedo += OnRequestRedo;
             _workspaceRibbonViewModel.RequestUndoMultiple += OnRequestUndoMultiple;
             _workspaceRibbonViewModel.RequestRedoMultiple += OnRequestRedoMultiple;
+            _workspaceRibbonViewModel.RequestShowCopilot += OnRequestShowCopilot;
+
+            _copilotController.Initialize();
         }
 
-
+        private void OnRequestShowCopilot(object? sender, EventArgs e)
+        {
+            _copilotController.ShowCopilot();
+        }
 
         [Obsolete]
         private async Task GenerateAllDotNetProjectCombinations()
@@ -408,6 +417,14 @@ namespace CodeGenerator.Application.Controllers.Workspace
                         .WithImage("redo")
                         .WithCommand(_workspaceRibbonViewModel.RedoCommand)
                         .WithDropDownItemsProvider(() => _workspaceRibbonViewModel.GetRedoDropDownItems())
+                    .Build();
+
+            workspaceTabBuilder.AddToolStrip("toolstripWorkspaceCopilot", "Copilot")
+                    .AddButton("btnShowCopilot", "Copilot")
+                        .WithSize(RibbonButtonSize.Large)
+                        .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
+                        .WithImage("copilot")
+                        .WithCommand(_workspaceRibbonViewModel.ShowCopilotCommand)
                     .Build();
 
             workspaceTabBuilder.Build();

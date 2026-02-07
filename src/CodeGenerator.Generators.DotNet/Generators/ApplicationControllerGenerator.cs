@@ -49,22 +49,18 @@ namespace CodeGenerator.Generators.DotNet.Generators
         {
             args.DiExtensionsClassArtifact.ServiceRegistrations.Add(new ServiceRegistration
             {
-                ServiceType = new TypeReference("ApplicationController"),
+                ServiceType = new TypeReference("ApplicationController", $"{WorkspaceTemplateHelpers.GetApplicationApplicationNamespace()}.Controllers"),
                 Lifetime = ServiceLifetime.Singleton
             });
-            args.DiExtensionsClassArtifact.CodeFile.AddUsing($"{WorkspaceTemplateHelpers.GetApplicationApplicationNamespace()}.Controllers");
-
+            
             //  MainViewModel
             args.DiExtensionsClassArtifact.ServiceRegistrations.Add(new ServiceRegistration
             {
-                ServiceType = new TypeReference("MainViewModel"),
+                ServiceType = new TypeReference("MainViewModel", $"{WorkspaceTemplateHelpers.GetApplicationApplicationNamespace()}.ViewModels"),
                 Lifetime = ServiceLifetime.Singleton
             });
-            // using VzwWijzer.Application.Application.ViewModels;
-            args.DiExtensionsClassArtifact.CodeFile.AddUsing($"{WorkspaceTemplateHelpers.GetApplicationApplicationNamespace()}.ViewModels");
 
             // Add Logging
-            
             var loggingCode = @"
         services.AddLogging(builder =>
         {

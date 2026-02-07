@@ -171,6 +171,31 @@ namespace CodeGenerator.Generators.DotNet.Generators
             codeFileArtifact.CodeFile.AddNamespace(layerNamespace, diClass);
             codeFileArtifact.CodeFile.Usings.AddRange(diFramework.GetExtensionMethodUsings().Select(x => new UsingElement(x)));
             codeFileArtifact.CodeFile.Usings.AddRange(diFramework.GetRequiredUsings().Select(x => new UsingElement(x)));
+            try
+            {
+
+           
+            foreach(var module in moduleRegistrations)
+            {
+                foreach(var registration in module.Value.ToArray())
+                {
+                    if(registration.ServiceType?.Namespace!=null)
+                    {
+                        codeFileArtifact.CodeFile.AddUsing(registration.ServiceType?.Namespace);
+                    }
+                    if(registration.ImplementationType?.Namespace!=null)
+                    {
+                        codeFileArtifact.CodeFile.AddUsing(registration.ImplementationType?.Namespace);
+                    }
+                    codeFileArtifact.ServiceRegistrations.Add(registration);
+                }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
             AddChildArtifactToParent(e.DotNetProjectArtifact, codeFileArtifact, e.Result);
 
             // Create ServiceProviderHolder class in Shared.Domain project

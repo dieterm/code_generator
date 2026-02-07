@@ -57,7 +57,8 @@ namespace CodeGenerator.Presentation.WinForms.Views.Application
 
             // Render Ribbon
             ServiceProviderHolder.GetRequiredService<IRibbonRenderer>()
-                .SetResourceManager(LucideIcons__000000.ResourceManager) // Image source
+                .AddResourceManager(LucideIcons__000000.ResourceManager) // Image source
+                .AddResourceManager(DotNetIcons.ResourceManager)
                 .Render(_mainViewModel.RibbonViewModel, ribbonControl);
 
             // Bind New Command

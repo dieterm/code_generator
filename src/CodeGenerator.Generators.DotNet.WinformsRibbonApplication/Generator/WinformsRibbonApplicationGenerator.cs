@@ -47,19 +47,15 @@ namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication
         private void OnDiExtensionsCodeFileArtifactCreated(DiExtensionsClassArtifactCreatedEventArgs args)
         {
             args.DiExtensionsClassArtifact.ServiceRegistrations.Add(new ServiceRegistration{
-                ServiceType = new TypeReference("IApplicationService"),
-                ImplementationType = new TypeReference("ApplicationService"),
+                ServiceType = new TypeReference("IApplicationService", $"{WorkspaceTemplateHelpers.GetApplicationApplicationNamespace()}.Services"),
+                ImplementationType = new TypeReference("ApplicationService", $"{WorkspaceTemplateHelpers.GetApplicationPresentationNamespace()}.Services"),
                 Lifetime = ServiceLifetime.Singleton
             });
-            args.DiExtensionsClassArtifact.CodeFile.AddUsing($"{WorkspaceTemplateHelpers.GetApplicationApplicationNamespace()}.Services");
-            args.DiExtensionsClassArtifact.CodeFile.AddUsing($"{WorkspaceTemplateHelpers.GetApplicationPresentationNamespace()}.Services");
             args.DiExtensionsClassArtifact.ServiceRegistrations.Add(new ServiceRegistration
             {
-                ServiceType = new TypeReference("MainView"),
+                ServiceType = new TypeReference("MainView", $"{WorkspaceTemplateHelpers.GetApplicationPresentationNamespace()}.Views"),
                 Lifetime = ServiceLifetime.Transient
             });
-            // using VzwWijzer.Application.Presentation.Views;
-            args.DiExtensionsClassArtifact.CodeFile.AddUsing($"{WorkspaceTemplateHelpers.GetApplicationPresentationNamespace()}.Views");
         }
 
         private bool PresentationDotNetProjectFilter(DotNetProjectArtifactCreatedEventArgs args)

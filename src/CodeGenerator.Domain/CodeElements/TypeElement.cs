@@ -60,12 +60,20 @@ namespace CodeGenerator.Domain.CodeElements
         /// Array rank (dimensions) if IsArray is true
         /// </summary>
         public int ArrayRank { get; set; } = 1;
-
+        /// <summary>
+        /// The namespace of the type, used for adding using directives if needed
+        /// </summary>
+        public string? Namespace { get; set; }
         public TypeReference() { }
 
         public TypeReference(string typeName)
         {
             TypeName = typeName;
+        }
+        public TypeReference(string typeName, string @namespace)
+        {
+            TypeName = typeName;
+            Namespace = @namespace;
         }
 
         public TypeReference(string typeName, bool isNullable)

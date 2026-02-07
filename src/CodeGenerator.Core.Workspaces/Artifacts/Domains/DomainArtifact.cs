@@ -234,9 +234,9 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
             return !string.IsNullOrWhiteSpace(newName);
         }
 
-        public void AddEntity(EntityArtifact entityArtifact)
+        public EntityArtifact AddEntity(EntityArtifact entityArtifact)
         {
-            Entities.AddEntity(entityArtifact);
+           return Entities.AddEntity(entityArtifact);
         }
 
         public void AddValueType(ValueTypeArtifact valueTypeArtifact)

@@ -2,6 +2,7 @@ using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Application.Controllers.Workspace.Datasources;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Core.Copilot;
 using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Workspaces.Datasources.Csv;
 using CodeGenerator.Presentation.WinForms.Resources;
@@ -32,7 +33,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IFileSystemDialogService, FileSystemDialogService>();
         services.AddSingleton<IRibbonRenderer, SyncfusionRibbonRenderer>();
         services.AddSharedUserControlViews();
-
+        services.AddCopilotServices(configuration);
         // Register Datasources
         services.AddCsvDatasourceServices(configuration);
         // Main form

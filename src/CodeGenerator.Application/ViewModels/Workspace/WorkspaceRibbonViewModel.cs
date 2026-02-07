@@ -24,6 +24,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         public event EventHandler? RequestSaveWorkspace;
         public event EventHandler? RequestCloseWorkspace;
         public event EventHandler? RequestShowTemplates;
+        public event EventHandler? RequestShowCopilot;
         public event EventHandler? RequestUndo;
         public event EventHandler? RequestRedo;
         public event EventHandler<int>? RequestUndoMultiple;
@@ -37,6 +38,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         public ICommand ShowTemplatesCommand { get; }
         public ICommand UndoCommand { get; }
         public ICommand RedoCommand { get; }
+        public ICommand ShowCopilotCommand { get; }
 
         public WorkspaceRibbonViewModel(IWorkspaceContextProvider workspaceContextProvider, UndoRedoManager undoRedoManager)
         {
@@ -51,9 +53,12 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             SaveWorkspaceCommand = new RelayCommand((e) => RequestSaveWorkspace?.Invoke(this, EventArgs.Empty), CanRequestSaveWorkspace);
             CloseWorkspaceCommand = new RelayCommand((e) => RequestCloseWorkspace?.Invoke(this, EventArgs.Empty), CanRequestCloseWorkspace);
             ShowTemplatesCommand = new RelayCommand((e) => RequestShowTemplates?.Invoke(this, EventArgs.Empty), CanShowTemplates);
+            ShowCopilotCommand = new RelayCommand((e) => RequestShowCopilot?.Invoke(this, EventArgs.Empty), CanShowCopilot);
             UndoCommand = new RelayCommand((e) => RequestUndo?.Invoke(this, EventArgs.Empty), _ => _undoRedoManager.CanUndo);
             RedoCommand = new RelayCommand((e) => RequestRedo?.Invoke(this, EventArgs.Empty), _ => _undoRedoManager.CanRedo);
         }
+
+
 
         private void OnUndoRedoHistoryChanged(object? sender, EventArgs e)
         {
@@ -78,6 +83,11 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             (SaveWorkspaceCommand as RelayCommand)?.RaiseCanExecuteChanged();
             (CloseWorkspaceCommand as RelayCommand)?.RaiseCanExecuteChanged();
             (ShowTemplatesCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            (ShowCopilotCommand as RelayCommand)?.RaiseCanExecuteChanged();
+        }
+        private bool CanShowCopilot(object? arg)
+        {
+            return _workspaceContextProvider.CurrentWorkspace != null; // Enable if a workspace is open
         }
 
         private bool CanRequestNewWorkspace(object? arg)
