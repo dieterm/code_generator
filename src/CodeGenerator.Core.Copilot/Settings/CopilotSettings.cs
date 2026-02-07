@@ -10,7 +10,10 @@
         {
         }
 
-        public string? Username { get; set; }
-        public string? Password { get; set; }
+        /// <summary>
+        /// GitHub Personal Access Token (PAT) with Copilot access.
+        /// Required scope: copilot
+        /// </summary>
+        public string? GitHubToken { get; set; }
     }
 }

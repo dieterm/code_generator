@@ -11,4 +11,9 @@
     <ProjectReference Include="..\CodeGenerator.Application\CodeGenerator.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="GitHub.Copilot.SDK" Version="0.1.23" />
+    <PackageReference Include="Microsoft.NET.StringTools" Version="18.0.2" ExcludeAssets="runtime" PrivateAssets="all" />
+  </ItemGroup>
+
 </Project>

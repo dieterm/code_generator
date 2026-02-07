@@ -30,18 +30,11 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
 
         public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("volleyball");
 
-        public void AddScope(string scopeName)
+        public ScopeArtifact AddScope(string scopeName)
         {
-            var scope = AddChild(new ScopeArtifact(scopeName));
-
             var codeArchitecture = Workspace!.CodeArchitecture!;
-
-            foreach (var layerFactory in codeArchitecture.Layers)
-            {
-                var layerArtifact = layerFactory.CreateLayer(scope.Name);
-                scope.AddChild(layerArtifact);
-            }
-            scope.AddChild(new SubScopesContainerArtifact());
+            var newScope = (codeArchitecture.ScopeFactory.CreateScopeArtifact(scopeName) as ScopeArtifact)!;
+            return AddChild(newScope);
         }
 
         #region Implement IEnumerable<ScopeArtifact>
