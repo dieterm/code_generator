@@ -2,11 +2,13 @@ using Syncfusion.Windows.Forms.Tools;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-
+using {{ get_application_application_namespace }}.ViewModels;
+using {{ get_shared_application_namespace }}.ViewModels;
+using {{ get_shared_application_namespace }}.Views;
 
 namespace {{ Namespace }}
 {
-    public partial class MainView : RibbonForm
+    public partial class MainView : RibbonForm, IView<MainViewModel>
     {
         /// <summary>
         /// expose DockingManger for WindowManagerService
@@ -16,6 +18,19 @@ namespace {{ Namespace }}
         public MainView()
         {
             InitializeComponent();
+        }
+
+        public void BindViewModel(MainViewModel viewModel)
+        {
+            lblProgress.DataBindings.Add("Text", viewModel, nameof(viewModel.ProgressLabel));
+            lblStatus.DataBindings.Add("Text", viewModel, nameof(viewModel.StatusLabel));
+            //pbProgress.DataBindings.Add("Value", viewModel, nameof(viewModel.ProgressValue));
+            btnExit.Command = viewModel.ExitCommand;
+        }
+
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        {
+            BindViewModel((MainViewModel)(object)viewModel);
         }
     }
 }

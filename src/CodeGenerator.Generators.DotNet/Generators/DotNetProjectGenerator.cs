@@ -64,15 +64,16 @@ namespace CodeGenerator.Generators.DotNet.Generators
                 DotNetProjectType projectType = (layer == scopeArtifact.Presentations) ? 
                     (scopeArtifact.Name== CodeArchitectureScopes.APPLICATION_SCOPE ? DotNetProjectTypes.WinFormsExe : DotNetProjectTypes.WinFormsLib) : 
                     DotNetProjectTypes.ClassLib;
-                var folderName = scopeArtifact.Namespace+"."+(layer as ILayerArtifact)!.LayerName;
+                var layerArtifact = (layer as CodeArchitectureLayerArtifact)!;
+                var folderName = scopeArtifact.Namespace+"."+ layerArtifact.LayerName;
                 var layerFolderArtifact = new FolderArtifact(folderName);
-                layerFolderArtifact.AddDecorator(new LayerArtifactRefDecorator(nameof(LayerArtifactRefDecorator), layer as ILayerArtifact));
+                layerFolderArtifact.AddDecorator(new LayerArtifactRefDecorator(nameof(LayerArtifactRefDecorator), layerArtifact));
                 AddChildArtifactToParent(scopeFolderArtifact, layerFolderArtifact, args.Result);
 
                 var dotNetProjectArtifact = new DotNetProjectArtifact(folderName, language, projectType, (layer == scopeArtifact.Presentations) ? winformsTargetFramework : targetFramework);
                 dotNetProjectArtifact.SolutionSubFolder = scopeArtifact.GetSolutionSubFolder();
                 AddChildArtifactToParent(layerFolderArtifact, dotNetProjectArtifact, args.Result);
-                PublishDotNetProjectCreated(dotNetProjectArtifact, args.Result, (layer as ILayerArtifact)!.LayerName, scopeArtifact.Name);
+                PublishDotNetProjectCreated(dotNetProjectArtifact, args.Result, layerArtifact.LayerName, scopeArtifact.Name);
             }
             return Task.CompletedTask;
         }

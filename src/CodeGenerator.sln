@@ -181,6 +181,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Generators.Do
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core.Workspaces.Datasources.Directory", "CodeGenerator.Core.Workspaces.Datasources.Directory\CodeGenerator.Core.Workspaces.Datasources.Directory.csproj", "{C4B5B82B-5E1C-43ED-88CE-58EDBF414520}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.TemplateEngines.Folder", "CodeGenerator.TemplateEngines.Folder\CodeGenerator.TemplateEngines.Folder.csproj", "{075240A2-1740-46EA-BD75-8526F5B0A869}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -354,6 +356,10 @@ Global
 		{C4B5B82B-5E1C-43ED-88CE-58EDBF414520}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4B5B82B-5E1C-43ED-88CE-58EDBF414520}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4B5B82B-5E1C-43ED-88CE-58EDBF414520}.Release|Any CPU.Build.0 = Release|Any CPU
+		{075240A2-1740-46EA-BD75-8526F5B0A869}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{075240A2-1740-46EA-BD75-8526F5B0A869}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{075240A2-1740-46EA-BD75-8526F5B0A869}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{075240A2-1740-46EA-BD75-8526F5B0A869}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -394,6 +400,7 @@ Global
 		{18E9BEF7-08A8-4DDD-81A1-683264EA08E1} = {09654CDA-46FB-4A25-BB90-65E726316AA5}
 		{54AA83B9-F514-4E6B-A211-FA7D2368431C} = {ED8AA5E0-9601-4995-910B-776F8204C303}
 		{C4B5B82B-5E1C-43ED-88CE-58EDBF414520} = {E9F8E255-2538-42FC-AD05-7742FE416432}
+		{075240A2-1740-46EA-BD75-8526F5B0A869} = {4856C5FE-741C-4773-A485-3E261182F82D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF76BCB8-B816-4DA2-B1B6-D1F900E7DD06}

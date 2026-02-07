@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,12 +12,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CodeGenerator.Application\CodeGenerator.Application.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Artifacts\CodeGenerator.Core.Artifacts.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces\CodeGenerator.Core.Workspaces.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core\CodeGenerator.Core.csproj" />
     <ProjectReference Include="..\CodeGenerator.Domain\CodeGenerator.Domain.csproj" />
     <ProjectReference Include="..\CodeGenerator.Shared\CodeGenerator.Shared.csproj" />
+    <ProjectReference Include="..\CodeGenerator.UserControls.Views\CodeGenerator.UserControls.Views.csproj" />
     <ProjectReference Include="..\CodeGenerator.UserControls\CodeGenerator.UserControls.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\CsvDatasourceEditView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
 
 </Project>

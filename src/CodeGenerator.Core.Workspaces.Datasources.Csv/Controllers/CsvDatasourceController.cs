@@ -137,7 +137,7 @@ public class CsvDatasourceController : WorkspaceArtifactControllerBase<CsvDataso
         _editViewModel.Datasource = artifact;
     }
 
-    private void OnEditViewModelValueChanged(object? sender, PropertyValueChangedEventArgs e)
+    private void OnEditViewModelValueChanged(object? sender, Core.Workspaces.Datasources.Csv.ViewModels.PropertyValueChangedEventArgs e)
     {
         if (_editViewModel?.Datasource is IArtifact artifact)
         {

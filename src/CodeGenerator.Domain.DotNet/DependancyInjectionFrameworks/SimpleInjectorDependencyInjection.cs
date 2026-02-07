@@ -144,6 +144,10 @@ return container;";
 
         public override string GenerateServiceRegistration(ServiceRegistration registration)
         {
+            if (!string.IsNullOrEmpty(registration.RawRegistrationCode))
+            {
+                return registration.RawRegistrationCode;
+            }
             var lifestyleParam = GetLifetimeMethodName(registration.Lifetime);
 
             if (registration.UsesInstance)

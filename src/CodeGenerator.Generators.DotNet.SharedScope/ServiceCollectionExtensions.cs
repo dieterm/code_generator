@@ -1,5 +1,6 @@
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Workspaces.MessageBus;
+using CodeGenerator.Generators.DotNet.SharedScope.Generators;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,7 +18,7 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-       
+        services.AddTransient<IMessageBusAwareGenerator, DotNetSharedScopeGenerator>();
 
         return services;
     }

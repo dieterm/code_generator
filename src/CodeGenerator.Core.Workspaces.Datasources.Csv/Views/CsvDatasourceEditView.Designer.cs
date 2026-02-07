@@ -1,6 +1,6 @@
 using CodeGenerator.UserControls.Views;
 
-namespace CodeGenerator.Presentation.WinForms.Views
+namespace CodeGenerator.Core.Workspaces.Datasources.Csv.Views
 {
     partial class CsvDatasourceEditView
     {

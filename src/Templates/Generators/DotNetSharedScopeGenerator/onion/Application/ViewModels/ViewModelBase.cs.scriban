@@ -1,0 +1,51 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+namespace {{ Namespace }};
+
+/// <summary>
+/// Base class for all ViewModels implementing INotifyPropertyChanged
+/// </summary>
+public abstract class ViewModelBase : INotifyPropertyChanged, IDisposable
+{
+    public event PropertyChangedEventHandler? PropertyChanged;
+    public event EventHandler? Disposed;
+    private bool _isDisposing = false;
+    private bool _isDisposed = false;
+    public void Dispose()
+    {
+        if (_isDisposing)
+            return;
+        _isDisposing = true;
+        Disposed?.Invoke(this, EventArgs.Empty);
+        DisposeViewModel();
+        _isDisposing = false;
+        _isDisposed = true;
+    }
+
+    /// <summary>
+    /// Override to dispose resources used by the ViewModel
+    /// </summary>
+    public virtual void DisposeViewModel()
+    {
+        // Override in derived classes to dispose resources
+    }
+
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        ObjectDisposedException.ThrowIf(_isDisposed, this);
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    protected virtual bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    {
+        ObjectDisposedException.ThrowIf(_isDisposed, this);
+        if (EqualityComparer<T>.Default.Equals(field, value))
+            return false;
+
+        field = value;
+        OnPropertyChanged(propertyName);
+        return true;
+    }
+}

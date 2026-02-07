@@ -143,6 +143,10 @@ namespace CodeGenerator.Domain.DependancyInjectionFrameworks
 
         public override string GenerateServiceRegistration(ServiceRegistration registration)
         {
+            if (!string.IsNullOrEmpty(registration.RawRegistrationCode))
+            {
+                return registration.RawRegistrationCode;
+            }
             var sb = new StringBuilder();
             sb.Append("container.Register(Component.For<");
             sb.Append(registration.ServiceType.TypeName);

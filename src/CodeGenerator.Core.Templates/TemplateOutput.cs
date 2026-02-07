@@ -27,6 +27,12 @@ namespace CodeGenerator.Core.Templates
             Artifacts = new List<IArtifact>();
             Succeeded = false;
         }
+        public TemplateOutput(IEnumerable<IArtifact> artifacts, IEnumerable<string> errors)
+        {
+            Artifacts = artifacts;
+            Errors = errors;
+            Succeeded = !Errors.Any();
+        }
 
         public TemplateOutput(string error)
         {

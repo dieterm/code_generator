@@ -3,7 +3,7 @@ using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
 using System.ComponentModel;
 
-namespace CodeGenerator.Presentation.WinForms.Views;
+namespace CodeGenerator.Core.Workspaces.Datasources.Csv.Views;
 
 /// <summary>
 /// View for editing CSV datasource properties

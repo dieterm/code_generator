@@ -44,6 +44,7 @@
     <ProjectReference Include="..\CodeGenerator.Application\CodeGenerator.Application.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Settings.Views\CodeGenerator.Core.Settings.Views.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Csv\CodeGenerator.Core.Workspaces.Datasources.Csv.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Directory\CodeGenerator.Core.Workspaces.Datasources.Directory.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly\CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Excel\CodeGenerator.Core.Workspaces.Datasources.Excel.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Json\CodeGenerator.Core.Workspaces.Datasources.Json.csproj" />

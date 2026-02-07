@@ -179,9 +179,9 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
                 return $"{GetParentScope()!.GetSolutionSubFolder()}\\{Name}";
         }
 
-        public IEnumerable<ILayerArtifact> GetLayers()
+        public IEnumerable<CodeArchitectureLayerArtifact> GetLayers()
         {
-            return Children.OfType<ILayerArtifact>().ToArray();
+            return Children.OfType<CodeArchitectureLayerArtifact>().ToArray();
         }
     }
 }

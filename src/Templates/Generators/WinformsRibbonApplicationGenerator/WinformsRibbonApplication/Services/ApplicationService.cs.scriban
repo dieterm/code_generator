@@ -1,6 +1,7 @@
 using {{ get_application_application_namespace }}.Services;
 using {{ get_application_application_namespace }}.ViewModels;
 using {{ get_shared_domain_namespace }};
+using {{ get_application_presentation_namespace }}.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;

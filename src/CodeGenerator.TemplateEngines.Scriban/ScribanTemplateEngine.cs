@@ -21,13 +21,14 @@ namespace CodeGenerator.TemplateEngines.Scriban;
 /// </summary>
 public class ScribanTemplateEngine : FileBasedTemplateEngine<ScribanTemplate, ScribanTemplateInstance>
 {
+    public const string TEMPLATE_ENGINE_ID = "scriban_template_engine";
     private static readonly ScriptObject _globalFunctions = new ScriptObject();
     private readonly ConcurrentDictionary<string, Template> _compiledTemplates = new ConcurrentDictionary<string, Template>();
     public ScriptObject GlobalFunctions { get { return _globalFunctions; } }
     public string TemplateRootFolder { get { return WorkspaceSettings.Instance.DefaultTemplateFolder; } }
 
     public ScribanTemplateEngine(ILogger<ScribanTemplateEngine> logger)
-        : base(logger, "scriban_template_engine", "Scriban Template Engine", TemplateType.Scriban, new[] { "scriban" })
+        : base(logger, TEMPLATE_ENGINE_ID, "Scriban Template Engine", TemplateType.Scriban, new[] { "scriban" })
     {
         
        
@@ -653,6 +654,11 @@ public class ScribanTemplateEngine : FileBasedTemplateEngine<ScribanTemplate, Sc
         {
             throw new InvalidOperationException($"Template must be of type {nameof(ScribanTemplate)}");
         }
-        return new ScribanTemplateInstance((ScribanFileTemplate)template);
+        var instance = new ScribanTemplateInstance((ScribanTemplate)template);
+        if(template is ScribanFileTemplate fileTemplate)
+        {
+            instance.OutputFileName = Path.GetFileNameWithoutExtension(fileTemplate.FilePath);
+        }
+        return instance;
     }
 }

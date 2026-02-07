@@ -26,7 +26,6 @@ using CodeGenerator.Core.Settings.ViewModels;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Templates.Settings;
 using CodeGenerator.Core.Workspaces;
-using CodeGenerator.Core.Workspaces.Datasources.Csv;
 using CodeGenerator.Core.Workspaces.Datasources.Directory;
 using CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly;
 using CodeGenerator.Core.Workspaces.Datasources.Excel;
@@ -105,7 +104,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IWorkspaceArtifactController, SqlServerDatasourceController>();
         services.AddSingleton<IWorkspaceArtifactController, PostgreSqlDatasourceController>();
         services.AddSingleton<IWorkspaceArtifactController, ExcelDatasourceController>();
-        services.AddSingleton<IWorkspaceArtifactController, CsvDatasourceController>();
+        
         services.AddSingleton<IWorkspaceArtifactController, JsonDatasourceController>();
         services.AddSingleton<IWorkspaceArtifactController, XmlDatasourceController>();
         services.AddSingleton<IWorkspaceArtifactController, YamlDatasourceController>();
@@ -171,7 +170,7 @@ public static class ServiceCollectionExtensions
         services.AddSqlServerDatasourceServices(configuration);
         services.AddPostgreSqlDatasourceServices(configuration);
         services.AddExcelDatasourceServices(configuration);
-        services.AddCsvDatasourceServices(configuration);
+        //
         services.AddJsonDatasourceServices(configuration);
         services.AddXmlDatasourceServices(configuration);
         services.AddYamlDatasourceServices(configuration);
@@ -219,7 +218,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.Scriban.ScribanTemplateEngine>();
         services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.T4.T4TemplateEngine>();
         services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.PlantUML.PlantUmlTemplateEngine>();
-        
+        services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.Folder.FolderTemplateEngine>();
+
         services.AddDotNetWinformsRibbonApplicationGeneratorServices(configuration);
         services.AddDotNetSharedScopeGeneratorServices(configuration);
 

@@ -8,6 +8,8 @@ namespace CodeGenerator.Domain.DotNet
 {
     public static class NuGetPackages
     {
+        // System.Drawing.Common <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+        public static NuGetPackage System_Drawing_Common { get; } = new NuGetPackage { PackageId = "System.Drawing.Common", Version= "8.0.0" };
         public static NuGetPackage Microsoft_EntityFrameworkCore { get; } = new NuGetPackage { PackageId = "Microsoft.EntityFrameworkCore", Version = "8.0.11" };
         public static NuGetPackage Microsoft_EntityFrameworkCore_Relational { get; } = new NuGetPackage { PackageId = "Microsoft.EntityFrameworkCore.Relational", Version = "8.0.11" };
         public static NuGetPackage Microsoft_Extensions_Configuration { get; } = new NuGetPackage { PackageId = "Microsoft.Extensions.Configuration", Version = "8.0.0" };
@@ -17,7 +19,9 @@ namespace CodeGenerator.Domain.DotNet
         public static NuGetPackage Microsoft_Extensions_Hosting { get; } = new NuGetPackage { PackageId = "Microsoft.Extensions.Hosting", Version = "8.0.1" };
         public static NuGetPackage Microsoft_Extensions_Logging { get; } = new NuGetPackage { PackageId = "Microsoft.Extensions.Logging", Version = "8.0.1" };
         public static NuGetPackage Microsoft_Extensions_Logging_Debug { get; } = new NuGetPackage { PackageId = "Microsoft.Extensions.Logging.Debug", Version = "8.0.1" };
-       
+        // Microsoft_Extensions_Logging_Configuration
+        public static NuGetPackage Microsoft_Extensions_Logging_Configuration { get; } = new NuGetPackage { PackageId = "Microsoft.Extensions.Logging.Configuration", Version = "8.0.0" };
+
         public const string Syncfusion_Version = "32.1.20";
 
         public static NuGetPackage Syncfusion_Core_WinForms { get; } = new NuGetPackage { PackageId = "Syncfusion.Core.WinForms", Version = Syncfusion_Version };

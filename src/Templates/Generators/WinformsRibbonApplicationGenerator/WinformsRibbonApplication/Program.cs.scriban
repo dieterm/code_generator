@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Syncfusion.Windows.Forms;
 using System.Diagnostics;
 {{~ placeholder_content "DiContainerSetupUsings" }}
+using {{ get_application_application_namespace }}.Controllers;
 
 namespace {{ Namespace }}
 {

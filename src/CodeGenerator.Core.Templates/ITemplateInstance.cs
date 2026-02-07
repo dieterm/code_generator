@@ -9,7 +9,7 @@ namespace CodeGenerator.Core.Templates
     public interface ITemplateInstance
     {
         ITemplate Template { get; }
-
+        Dictionary<string, object?> Parameters { get; }
         void SetParameter(string key, object? value);
     }
 }

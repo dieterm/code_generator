@@ -4,6 +4,7 @@ using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Application.ViewModels.Workspace.Domains.Factories;
 using CodeGenerator.Application.ViewModels.Workspace.Domains.Specifications;
 using CodeGenerator.Core.Workspaces.Datasources.Csv.ViewModels;
+using CodeGenerator.Core.Workspaces.Datasources.Csv.Views;
 using CodeGenerator.Core.Workspaces.Datasources.Directory.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Excel.ViewModels;

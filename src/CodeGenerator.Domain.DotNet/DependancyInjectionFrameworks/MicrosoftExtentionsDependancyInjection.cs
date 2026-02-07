@@ -114,6 +114,11 @@ namespace CodeGenerator.Domain.DependancyInjectionFrameworks
 
         public override string GenerateServiceRegistration(ServiceRegistration registration)
         {
+            if(!string.IsNullOrEmpty(registration.RawRegistrationCode))
+            {
+                return registration.RawRegistrationCode;
+            }
+
             var methodName = GetLifetimeMethodName(registration.Lifetime);
 
             if (registration.UsesInstance)

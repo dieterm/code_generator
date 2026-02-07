@@ -1,14 +1,17 @@
-using CodeGenerator.Core.MessageBus;
+using CodeGenerator.Application.Controllers.Workspace;
+using CodeGenerator.Application.Controllers.Workspace.Datasources;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Core.MessageBus;
+using CodeGenerator.Core.Workspaces.Datasources.Csv;
 using CodeGenerator.Presentation.WinForms.Resources;
 using CodeGenerator.Presentation.WinForms.Services;
+using CodeGenerator.Presentation.WinForms.Views.Application;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.UserControls;
 using CodeGenerator.UserControls.Ribbon;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using CodeGenerator.Presentation.WinForms.Views.Application;
 
 namespace CodeGenerator.Presentation.WinForms;
 
@@ -29,6 +32,9 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IFileSystemDialogService, FileSystemDialogService>();
         services.AddSingleton<IRibbonRenderer, SyncfusionRibbonRenderer>();
         services.AddSharedUserControlViews();
+
+        // Register Datasources
+        services.AddCsvDatasourceServices(configuration);
         // Main form
         //var mainView = new MainView();
         //services.AddSingleton<MainView>(mainView);

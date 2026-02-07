@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using System.Diagnostics.Eventing.Reader;
 
 namespace CodeGenerator.Core.Templates;
 
@@ -503,12 +504,25 @@ public class TemplatePathResolver
         if (!parsed.IsValid)
             return null;
 
+        bool workspaceHasFilesOrFolders = false;
+        bool workspaceFolderExists = false;
+        string? workspacePath = null;
         // Try workspace first
         if (!string.IsNullOrEmpty(CurrentWorkspaceDirectory))
         {
-            var workspacePath = ResolveFolderInDirectory(parsed, CurrentWorkspaceDirectory, useTemplatesSubfolder: true);
+            workspacePath = ResolveFolderInDirectory(parsed, CurrentWorkspaceDirectory, useTemplatesSubfolder: true);
             if (!string.IsNullOrEmpty(workspacePath))
-                return workspacePath;
+            {
+                workspaceFolderExists = true;
+                workspaceHasFilesOrFolders = Directory.GetFileSystemEntries(workspacePath).Any(); // Check if there are any files or folders in the workspace template folder
+                if(!workspaceHasFilesOrFolders)
+                {
+                    _logger?.LogDebug("Workspace template folder '{Folder}' is empty, ignoring", workspacePath);
+                } else { 
+                    return workspacePath;
+                }
+            }
+                
         }
 
         // Fallback to default
@@ -516,7 +530,23 @@ public class TemplatePathResolver
         {
             var defaultPath = ResolveFolderInDirectory(parsed, DefaultTemplateFolder, useTemplatesSubfolder: false);
             if (!string.IsNullOrEmpty(defaultPath))
-                return defaultPath;
+            {
+                var defaultHasFilesOrFolders = Directory.GetFileSystemEntries(defaultPath).Any();
+                if (defaultHasFilesOrFolders)
+                {
+                    return defaultPath;
+                } 
+                else if (workspaceFolderExists && !workspaceHasFilesOrFolders)
+                {
+                    _logger?.LogDebug("Workspace template folder exists but is empty, using workspace template folder: {DefaultPath}", defaultPath);
+                    return workspacePath;
+                }
+                else
+                {
+                    return defaultPath;
+                }
+            }
+              
         }
 
         return null;

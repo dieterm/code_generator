@@ -1,3 +1,5 @@
+using CodeGenerator.Application.Controllers.Workspace;
+using CodeGenerator.Application.Controllers.Workspace.Datasources;
 using CodeGenerator.Core.Workspaces.Datasources.Csv.Services;
 using CodeGenerator.Core.Workspaces.Services;
 using Microsoft.Extensions.Configuration;
@@ -19,7 +21,7 @@ public static class ServiceCollectionExtensions
     {
         // Register the datasource provider
         services.AddSingleton<IDatasourceProvider, CsvDatasourceProvider>();
-
+        services.AddSingleton<IWorkspaceArtifactController, CsvDatasourceController>();
         // Register the schema reader
         services.AddTransient<CsvSchemaReader>();
 

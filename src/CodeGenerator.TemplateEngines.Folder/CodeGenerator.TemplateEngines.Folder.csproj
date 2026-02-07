@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="folder-kanban.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="folder-kanban.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CodeGenerator.Core.Generators\CodeGenerator.Core.Generators.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Templates\CodeGenerator.Core.Templates.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.Workspaces\CodeGenerator.Core.Workspaces.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Domain\CodeGenerator.Domain.csproj" />
+    <ProjectReference Include="..\CodeGenerator.TemplateEngines.DotNetProject\CodeGenerator.TemplateEngines.DotNetProject.csproj" />
+    <ProjectReference Include="..\CodeGenerator.TemplateEngines.PlantUML\CodeGenerator.TemplateEngines.PlantUML.csproj" />
+    <ProjectReference Include="..\CodeGenerator.TemplateEngines.Scriban\CodeGenerator.TemplateEngines.Scriban.csproj" />
+    <ProjectReference Include="..\CodeGenerator.TemplateEngines.T4\CodeGenerator.TemplateEngines.T4.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+  </ItemGroup>
+</Project>

@@ -11,6 +11,7 @@ namespace CodeGenerator.TemplateEngines.PlantUML;
 /// </summary>
 public class PlantUmlTemplateEngine : FileBasedTemplateEngine<PlantUmlTemplate, PlantUmlTemplateInstance>
 {
+    public const string TEMPLATE_ENGINE_ID = "plantuml_template_engine";
     public const string IMAGE_CONTENT_DECORATOR_KEY = "ImageContent";
 
     private readonly RendererFactory _rendererFactory;
@@ -18,7 +19,7 @@ public class PlantUmlTemplateEngine : FileBasedTemplateEngine<PlantUmlTemplate, 
     public override string DefaultFileExtension => "puml";
 
     public PlantUmlTemplateEngine(ILogger<PlantUmlTemplateEngine> logger)
-        : base(logger, "plantuml_template_engine", "PlantUML Template Engine", TemplateType.ImageFile, new[] { "puml", "plantuml" })
+        : base(logger, TEMPLATE_ENGINE_ID, "PlantUML Template Engine", TemplateType.ImageFile, new[] { "puml", "plantuml" })
     {
         _rendererFactory = new RendererFactory();
     }

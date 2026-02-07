@@ -1,0 +1,203 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace {{ Namespace }}
+{
+    public static class FileSystemExtensions
+    {
+        
+        public static HashSet<string> TextFileExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".txt", ".md", ".csv", ".log", ".json", ".xml", ".yaml", ".yml", ".ini", ".cfg"
+        };
+        public static HashSet<string> DocumentFileExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".doc", ".docx", ".pdf", ".txt", ".rtf", ".odt"
+        };
+        public static HashSet<string> ImageFileExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".svg", ".webp"
+        };
+
+        public static HashSet<string> VideoFileExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".mp4", ".avi", ".mov", ".wmv", ".flv", ".mkv", ".webm"
+        };
+
+        public static HashSet<string> AudioFileExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".mp3", ".wav", ".aac", ".flac", ".ogg", ".wma"
+        };
+
+        public static bool IsImageFile(this string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return false;
+            var extension = System.IO.Path.GetExtension(filePath);
+            return ImageFileExtensions.Contains(extension);
+        }
+
+        public static bool IsTextFile(this string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return false;
+            var extension = System.IO.Path.GetExtension(filePath)?.ToLowerInvariant();
+            return TextFileExtensions.Contains(extension);
+        }
+
+        public static bool IsDocumentFile(this string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return false;
+            var extension = System.IO.Path.GetExtension(filePath)?.ToLowerInvariant();
+            return DocumentFileExtensions.Contains(extension);
+        }
+
+        public static bool IsVideoFile(this string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return false;
+            var extension = System.IO.Path.GetExtension(filePath)?.ToLowerInvariant();
+            return VideoFileExtensions.Contains(extension);
+        }
+
+        public static bool IsAudioFile(this string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return false;
+            var extension = System.IO.Path.GetExtension(filePath)?.ToLowerInvariant();
+            return AudioFileExtensions.Contains(extension);
+        }
+
+        public static bool IsValidFileName(this string? fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName)) return false;
+            // Check for invalid characters
+            var invalidChars = System.IO.Path.GetInvalidFileNameChars();
+            if (fileName.Any(c => invalidChars.Contains(c)))
+            {
+                return false;
+            }
+            // Additional checks can be added here (e.g., reserved names)
+            return true;
+        }
+
+        /// <summary>
+        /// Creates a new file with a unique indexed name in the specified directory path.
+        /// Will append an index to the base file name if a file with that name already exists.
+        /// eg. "NewTemplate.txt", "NewTemplate1.txt", "NewTemplate2.txt", etc.
+        /// </summary>
+        /// <param name="directoryPath"></param>
+        /// <param name="baseFileName">name without extension</param>
+        /// <param name="fileExtension">extension without dot, e.g. "txt"</param>
+        /// <returns></returns>
+        public static FileInfo? CreateIndexedFile(this string directoryPath, string baseFileName, string fileExtension)
+        {
+            try
+            {
+                int? fileIndex = null;
+                var filePath = Path.Combine(directoryPath, $"{baseFileName}.{fileExtension}");
+                if (File.Exists(filePath))
+                {
+                    fileIndex = 1;
+                    filePath = Path.Combine(directoryPath, $"{baseFileName}{fileIndex}.{fileExtension}");
+                    while (File.Exists(filePath))
+                    {
+                        fileIndex++;
+                        filePath = Path.Combine(directoryPath, $"{baseFileName}{fileIndex}{fileExtension}");
+                    }
+                }
+                var fileInfo = new FileInfo(filePath);
+                using (var fs = fileInfo.Create())
+                {
+                    // Just create and close the file
+                }
+                return fileInfo;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error creating file: {ex.Message}");
+                return null;
+            }
+        }
+
+        public static void CopyDirectory(this string sourceDir, string destinationDir, bool copySubDirs)
+        {
+            // Get the subdirectories for the specified directory.
+            DirectoryInfo dir = new DirectoryInfo(sourceDir);
+            if (!dir.Exists)
+            {
+                throw new DirectoryNotFoundException(
+                    "Source directory does not exist or could not be found: "
+                    + sourceDir);
+            }
+            DirectoryInfo[] dirs = dir.GetDirectories();
+            // If the destination directory doesn't exist, create it.
+            Directory.CreateDirectory(destinationDir);
+            // Get the files in the directory and copy them to the new location.
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                string tempPath = Path.Combine(destinationDir, file.Name);
+                file.CopyTo(tempPath, false);
+            }
+            // If copying subdirectories, copy them and their contents to new location.
+            if (copySubDirs)
+            {
+                foreach (DirectoryInfo subdir in dirs)
+                {
+                    string tempPath = Path.Combine(destinationDir, subdir.Name);
+                    CopyDirectory(subdir.FullName, tempPath, copySubDirs);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Attempts to create a new directory with a unique name in the specified directory path.
+        /// Will append an index to "New Folder" if a folder with that name already exists.
+        /// eg. "New Folder", "New Folder1", "New Folder2", etc.
+        /// </summary>
+        public static DirectoryInfo? CreateDirectory(this string directoryPath, string newFolderName)
+        {
+            try
+            {
+                int? folderIndex = null;
+                var folderPath = Path.Combine(directoryPath, $"New Folder{folderIndex}");
+                if (Directory.Exists(folderPath))
+                {
+                    folderIndex = 1;
+                    folderPath = Path.Combine(directoryPath, $"New Folder{folderIndex}");
+                    while (Directory.Exists(folderPath))
+                    {
+                        folderIndex++;
+                    }
+                }
+                var dirInfo = Directory.CreateDirectory(folderPath);
+                return dirInfo;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error creating directory: {ex.Message}");
+                return null;
+            }
+        }
+
+        public static string? GetFileNameWithoutExtension(this string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return null;
+            var fileName = System.IO.Path.GetFileName(filePath);
+            return System.IO.Path.GetFileNameWithoutExtension(fileName);
+        }
+
+        public static string? GetDirectoryName(this string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return null;
+            return System.IO.Path.GetDirectoryName(filePath) ?? string.Empty;
+        }
+
+        public static string? GetFileExtension(this string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) return null;
+            return System.IO.Path.GetExtension(filePath);
+        }
+    }
+}

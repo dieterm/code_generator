@@ -59,10 +59,25 @@ namespace CodeGenerator.Core.Workspaces.Services
         /// <summary>
         /// Get namespace of Shared scope Application layer. Eg. "MyWorkspace.Shared.Application"
         /// </summary>
-        /// <returns></returns>
         public static string? GetSharedApplicationNamespace()
         {
             return GetLayerNamespace(CodeArchitectureScopes.SHARED_SCOPE, OnionCodeArchitecture.APPLICATION_LAYER);
+        }
+
+        /// <summary>
+        /// Get namespace of Shared scope Infrastructure layer. Eg. "MyWorkspace.Shared.Infrastructure"
+        /// </summary>
+        public static string? GetSharedInfrastructureNamespace()
+        {
+            return GetLayerNamespace(CodeArchitectureScopes.SHARED_SCOPE, OnionCodeArchitecture.INFRASTRUCTURE_LAYER);
+        }
+
+        /// <summary>
+        /// Get namespace of Shared scope Presentation layer. Eg. "MyWorkspace.Shared.Presentation"
+        /// </summary>
+        public static string? GetSharedPresentationNamespace()
+        {
+            return GetLayerNamespace(CodeArchitectureScopes.SHARED_SCOPE, OnionCodeArchitecture.PRESENTATION_LAYER);
         }
 
         /// <summary>
@@ -71,6 +86,28 @@ namespace CodeGenerator.Core.Workspaces.Services
         public static string? GetApplicationApplicationNamespace()
         {
             return GetLayerNamespace(CodeArchitectureScopes.APPLICATION_SCOPE, OnionCodeArchitecture.APPLICATION_LAYER);
+        }
+
+        /// <summary>
+        /// Get namespace of Application scope Presentation layer. Eg. "MyWorkspace.Application.Presentation"
+        /// </summary>
+        public static string? GetApplicationPresentationNamespace()
+        {
+            return GetLayerNamespace(CodeArchitectureScopes.APPLICATION_SCOPE, OnionCodeArchitecture.PRESENTATION_LAYER);
+        }
+        /// <summary>
+        /// Get namespace of Application scope Infrastructure layer. Eg. "MyWorkspace.Application.Infrastructure"
+        /// </summary>
+        public static string? GetApplicationInfrastructureNamespace()
+        {
+            return GetLayerNamespace(CodeArchitectureScopes.APPLICATION_SCOPE, OnionCodeArchitecture.INFRASTRUCTURE_LAYER);
+        }
+        /// <summary>
+        /// Get namespace of Application scope Domain layer. Eg. "MyWorkspace.Application.Domain"
+        /// </summary>
+        public static string? GetApplicationDomainNamespace()
+        {
+            return GetLayerNamespace(CodeArchitectureScopes.APPLICATION_SCOPE, OnionCodeArchitecture.DOMAIN_LAYER);
         }
     }
 }

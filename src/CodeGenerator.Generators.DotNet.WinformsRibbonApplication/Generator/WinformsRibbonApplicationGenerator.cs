@@ -7,55 +7,86 @@ using CodeGenerator.Core.Settings.Generators;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
+using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Domain.CodeArchitecture;
+using CodeGenerator.Domain.CodeElements;
+using CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection;
 using CodeGenerator.Domain.DotNet;
+using CodeGenerator.Generators.DotNet.Events;
 using CodeGenerator.Shared;
+using CodeGenerator.TemplateEngines.Folder;
 using CodeGenerator.TemplateEngines.Scriban;
 
 namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication
 {
     public class WinformsRibbonApplicationGenerator : GeneratorBase
     {
-        private Func<CreatedArtifactEventArgs, Task>? _unsubscribe_handler;
+        private Func<DotNetProjectArtifactCreatedEventArgs, Task>? _unsubscribe_handler;
+        private Action<DiExtensionsClassArtifactCreatedEventArgs>? _unsubscribe_diextensions_codefile_created_handler;
 
         public override void SubscribeToEvents(GeneratorMessageBus messageBus)
         {
             // Use async Subscribe variant for proper async handling
-            _unsubscribe_handler = messageBus.Subscribe<CreatedArtifactEventArgs>(
+            _unsubscribe_handler = messageBus.Subscribe<DotNetProjectArtifactCreatedEventArgs>(
                 async (e) => await OnPresentationDotNetProjectCreated(e),
                 PresentationDotNetProjectFilter
             );
+            _unsubscribe_diextensions_codefile_created_handler = messageBus.Subscribe<DiExtensionsClassArtifactCreatedEventArgs>(
+                OnDiExtensionsCodeFileArtifactCreated, 
+                DiExtensionsCodeFileArtifactFilter
+            );
         }
 
-        private bool PresentationDotNetProjectFilter(CreatedArtifactEventArgs args)
+        private bool DiExtensionsCodeFileArtifactFilter(DiExtensionsClassArtifactCreatedEventArgs args)
+        {
+            return Enabled &&
+                   args.Layer == OnionCodeArchitecture.PRESENTATION_LAYER &&
+                   args.Scope == CodeArchitectureScopes.APPLICATION_SCOPE;
+        }
+
+        private void OnDiExtensionsCodeFileArtifactCreated(DiExtensionsClassArtifactCreatedEventArgs args)
+        {
+            args.DiExtensionsClassArtifact.ServiceRegistrations.Add(new ServiceRegistration{
+                ServiceType = new TypeReference("IApplicationService"),
+                ImplementationType = new TypeReference("ApplicationService"),
+                Lifetime = ServiceLifetime.Singleton
+            });
+            args.DiExtensionsClassArtifact.CodeFile.AddUsing($"{WorkspaceTemplateHelpers.GetApplicationApplicationNamespace()}.Services");
+            args.DiExtensionsClassArtifact.CodeFile.AddUsing($"{WorkspaceTemplateHelpers.GetApplicationPresentationNamespace()}.Services");
+            args.DiExtensionsClassArtifact.ServiceRegistrations.Add(new ServiceRegistration
+            {
+                ServiceType = new TypeReference("MainView"),
+                Lifetime = ServiceLifetime.Transient
+            });
+            // using VzwWijzer.Application.Presentation.Views;
+            args.DiExtensionsClassArtifact.CodeFile.AddUsing($"{WorkspaceTemplateHelpers.GetApplicationPresentationNamespace()}.Views");
+        }
+
+        private bool PresentationDotNetProjectFilter(DotNetProjectArtifactCreatedEventArgs args)
         {
             if(!Enabled)
                 return false;
 
-            if (args.Artifact is DotNetProjectArtifact projectArtifact)
+            var projectArtifact = args.DotNetProjectArtifact;
+
+            if(projectArtifact.Parent is FolderArtifact folderArtifact && folderArtifact.HasDecorator<LayerArtifactRefDecorator>())
             {
-                if(projectArtifact.Parent is FolderArtifact folderArtifact && folderArtifact.HasDecorator<LayerArtifactRefDecorator>())
+                if(args.Layer == OnionCodeArchitecture.PRESENTATION_LAYER &&
+                    args.Scope == CodeArchitectureScopes.APPLICATION_SCOPE)
                 {
-                    var layerArtifact = folderArtifact.GetDecoratorOfType<LayerArtifactRefDecorator>()?.LayerArtifact;
-                    var scopeArtifact = layerArtifact?.Parent as ScopeArtifact;
-                    var layer = layerArtifact?.LayerName;
-                    var scope = scopeArtifact?.Name;
-                    if(layer == OnionCodeArchitecture.PRESENTATION_LAYER &&
-                       scope == CodeArchitectureScopes.APPLICATION_SCOPE)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
+
             return false;
         }
 
-        private async Task OnPresentationDotNetProjectCreated(CreatedArtifactEventArgs e)
+        private async Task OnPresentationDotNetProjectCreated(DotNetProjectArtifactCreatedEventArgs e)
         {
             if (!Enabled)
                 return;
 
-            var projectArtifact = (e.Artifact as DotNetProjectArtifact)!;
+            var projectArtifact = e.DotNetProjectArtifact;
       
             projectArtifact.AddNuGetPackage(NuGetPackages.Syncfusion_Edit_Windows);
             projectArtifact.AddNuGetPackage(NuGetPackages.Syncfusion_Grouping_Base);
@@ -83,103 +114,55 @@ namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication
             if (Directory.Exists(templateFolder))
             {
                 var templateManager = ServiceProviderHolder.GetRequiredService<TemplateEngineManager>();
-                await ParseTemplateFolder(templateFolder, projectArtifact, settings, templateManager, e.Result, projectArtifact.Name);
-                
-            }
-        }
+                var folderTemplate = new FolderTemplate(templateId);
+                var templateInstance = new FolderTemplateInstance(folderTemplate);
+                // for now, we asume the root namespace is the same as the project name.
+                // but this could be made more flexible in the future if needed (eg allow user to specify in settings or determine based on solution structure)
+                templateInstance.SetParameter("RootNamespace", projectArtifact.Name);
+                // set common template handler to handle namespace generation based on folder structure
+                templateInstance.TemplateHandler = new TemplateHandler {
+                    PrepareTemplateInstance = (instance) =>
+                    {
+                        // the folder template engine will set the "FolderNamespace" parameter based on the folder structure.
+                        // we can use this to build the full namespace for each file.
+                        var folderNamespace = instance.Parameters[FolderTemplateEngine.TEMPLATE_PARAMETER_FOLDER_NAMESPACE] as string;
+                        var rootNamespace = instance.Parameters["RootNamespace"] as string;
+                        if (!string.IsNullOrEmpty(folderNamespace))
+                        {
+                            instance.SetParameter("Namespace", $"{rootNamespace}.{folderNamespace}");
+                        } else
+                        {
+                            instance.SetParameter("Namespace", rootNamespace);
+                        }
 
-        private async Task ParseTemplateFolder(string templateFolder, IArtifact? parentArtifact, GeneratorSettings settings, TemplateEngineManager templateEngineManager, GenerationResult result, string parentNamespace)
-        {
-            var filesToIgnore = new List<string>();
-            foreach(var file in Directory.GetFiles(templateFolder, "*", SearchOption.TopDirectoryOnly))
-            {
-                // Skip files that are already processed (eg *.def files)
-                if (filesToIgnore.Contains(file))
-                    continue;
-
-                var fileExtension = Path.GetExtension(file).Replace(".", "");
-                if(fileExtension=="def")
-                {
-                    // Definition file, skip
-                    filesToIgnore.Add(file);
-                    
-                    continue;
+                    }
                 };
-                var templateEngine = templateEngineManager.GetTemplateEngineByFileExtension(fileExtension);
-                
-                if (templateEngine == null)
+                var renderResult = await templateInstance.RenderAsync(CancellationToken.None);
+                if (renderResult.Succeeded)
                 {
-                    // No template engine found, treat as existing file
-                    parentArtifact.AddChild(new ExistingFileArtifact(file));
-                    //AddChildArtifactToParent(parentArtifact, new ExistingFileArtifact(file), result);
-                    continue;
-                }
-                filesToIgnore.Add(TemplateDefinition.GetDefinitionFilePath(file));
-                
-                if(templateEngine is IFileBasedTemplateEngine fileBasedTemplateEngine)
-                {
-                    var template = fileBasedTemplateEngine.CreateTemplateFromFile(file);
-                    if (template is ScribanFileTemplate scribanTemplate)
+                    foreach (var artifact in renderResult.Artifacts)
                     {
-                        // Set Scriban specific options if needed
-                        scribanTemplate.CreateTemplateFileIfMissing = true;
-                    }
-                    var templateInstance = templateEngine.CreateTemplateInstance(template);
-
-                    templateInstance.SetParameter("Namespace", parentNamespace);
-                    var renderResult = await templateEngine.RenderAsync(templateInstance);
-
-                    if (renderResult.Succeeded)
-                    {
-                        foreach (var artifact in renderResult.Artifacts)
-                        {
-                            if (artifact is FileArtifact fileArtifact)
-                            {
-                                // remove extension from filename
-                                var filenameWithoutExtension = Path.GetFileNameWithoutExtension(file);
-                                fileArtifact.FileName = filenameWithoutExtension;
-                                parentArtifact.AddChild(fileArtifact);
-                                //AddChildArtifactToParent(parentArtifact, fileArtifact, result);
-                            }
-                            else
-                            {
-                                // Handle other artifact types if necessary
-                                parentArtifact.AddChild(artifact);
-                                //AddChildArtifactToParent(parentArtifact, artifact, result);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // Log errors
-                        foreach (var error in renderResult.Errors)
-                        {
-                            result.Errors.Add($"Error rendering template '{file}': {error}");
-                        }
+                        AddChildArtifactToParent(projectArtifact, artifact, e.Result);
                     }
                 }
-
-                // Create template instance
-                
-
-            }
-
-            // Recursively process subdirectories
-            foreach(var directory in Directory.GetDirectories(templateFolder, "*", SearchOption.TopDirectoryOnly))
-            {
-                var directoryName = Path.GetFileName(directory);
-                var existingSubFolderArtifact = parentArtifact?.Children.OfType<FolderArtifact>().FirstOrDefault(f => f.FolderName == directoryName);
-                var subdirectoryArtifact = existingSubFolderArtifact ?? new FolderArtifact(directoryName);
-                var subdirectoryNamespace = $"{parentNamespace}.{directoryName}";
-                AddChildArtifactToParent(parentArtifact, subdirectoryArtifact, result);
-                await ParseTemplateFolder(directory, subdirectoryArtifact, settings, templateEngineManager, result, subdirectoryNamespace);
+                else
+                {
+                    // Log errors
+                    foreach (var error in renderResult.Errors)
+                    {
+                        e.Result.Errors.Add($"Error rendering template '{templateFolder}': {error}");
+                    }
+                }
             }
         }
+
 
         public override void UnsubscribeFromEvents(GeneratorMessageBus messageBus)
         {
             if(_unsubscribe_handler!=null)
                 messageBus.Unsubscribe(_unsubscribe_handler!);
+            if(_unsubscribe_diextensions_codefile_created_handler!=null)
+                messageBus.Unsubscribe(_unsubscribe_diextensions_codefile_created_handler!);
         }
 
         protected override GeneratorSettingsDescription ConfigureSettingsDescription()

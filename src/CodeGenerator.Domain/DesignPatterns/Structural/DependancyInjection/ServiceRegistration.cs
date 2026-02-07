@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Domain.CodeElements;
+using Microsoft.Extensions.Primitives;
 
 namespace CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection
 {
@@ -7,6 +8,7 @@ namespace CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection
     /// </summary>
     public class ServiceRegistration
     {
+        public string? RawRegistrationCode { get; set; }
         /// <summary>
         /// The contract/interface type
         /// </summary>

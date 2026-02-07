@@ -13,13 +13,14 @@ namespace CodeGenerator.TemplateEngines.T4
     /// </summary>
     public class T4TemplateEngine : FileBasedTemplateEngine<T4Template, T4TemplateInstance>
     {
+        public const string TEMPLATE_ENGINE_ID = "t4_template_engine";
         private readonly ConcurrentDictionary<string, (CompiledTemplate Template, TemplateGenerator Generator)> _compiledTemplates = new();
         private readonly string? _templateRootFolder;
 
         public override string DefaultFileExtension => "tt";
 
         public T4TemplateEngine(ILogger<T4TemplateEngine> logger, string? templateRootFolder = null)
-            : base(logger, "t4_template_engine", "T4 Template Engine", TemplateType.T4, new[] { "tt" })
+            : base(logger, TEMPLATE_ENGINE_ID, "T4 Template Engine", TemplateType.T4, new[] { "tt" })
         {
             _templateRootFolder = templateRootFolder;
         }

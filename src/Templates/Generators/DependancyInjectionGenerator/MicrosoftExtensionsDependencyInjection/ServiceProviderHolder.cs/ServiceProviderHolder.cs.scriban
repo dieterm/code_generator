@@ -44,6 +44,21 @@ public static class {{ ClassName }}
         return ServiceProvider.GetService<T>();
     }
 
+	public static T? GetKeyedService<T>(object? serviceKey)
+	{
+		return ServiceProvider.GetKeyedService<T>(serviceKey);
+	}
+
+	public static IEnumerable<T> GetKeyedServices<T>(object? serviceKey)
+	{
+		return ServiceProvider.GetKeyedServices<T>(serviceKey);
+	}
+
+	public static IEnumerable<T> GetServices<T>()
+	{
+		return ServiceProvider.GetServices<T>();
+	}
+
     /// <summary>
     /// Creates a new scope for scoped services
     /// </summary>

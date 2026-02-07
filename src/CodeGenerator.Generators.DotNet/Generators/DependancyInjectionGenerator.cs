@@ -12,6 +12,7 @@ using CodeGenerator.Domain.CodeElements;
 using CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection;
 using CodeGenerator.Domain.DotNet;
 using CodeGenerator.Generators.DotNet.Events;
+using CodeGenerator.Generators.DotNet.Workspace;
 using CodeGenerator.Shared;
 using CodeGenerator.TemplateEngines.Scriban;
 using System;
@@ -28,7 +29,7 @@ namespace CodeGenerator.Generators.DotNet.Generators
         public const string PLACEHOLDER_DI_CONTAINER_SETUP_USINGS = "DiContainerSetupUsings";
         public const string SERVICE_PROVIDER_HOLDER_TEMPLATE_NAME = "ServiceProviderHolder.cs";
         public const string PARAMETER_SERVICE_PROVIDER_HOLDER_CLASS_NAME = "ServiceProviderHolderClassName";
-
+        
         private readonly DependancyInjectionFrameworkManager _diManager;
         private Func<DotNetProjectArtifactCreatedEventArgs, Task>? _unsubscribe_dotnet_project_created_handler;
         private Action<RequestingPlaceholderContentEventArgs>? _unsubscribe_requesting_dicontainersetup_content_handler;
@@ -160,15 +161,13 @@ namespace CodeGenerator.Generators.DotNet.Generators
             // eg. "AddApplicationDomainServices"
             var methodName = diFramework.GenerateModuleRegistrationMethodName(e.Scope, e.Layer);
             // register types
-            var codeFileArtifact = new CodeFileArtifact("DiContainerExtentions", language);
-
+            var codeFileArtifact = new DiExtensionsClassArtifact(language);
+            // publish event for DiExtensionsClassArtifact creation so that other generators can add content to it before it's added to the project
+            MessageBus?.Publish(new DiExtensionsClassArtifactCreatedEventArgs(codeFileArtifact, e.Layer, e.Scope, e.Result));
+   
             var moduleRegistrations = new Dictionary<string, IEnumerable<ServiceRegistration>>();
-            moduleRegistrations.Add(methodName, new List<ServiceRegistration>
-            {
-                //new ServiceRegistration { ServiceType = new TypeReference("IMyService"), ImplementationType = new TypeReference("MyService"), Lifetime = ServiceLifetime.Scoped },
-                //new ServiceRegistration { ServiceType = new TypeReference("IMyRepository"), ImplementationType = new TypeReference("MyRepository"), Lifetime = ServiceLifetime.Singleton },
-            });
-            var diClass = diFramework.GenerateServiceCollectionExtensionsClass("DiContainerExtentions",moduleRegistrations);
+            moduleRegistrations.Add(methodName, codeFileArtifact.ServiceRegistrations);
+            var diClass = diFramework.GenerateServiceCollectionExtensionsClass(DiExtensionsClassArtifact.DI_CONTAINER_EXTENSIONS_CLASS_NAME, moduleRegistrations);
             codeFileArtifact.CodeFile.AddNamespace(layerNamespace, diClass);
             codeFileArtifact.CodeFile.Usings.AddRange(diFramework.GetExtensionMethodUsings().Select(x => new UsingElement(x)));
             codeFileArtifact.CodeFile.Usings.AddRange(diFramework.GetRequiredUsings().Select(x => new UsingElement(x)));

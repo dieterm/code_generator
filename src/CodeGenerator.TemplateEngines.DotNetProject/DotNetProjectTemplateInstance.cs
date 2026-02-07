@@ -38,7 +38,7 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
             ProjectName = projectName ?? throw new ArgumentNullException(nameof(projectName));
            // TargetFolder = targetFolder ?? throw new ArgumentNullException(nameof(targetFolder));
         }
-
+        public Dictionary<string, object?> Parameters { get; } = new Dictionary<string, object?>();
         public void SetParameter(string key, object? value)
         {
             switch (key)
@@ -66,6 +66,7 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
                     }
                     break;
                 default:
+                    Parameters[key] = value;
                     break;
             }
         }
