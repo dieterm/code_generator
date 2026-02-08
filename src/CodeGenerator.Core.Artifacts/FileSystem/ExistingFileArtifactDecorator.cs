@@ -34,24 +34,20 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
             // first look for a FileArtifactDectorator
             var fileArtifact = this.Artifact as FileArtifact;
 
-            if (fileArtifact != null) {
+            if (fileArtifact == null)
+                throw new InvalidOperationException("Artifact of an ExistingFileArtifact should be of type FileArtifact");
 
-                if (string.Equals(FilePath, fileArtifact.FullPath, StringComparison.OrdinalIgnoreCase))
-                {
-                    // If source and target are the same, the file is already at it's place, so we can skip the copy operation.
-                    return Task.CompletedTask;
-                }
-                // use the filename from the FileArtifactDecorator
-                File.Copy(FilePath, fileArtifact.FullPath, true);
+            OnGenerating();
+            if (string.Equals(FilePath, fileArtifact.FullPath, StringComparison.OrdinalIgnoreCase))
+            {
+                // If source and target are the same, the file is already at it's place, so we can skip the copy operation.
                 return Task.CompletedTask;
             }
-            // if not found use the same filename as the existing file
-
-            // determine the target directory
-            // visit the parent Artifact until a DirectoryArtifactDecorator is found
-
-            // copy the file
-            throw new NotImplementedException();
+            // use the filename from the FileArtifactDecorator
+            File.Copy(FilePath, fileArtifact.FullPath, true);
+            OnGenerated();
+            return Task.CompletedTask;
+            
         }
     }
 }

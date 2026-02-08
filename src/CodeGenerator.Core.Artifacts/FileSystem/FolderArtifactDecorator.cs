@@ -33,8 +33,13 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
 
         public override Task GenerateAsync(IProgress<ArtifactGenerationProgress> progress, CancellationToken cancellationToken = default)
         {
-            var newFolderPath = Path.Combine(this.Artifact.GetFullPath());
+            var folderArtifact = Artifact as FolderArtifact;
+            if (folderArtifact == null)
+                throw new InvalidOperationException("Artifact of a FolderArtifactDecorator should be of type FolderArtifact");
+            OnGenerating();
+            var newFolderPath = folderArtifact.FullPath;
             System.IO.Directory.CreateDirectory(newFolderPath);
+            OnGenerated();
             return Task.CompletedTask;
         }
     }

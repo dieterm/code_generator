@@ -17,8 +17,20 @@ namespace CodeGenerator.Domain.CodeElements
         {
             CodeFile = new CodeFileElement(fileTitle, programmingLanguage);
             FileName = CodeFile.FullFileName;
+            AddDecorator(new TextContentDecorator(TEXT_CONTENT_DECORATOR_KEY)).Generating += CodeFileArtifact_Generating;
+        }
 
-            this.AddDecorator(new CodeFileDecorator(nameof(CodeFileDecorator)));
+
+        private void CodeFileArtifact_Generating(object? sender, EventArgs e)
+        {
+            var programmingLanguage = ProgrammingLanguages.ProgrammingLanguages.FindByFileExtension(CodeFile.FileExtension);
+            if (programmingLanguage == null)
+                throw new InvalidOperationException($"No programming language found for file extension '{CodeFile.FileExtension}'.");
+            var generator = ProgrammingLanguageCodeGenerators.GetGenerator(programmingLanguage);
+            if (generator == null)
+                throw new InvalidOperationException($"No code generator registered for programming language '{programmingLanguage.Name}' (ID: {programmingLanguage.Id}).");
+            var code = generator.GenerateCodeElement(CodeFile);
+            SetTextContent(code);
         }
 
         public CodeFileArtifact(ArtifactState state) : base(state)
@@ -33,18 +45,6 @@ namespace CodeGenerator.Domain.CodeElements
             {
                 SetValue<CodeFileElement>(nameof(CodeFile), value);
             }
-        }
-
-        public override string? GetTextContent()
-        {
-            var programmingLanguage = ProgrammingLanguages.ProgrammingLanguages.FindByFileExtension(CodeFile.FileExtension);
-            if (programmingLanguage == null)
-                throw new InvalidOperationException($"No programming language found for file extension '{CodeFile.FileExtension}'.");
-            var generator = ProgrammingLanguageCodeGenerators.GetGenerator(programmingLanguage);
-            if (generator == null)
-                throw new InvalidOperationException($"No code generator registered for programming language '{programmingLanguage.Name}' (ID: {programmingLanguage.Id}).");
-            var code = generator.GenerateCodeElement(CodeFile);
-            return code;
         }
 
         public override string FileName { 
@@ -62,13 +62,5 @@ namespace CodeGenerator.Domain.CodeElements
                 }
             }
         }
-
-        public override void SetTextContent(string content)
-        {
-            CodeFile.RawCode = content;
-            
-        }
-
-        
     }
 }

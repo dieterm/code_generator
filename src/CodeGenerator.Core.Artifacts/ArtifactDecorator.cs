@@ -6,6 +6,10 @@ namespace CodeGenerator.Core.Artifacts
 {
     public abstract class ArtifactDecorator : MementoObjectBase<ArtifactDecoratorState>, IArtifactDecorator
     {
+        public event EventHandler? Attached;
+        public event EventHandler? Detachted;
+        public event EventHandler? Generating;
+        public event EventHandler? Generated;
         /// <summary>
         /// Constructor for restoring state from memento
         /// </summary>
@@ -28,11 +32,32 @@ namespace CodeGenerator.Core.Artifacts
          public virtual void Attach(Artifact artifact)
         {
             Artifact = artifact;
+            OnAttached();
         }
 
         public virtual void Detach()
         {
             Artifact = null;
+            OnDetached();
+        }
+        
+        protected virtual void OnGenerating()
+        {
+            Generating?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected virtual void OnGenerated()
+        {
+            Generated?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected virtual void OnAttached()
+        {
+            Attached?.Invoke(this, EventArgs.Empty);
+        }
+        protected virtual void OnDetached()
+        {
+            Detachted?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>

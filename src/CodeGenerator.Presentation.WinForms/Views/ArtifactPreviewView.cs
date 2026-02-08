@@ -29,8 +29,35 @@ namespace CodeGenerator.Presentation.WinForms.Views
         {
             InitializeComponent();
             InitializeCustomContextMenu();
-        }
 
+            editControl.Closing += (s, e) =>
+            {
+                if (HasPendingChanges)
+                {
+                    var result = ServiceProviderHolder
+                        .GetRequiredService<IMessageBoxService>()
+                        .AskYesNoCancel("You have unsaved changes. Do you want to save before closing?", "Unsaved Changes");
+                    
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        EditControl_HandleSave();
+                        e.Action = SaveChangesAction.Discard;
+                    }
+                    else if (result == MessageBoxResult.Cancel)
+                    {
+                        e.Action = SaveChangesAction.Cancel; // Cancel the close operation
+                    }
+                } else
+                {
+                    e.Action = SaveChangesAction.Discard; // No pending changes, proceed with close
+                }
+            };
+            editControl.TextChanged += (s, e) =>
+            {
+                HasPendingChanges = true;
+            };
+        }
+        public bool HasPendingChanges { get; private set; } = false;
 
         /// <summary>
         /// Context menu is customized to override the 'Save' & 'Save As' commands.
@@ -469,25 +496,27 @@ Options...
             catch (Exception ex)
             {
 
-                // throw;
             }
-
+            
+            // for existing files
             if (viewModel.FilePath != null)
             {
                 try
                 {
                     editControl.Text = File.ReadAllText(viewModel.FilePath);
-                    editControl.FileName = viewModel.FilePath;// Path.GetFileName(viewModel.FilePath);
+                    editControl.FileName = viewModel.FilePath;
+                    HasPendingChanges = false; // clear initial flag
                 }
                 catch (Exception ex)
                 {
                     // throw;
                 }
             }
+            // for text-content
             else if (viewModel.TextContent != null)
             {
-
                 editControl.Text = viewModel.TextContent ?? string.Empty;
+                HasPendingChanges = false; // clear initial flag
             }
             
         }

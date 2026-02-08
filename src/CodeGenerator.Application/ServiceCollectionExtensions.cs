@@ -80,12 +80,18 @@ public static class ServiceCollectionExtensions
         
         // Application Controllers
         services.AddSingleton<ApplicationController>();
-        services.AddTransient<MainViewModel>();
+        services.AddSingleton<MainViewModel>();
 
         // Generation Controllers & Viewmodels
         services.AddSingleton<GenerationController>();
+        services.AddSingleton<GenerationTreeViewController>();
         services.AddSingleton<GenerationRibbonViewModel>();
-        services.AddTransient<GenerationResultTreeViewModel>();
+        services.AddSingleton<GenerationResultTreeViewModel>();
+        services.AddSingleton<GenerationTreeViewModel>();
+        services.AddSingleton<GenerationDetailsViewModel>();
+
+        // Generation Artifact Controllers
+        services.AddSingleton<IGenerationArtifactController, GenerationArtifactController>();
 
         // Settings Controllers & ViewModels
         services.AddSingleton<SettingsController>();

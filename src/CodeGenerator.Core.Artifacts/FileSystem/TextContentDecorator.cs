@@ -33,7 +33,6 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
         public object? CreatePreview()
         {
             return Content ?? string.Empty;
-            return Image.FromStream(new MemoryStream());
         }
 
         override public async Task GenerateAsync(IProgress<ArtifactGenerationProgress> progress, CancellationToken cancellationToken = default)
@@ -41,12 +40,18 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
             var fileArtifact = Artifact.GetDecoratorOfType<FileArtifactDecorator>() ?? throw new InvalidOperationException("Artifact does not have a FileArtifactDecorator");
             if(string.IsNullOrWhiteSpace(fileArtifact.FileName))
                 throw new InvalidOperationException("FileArtifactDecorator does not have a FileName set");
-
+            
+            // notify outside world we are about to write the Content to a file
+            OnGenerating();
+            
             var folderPath = Artifact.GetFullPath();
             
             var filePath = Path.Combine(folderPath, fileArtifact.FileName);
             var content = Content ?? string.Empty;
             await System.IO.File.WriteAllTextAsync(filePath, content, cancellationToken);
+            
+            // notify outside world we have finished writing the Content to a file
+            OnGenerated();
         }
     }
 }

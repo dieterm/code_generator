@@ -141,11 +141,24 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
     /// </summary>
     public virtual async Task GenerateSelfAsync(IProgress<ArtifactGenerationProgress> progress, CancellationToken cancellationToken = default)
     {
-        foreach (var decorator in Decorators.Where(d => d.CanGenerate()))
+        var handledDecorators = new List<IArtifactDecorator>();
+
+        List<IArtifactDecorator> generatableDecorators;
+        do
         {
-            progress.Report(new ArtifactGenerationProgress(this, $"Generating artifact via decorator '{decorator.Key}'", 0, 1));
-            await decorator.GenerateAsync(progress, cancellationToken);
-        }
+            generatableDecorators = Decorators.Where(d => d.CanGenerate()).Except(handledDecorators).ToList();
+            foreach (var decorator in generatableDecorators)
+            {
+                progress.Report(new ArtifactGenerationProgress(this, $"Generating artifact via decorator '{decorator.Key}'", 0, 1));
+                await decorator.GenerateAsync(progress, cancellationToken);
+            }
+            handledDecorators.AddRange(generatableDecorators);
+            generatableDecorators = Decorators.Where(d => d.CanGenerate()).Except(handledDecorators).ToList();
+            if (generatableDecorators.Count > 0)
+            {
+                // we have more decorators to handle
+            }
+        } while (generatableDecorators.Count > 0);
     }
 
     public virtual T AddChild<T>(T child) where T : class,IArtifact

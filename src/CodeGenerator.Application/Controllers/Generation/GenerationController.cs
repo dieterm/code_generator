@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Application.Controllers.ArtifactPreview;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Application.ViewModels.Generation;
@@ -12,11 +13,6 @@ using CodeGenerator.Shared;
 using CodeGenerator.Shared.ExtensionMethods;
 using CodeGenerator.Shared.Ribbon;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CodeGenerator.Application.Controllers.Generation
 {
@@ -24,20 +20,41 @@ namespace CodeGenerator.Application.Controllers.Generation
     {
         private readonly GenerationResultTreeViewModel _treeViewModel;
         private readonly GenerationRibbonViewModel _generationRibbonViewModel;
-        private readonly ArtifactPreviewViewModel _artifactPreviewViewModel;
+        private readonly GenerationTreeViewController _generationTreeViewController;
+        private readonly GenerationDetailsViewModel _detailsViewModel;
         private readonly GeneratorOrchestrator _generatorOrchestrator;
-        public GenerationController(GeneratorOrchestrator generatorOrchestrator, ArtifactPreviewViewModel artifactPreviewViewModel, GenerationResultTreeViewModel treeViewModel, GenerationRibbonViewModel generationRibbonViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IMessageBoxService messageService, ApplicationMessageBus messageBus, IFileSystemDialogService fileSystemDialogService, ILogger<GenerationController> logger)
-            : base(windowManagerService, ribbonBuilder, messageBus, messageService, fileSystemDialogService,logger)
+
+        public GenerationController(
+            GeneratorOrchestrator generatorOrchestrator,
+            GenerationTreeViewController generationTreeViewController,
+            GenerationDetailsViewModel detailsViewModel,
+            GenerationResultTreeViewModel treeViewModel,
+            GenerationRibbonViewModel generationRibbonViewModel,
+            IWindowManagerService windowManagerService,
+            RibbonBuilder ribbonBuilder,
+            IMessageBoxService messageService,
+            ApplicationMessageBus messageBus,
+            IFileSystemDialogService fileSystemDialogService,
+            ILogger<GenerationController> logger)
+            : base(windowManagerService, ribbonBuilder, messageBus, messageService, fileSystemDialogService, logger)
         {
             _generatorOrchestrator = generatorOrchestrator ?? throw new ArgumentNullException(nameof(generatorOrchestrator));
+            _generationTreeViewController = generationTreeViewController ?? throw new ArgumentNullException(nameof(generationTreeViewController));
+            _detailsViewModel = detailsViewModel ?? throw new ArgumentNullException(nameof(detailsViewModel));
             _treeViewModel = treeViewModel ?? throw new ArgumentNullException(nameof(treeViewModel));
-            _artifactPreviewViewModel = artifactPreviewViewModel ?? throw new ArgumentNullException(nameof(artifactPreviewViewModel));
             _generationRibbonViewModel = generationRibbonViewModel ?? throw new ArgumentNullException(nameof(generationRibbonViewModel));
         }
 
         public override void Initialize()
         {
-            _treeViewModel.ArtifactSelected += OnArtifactSelected;
+            _generationTreeViewController.Initialize();
+
+            // Wire up the sub-viewmodels
+            _treeViewModel.TreeViewModel = _generationTreeViewController.TreeViewModel;
+            _treeViewModel.DetailsViewModel = _detailsViewModel;
+
+            // Subscribe to tree selection events for backward compatibility
+            _generationTreeViewController.ArtifactSelected += OnArtifactSelected;
 
             _generationRibbonViewModel.StartGenerationRequested += OnGenerateRequested;
             _generationRibbonViewModel.StartPreviewRequested += OnGeneratePreviewRequested;
@@ -46,70 +63,21 @@ namespace CodeGenerator.Application.Controllers.Generation
             _generatorOrchestrator.Initialize();
         }
 
-        private void OnArtifactSelected(object? sender, GenerationResultTreeViewModel.ArtifactSelectedEventArgs e)
+        public void ShowGenerationResultView()
         {
-            var selectedArtifact = e.SelectedArtifact;
-            _treeViewModel.SelectedArtifact = selectedArtifact;
+            _windowManagerService.ShowGenerationTreeView(_treeViewModel);
+        }
 
-            // Artifact Preview
-            if (selectedArtifact != null)
-            {
-                if(selectedArtifact.CanPreview)
-                {
-                    object? previewOutput = selectedArtifact.CreatePreview();
+        private void OnArtifactSelected(object? sender, IArtifact? artifact)
+        {
+            if (artifact == null) return;
 
-                    if (previewOutput is string) { 
-                        _artifactPreviewViewModel.TextContent = previewOutput as string;
-                        var fileExtension = selectedArtifact.GetDecoratorOfType<FileArtifactDecorator>()?.FileName.GetFileExtension();
-                        switch (fileExtension)
-                        {
-                            case ".cs":
-                                _artifactPreviewViewModel.TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.CSharp;
-                                break;
-                            case ".js":
-                                _artifactPreviewViewModel.TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.JScript;
-                                break;
-                            case ".ts":
-                                _artifactPreviewViewModel.TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.CSharp;
-                                break;
-                            case ".html":
-                            case ".htm":
-                                _artifactPreviewViewModel.TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.HTML;
-                                break;
-                            case ".xml":
-                            case ".csproj":
-                            case ".sln":
-                            case ".targets":
-                                _artifactPreviewViewModel.TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.XML;
-                                break;
-                            case ".json":
-                                _artifactPreviewViewModel.TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.Undefined;
-                                break;
-                            case ".sql":
-                                _artifactPreviewViewModel.TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.SQL;
-                                break;
-                            case ".java":
-                                _artifactPreviewViewModel.TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.Java;
-                                break;
-                            case ".py":
-                                _artifactPreviewViewModel.TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.Undefined;
-                                break;
-                            default:
-                                _artifactPreviewViewModel.TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.Text;
-                                break;
-                        }
-                    }
-                    else
-                        throw new NotImplementedException("Cannot preview Artifact");
-
-                    _windowManagerService.ShowArtifactPreview(_artifactPreviewViewModel);
-                }
-            }
+            _treeViewModel.SelectedArtifact = artifact;
+            _detailsViewModel.SelectedArtifact = artifact;
         }
 
         public async Task GenerateAsync(IProgress<GenerationProgress> progress, CancellationToken cancellationToken)
         {
-            
             try
             {
                 _generationRibbonViewModel.IsGenerating = true;
@@ -121,7 +89,8 @@ namespace CodeGenerator.Application.Controllers.Generation
                 _logger.LogInformation("Starting code generation process...");
                 var generationResult = await _generatorOrchestrator.GenerateAsync(workspaceContextProvider.CurrentWorkspace, false, progress, cancellationToken);
                 _treeViewModel.GenerationResult = generationResult;
-                _windowManagerService.ShowGenerationTreeView(_treeViewModel);
+                _generationTreeViewController.LoadGenerationResult(generationResult);
+                ShowGenerationResultView();
                 _logger.LogInformation("Code generation process completed successfully.");
             }
             catch (Exception ex)
@@ -145,7 +114,8 @@ namespace CodeGenerator.Application.Controllers.Generation
                 _logger.LogInformation("Starting code generation preview process...");
                 var generationResult = await generatorOrchestrator.GenerateAsync(workspaceContextProvider.CurrentWorkspace, true, progress, cancellationToken);
                 _treeViewModel.GenerationResult = generationResult;
-                _windowManagerService.ShowGenerationTreeView(_treeViewModel);
+                _generationTreeViewController.LoadGenerationResult(generationResult);
+                ShowGenerationResultView();
                 _logger.LogInformation("Code generation preview process completed successfully.");
             }
             catch (Exception ex)
@@ -158,6 +128,7 @@ namespace CodeGenerator.Application.Controllers.Generation
                 _generationRibbonViewModel.IsGenerating = false;
             }
         }
+
         public void CreateRibbon()
         {
             var generationTab = _ribbonBuilder.AddTab("tabGeneration", "Generation");
@@ -187,10 +158,6 @@ namespace CodeGenerator.Application.Controllers.Generation
 
         private CancellationTokenSource? _generationCancellationTokenSource;
 
-        /// <summary>
-        /// Handle code generation logic. <br/>
-        /// Triggered when user clicks "Generate" button
-        /// </summary>
         private async void OnGenerateRequested(object? sender, EventArgs e)
         {
             if (_generationCancellationTokenSource != null)
@@ -228,8 +195,10 @@ namespace CodeGenerator.Application.Controllers.Generation
 
         public override void Dispose()
         {
-            // Clean up resources if needed
+            _generationTreeViewController.ArtifactSelected -= OnArtifactSelected;
             _generationRibbonViewModel.StartGenerationRequested -= OnGenerateRequested;
+            _generationRibbonViewModel.StartPreviewRequested -= OnGeneratePreviewRequested;
+            _generationRibbonViewModel.CancelGenerationRequested -= OnCancelGenerationRequested;
         }
 
         public void Report(GenerationProgress value)

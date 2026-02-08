@@ -30,11 +30,12 @@ public class BinaryContentDecorator : ArtifactDecorator
         
         if (string.IsNullOrWhiteSpace(fileArtifact.FileName))
             throw new InvalidOperationException("FileArtifactDecorator does not have a FileName set");
-
+        OnGenerating();
         var folderPath = Artifact!.GetFullPath();
         var filePath = Path.Combine(folderPath, fileArtifact.FileName);
         var content = Content ?? Array.Empty<byte>();
         
         await File.WriteAllBytesAsync(filePath, content, cancellationToken);
+        OnGenerated();
     }
 }

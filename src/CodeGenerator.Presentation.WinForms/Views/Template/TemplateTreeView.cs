@@ -1,25 +1,22 @@
-using CodeGenerator.Application.Controllers.Base;
-using CodeGenerator.Application.Controllers.Template;
-using CodeGenerator.Application.ViewModels.Base;
 using CodeGenerator.Application.ViewModels.Template;
-using CodeGenerator.Core.Artifacts;
-using CodeGenerator.Core.Artifacts.FileSystem;
-using CodeGenerator.Core.Templates;
-using Syncfusion.Windows.Forms.Tools;
-using System.ComponentModel;
+using CodeGenerator.Shared.ViewModels;
+using CodeGenerator.Shared.Views;
 
 namespace CodeGenerator.Presentation.WinForms.Views.Template
 {
     /// <summary>
     /// TreeView control for displaying and browsing templates
     /// </summary>
-    public partial class TemplateTreeView : ArtifactTreeView
+    public partial class TemplateTreeView : ArtifactTreeView, IView<TemplateTreeViewModel>
     {
-        public TemplateTreeView()
-            : base()
+        public void BindViewModel(TemplateTreeViewModel viewModel)
         {
-
+            base.BindViewModel(viewModel);
         }
 
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        {
+            BindViewModel((TemplateTreeViewModel)(object)viewModel);
+        }
     }
 }
