@@ -1,25 +1,22 @@
-﻿using CodeGenerator.Application.ViewModels.Template;
-using CodeGenerator.Application.ViewModels.Workspace;
-using CodeGenerator.Core.Workspaces.Datasources.Mysql.ViewModels;
+﻿using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
-using System;
 using System.ComponentModel;
-using System.Windows.Forms;
 
 namespace CodeGenerator.Presentation.WinForms.Views
 {
-    public partial class TemplateDetailsView : UserControl, IView<WorkspaceArtifactDetailsViewModel>
+    public partial class WorkspaceArtifactDetailsView : UserControl, IView<WorkspaceArtifactDetailsViewModel>
     {
         private WorkspaceArtifactDetailsViewModel? _viewModel;
-        public TemplateDetailsView()
+
+        public WorkspaceArtifactDetailsView()
         {
             InitializeComponent();
-            Disposed += TemplateDetailsView_Disposed;
+            Disposed += WorkspaceDetailsView_Disposed;
         }
 
-        private void TemplateDetailsView_Disposed(object? sender, EventArgs e)
+        private void WorkspaceDetailsView_Disposed(object? sender, EventArgs e)
         {
             if (_viewModel != null)
             {

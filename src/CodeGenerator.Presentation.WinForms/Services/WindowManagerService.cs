@@ -97,12 +97,12 @@ namespace CodeGenerator.Presentation.WinForms.Services
             _workspaceTreeView.ViewModel = treeViewModel;
         }
 
-        private WorkspaceDetailsView? _workspaceDetailsView;
-        public void ShowWorkspaceDetailsView(ArtifactDetailsViewModel viewModel)
+        private WorkspaceArtifactDetailsView? _workspaceDetailsView;
+        public void ShowWorkspaceDetailsView(WorkspaceArtifactDetailsViewModel viewModel)
         {
             if (_workspaceDetailsView == null || _workspaceDetailsView.IsDisposed)
             {
-                _workspaceDetailsView = new WorkspaceDetailsView();
+                _workspaceDetailsView = new WorkspaceArtifactDetailsView();
 
                 dockingManager.DockControl(_workspaceDetailsView, mainView, DockingStyle.Left, 4);
                 dockingManager.SetEnableDocking(_workspaceDetailsView, true);
@@ -185,7 +185,7 @@ namespace CodeGenerator.Presentation.WinForms.Services
         //}
 
         private TemplateDetailsView? _templateDetailsView;
-        public void ShowTemplateDetailsView(ArtifactDetailsViewModel artifactDetailsViewModel)
+        public void ShowTemplateDetailsView(WorkspaceArtifactDetailsViewModel artifactDetailsViewModel)
         {
             if (_templateDetailsView == null || _templateDetailsView.IsDisposed)
             {

@@ -14,7 +14,7 @@ using CodeGenerator.Application.Services;
 
 namespace CodeGenerator.Application.Controllers.Template
 {
-    public class ExistingFolderArtifactController : TemplateArtifactControllerBase<TemplateTreeViewController, ExistingFolderArtifact>
+    public class ExistingFolderArtifactController : TemplateArtifactControllerBase<ExistingFolderArtifact>
     {
         private readonly IMessageBoxService _messageBoxService;
         public ExistingFolderArtifactController(IMessageBoxService messageBoxService, TemplateTreeViewController treeViewController, ILogger<ExistingFolderArtifactController> logger)

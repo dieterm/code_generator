@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Application.Controllers.Generation;
 using CodeGenerator.Application.Controllers.Template;
 using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Application.Events.Application;

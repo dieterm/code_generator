@@ -18,7 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CodeGenerator.Application.Controllers
+namespace CodeGenerator.Application.Controllers.Generation
 {
     public class GenerationController : CoreControllerBase, IProgress<GenerationProgress>
     {

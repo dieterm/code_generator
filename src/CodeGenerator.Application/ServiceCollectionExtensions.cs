@@ -1,5 +1,6 @@
 using CodeGenerator.Application.Controllers;
 using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Application.Controllers.Generation;
 using CodeGenerator.Application.Controllers.Template;
 using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Application.Controllers.Workspace.Datasources;
@@ -67,24 +68,34 @@ public static class ServiceCollectionExtensions
         // Register Domain services
         services.AddDomainServices(configuration);
         services.AddDomainDotNetServices(configuration);
-        CSharpCodeGeneratorExtensions.RegisterCSharpCodeGenerator();
-        // Register ViewModels
-        services.AddTransient<MainViewModel>();
-        
-        services.AddTransient<GenerationResultTreeViewModel>();
-        services.AddTransient<ArtifactPreviewViewModel>();
-        services.AddTransient<SettingsViewModel>();
-        services.AddTransient<TemplateTreeViewModel>();
-        services.AddTransient<TemplateParametersViewModel>();
 
-        // Register Controllers
+        // Register CodeGenerators
+        // TODO: use DI-container to register generators instead of static registration
+        CSharpCodeGeneratorExtensions.RegisterCSharpCodeGenerator();
+
+        // Register ViewModels
+        services.AddTransient<ArtifactPreviewViewModel>();
+        
+        // Application Controllers
         services.AddSingleton<ApplicationController>();
+        services.AddTransient<MainViewModel>();
+
+        // Generation Controllers & Viewmodels
         services.AddSingleton<GenerationController>();
         services.AddSingleton<GenerationRibbonViewModel>();
-        
+        services.AddTransient<GenerationResultTreeViewModel>();
+
+        // Settings Controllers & ViewModels
         services.AddSingleton<SettingsController>();
-        
-        
+        services.AddTransient<SettingsViewModel>();
+
+        // Register Template Controllers & ViewModels
+        services.AddSingleton<TemplateTreeViewController>();
+        services.AddSingleton<TemplateController>();
+        services.AddTransient<TemplateTreeViewModel>();
+        services.AddTransient<TemplateParametersViewModel>();
+        services.AddSingleton<TemplateRibbonViewModel>();
+
         // Register Workspace Controllers
         services.AddSingleton<WorkspaceController>();
         services.AddSingleton<WorkspaceTreeViewController>();
@@ -92,10 +103,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IDatasourceFactory, DatasourceFactory>();
        
         services.AddSingleton<WorkspaceRibbonViewModel>();
-        // Register Template Controllers
-        services.AddSingleton<TemplateTreeViewController>();
-        services.AddSingleton<TemplateRibbonViewModel>();
-        services.AddSingleton<TemplateController>();
+
         // Workspace Artifact Controllers
         services.AddSingleton<IWorkspaceArtifactController, WorkspaceArtifactController>();
 

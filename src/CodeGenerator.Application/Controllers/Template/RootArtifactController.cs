@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Application.Controllers.Template
 {
-    public class RootArtifactController : TemplateArtifactControllerBase<TemplateTreeViewController, RootArtifact>
+    public class RootArtifactController : TemplateArtifactControllerBase<RootArtifact>
     {
         public RootArtifactController(TemplateTreeViewController treeViewController, ILogger<RootArtifactController> logger)
             : base(treeViewController, logger)

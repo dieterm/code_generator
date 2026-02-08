@@ -35,7 +35,7 @@ namespace CodeGenerator.Application.Controllers.Template
         
         private readonly WorkspaceTreeViewController _workspaceController = ServiceProviderHolder.GetRequiredService<WorkspaceTreeViewController>();
         private readonly TemplateEngineManager _templateEngineManager;
-        private ArtifactDetailsViewModel? _artifactDetailsViewModel;
+        private WorkspaceArtifactDetailsViewModel? _artifactDetailsViewModel;
         private readonly TemplateManager _templateManager;
 
         public TemplateTreeViewController(TemplateManager templateManager, TemplateEngineManager templateEngineManager, WorkspaceTreeViewController workspaceController, RibbonBuilder ribbonBuilder, IWindowManagerService windowManagerService, IMessageBoxService messageBoxService, ILogger<TemplateTreeViewController> logger) : base(windowManagerService, messageBoxService, logger)
@@ -484,7 +484,7 @@ namespace CodeGenerator.Application.Controllers.Template
 
             if (_artifactDetailsViewModel == null)
             {
-                _artifactDetailsViewModel = new ArtifactDetailsViewModel();
+                _artifactDetailsViewModel = new WorkspaceArtifactDetailsViewModel();
             }
             _artifactDetailsViewModel.DetailsViewModel = detailsModel;
             WindowManagerService.ShowTemplateDetailsView(_artifactDetailsViewModel);

@@ -9,11 +9,10 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Application.Controllers.Template
 {
-    public abstract class TemplateArtifactControllerBase<TTreeView, TArtifact> : ArtifactControllerBase<TTreeView, TArtifact>, ITemplateArtifactController
+    public abstract class TemplateArtifactControllerBase<TArtifact> : ArtifactControllerBase<TemplateTreeViewController, TArtifact>, ITemplateArtifactController
         where TArtifact : class, IArtifact
-        where TTreeView : IArtifactTreeViewController
     {
-        protected TemplateArtifactControllerBase(TTreeView treeViewController, ILogger logger) 
+        protected TemplateArtifactControllerBase(TemplateTreeViewController treeViewController, ILogger logger) 
             : base(treeViewController, logger)
         {
 

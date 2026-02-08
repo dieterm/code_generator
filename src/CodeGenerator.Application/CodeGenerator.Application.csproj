@@ -48,4 +48,8 @@
     <ProjectReference Include="..\CodeGenerator.UserControls\CodeGenerator.UserControls.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ViewModels\ArtifactPreview\" />
+  </ItemGroup>
+
 </Project>

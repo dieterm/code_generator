@@ -41,7 +41,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
         private readonly TemplateManager _templateManager;
         private readonly WorkspaceMessageBus _workspaceMessageBus;
         private readonly UndoRedoManager _undoRedoManager;
-        private ArtifactDetailsViewModel? _workspaceDetailsViewModel;
+        private WorkspaceArtifactDetailsViewModel? _workspaceDetailsViewModel;
 
         /// <summary>
         /// The UndoRedoManager for this workspace
@@ -345,7 +345,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
         {
             if (_workspaceDetailsViewModel == null)
             {
-                _workspaceDetailsViewModel = new ArtifactDetailsViewModel();
+                _workspaceDetailsViewModel = new WorkspaceArtifactDetailsViewModel();
             }
             _workspaceDetailsViewModel.DetailsViewModel = detailsModel;
             WindowManagerService.ShowWorkspaceDetailsView(_workspaceDetailsViewModel);

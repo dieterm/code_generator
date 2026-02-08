@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Application.ViewModels.Workspace
 {
-    public class ArtifactDetailsViewModel : ViewModelBase
+    public class WorkspaceArtifactDetailsViewModel : ViewModelBase
     {
         private ViewModelBase? _detailsViewModel;
         public ViewModelBase? DetailsViewModel

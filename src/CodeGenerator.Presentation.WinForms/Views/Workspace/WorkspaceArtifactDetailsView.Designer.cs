@@ -1,6 +1,6 @@
 ﻿namespace CodeGenerator.Presentation.WinForms.Views
 {
-    partial class WorkspaceDetailsView
+    partial class WorkspaceArtifactDetailsView
     {
         /// <summary> 
         /// Required designer variable.
