@@ -1,4 +1,5 @@
 using CodeGenerator.Application.Controllers;
+using CodeGenerator.Application.Controllers.ArtifactPreview;
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Controllers.Generation;
 using CodeGenerator.Application.Controllers.Template;
@@ -73,7 +74,8 @@ public static class ServiceCollectionExtensions
         // TODO: use DI-container to register generators instead of static registration
         CSharpCodeGeneratorExtensions.RegisterCSharpCodeGenerator();
 
-        // Register ViewModels
+        // Artifact Preview Controllers & ViewModels
+        services.AddSingleton<ArtifactPreviewController>();
         services.AddTransient<ArtifactPreviewViewModel>();
         
         // Application Controllers

@@ -1,3 +1,4 @@
+using CodeGenerator.Application.Controllers.ArtifactPreview;
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Artifacts;
@@ -59,14 +60,9 @@ public class CsvDatasourceController : WorkspaceArtifactControllerBase<CsvDataso
                 IconKey = "edit",
                 Execute = async (a) =>
                 {
-                    var windowService = ServiceProviderHolder.GetRequiredService<IWindowManagerService>();
-                    var previewViewModel = new ViewModels.ArtifactPreviewViewModel
-                    {
-                        TabLabel = Path.GetFileName(artifact.FilePath),
-                        FilePath = artifact.FilePath,
-                        TextLanguageSchema = ViewModels.ArtifactPreviewViewModel.KnownLanguages.Text
-                    };
-                    windowService.ShowArtifactPreview(previewViewModel);
+                    var previewController = ServiceProviderHolder.GetRequiredService<ArtifactPreviewController>();
+                    previewController.ShowExistingFile(artifact.FilePath, ViewModels.ArtifactPreviewViewModel.KnownLanguages.Text);
+                    
                     await Task.CompletedTask;
                 }
             });

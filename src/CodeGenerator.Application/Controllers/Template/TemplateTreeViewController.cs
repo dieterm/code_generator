@@ -1,4 +1,5 @@
-﻿using CodeGenerator.Application.Controllers.Base;
+﻿using CodeGenerator.Application.Controllers.ArtifactPreview;
+using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
@@ -318,43 +319,21 @@ namespace CodeGenerator.Application.Controllers.Template
 
                 if (output.Succeeded)
                 {
+                    var previewController = ServiceProviderHolder.GetRequiredService<ArtifactPreviewController>();
+
                     // Show preview of the generated content
                     if (output.Artifacts.Any())
                     {
                         var firstArtifact = output.Artifacts.First();
                         if (firstArtifact is FileArtifact fileArtifact)
                         {
-                            if(fileArtifact.HasDecorator<TextContentDecorator>())
-                            {
-                                // If the file artifact has text content decorator, show that
-                                WindowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel
-                                {
-                                    FileName = fileArtifact.FileName,
-                                    TabLabel = $"Generated: {templateArtifact.DisplayName}",
-                                    TextContent = fileArtifact.GetTextContent(),
-                                    TextLanguageSchema = DetermineLanguageSchema(templateArtifact.FilePath)
-                                });
-                                return;
-                            }
-                            else if (fileArtifact.HasDecorator<ImageContentDecorator>())
-                            {
-                                var image = fileArtifact.GetDecoratorOfType<ImageContentDecorator>()?.CreatePreview() as Image;
-                                if (image != null) {
-                                    WindowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel
-                                    {
-                                        FileName = fileArtifact.FileName,
-                                        TabLabel = $"Generated: {templateArtifact.DisplayName}",
-                                        //TextContent = fileArtifact.GetTextContent(),
-                                        ImageContent = image,
-                                        TextLanguageSchema = DetermineLanguageSchema(templateArtifact.FilePath)
-                                    });
-                                }
-                            }
+                            previewController.ShowFileArtifact(fileArtifact, $"Generated: {templateArtifact.DisplayName}");
+                            
                         }
                     }
                     else if (!string.IsNullOrEmpty(output.TextContent))
                     {
-                        WindowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel
+                        previewController.ShowArtifactPreview(new ArtifactPreviewViewModel
                         {
                             FileName = templateArtifact.FileName?.GetFileNameWithoutExtension()??"output.txt",
                             TabLabel = $"Generated: {templateArtifact.DisplayName}",

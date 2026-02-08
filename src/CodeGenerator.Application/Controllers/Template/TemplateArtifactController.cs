@@ -1,4 +1,5 @@
-﻿using CodeGenerator.Application.Controllers.Base;
+﻿using CodeGenerator.Application.Controllers.ArtifactPreview;
+using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels.Template;
@@ -89,15 +90,8 @@ namespace CodeGenerator.Application.Controllers.Template
                         await TreeViewController.OpenTemplateEditor(templateArtifact, new Dictionary<string, object?>());
                     else
                     {
-                        var windowService = ServiceProviderHolder.GetRequiredService<IWindowManagerService>();
-                        var previewViewModel = new ViewModels.ArtifactPreviewViewModel
-                        {
-                            TabLabel = templateArtifact.FileName,
-                            FilePath = templateArtifact.FilePath,
-                            //TextContent = System.IO.File.ReadAllText(templateArtifact.FilePath), 
-                            TextLanguageSchema = ViewModels.ArtifactPreviewViewModel.KnownLanguages.Text
-                        };
-                        windowService.ShowArtifactPreview(previewViewModel);
+                        var previewController = ServiceProviderHolder.GetRequiredService<ArtifactPreviewController>();
+                        previewController.ShowExistingFile(templateArtifact.FilePath);
                         await Task.CompletedTask;
                     }
                 }
@@ -113,17 +107,8 @@ namespace CodeGenerator.Application.Controllers.Template
                     Execute = async (a) =>
                     {
                         var templateDefinitionFilePath = TemplateDefinition.GetDefinitionFilePath(templateArtifact.FilePath);
-                        var defFileName = Path.GetFileName(templateDefinitionFilePath);
-                        //var definition = TemplateDefinition.LoadFromFile(templateDefinitionFilePath);
-                        var windowService = ServiceProviderHolder.GetRequiredService<IWindowManagerService>();
-                        var previewViewModel = new ViewModels.ArtifactPreviewViewModel
-                        {
-                            TabLabel = defFileName,
-                            FilePath = templateDefinitionFilePath,
-                            //TextContent = System.IO.File.ReadAllText(templateArtifact.FilePath), 
-                            TextLanguageSchema = ViewModels.ArtifactPreviewViewModel.KnownLanguages.Text
-                        };
-                        windowService.ShowArtifactPreview(previewViewModel);
+                        var previewController = ServiceProviderHolder.GetRequiredService<ArtifactPreviewController>();
+                        previewController.ShowExistingFile(templateDefinitionFilePath);
                         await Task.CompletedTask;
                     }
                 };

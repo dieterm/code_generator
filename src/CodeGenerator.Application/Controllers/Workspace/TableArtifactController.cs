@@ -1,3 +1,4 @@
+using CodeGenerator.Application.Controllers.ArtifactPreview;
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
@@ -389,12 +390,9 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 if (content.Succeeded == false)
                 {
                     var errorContent = $"-- Errors generating script:\n-- {string.Join("\n-- ", content.Errors)}";
-                    _windowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel()
-                    {
-                        TabLabel = tabLabel,
-                        TextContent = errorContent,
-                        TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.Text
-                    });
+                    var previewController = ServiceProviderHolder.GetRequiredService<ArtifactPreviewController>();
+                    previewController.ShowTextContent(errorContent, tabLabel);
+                    
                     return;
                 }
 
@@ -402,12 +400,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
                 if (lastGenArtifact is FileArtifact fileArtifact)
                 {
-                    _windowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel()
-                    {
-                        TabLabel = tabLabel,
-                        TextContent = fileArtifact.GetTextContent(),
-                        TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.SQL
-                    });
+                    var previewController = ServiceProviderHolder.GetRequiredService<ArtifactPreviewController>();
+                    previewController.ShowTextContent(fileArtifact.GetTextContent()??string.Empty, tabLabel, ArtifactPreviewViewModel.KnownLanguages.SQL);
                 }
             }
             catch (Exception ex)

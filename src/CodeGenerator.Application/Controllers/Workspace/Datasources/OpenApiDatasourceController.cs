@@ -1,3 +1,4 @@
+using CodeGenerator.Application.Controllers.ArtifactPreview;
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Artifacts;
@@ -58,18 +59,12 @@ public class OpenApiDatasourceController : WorkspaceArtifactControllerBase<OpenA
                 IconKey = "edit",
                 Execute = async (a) =>
                 {
-                    var windowService = ServiceProviderHolder.GetRequiredService<IWindowManagerService>();
                     var languageSchema = artifact.FilePath.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
                         ? ViewModels.ArtifactPreviewViewModel.KnownLanguages.JScript
                         : ViewModels.ArtifactPreviewViewModel.KnownLanguages.Text;
-
-                    var previewViewModel = new ViewModels.ArtifactPreviewViewModel
-                    {
-                        TabLabel = Path.GetFileName(artifact.FilePath),
-                        FilePath = artifact.FilePath,
-                        TextLanguageSchema = languageSchema
-                    };
-                    windowService.ShowArtifactPreview(previewViewModel);
+                    var previewController = ServiceProviderHolder.GetRequiredService<ArtifactPreviewController>();
+                    previewController.ShowExistingFile(artifact.FilePath, languageSchema);
+                    
                     await Task.CompletedTask;
                 }
             });

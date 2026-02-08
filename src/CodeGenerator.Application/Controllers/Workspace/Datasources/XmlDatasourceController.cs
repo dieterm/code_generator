@@ -1,3 +1,4 @@
+using CodeGenerator.Application.Controllers.ArtifactPreview;
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Artifacts;
@@ -58,14 +59,9 @@ public class XmlDatasourceController : WorkspaceArtifactControllerBase<XmlDataso
                 IconKey = "edit",
                 Execute = async (a) =>
                 {
-                    var windowService = ServiceProviderHolder.GetRequiredService<IWindowManagerService>();
-                    var previewViewModel = new ViewModels.ArtifactPreviewViewModel
-                    {
-                        TabLabel = Path.GetFileName(artifact.FilePath),
-                        FilePath = artifact.FilePath,
-                        TextLanguageSchema = ViewModels.ArtifactPreviewViewModel.KnownLanguages.XML
-                    };
-                    windowService.ShowArtifactPreview(previewViewModel);
+                    var previewController = ServiceProviderHolder.GetRequiredService<ArtifactPreviewController>();
+                    previewController.ShowExistingFile(artifact.FilePath, ViewModels.ArtifactPreviewViewModel.KnownLanguages.XML);
+                    
                     await Task.CompletedTask;
                 }
             });
