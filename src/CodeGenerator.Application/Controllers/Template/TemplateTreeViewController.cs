@@ -207,7 +207,7 @@ namespace CodeGenerator.Application.Controllers.Template
                     if (filePath.EndsWith(TemplateDefinition.DefinitionFileExtension, StringComparison.OrdinalIgnoreCase))
                         continue;
 
-                    var extension = Path.GetExtension(filePath).TrimStart('.');
+                    var extension = filePath.GetFileExtension(false);
                     var templateEngine = _templateEngineManager.GetTemplateEngineByFileExtension(extension);
 
                     if (templateEngine != null)

@@ -7,6 +7,7 @@ using CodeGenerator.Core.Settings.Generators;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Templates.Settings;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.ExtensionMethods;
 using CodeGenerator.TemplateEngines.Scriban;
 using CodeGenerator.TemplateEngines.T4;
 using Microsoft.Extensions.Logging;
@@ -69,7 +70,7 @@ namespace CodeGenerator.TemplateEngines.Folder
                     break;
                 }
                 var fileRelativePath = Path.GetRelativePath(templateRootFolder, file);
-                var fileExtension = Path.GetExtension(file).Replace(".", "");
+                var fileExtension = file.GetFileExtension(false);
                 if (templateInstance.ExcludedFileNames.Contains(fileRelativePath) || templateInstance.ExcludedExtensions.Contains(fileExtension)) 
                 { 
                     ignoredFiles.Add(fileRelativePath);

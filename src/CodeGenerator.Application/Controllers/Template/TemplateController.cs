@@ -43,6 +43,12 @@ public class TemplateController : CoreControllerBase
 
         _templateRibbonViewModel.RequestShowTemplates += OnRequestShowTemplates;
         _templateRibbonViewModel.RequestRefreshTemplates+= OnRequestRefreshTemplates;
+        _templateRibbonViewModel.RequestShowCodeElementsTool += OnRequestShowCodeElementsTool;
+    }
+
+    private void OnRequestShowCodeElementsTool(object? sender, EventArgs e)
+    {
+        throw new NotImplementedException();
     }
 
     private void OnRequestRefreshTemplates(object? sender, EventArgs e)
@@ -57,23 +63,36 @@ public class TemplateController : CoreControllerBase
 
     public void CreateRibbon()
     {
-        _ribbonBuilder
-            .AddTab("tabTemplates", "Templates")
-                .AddToolStrip("toolstripTemplates", "Templates")
-                    .AddButton("btnShowTemplates", "Browse Templates")
-                        .WithSize(RibbonButtonSize.Large)
-                        .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
-                        .WithImage("file_code")
-                        .WithToolTip("Browse and execute templates")
-                        .WithCommand(_templateRibbonViewModel.ShowTemplatesCommand)
-                    .AddButton("btnRefreshTemplates", "Refresh")
-                        .WithSize(RibbonButtonSize.Small)
-                        .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
-                        .WithImage("refresh_cw")
-                        .WithToolTip("Refresh template list")
-                        .WithCommand(_templateRibbonViewModel.RefreshTemplatesCommand)
-                .EndToolStrip()
-            .Build();
+        var templateTabBuilder = _ribbonBuilder
+            .AddTab("tabTemplates", "Templates");
+
+        templateTabBuilder
+            .AddToolStrip("toolstripTemplates", "Templates")
+                .AddButton("btnShowTemplates", "Browse Templates")
+                    .WithSize(RibbonButtonSize.Large)
+                    .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
+                    .WithImage("file_code")
+                    .WithToolTip("Browse and execute templates")
+                    .WithCommand(_templateRibbonViewModel.ShowTemplatesCommand)
+                .AddButton("btnRefreshTemplates", "Refresh")
+                    .WithSize(RibbonButtonSize.Small)
+                    .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
+                    .WithImage("refresh_cw")
+                    .WithToolTip("Refresh template list")
+                    .WithCommand(_templateRibbonViewModel.RefreshTemplatesCommand)
+            .EndToolStrip()
+        .Build();
+        templateTabBuilder
+            .AddToolStrip("toolstripTemplateTools", "Tools")
+                .AddDropDownButton("btnTemplateTools", "Tools")
+                    .WithSize(RibbonButtonSize.Large)
+                    .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
+                    .WithImage("pocket-knife")
+                    .WithToolTip("Template related tools")
+                    .AddDropDownItem("btnCodeElements", "Code Elements", (e) => _templateRibbonViewModel.ShowCodeElementsToolCommand.Execute(null))
+                        
+            .EndToolStrip()
+        .Build();
     }
     public override void Dispose()
     {

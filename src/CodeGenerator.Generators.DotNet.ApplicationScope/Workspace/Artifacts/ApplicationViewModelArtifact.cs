@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication.Workspace.Artifacts
+namespace CodeGenerator.Generators.DotNet.ApplicationScope.Workspace.Artifacts
 {
     public class ApplicationViewModelArtifact : ViewModelArtifact
     {
@@ -18,6 +18,11 @@ namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication.Workspace.Ar
         public ApplicationViewModelArtifact(ArtifactState state)
             : base(state)
         {
+        }
+
+        public string? ApplicationName { 
+            get { return GetValue<string>(nameof(ApplicationName)); } 
+            set { SetValue<string>(nameof(ApplicationName), value); } 
         }
     }
 }

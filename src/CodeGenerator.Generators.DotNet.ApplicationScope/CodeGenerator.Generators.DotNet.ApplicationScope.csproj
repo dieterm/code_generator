@@ -23,4 +23,9 @@
     <ProjectReference Include="..\CodeGenerator.UserControls\CodeGenerator.UserControls.csproj" />
     <ProjectReference Include="..\CodeGenerator.UserControls.Views\CodeGenerator.UserControls.Views.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Views\ApplicationViewModelArtifactEditView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>

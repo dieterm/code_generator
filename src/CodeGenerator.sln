@@ -190,6 +190,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Copilot", "Copilot", "{749E
 		..\docs\Copilot\workspace-operations-architecture.md = ..\docs\Copilot\workspace-operations-architecture.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Generators.DotNet.ApplicationScope", "CodeGenerator.Generators.DotNet.ApplicationScope\CodeGenerator.Generators.DotNet.ApplicationScope.csproj", "{BA333ED9-74C0-4800-9241-3B95F45A9722}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -371,6 +373,10 @@ Global
 		{77484791-DF9A-4A16-B7D8-7595A410DC93}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77484791-DF9A-4A16-B7D8-7595A410DC93}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77484791-DF9A-4A16-B7D8-7595A410DC93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA333ED9-74C0-4800-9241-3B95F45A9722}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA333ED9-74C0-4800-9241-3B95F45A9722}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA333ED9-74C0-4800-9241-3B95F45A9722}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA333ED9-74C0-4800-9241-3B95F45A9722}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -413,6 +419,7 @@ Global
 		{C4B5B82B-5E1C-43ED-88CE-58EDBF414520} = {E9F8E255-2538-42FC-AD05-7742FE416432}
 		{075240A2-1740-46EA-BD75-8526F5B0A869} = {4856C5FE-741C-4773-A485-3E261182F82D}
 		{749E5A48-DBB8-43E5-AB88-A7A6EA684F65} = {C07A3E83-0321-4673-AA42-47F3D68755B5}
+		{BA333ED9-74C0-4800-9241-3B95F45A9722} = {ED8AA5E0-9601-4995-910B-776F8204C303}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF76BCB8-B816-4DA2-B1B6-D1F900E7DD06}

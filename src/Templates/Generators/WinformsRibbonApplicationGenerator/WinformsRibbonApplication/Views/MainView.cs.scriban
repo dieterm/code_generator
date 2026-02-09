@@ -26,6 +26,7 @@ namespace {{ Namespace }}
             lblStatus.DataBindings.Add("Text", viewModel, nameof(viewModel.StatusLabel));
             //pbProgress.DataBindings.Add("Value", viewModel, nameof(viewModel.ProgressValue));
             btnExit.Command = viewModel.ExitCommand;
+						Text = viewModel.ApplicationName;
         }
 
         public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase

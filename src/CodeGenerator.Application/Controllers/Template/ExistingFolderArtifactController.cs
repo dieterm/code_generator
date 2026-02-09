@@ -168,7 +168,7 @@ namespace CodeGenerator.Application.Controllers.Template
 
                     // paste to new parent
                     // create new template artifact
-                    var fileExtension = Path.GetExtension(targetFilePath).Replace(".", "");
+                    var fileExtension = targetFilePath.GetFileExtension(false);
                     var templateEngineManager = ServiceProviderHolder.GetRequiredService<TemplateEngineManager>();
                     var templateEngine = templateEngineManager.GetTemplateEngineByFileExtension(fileExtension);
                     var newTemplateArtifact = new TemplateArtifact(targetFilePath, templateEngine);
@@ -189,7 +189,7 @@ namespace CodeGenerator.Application.Controllers.Template
                     }
 
                     // create new template artifact
-                    var fileExtension = Path.GetExtension(targetFilePath).Replace(".", "");
+                    var fileExtension = targetFilePath.GetFileExtension(false);
                     var templateEngineManager = ServiceProviderHolder.GetRequiredService<TemplateEngineManager>();
                     var templateEngine = templateEngineManager.GetTemplateEngineByFileExtension(fileExtension);
                     var newTemplateArtifact = new TemplateArtifact(targetFilePath, templateEngine);

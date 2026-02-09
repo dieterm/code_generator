@@ -35,6 +35,7 @@ using CodeGenerator.Shared.Views;
 using CodeGenerator.UserControls;
 using CodeGenerator.UserControls.Ribbon;
 using CodeGenerator.Generators.DotNet.WinformsRibbonApplication;
+using CodeGenerator.Generators.DotNet.ApplicationScope;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -63,6 +64,7 @@ public static class ServiceCollectionExtensions
 
         // Register Generators
         services.AddDotNetWinformsRibbonApplicationGeneratorServices(configuration);
+        services.AddDotNetApplicationScopeGeneratorServices(configuration);
         // Main form
         services.AddSingleton<MainView>();
         services.AddSingleton<IWindowManagerService>((s) => new WindowManagerService(Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<MainView>(s)));

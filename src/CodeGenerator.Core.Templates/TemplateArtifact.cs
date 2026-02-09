@@ -2,6 +2,7 @@ using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Core.Interfaces;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.ExtensionMethods;
 
 namespace CodeGenerator.Core.Templates;
 
@@ -40,7 +41,7 @@ public class TemplateArtifact : Artifact
     {
         FilePath = GetValue<string>(nameof(FilePath)) ?? string.Empty;
         _definition = TemplateDefinition.LoadForTemplate(FilePath);
-        var fileExtention = Path.GetExtension(FilePath);
+        var fileExtention = FilePath.GetFileExtension(false);
         var templateEngineManager = ServiceProviderHolder.GetRequiredService<TemplateEngineManager>();
         var templateEngine = templateEngineManager.GetTemplateEngineByFileExtension(fileExtention);
         if (templateEngine is IFileBasedTemplateEngine fileBasedTemplateEngine)

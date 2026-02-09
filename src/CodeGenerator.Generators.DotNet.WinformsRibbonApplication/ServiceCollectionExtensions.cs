@@ -1,8 +1,8 @@
 using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Workspaces.MessageBus;
-using CodeGenerator.Generators.DotNet.WinformsRibbonApplication.Controllers;
 using CodeGenerator.Generators.DotNet.WinformsRibbonApplication.Workspace.Subscribers;
+using CodeGenerator.Shared.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,11 +25,9 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<IWorkspaceMessageBusSubscriber, OnionPresentationLayerContextMenuOpeningSubscriber>();
         services.AddSingleton<IWorkspaceMessageBusSubscriber, ViewsContainerToPresentationLayerArtifactChildAddedSubscriber>();
-        services.AddSingleton<IWorkspaceMessageBusSubscriber, ViewModelsContainerToApplicationLayerArtifactChildAddedSubscriber>();
         services.AddSingleton<IWorkspaceMessageBusSubscriber, ControllersContainerToApplicationLayerArtifactChildAddedSubscriber>();
 
-        // workspace controllers
-        services.AddSingleton<IWorkspaceArtifactController, ApplicationViewModelArtifactController>();
+       
 
         return services;
     }

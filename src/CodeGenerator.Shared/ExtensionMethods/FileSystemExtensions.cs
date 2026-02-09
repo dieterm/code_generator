@@ -194,10 +194,16 @@ namespace CodeGenerator.Shared.ExtensionMethods
             return System.IO.Path.GetDirectoryName(filePath) ?? string.Empty;
         }
 
-        public static string? GetFileExtension(this string filePath)
+        /// <summary>
+        /// returns file extension (without dot by default) or null if no extension or invalid path.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public static string? GetFileExtension(this string filePath, bool includeDot = true)
         {
             if (string.IsNullOrWhiteSpace(filePath)) return null;
-            return System.IO.Path.GetExtension(filePath);
+            var extension = System.IO.Path.GetExtension(filePath);
+            return includeDot ? extension : extension?.TrimStart('.');
         }
 
         public static void OpenFolderInExplorer(this string folderPath)

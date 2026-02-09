@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace {{ Namespace }}
 {
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : {{ BaseClassName }}
     {
         /// <summary>
         /// Event raised when closing is requested. 
@@ -32,6 +32,13 @@ namespace {{ Namespace }}
             set => SetProperty(ref _progressLabel, value);
         }
 
+        private string? _applicationName;
+        public string? ApplicationName
+        {
+            get => _applicationName;
+            set => SetProperty(ref _applicationName, value);
+        }
+
         private int? _progressValue;
         public int? ProgressValue
         {
@@ -45,6 +52,7 @@ namespace {{ Namespace }}
         public MainViewModel()
         {
             ExitCommand = new RelayCommand(_ => ClosingRequested?.Invoke(this, EventArgs.Empty));
+						ApplicationName = "{{ ApplicationName }}";
         }
     }
 

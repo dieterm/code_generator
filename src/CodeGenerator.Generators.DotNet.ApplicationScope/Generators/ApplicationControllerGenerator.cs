@@ -10,6 +10,7 @@ using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.CodeElements;
 using CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection;
 using CodeGenerator.Domain.DotNet;
+using CodeGenerator.Generators.DotNet.ApplicationScope.Workspace.Artifacts;
 using CodeGenerator.Generators.DotNet.Events;
 using CodeGenerator.Generators.DotNet.Workspace;
 using CodeGenerator.Shared;
@@ -20,7 +21,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CodeGenerator.Generators.DotNet.Generators
+namespace CodeGenerator.Generators.DotNet.ApplicationScope.Generators
 {
     public class ApplicationControllerGenerator : GeneratorBase
     {
@@ -36,17 +37,23 @@ namespace CodeGenerator.Generators.DotNet.Generators
             _unsubscribe_dotnet_project_created_handler = messageBus.Subscribe<DotNetProjectArtifactCreatedEventArgs>(
                async (e) => await OnDotNetProjectCreated(e), FilterApplicationScopeApplicationLayer          
             );
-            _unsubscribe_diextensions_codefile_created_handler = messageBus.Subscribe<DiExtensionsClassArtifactCreatedEventArgs>(OnDiExtensionsCodeFileArtifactCreated, DiExtensionsCodeFileArtifactFilter);
+            _unsubscribe_diextensions_codefile_created_handler = messageBus.Subscribe<DiExtensionsClassArtifactCreatedEventArgs>(
+                OnDiExtensionsCodeFileArtifactCreated, DiExtensionsCodeFileArtifactFilter);
         }
 
         private bool DiExtensionsCodeFileArtifactFilter(DiExtensionsClassArtifactCreatedEventArgs args)
         {
+            if (!Enabled)
+                return false;
             return args.Layer == OnionCodeArchitecture.APPLICATION_LAYER &&
                    args.Scope == CodeArchitectureScopes.APPLICATION_SCOPE;
         }
 
         private void OnDiExtensionsCodeFileArtifactCreated(DiExtensionsClassArtifactCreatedEventArgs args)
         {
+            if (!Enabled)
+                return;
+
             args.DiExtensionsClassArtifact.ServiceRegistrations.Add(new ServiceRegistration
             {
                 ServiceType = new TypeReference("ApplicationController", $"{WorkspaceTemplateHelpers.GetApplicationApplicationNamespace()}.Controllers"),
@@ -147,7 +154,10 @@ namespace CodeGenerator.Generators.DotNet.Generators
             appControllerTemplate.OutputFileName = "MainViewModel.cs";
             appControllerTemplate.SetParameter("Namespace", serviceNamespace);
             appControllerTemplate.SetParameter("BaseClassName", "ViewModelBase");
-
+            //var applicationScope = e.Result.Workspace.Scopes.FindScope(CodeArchitectureScopes.APPLICATION_SCOPE, false);
+            var viewModelArtifact = e.Result.Workspace.FindDescendants<ApplicationViewModelArtifact>().SingleOrDefault();
+            if (viewModelArtifact != null)
+                appControllerTemplate.SetParameter("ApplicationName", viewModelArtifact.ApplicationName);
 
             var output = await appControllerTemplate.RenderAsync(CancellationToken.None);
 

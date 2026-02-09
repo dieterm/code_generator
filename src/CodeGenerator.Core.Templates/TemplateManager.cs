@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Core.Artifacts.FileSystem;
+using CodeGenerator.Shared.ExtensionMethods;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -341,7 +342,7 @@ namespace CodeGenerator.Core.Templates
 
             try
             {
-                var extension = Path.GetExtension(filePath).TrimStart('.');
+                var extension = filePath.GetFileExtension(false);
                 var templateEngine = _templateEngineManager.GetTemplateEngineByFileExtension(extension);
 
                 if (templateEngine != null && templateEngine is IFileBasedTemplateEngine fileBasedTemplateEngine)
@@ -389,7 +390,7 @@ namespace CodeGenerator.Core.Templates
                             continue; // already loaded
                     }
 
-                    var extension = Path.GetExtension(filePath).TrimStart('.');
+                    var extension = filePath.GetFileExtension(false);
                     var templateEngine = _templateEngineManager.GetTemplateEngineByFileExtension(extension);
 
                     if (templateEngine != null && templateEngine is IFileBasedTemplateEngine fileBasedTemplateEngine)
