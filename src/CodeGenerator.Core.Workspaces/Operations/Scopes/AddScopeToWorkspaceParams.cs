@@ -1,3 +1,4 @@
+using CodeGenerator.Core.Artifacts;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,5 +12,8 @@ namespace CodeGenerator.Core.Workspaces.Operations.Scopes
         [Required]
         [Description("The name of the new scope (e.g. 'Infrastructure', 'Presentation')")]
         public string ScopeName { get; set; } = string.Empty;
+
+        public IArtifact? CreatedScope;
+        public IArtifact? ParentContainer;
     }
 }

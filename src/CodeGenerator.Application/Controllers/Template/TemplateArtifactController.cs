@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CodeGenerator.Shared.ExtensionMethods;
 
 namespace CodeGenerator.Application.Controllers.Template
 {
@@ -137,10 +138,7 @@ namespace CodeGenerator.Application.Controllers.Template
                 Execute = async (a) =>
                 {
                     var folder = Path.GetDirectoryName(templateArtifact.FilePath);
-                    if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder))
-                    {
-                        System.Diagnostics.Process.Start("explorer.exe", folder);
-                    }
+                    folder?.OpenFolderInExplorer();
                     await Task.CompletedTask;
                 }
             };

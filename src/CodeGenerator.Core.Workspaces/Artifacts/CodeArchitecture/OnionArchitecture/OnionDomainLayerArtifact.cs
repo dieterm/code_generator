@@ -2,8 +2,12 @@
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
+using CodeGenerator.Core.Workspaces.Operations.Domains;
+using CodeGenerator.Core.Workspaces.Operations.Scopes;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Domain.CodeArchitecture;
+using CodeGenerator.Shared;
+using CodeGenerator.Shared.Operations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,11 +28,6 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         }
 
         public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("boxes");
-
-        public DomainArtifact AddDomain(string domainName)
-        {
-            return AddChild(new DomainArtifact(domainName));
-        }
 
         public IEnumerator<DomainArtifact> GetEnumerator()
         {

@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CodeGenerator.Application\CodeGenerator.Application.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Artifacts\CodeGenerator.Core.Artifacts.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Generators\CodeGenerator.Core.Generators.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Templates\CodeGenerator.Core.Templates.csproj" />

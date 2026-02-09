@@ -9,9 +9,6 @@ namespace CodeGenerator.Core.Workspaces.Operations.Scopes
     {
         private readonly IWorkspaceContextProvider _workspaceContextProvider;
 
-        private ScopeArtifact? _createdScope;
-        private SubScopesContainerArtifact? _parentContainer;
-
         public string OperationId => "AddSubScope";
         public string DisplayName => "Add Sub-Scope";
         public string Description => "Add a new sub-scope to an existing scope";
@@ -27,14 +24,14 @@ namespace CodeGenerator.Core.Workspaces.Operations.Scopes
             var workspace = _workspaceContextProvider.CurrentWorkspace;
             if (workspace == null)
                 return "No workspace is currently open.";
-            if (string.IsNullOrWhiteSpace(parameters.ParentScopeName))
-                return "Parent scope name cannot be empty.";
+            if (string.IsNullOrWhiteSpace(parameters.ParentScopeId))
+                return "Parent scope ID cannot be empty.";
             if (string.IsNullOrWhiteSpace(parameters.NewScopeName))
                 return "New scope name cannot be empty.";
 
             var existing = _workspaceContextProvider.CurrentWorkspace?.FindScope(parameters.NewScopeName, false);
             if (existing != null)
-                return $"Scope '{parameters.NewScopeName}' already exists.";
+                return $"Scope '{parameters.NewScopeName}' with id '{existing.Id}' already exists.";
 
             return null;
         }
@@ -45,23 +42,23 @@ namespace CodeGenerator.Core.Workspaces.Operations.Scopes
             if (validationError != null)
                 return OperationResult.Fail(validationError);
 
-            var parentScope = _workspaceContextProvider.CurrentWorkspace!.Scopes.FindScope(parameters.ParentScopeName);
-            _parentContainer = parentScope.SubScopes;
-            _createdScope = _parentContainer.AddScope(parameters.NewScopeName);
+            var parentScope = _workspaceContextProvider.CurrentWorkspace!.FindDescendantById<ScopeArtifact>(parameters.ParentScopeId);//.Scopes.FindScope(parameters.ParentScopeName);
+            parameters.ParentContainer = parentScope.SubScopes;
+            parameters.CreatedScope = parameters.ParentContainer.AddScope(parameters.NewScopeName);
 
-            return OperationResult.Ok($"Sub-scope '{parameters.NewScopeName}' added to scope '{parameters.ParentScopeName}'.");
+            return OperationResult.Ok($"Sub-scope '{parameters.NewScopeName}' with id '{parameters.CreatedScope.Id}' added to scope '{parentScope.Name}'.");
         }
 
-        public void Undo()
+        public void Undo(AddSubScopeToScopeParams parameters)
         {
-            if (_createdScope != null && _parentContainer != null)
-                _parentContainer.RemoveChild(_createdScope);
+            if (parameters.CreatedScope != null && parameters.ParentContainer != null)
+                parameters.ParentContainer.RemoveChild(parameters.CreatedScope);
         }
 
-        public void Redo()
+        public void Redo(AddSubScopeToScopeParams parameters)
         {
-            if (_createdScope != null && _parentContainer != null)
-                _parentContainer.AddChild(_createdScope);
+            if (parameters.CreatedScope != null && parameters.ParentContainer != null)
+                parameters.ParentContainer.AddChild(parameters.CreatedScope);
         }
     }
 }

@@ -12,10 +12,6 @@ namespace CodeGenerator.Core.Workspaces.Operations.Scopes
     {
         private readonly IWorkspaceContextProvider _workspaceContextProvider;
 
-        // Undo state — captured during Execute
-        private IArtifact? _createdScope;
-        private IArtifact? _parentContainer;
-
         public string OperationId => "AddScope";
         public string DisplayName => "Add Scope";
         public string Description => "Add a new scope to the workspace";
@@ -35,8 +31,9 @@ namespace CodeGenerator.Core.Workspaces.Operations.Scopes
                 return "Workspace does not have a code architecture defined. Cannot add scope.";
             if (string.IsNullOrWhiteSpace(parameters.ScopeName))
                 return "Scope name cannot be empty.";
-            if (workspace.Scopes.Any(s => s.Name.Equals(parameters.ScopeName, StringComparison.OrdinalIgnoreCase)))
-                return $"Scope '{parameters.ScopeName}' already exists.";
+            var existingScope = workspace.Scopes.FirstOrDefault(s => s.Name.Equals(parameters.ScopeName, StringComparison.OrdinalIgnoreCase));
+            if (existingScope != null)
+                return $"Scope '{parameters.ScopeName}' with id '{existingScope.Id}' already exists.";
             return null;
         }
 
@@ -47,23 +44,23 @@ namespace CodeGenerator.Core.Workspaces.Operations.Scopes
                 return OperationResult.Fail(validationError);
 
             var workspace = _workspaceContextProvider.CurrentWorkspace!;
-            _createdScope = workspace.CodeArchitecture!.ScopeFactory.CreateScopeArtifact(parameters.ScopeName);
-            _parentContainer = workspace.Scopes;
-            _parentContainer.AddChild(_createdScope);
+            parameters.CreatedScope = workspace.CodeArchitecture!.ScopeFactory.CreateScopeArtifact(parameters.ScopeName);
+            parameters.ParentContainer = workspace.Scopes;
+            parameters.ParentContainer.AddChild(parameters.CreatedScope);
 
-            return OperationResult.Ok($"Scope '{parameters.ScopeName}' added.");
+            return OperationResult.Ok($"Scope '{parameters.ScopeName}' with id '{parameters.CreatedScope.Id}' added.");
         }
 
-        public void Undo()
+        public void Undo(AddScopeToWorkspaceParams parameters)
         {
-            if (_createdScope != null && _parentContainer != null)
-                _parentContainer.RemoveChild(_createdScope);
+            if (parameters.CreatedScope != null && parameters.ParentContainer != null)
+                parameters.ParentContainer.RemoveChild(parameters.CreatedScope);
         }
 
-        public void Redo()
+        public void Redo(AddScopeToWorkspaceParams parameters)
         {
-            if (_createdScope != null && _parentContainer != null)
-                _parentContainer.AddChild(_createdScope);
+            if (parameters.CreatedScope != null && parameters.ParentContainer != null)
+                parameters.ParentContainer.AddChild(parameters.CreatedScope);
         }
     }
 }

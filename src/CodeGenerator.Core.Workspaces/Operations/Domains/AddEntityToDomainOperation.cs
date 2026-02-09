@@ -1,5 +1,6 @@
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
+using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Shared.Operations;
 
@@ -8,9 +9,6 @@ namespace CodeGenerator.Core.Workspaces.Operations.Domains
     public class AddEntityToDomainOperation : IOperation<AddEntityToDomainParams>
     {
         private readonly IWorkspaceContextProvider _workspaceContextProvider;
-
-        private EntityArtifact? _createdEntity;
-        private DomainArtifact? _parentDomain;
 
         public string OperationId => "AddEntity";
         public string DisplayName => "Add Entity";
@@ -29,9 +27,10 @@ namespace CodeGenerator.Core.Workspaces.Operations.Domains
             if (string.IsNullOrWhiteSpace(parameters.EntityName))
                 return "Entity name cannot be empty.";
 
-            var domain = _workspaceContextProvider.CurrentWorkspace.FindDomain(parameters.ScopeName, parameters.DomainName);
-            if (domain.Entities.GetEntities().Any(e => e.Name.Equals(parameters.EntityName, StringComparison.OrdinalIgnoreCase)))
-                return $"Entity '{parameters.EntityName}' already exists in domain '{parameters.DomainName}'.";
+            var domain = _workspaceContextProvider.CurrentWorkspace.FindDescendantById<DomainArtifact>(parameters.EntitiesContainerId);
+            var existingEntity = domain.Entities.GetEntities().FirstOrDefault(e => e.Name.Equals(parameters.EntityName, StringComparison.OrdinalIgnoreCase));
+            if (existingEntity != null)
+                return $"Entity '{parameters.EntityName}' with id '{existingEntity.Id}' already exists in domain '{domain.Name}'.";
 
             return null;
         }
@@ -42,23 +41,23 @@ namespace CodeGenerator.Core.Workspaces.Operations.Domains
             if (validationError != null)
                 return OperationResult.Fail(validationError);
 
-            _parentDomain = _workspaceContextProvider.CurrentWorkspace!.FindDomain(parameters.ScopeName, parameters.DomainName);
-            _createdEntity = new EntityArtifact(parameters.EntityName);
-            _parentDomain!.AddEntity(_createdEntity);
+            parameters.ParentDomain = _workspaceContextProvider.CurrentWorkspace!.FindDescendantById<DomainArtifact>(parameters.EntitiesContainerId);
+            parameters.CreatedEntity = new EntityArtifact(parameters.EntityName);
+            parameters.ParentDomain!.AddEntity(parameters.CreatedEntity);
 
-            return OperationResult.Ok($"Entity '{parameters.EntityName}' added to domain '{parameters.DomainName}'.");
+            return OperationResult.Ok($"Entity '{parameters.EntityName}' with id '{parameters.CreatedEntity.Id}' added to domain '{parameters.ParentDomain.Name}'.");
         }
 
-        public void Undo()
+        public void Undo(AddEntityToDomainParams parameters)
         {
-            if (_createdEntity != null && _parentDomain != null)
-                _parentDomain.Entities.RemoveEntity(_createdEntity);
+            if (parameters.CreatedEntity != null && parameters.ParentDomain != null)
+                parameters.ParentDomain.Entities.RemoveEntity(parameters.CreatedEntity);
         }
 
-        public void Redo()
+        public void Redo(AddEntityToDomainParams parameters)
         {
-            if (_createdEntity != null && _parentDomain != null)
-                _parentDomain.AddEntity(_createdEntity);
+            if (parameters.CreatedEntity != null && parameters.ParentDomain != null)
+                parameters.ParentDomain.AddEntity(parameters.CreatedEntity);
         }
     }
 }

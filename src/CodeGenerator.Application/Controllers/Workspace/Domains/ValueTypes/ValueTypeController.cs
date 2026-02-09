@@ -4,8 +4,10 @@ using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes;
+using CodeGenerator.Core.Workspaces.Operations.Domains;
 using CodeGenerator.Domain.DataTypes;
 using CodeGenerator.Domain.NamingConventions;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -42,10 +44,27 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.ValueTypes
                 IconKey = "plus",
                 Execute = async (a) =>
                 {
-                    var property = new PropertyArtifact("NewProperty", GenericDataTypes.VarChar.Id, true);
-                    artifact.AddProperty(property);
-                    TreeViewController.OnArtifactAdded(artifact, property);
-                    TreeViewController.RequestBeginRename(property);
+                    var addPropertyOperation = ServiceProviderHolder.GetRequiredService<AddPropertyToValueTypeOperation>();
+                    var addPropertyParams = new AddPropertyToValueTypeParams
+                    {
+                        PropertyName= "NewProperty",
+                        DataType = GenericDataTypes.VarChar.Id,
+                        IsNullable = true,
+                        ValueTypeId = artifact.Id
+                    };
+
+                    var result = OperationExecutor.Execute(addPropertyOperation, addPropertyParams);
+
+                    if(result.Success)
+                    {
+                        var createdProperty = addPropertyParams.CreatedProperty;
+                        if(createdProperty != null)
+                        {
+                            TreeViewController.OnArtifactAdded(artifact, createdProperty);
+                            TreeViewController.RequestBeginRename(createdProperty);
+                        }
+                    }
+      
                     await Task.CompletedTask;
                 }
             });

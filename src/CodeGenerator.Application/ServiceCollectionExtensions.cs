@@ -97,7 +97,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IGenerationArtifactController, GenerationArtifactController>();
 
         // Settings Controllers & ViewModels
-        services.AddSingleton<SettingsController>();
+        services.AddSingleton<SettingsController>
+        ();
         services.AddTransient<SettingsViewModel>();
 
         // Register Template Controllers & ViewModels
@@ -215,10 +216,14 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IOperation, AddDomainToScopeOperation>(sp => sp.GetRequiredService<AddDomainToScopeOperation>());
         services.AddSingleton<AddEntityToDomainOperation>();
         services.AddSingleton<IOperation, AddEntityToDomainOperation>(sp => sp.GetRequiredService<AddEntityToDomainOperation>());
-        services.AddSingleton<AddEntityWithPropertiesToDomainOperation>();
-        services.AddSingleton<IOperation, AddEntityWithPropertiesToDomainOperation>(sp => sp.GetRequiredService<AddEntityWithPropertiesToDomainOperation>());
+        //services.AddSingleton<AddEntityWithPropertiesToDomainOperation>();
+        //services.AddSingleton<IOperation, AddEntityWithPropertiesToDomainOperation>(sp => sp.GetRequiredService<AddEntityWithPropertiesToDomainOperation>());
         services.AddSingleton<AddPropertyToEntityOperation>();
         services.AddSingleton<IOperation, AddPropertyToEntityOperation>(sp => sp.GetRequiredService<AddPropertyToEntityOperation>());
+        services.AddSingleton<AddPropertyToEntityStateOperation>();
+        services.AddSingleton<IOperation, AddPropertyToEntityStateOperation>(sp => sp.GetRequiredService<AddPropertyToEntityStateOperation>());
+        services.AddSingleton<AddPropertyToValueTypeOperation>();
+        services.AddSingleton<IOperation, AddPropertyToValueTypeOperation>(sp => sp.GetRequiredService<AddPropertyToValueTypeOperation>());
         services.AddSingleton<AddValueTypeToDomainOperation>();
         services.AddSingleton<IOperation, AddValueTypeToDomainOperation>(sp => sp.GetRequiredService<AddValueTypeToDomainOperation>());
 
@@ -256,7 +261,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.PlantUML.PlantUmlTemplateEngine>();
         services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.Folder.FolderTemplateEngine>();
 
-        services.AddDotNetWinformsRibbonApplicationGeneratorServices(configuration);
+
         services.AddDotNetSharedScopeGeneratorServices(configuration);
 
         // Add logging

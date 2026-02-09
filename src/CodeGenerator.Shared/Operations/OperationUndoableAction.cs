@@ -22,8 +22,8 @@ namespace CodeGenerator.Shared.Operations
 
         public void Execute() => _operation.Execute(_parameters);
 
-        public void Undo() => _operation.Undo();
+        public void Undo() => _operation.Undo(_parameters);
 
-        public void Redo() => _operation.Redo();
+        public void Redo() => _operation.Redo(_parameters);
     }
 }

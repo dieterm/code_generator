@@ -9,7 +9,7 @@ namespace CodeGenerator.Shared.ExtensionMethods
 {
     public static class FileSystemExtensions
     {
-        
+
         public static HashSet<string> TextFileExtensions = new(StringComparer.OrdinalIgnoreCase)
         {
             ".txt", ".md", ".csv", ".log", ".json", ".xml", ".yaml", ".yml", ".ini", ".cfg"
@@ -198,6 +198,33 @@ namespace CodeGenerator.Shared.ExtensionMethods
         {
             if (string.IsNullOrWhiteSpace(filePath)) return null;
             return System.IO.Path.GetExtension(filePath);
+        }
+
+        public static void OpenFolderInExplorer(this string folderPath)
+        {
+            if (string.IsNullOrWhiteSpace(folderPath) || !Directory.Exists(folderPath))
+            {
+                Debug.WriteLine($"Invalid folder path: {folderPath}");
+                return;
+            }
+            try
+            {
+                /*var folder = Path.GetDirectoryName(templateArtifact.FilePath);
+                    if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder))
+                    {
+                        System.Diagnostics.Process.Start("explorer.exe", folder);
+                    }*/
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = folderPath,
+                    UseShellExecute = true,
+                    Verb = "open"
+                });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error opening folder: {ex.Message}");
+            }
         }
     }
 }

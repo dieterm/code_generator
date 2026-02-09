@@ -73,6 +73,13 @@ namespace CodeGenerator.Core.Workspaces.Services
             return workspaceArtifact;
         }
 
+        public string SerializeWorkspace(WorkspaceArtifact workspace)
+        {
+            var workspaceState = (ArtifactState)workspace.CaptureState();
+            var json = JsonSerializer.Serialize(workspaceState, JsonOptions);
+            return json;
+        }
+
         /// <summary>
         /// Save a workspace to a .cg file
         /// </summary>

@@ -1,14 +1,15 @@
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace CodeGenerator.Core.Workspaces.Operations.Domains
 {
-    public class AddPropertyToEntityParams
+    public class AddPropertyToValueTypeParams
     {
         [Required]
-        [Description("The ID of the entity")]
-        public string EntityId { get; set; } = string.Empty;
+        [Description("The ID of the value type")]
+        public string ValueTypeId { get; set; } = string.Empty;
 
         [Required]
         [Description("The property name")]
@@ -22,6 +23,6 @@ namespace CodeGenerator.Core.Workspaces.Operations.Domains
         public bool IsNullable { get; set; }
 
         public PropertyArtifact? CreatedProperty;
-        public EntityStateArtifact? ParentState;
+        public ValueTypeArtifact? ParentValueType;
     }
 }

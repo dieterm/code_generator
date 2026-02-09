@@ -3,8 +3,10 @@ using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
+using CodeGenerator.Core.Workspaces.Operations.Domains;
 using CodeGenerator.Domain.DataTypes;
 using CodeGenerator.Domain.NamingConventions;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -41,10 +43,25 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Entities
                 IconKey = "plus",
                 Execute = async (a) =>
                 {
-                    var property = new PropertyArtifact("NewProperty", GenericDataTypes.VarChar.Id, true);
-                    artifact.AddProperty(property);
-                    TreeViewController.OnArtifactAdded(artifact, property);
-                    TreeViewController.RequestBeginRename(property);
+                    var addPropertyOperation = ServiceProviderHolder.GetRequiredService<AddPropertyToEntityStateOperation>();
+                    var addPropertyParams = new AddPropertyToEntityStateParams
+                    {
+                        DataType = GenericDataTypes.VarChar.Id,
+                        EntityStateId = artifact.Id,
+                        PropertyName = "NewProperty",
+                        IsNullable = true
+                    };
+                    var result = OperationExecutor.Execute(addPropertyOperation, addPropertyParams);
+
+                    if(result.Success)
+                    {
+                        var createdProperty = addPropertyParams.CreatedProperty;
+                        if(createdProperty != null)
+                        {
+                            TreeViewController.OnArtifactAdded(artifact, createdProperty);
+                            TreeViewController.RequestBeginRename(createdProperty);
+                        }
+                    }
                     await Task.CompletedTask;
                 }
             });

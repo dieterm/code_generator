@@ -2,6 +2,8 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
+using CodeGenerator.Core.Workspaces.Operations.Domains;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 using System;
@@ -32,7 +34,22 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
 
         private Task AddDomainAsync(OnionDomainLayerArtifact artifact)
         {
-            artifact.AddDomain("New Domain");
+            var parentScope = artifact.Parent as ScopeArtifact;
+            var addDomainOperation = ServiceProviderHolder.GetRequiredService<AddDomainToScopeOperation>();
+            var addDomainParams = new AddDomainToScopeParams {
+                DomainName = "New Domain",
+                ScopeId = parentScope!.Id
+            };
+            var result = OperationExecutor.Execute(addDomainOperation, addDomainParams);
+            if (result.Success)
+            {
+                var createdDomain = addDomainParams.CreatedDomain;
+                if (createdDomain != null)
+                {
+                    TreeViewController.OnArtifactAdded(artifact, createdDomain);
+                    TreeViewController.RequestBeginRename(createdDomain);
+                }
+            }
             return Task.CompletedTask;
         }
     }

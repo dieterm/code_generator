@@ -34,6 +34,7 @@ using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.Views;
 using CodeGenerator.UserControls;
 using CodeGenerator.UserControls.Ribbon;
+using CodeGenerator.Generators.DotNet.WinformsRibbonApplication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -59,6 +60,9 @@ public static class ServiceCollectionExtensions
         services.AddCopilotServices(configuration);
         // Register Datasources
         services.AddCsvDatasourceServices(configuration);
+
+        // Register Generators
+        services.AddDotNetWinformsRibbonApplicationGeneratorServices(configuration);
         // Main form
         services.AddSingleton<MainView>();
         services.AddSingleton<IWindowManagerService>((s) => new WindowManagerService(Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<MainView>(s)));

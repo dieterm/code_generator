@@ -8,9 +8,6 @@ namespace CodeGenerator.Core.Workspaces.Operations.Domains
     {
         private readonly IWorkspaceContextProvider _workspaceContextProvider;
 
-        private PropertyArtifact? _createdProperty;
-        private EntityStateArtifact? _parentState;
-
         public string OperationId => "AddPropertyToEntity";
         public string DisplayName => "Add Property to Entity";
         public string Description => "Add a property to an existing entity's default state";
@@ -28,12 +25,10 @@ namespace CodeGenerator.Core.Workspaces.Operations.Domains
             if (string.IsNullOrWhiteSpace(parameters.PropertyName))
                 return "Property name cannot be empty.";
 
-            var domain = _workspaceContextProvider.CurrentWorkspace.FindDomain(parameters.ScopeName, parameters.DomainName);
-            var entity = domain.Entities.GetEntities()
-                .FirstOrDefault(e => e.Name.Equals(parameters.EntityName, StringComparison.OrdinalIgnoreCase));
+            //var domain = _workspaceContextProvider.CurrentWorkspace.FindDomain(parameters.ScopeName, parameters.DomainName);
+            var entity = _workspaceContextProvider.CurrentWorkspace.FindDescendantById<EntityArtifact>(parameters.EntityId);
             if (entity == null)
-                return $"Entity '{parameters.EntityName}' not found in domain '{parameters.DomainName}'.";
-
+                return $"Entity with ID '{parameters.EntityId}' not found.";
             return null;
         }
 
@@ -43,30 +38,30 @@ namespace CodeGenerator.Core.Workspaces.Operations.Domains
             if (validationError != null)
                 return OperationResult.Fail(validationError);
 
-            var domain = _workspaceContextProvider.CurrentWorkspace!.FindDomain(parameters.ScopeName, parameters.DomainName);
-            var entity = domain.Entities.GetEntities()
-                .First(e => e.Name.Equals(parameters.EntityName, StringComparison.OrdinalIgnoreCase));
+            var entity = _workspaceContextProvider.CurrentWorkspace!.FindDescendantById<EntityArtifact>(parameters.EntityId);
+            if (entity == null)
+                return OperationResult.Fail($"Entity with ID '{parameters.EntityId}' not found.");
 
-            _parentState = entity.DefaultState ?? entity.AddEntityState(parameters.EntityName);
+            parameters.ParentState = entity.DefaultState ?? entity.AddEntityState(entity.Name);
             if (entity.DefaultStateId == null)
-                entity.DefaultStateId = _parentState.Id;
+                entity.DefaultStateId = parameters.ParentState.Id;
 
-            _createdProperty = new PropertyArtifact(parameters.PropertyName, parameters.DataType, parameters.IsNullable);
-            _parentState.AddProperty(_createdProperty);
+            parameters.CreatedProperty = new PropertyArtifact(parameters.PropertyName, parameters.DataType, parameters.IsNullable);
+            parameters.ParentState.AddProperty(parameters.CreatedProperty);
 
-            return OperationResult.Ok($"Property '{parameters.PropertyName}' ({parameters.DataType}, nullable={parameters.IsNullable}) added to entity '{parameters.EntityName}'.");
+            return OperationResult.Ok($"Property '{parameters.PropertyName}' ({parameters.DataType}, nullable={parameters.IsNullable}) with id '{parameters.CreatedProperty.Id}' added to entity '{entity.Name}'.");
         }
 
-        public void Undo()
+        public void Undo(AddPropertyToEntityParams parameters)
         {
-            if (_createdProperty != null && _parentState != null)
-                _parentState.RemoveProperty(_createdProperty);
+            if (parameters.CreatedProperty != null && parameters.ParentState != null)
+                parameters.ParentState.RemoveProperty(parameters.CreatedProperty);
         }
 
-        public void Redo()
+        public void Redo(AddPropertyToEntityParams parameters)
         {
-            if (_createdProperty != null && _parentState != null)
-                _parentState.AddProperty(_createdProperty);
+            if (parameters.CreatedProperty != null && parameters.ParentState != null)
+                parameters.ParentState.AddProperty(parameters.CreatedProperty);
         }
     }
 }

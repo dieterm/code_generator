@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CodeGenerator.Core.Workspaces.Operations.Domains
 {
-    public class AddPropertyToEntityParams
+    public class AddPropertyToEntityStateParams
     {
         [Required]
-        [Description("The ID of the entity")]
-        public string EntityId { get; set; } = string.Empty;
+        [Description("The ID of the entity state")]
+        public string EntityStateId { get; set; } = string.Empty;
 
         [Required]
         [Description("The property name")]

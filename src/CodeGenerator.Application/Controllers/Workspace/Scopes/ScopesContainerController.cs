@@ -10,18 +10,13 @@ namespace CodeGenerator.Application.Controllers.Workspace.Scopes
 {
     public class ScopesContainerController : WorkspaceArtifactControllerBase<ScopesContainerArtifact>
     {
-        private readonly OperationExecutor _operationExecutor;
-        private readonly AddScopeToWorkspaceOperation _addScopeOperation;
-
         public ScopesContainerController(
             OperationExecutor operationExecutor,
-            AddScopeToWorkspaceOperation addScopeOperation,
             WorkspaceTreeViewController treeViewController,
             ILogger<ScopesContainerController> logger)
             : base(operationExecutor, treeViewController, logger)
         {
-            _operationExecutor = operationExecutor;
-            _addScopeOperation = addScopeOperation;
+            
         }
 
         protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(ScopesContainerArtifact artifact)
@@ -33,10 +28,24 @@ namespace CodeGenerator.Application.Controllers.Workspace.Scopes
                 IconKey = "plus-circle",
                 Execute = async (a) =>
                 {
-                    _operationExecutor.Execute(_addScopeOperation, new AddScopeToWorkspaceParams
+                    var addScopeOperation = ServiceProviderHolder.GetRequiredService<AddScopeToWorkspaceOperation>();
+                    var addScopeParams = new AddScopeToWorkspaceParams
                     {
-                        ScopeName = "New scope"
-                    });
+                        ScopeName = "New scope",
+                        ParentContainer = artifact
+                    };
+                    var result = OperationExecutor.Execute(addScopeOperation, addScopeParams);
+
+                    if(result.Success)
+                    {
+                        var createdScope = addScopeParams.CreatedScope;
+                        if (createdScope != null)
+                        {
+                            TreeViewController.OnArtifactAdded(artifact, createdScope);
+                            TreeViewController.RequestBeginRename(createdScope);
+                        }
+                    }
+                    
                     await Task.CompletedTask;
                 }
             };

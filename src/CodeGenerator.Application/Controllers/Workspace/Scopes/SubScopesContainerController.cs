@@ -2,6 +2,8 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
+using CodeGenerator.Core.Workspaces.Operations.Scopes;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 using System;
@@ -33,12 +35,25 @@ namespace CodeGenerator.Application.Controllers.Workspace.Scopes
 
         private Task AddScopeAsync(SubScopesContainerArtifact scopesContainer)
         {
-            var codeArchitecture = scopesContainer.Workspace!.CodeArchitecture;
-            if (codeArchitecture != null)
+            var parentScope = scopesContainer.Parent as ScopeArtifact;
+            var addSubScopeOperation = ServiceProviderHolder.GetRequiredService<AddSubScopeToScopeOperation>();
+            var addSubScopeParams = new AddSubScopeToScopeParams
             {
-                var newScope = codeArchitecture.ScopeFactory.CreateScopeArtifact("New scope");
-                scopesContainer.AddChild(newScope);
+                NewScopeName = "New scope",
+                ParentScopeId = parentScope!.Id
+            };
+            var result = OperationExecutor.Execute(addSubScopeOperation, addSubScopeParams);
+
+            if (result.Success)
+            {
+                var createdScope = addSubScopeParams.CreatedScope;
+                if (createdScope != null)
+                {
+                    TreeViewController.OnArtifactAdded(scopesContainer, createdScope);
+                    TreeViewController.RequestBeginRename(createdScope);
+                }
             }
+
             return Task.CompletedTask;
         }
     }

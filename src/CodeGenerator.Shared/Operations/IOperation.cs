@@ -44,9 +44,9 @@ namespace CodeGenerator.Shared.Operations
         OperationResult Execute(TParams parameters);
 
         /// <summary>Undo the last execution, restoring the previous state.</summary>
-        void Undo();
+        void Undo(TParams parameters);
 
         /// <summary>Redo the operation after it was undone.</summary>
-        void Redo();
+        void Redo(TParams parameters);
     }
 }

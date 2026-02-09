@@ -12,6 +12,8 @@
     <Compile Remove="Models\TableDefinition.cs" />
     <Compile Remove="Models\ViewDefinition.cs" />
     <Compile Remove="Models\WorkspaceFile.cs" />
+    <Compile Remove="Operations\Domains\AddEntityWithPropertiesToDomainOperation.cs" />
+    <Compile Remove="Operations\Domains\AddEntityWithPropertiesToDomainParams.cs" />
   </ItemGroup>
 
   <ItemGroup>

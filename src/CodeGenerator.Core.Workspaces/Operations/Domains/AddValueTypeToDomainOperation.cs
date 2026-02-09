@@ -1,3 +1,4 @@
+using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Shared.Operations;
@@ -7,9 +8,6 @@ namespace CodeGenerator.Core.Workspaces.Operations.Domains
     public class AddValueTypeToDomainOperation : IOperation<AddValueTypeToDomainParams>
     {
         private readonly IWorkspaceContextProvider _workspaceContextProvider;
-
-        private ValueTypeArtifact? _createdValueType;
-        private ValueTypesContainerArtifact? _parentContainer;
 
         public string OperationId => "AddValueType";
         public string DisplayName => "Add Value Type";
@@ -28,9 +26,10 @@ namespace CodeGenerator.Core.Workspaces.Operations.Domains
             if (string.IsNullOrWhiteSpace(parameters.ValueTypeName))
                 return "Value type name cannot be empty.";
 
-            var domain = _workspaceContextProvider.CurrentWorkspace.FindDomain(parameters.ScopeName, parameters.DomainName);
-            if (domain.ValueTypes.GetValueTypes().Any(v => v.Name.Equals(parameters.ValueTypeName, StringComparison.OrdinalIgnoreCase)))
-                return $"Value type '{parameters.ValueTypeName}' already exists in domain '{parameters.DomainName}'.";
+            var domain = _workspaceContextProvider.CurrentWorkspace.FindDescendantById<DomainArtifact>(parameters.DomainId);
+            var existingValueType = domain?.ValueTypes.GetValueTypes().FirstOrDefault(v => v.Name.Equals(parameters.ValueTypeName, StringComparison.OrdinalIgnoreCase));
+            if (existingValueType != null)
+                return $"Value type '{parameters.ValueTypeName}' with id '{existingValueType.Id}' already exists in domain '{domain.Name}'.";
 
             return null;
         }
@@ -41,24 +40,24 @@ namespace CodeGenerator.Core.Workspaces.Operations.Domains
             if (validationError != null)
                 return OperationResult.Fail(validationError);
 
-            var domain = _workspaceContextProvider.CurrentWorkspace!.FindDomain(parameters.ScopeName, parameters.DomainName);
-            _parentContainer = domain!.ValueTypes;
-            _createdValueType = new ValueTypeArtifact(parameters.ValueTypeName);
-            _parentContainer.AddValueType(_createdValueType);
+            var domain = _workspaceContextProvider.CurrentWorkspace!.FindDescendantById<DomainArtifact>(parameters.DomainId);
+            parameters.ParentContainer = domain!.ValueTypes;
+            parameters.CreatedValueType = new ValueTypeArtifact(parameters.ValueTypeName);
+            parameters.ParentContainer.AddValueType(parameters.CreatedValueType);
 
-            return OperationResult.Ok($"Value type '{parameters.ValueTypeName}' added to domain '{parameters.DomainName}'.");
+            return OperationResult.Ok($"Value type '{parameters.ValueTypeName}' with id '{parameters.CreatedValueType.Id}' added to domain '{domain.Name}'.");
         }
 
-        public void Undo()
+        public void Undo(AddValueTypeToDomainParams parameters)
         {
-            if (_createdValueType != null && _parentContainer != null)
-                _parentContainer.RemoveValueType(_createdValueType);
+            if (parameters.CreatedValueType != null && parameters.ParentContainer != null)
+                parameters.ParentContainer.RemoveValueType(parameters.CreatedValueType);
         }
 
-        public void Redo()
+        public void Redo(AddValueTypeToDomainParams parameters)
         {
-            if (_createdValueType != null && _parentContainer != null)
-                _parentContainer.AddValueType(_createdValueType);
+            if (parameters.CreatedValueType != null && parameters.ParentContainer != null)
+                parameters.ParentContainer.AddValueType(parameters.CreatedValueType);
         }
     }
 }

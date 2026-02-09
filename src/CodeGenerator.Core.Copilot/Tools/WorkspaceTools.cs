@@ -1,10 +1,14 @@
+using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts;
-using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
+using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Core.Workspaces.Services;
+using CodeGenerator.Domain.DataTypes;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.AI;
 using System.ComponentModel;
+using System.Text.Json;
 
 namespace CodeGenerator.Core.Copilot.Tools
 {
@@ -46,6 +50,7 @@ namespace CodeGenerator.Core.Copilot.Tools
                 AIFunctionFactory.Create(ListScopes, nameof(ListScopes), "List all scopes in the current workspace"),
                 AIFunctionFactory.Create(ListDomains, nameof(ListDomains), "List all domains within a scope"),
                 AIFunctionFactory.Create(ListEntities, nameof(ListEntities), "List all entities within a domain in a scope"),
+                AIFunctionFactory.Create(ListPropertyDataTypes, nameof(ListPropertyDataTypes), "List all available data types for properties")
             ];
         }
 
@@ -54,12 +59,9 @@ namespace CodeGenerator.Core.Copilot.Tools
             return _uiInvoker(() =>
             {
                 var workspace = GetWorkspace();
-                var scopes = workspace.Scopes.ToList();
-                var totalDomains = scopes.Sum(s => s.Domains?.Count() ?? 0);
-
-                return $"Workspace: {workspace.Name}, RootNamespace: {workspace.RootNamespace}, " +
-                       $"Scopes: {scopes.Count}, Total Domains: {totalDomains}, " +
-                       $"Framework: {workspace.DefaultTargetFramework}, Language: {workspace.DefaultLanguage}";
+                var workspaceFileService = ServiceProviderHolder.GetRequiredService<WorkspaceFileService>();
+                var workspaceStateAsJson = workspaceFileService.SerializeWorkspace(workspace);
+                return workspaceStateAsJson;
             });
         }
 
@@ -101,5 +103,11 @@ namespace CodeGenerator.Core.Copilot.Tools
             });
         }
 
+
+        public string ListPropertyDataTypes()
+        {
+            var dataTypes = GenericDataTypes.All.Select(dt => dt.Id).ToArray(); //.Enum.GetValues<GenericDataTypes>().Select(dt => dt.ToString()).ToList();
+            return $"Available data types: {string.Join(", ", dataTypes)}";
+        }
     }
 }

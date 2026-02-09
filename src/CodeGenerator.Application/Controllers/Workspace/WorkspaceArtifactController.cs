@@ -2,8 +2,10 @@ using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Services;
+using CodeGenerator.Shared.ExtensionMethods;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -44,31 +46,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                     await Task.CompletedTask;
                 }
             });
-            var DATASOURCE_COMMANDS = "DatasourceCommands";
-            // Add datasource submenu
-            var addDatasourceSubCommands = new List<ArtifactTreeNodeCommand>();
             
-            foreach (var typeInfo in _datasourceFactory.GetAvailableTypes())
-            {
-                addDatasourceSubCommands.Add(new ArtifactTreeNodeCommand(DATASOURCE_COMMANDS)
-                {
-                    Id = $"add_datasource_{typeInfo.TypeId}",
-                    Text = typeInfo.DisplayName,
-                    IconKey = typeInfo.IconKey,
-                    Execute = async (a) => await AddDatasourceAsync(artifact, typeInfo.TypeId)
-                });
-            }
-
-            if (addDatasourceSubCommands.Any())
-            {
-                commands.Add(new ArtifactTreeNodeCommand(DATASOURCE_COMMANDS)
-                {
-                    Id = "add_datasource",
-                    Text = "Add Datasource",
-                    IconKey = "plus",
-                    SubCommands = addDatasourceSubCommands
-                });
-            }
             var WORKSPACE_COMMANDS = "WorkspaceCommands";
             // Workspace commands
             commands.Add(new ArtifactTreeNodeCommand(WORKSPACE_COMMANDS)
@@ -85,6 +63,18 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 Text = "Properties",
                 IconKey = "settings",
                 Execute = async (a) => await ShowPropertiesAsync(artifact)
+            });
+
+            commands.Add(new ArtifactTreeNodeCommand(WORKSPACE_COMMANDS)
+            {
+                Id = "open_workspace_folder",
+                Text = "Open Workspace Folder",
+                IconKey = "folder",
+                Execute = async (a) =>
+                {
+                    artifact.WorkspaceDirectory?.OpenFolderInExplorer();
+                    await Task.CompletedTask;
+                }
             });
 
             return commands;

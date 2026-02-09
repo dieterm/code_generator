@@ -37,7 +37,6 @@
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.SqlServer\CodeGenerator.Core.Workspaces.Datasources.SqlServer.csproj" />
     <ProjectReference Include="..\CodeGenerator.Generators.CodeArchitectureLayers\CodeGenerator.Generators.CodeArchitectureLayers.csproj" />
     <ProjectReference Include="..\CodeGenerator.Generators.DotNet.SharedScope\CodeGenerator.Generators.DotNet.SharedScope.csproj" />
-    <ProjectReference Include="..\CodeGenerator.Generators.DotNet.WinformsRibbonApplication\CodeGenerator.Generators.DotNet.WinformsRibbonApplication.csproj" />
     <ProjectReference Include="..\CodeGenerator.Generators.DotNet\CodeGenerator.Generators.DotNet.csproj" />
     <ProjectReference Include="..\CodeGenerator.Shared\CodeGenerator.Shared.csproj" />
     <ProjectReference Include="..\CodeGenerator.TemplateEngines.DotNetProject\CodeGenerator.TemplateEngines.DotNetProject.csproj" />

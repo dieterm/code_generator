@@ -1,12 +1,12 @@
+using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Workspaces.MessageBus;
-using CodeGenerator.Generators.DotNet.Generators;
-using CodeGenerator.Generators.DotNet.WinformsRibbonApplication;
+using CodeGenerator.Generators.DotNet.WinformsRibbonApplication.Controllers;
 using CodeGenerator.Generators.DotNet.WinformsRibbonApplication.Workspace.Subscribers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CodeGenerator.Generators.CodeArchitectureLayers;
+namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication;
 
 /// <summary>
 /// Extension methods for configuring services in the DI container
@@ -27,6 +27,9 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IWorkspaceMessageBusSubscriber, ViewsContainerToPresentationLayerArtifactChildAddedSubscriber>();
         services.AddSingleton<IWorkspaceMessageBusSubscriber, ViewModelsContainerToApplicationLayerArtifactChildAddedSubscriber>();
         services.AddSingleton<IWorkspaceMessageBusSubscriber, ControllersContainerToApplicationLayerArtifactChildAddedSubscriber>();
+
+        // workspace controllers
+        services.AddSingleton<IWorkspaceArtifactController, ApplicationViewModelArtifactController>();
 
         return services;
     }
