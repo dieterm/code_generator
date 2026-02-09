@@ -2,6 +2,7 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -13,8 +14,8 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
 {
     public class DomainLayerController : WorkspaceArtifactControllerBase<OnionDomainLayerArtifact>
     {
-        public DomainLayerController(WorkspaceTreeViewController treeViewController, ILogger<DomainLayerController> logger)
-            : base(treeViewController, logger)
+        public DomainLayerController(OperationExecutor operationExecutor, WorkspaceTreeViewController treeViewController, ILogger<DomainLayerController> logger)
+            : base(operationExecutor, treeViewController, logger)
         {
         }
 

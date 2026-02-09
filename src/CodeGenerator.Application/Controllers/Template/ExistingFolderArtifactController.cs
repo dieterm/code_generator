@@ -1,24 +1,25 @@
 ﻿using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.FileSystem;
-using Microsoft.Extensions.Logging;
+using CodeGenerator.Core.Templates;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.ExtensionMethods;
+using CodeGenerator.Shared.Operations;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CodeGenerator.Shared;
-using CodeGenerator.Core.Templates;
-using CodeGenerator.Application.Services;
 
 namespace CodeGenerator.Application.Controllers.Template
 {
     public class ExistingFolderArtifactController : TemplateArtifactControllerBase<ExistingFolderArtifact>
     {
         private readonly IMessageBoxService _messageBoxService;
-        public ExistingFolderArtifactController(IMessageBoxService messageBoxService, TemplateTreeViewController treeViewController, ILogger<ExistingFolderArtifactController> logger)
-            : base(treeViewController, logger)
+        public ExistingFolderArtifactController(OperationExecutor operationExecutor, IMessageBoxService messageBoxService, TemplateTreeViewController treeViewController, ILogger<ExistingFolderArtifactController> logger)
+            : base(operationExecutor, treeViewController, logger)
         {
             _messageBoxService = messageBoxService ?? throw new ArgumentNullException(nameof(messageBoxService));
         }

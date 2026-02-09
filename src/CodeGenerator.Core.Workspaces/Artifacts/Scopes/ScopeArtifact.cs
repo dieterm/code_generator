@@ -42,7 +42,18 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
             PublishArtifactConstructionEvent();
         }
 
-
+        public ScopeArtifact? FindScopeRecursive(string scopeName)
+        {
+            foreach (var subScope in SubScopes)
+            {
+                if (subScope.Name.Equals(scopeName, StringComparison.OrdinalIgnoreCase))
+                    return subScope;
+                var found = subScope.FindScopeRecursive(scopeName);
+                if (found != null)
+                    return found;
+            }
+            return null;
+        }
 
         public ScopeArtifact(ArtifactState state)
             : base(state) 
@@ -182,6 +193,11 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
         public IEnumerable<CodeArchitectureLayerArtifact> GetLayers()
         {
             return Children.OfType<CodeArchitectureLayerArtifact>().ToArray();
+        }
+
+        public DomainArtifact? FindDomain(string domainName, bool exceptionIfNotFound = true)
+        {
+            return Domains.FindDomain(domainName, exceptionIfNotFound);
         }
     }
 }

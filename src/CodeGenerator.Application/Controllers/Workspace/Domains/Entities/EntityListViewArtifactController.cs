@@ -2,6 +2,7 @@ using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Domains.Entities
@@ -13,10 +14,10 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Entities
     {
         private EntityListViewEditViewModel? _editViewModel;
 
-        public EntityListViewArtifactController(
+        public EntityListViewArtifactController(OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
             ILogger<EntityListViewArtifactController> logger)
-            : base(workspaceController, logger)
+            : base(operationExecutor, workspaceController, logger)
         {
         }
 

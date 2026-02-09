@@ -13,6 +13,7 @@ using CodeGenerator.Shared;
 using CodeGenerator.Shared.ExtensionMethods;
 using CodeGenerator.Shared.Ribbon;
 using Microsoft.Extensions.Logging;
+using CodeGenerator.Shared.Operations;
 
 namespace CodeGenerator.Application.Controllers.Generation
 {
@@ -25,6 +26,7 @@ namespace CodeGenerator.Application.Controllers.Generation
         private readonly GeneratorOrchestrator _generatorOrchestrator;
 
         public GenerationController(
+            OperationExecutor operationExecutor,
             GeneratorOrchestrator generatorOrchestrator,
             GenerationTreeViewController generationTreeViewController,
             GenerationDetailsViewModel detailsViewModel,
@@ -36,7 +38,7 @@ namespace CodeGenerator.Application.Controllers.Generation
             ApplicationMessageBus messageBus,
             IFileSystemDialogService fileSystemDialogService,
             ILogger<GenerationController> logger)
-            : base(windowManagerService, ribbonBuilder, messageBus, messageService, fileSystemDialogService, logger)
+            : base(operationExecutor, windowManagerService, ribbonBuilder, messageBus, messageService, fileSystemDialogService, logger)
         {
             _generatorOrchestrator = generatorOrchestrator ?? throw new ArgumentNullException(nameof(generatorOrchestrator));
             _generationTreeViewController = generationTreeViewController ?? throw new ArgumentNullException(nameof(generationTreeViewController));

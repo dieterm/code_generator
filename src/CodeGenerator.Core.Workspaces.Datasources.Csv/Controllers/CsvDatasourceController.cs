@@ -6,6 +6,7 @@ using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.Csv.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.Csv.ViewModels;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
@@ -18,9 +19,10 @@ public class CsvDatasourceController : WorkspaceArtifactControllerBase<CsvDataso
     private CsvDatasourceEditViewModel? _editViewModel;
 
     public CsvDatasourceController(
+        OperationExecutor operationExecutor,
         WorkspaceTreeViewController workspaceController,
         ILogger<CsvDatasourceController> logger)
-        : base(workspaceController, logger)
+        : base(operationExecutor, workspaceController, logger)
     {
     }
 

@@ -1,6 +1,8 @@
 ﻿using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
+using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
+using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Domain.CodeArchitecture;
 using System;
 using System.Collections;
@@ -36,6 +38,15 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public DomainArtifact? FindDomain(string domainName, bool exceptionIfNotFound = true)
+        {
+            var scope = (Parent as ScopeArtifact)!;// provider.CurrentWorkspace!.FindScope(scopeName);
+            var domain = this.FirstOrDefault(d => d.Name.Equals(domainName, StringComparison.OrdinalIgnoreCase));
+            if (domain == null && exceptionIfNotFound)
+                 throw new InvalidOperationException($"Domain '{domainName}' not found in scope '{scope.Name}'. Available domains: {string.Join(", ", this.Select(d => d.Name))}");
+            return domain;
         }
     }
 }

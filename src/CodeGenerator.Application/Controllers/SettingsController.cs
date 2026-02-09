@@ -8,6 +8,7 @@ using CodeGenerator.Core.Settings.ViewModels;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Templates.Settings;
 using CodeGenerator.Core.Workspaces.Settings;
+using CodeGenerator.Shared.Operations;
 using CodeGenerator.Shared.Ribbon;
 using Microsoft.Extensions.Logging;
 using System;
@@ -24,8 +25,8 @@ namespace CodeGenerator.Application.Controllers
         private readonly TemplateManager _templateManager;
         private readonly TemplateEngineSettingsManager _templateEngineSettingsManager;
 
-		public SettingsController( TemplateEngineSettingsManager templateEngineSettingsManager, TemplateManager templateManager, ApplicationSettingsManager applicationSettingsManager, WorkspaceSettingsManager workspaceSettingsManager, GeneratorSettingsManager generatorSettingsManager, SettingsViewModel settingsViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IMessageBoxService messageBoxService, IFileSystemDialogService fileSystemDialogService, ApplicationMessageBus messageBus, ILogger<SettingsController> logger)
-			: base(windowManagerService, ribbonBuilder, messageBus, messageBoxService, fileSystemDialogService, logger)
+		public SettingsController(OperationExecutor operationExecutor, TemplateEngineSettingsManager templateEngineSettingsManager, TemplateManager templateManager, ApplicationSettingsManager applicationSettingsManager, WorkspaceSettingsManager workspaceSettingsManager, GeneratorSettingsManager generatorSettingsManager, SettingsViewModel settingsViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IMessageBoxService messageBoxService, IFileSystemDialogService fileSystemDialogService, ApplicationMessageBus messageBus, ILogger<SettingsController> logger)
+			: base(operationExecutor, windowManagerService, ribbonBuilder, messageBus, messageBoxService, fileSystemDialogService, logger)
 		{
 			_templateEngineSettingsManager = templateEngineSettingsManager;
 			_settingsViewModel = settingsViewModel;

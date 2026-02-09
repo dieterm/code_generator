@@ -7,6 +7,7 @@ using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Operations;
 using CodeGenerator.Shared.Ribbon;
 using Microsoft.Extensions.Logging;
 
@@ -21,7 +22,7 @@ public class TemplateController : CoreControllerBase
     private readonly TemplateRibbonViewModel _templateRibbonViewModel;
     private readonly TemplateTreeViewController _templateTreeViewController;
 
-    public TemplateController(
+    public TemplateController(OperationExecutor operationExecutor,
         TemplateRibbonViewModel templateRibbonViewModel,
         TemplateTreeViewController templateTreeViewController,
         IWindowManagerService windowManagerService,
@@ -30,7 +31,7 @@ public class TemplateController : CoreControllerBase
         IMessageBoxService messageBoxService,
         IFileSystemDialogService fileSystemDialogService,
         ILogger<TemplateController> logger)
-        : base(windowManagerService, ribbonBuilder, messageBus, messageBoxService, fileSystemDialogService, logger)
+        : base(operationExecutor, windowManagerService, ribbonBuilder, messageBus, messageBoxService, fileSystemDialogService, logger)
     {
         _templateRibbonViewModel = templateRibbonViewModel;
         _templateTreeViewController = templateTreeViewController;

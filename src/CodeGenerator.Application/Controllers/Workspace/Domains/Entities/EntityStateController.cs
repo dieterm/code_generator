@@ -5,6 +5,7 @@ using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Domain.DataTypes;
 using CodeGenerator.Domain.NamingConventions;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Domains.Entities
@@ -16,10 +17,10 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Entities
     {
         private EntityStateEditViewModel? _editViewModel;
 
-        public EntityStateController(
+        public EntityStateController(OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
             ILogger<EntityStateController> logger)
-            : base(workspaceController, logger)
+            : base(operationExecutor, workspaceController, logger)
         {
         }
 

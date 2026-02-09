@@ -3,6 +3,7 @@ using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.Excel.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.Excel.ViewModels;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
@@ -14,10 +15,8 @@ public class ExcelDatasourceController : WorkspaceArtifactControllerBase<ExcelDa
 {
     private ExcelDatasourceEditViewModel? _editViewModel;
 
-    public ExcelDatasourceController(
-        WorkspaceTreeViewController workspaceController,
-        ILogger<ExcelDatasourceController> logger)
-        : base(workspaceController, logger)
+    public ExcelDatasourceController(OperationExecutor operationExecutor, WorkspaceTreeViewController workspaceController, ILogger<ExcelDatasourceController> logger)
+        : base(operationExecutor, workspaceController, logger)
     {
     }
 

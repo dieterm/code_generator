@@ -6,6 +6,7 @@ using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.Xml.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.Xml.ViewModels;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
@@ -18,9 +19,10 @@ public class XmlDatasourceController : WorkspaceArtifactControllerBase<XmlDataso
     private XmlDatasourceEditViewModel? _editViewModel;
 
     public XmlDatasourceController(
+        OperationExecutor operationExecutor,
         WorkspaceTreeViewController workspaceController,
         ILogger<XmlDatasourceController> logger)
-        : base(workspaceController, logger)
+        : base(operationExecutor, workspaceController, logger)
     {
     }
 

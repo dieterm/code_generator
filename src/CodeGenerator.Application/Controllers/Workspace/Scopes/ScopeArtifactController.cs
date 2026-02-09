@@ -2,6 +2,7 @@
 using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -18,8 +19,8 @@ namespace CodeGenerator.Application.Controllers.Workspace.Scopes
     {
         private ScopeEditViewModel? _editViewModel;
 
-        public ScopeArtifactController(WorkspaceTreeViewController treeViewController, ILogger<ScopeArtifactController> logger)
-            : base(treeViewController, logger)
+        public ScopeArtifactController(OperationExecutor operationExecutor, WorkspaceTreeViewController treeViewController, ILogger<ScopeArtifactController> logger)
+            : base(operationExecutor, treeViewController, logger)
         {
 
         }

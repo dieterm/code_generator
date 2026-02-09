@@ -13,6 +13,7 @@ using CodeGenerator.Domain.DotNet;
 using CodeGenerator.Domain.DotNet.ProjectType;
 using CodeGenerator.Presentation.WinForms.ViewModels;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Operations;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.UndoRedo;
 using CodeGenerator.TemplateEngines.DotNetProject.Services;
@@ -36,8 +37,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
         private readonly ICopilotController _copilotController;
         public bool HasUnsavedChanges { get {return _workspaceTreeViewController.HasUnsavedChanges; } }
 
-        public WorkspaceController(ICopilotController copilotController, UndoRedoManager undoRedoManager, WorkspaceMessageBus workspaceMessageBus, WorkspaceTreeViewController workspaceTreeViewController, WorkspaceRibbonViewModel workspaceRibbonViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<WorkspaceController> logger) 
-            : base(windowManagerService, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
+        public WorkspaceController(ICopilotController copilotController, UndoRedoManager undoRedoManager, WorkspaceMessageBus workspaceMessageBus, WorkspaceTreeViewController workspaceTreeViewController, WorkspaceRibbonViewModel workspaceRibbonViewModel, OperationExecutor operationExecutor, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<WorkspaceController> logger) 
+            : base(operationExecutor, windowManagerService, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
         {
             _undoRedoManager = undoRedoManager ?? throw new ArgumentNullException(nameof(undoRedoManager));
             _workspaceMessageBus = workspaceMessageBus;

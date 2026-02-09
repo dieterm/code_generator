@@ -1,6 +1,7 @@
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Factories;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Domains.Factories
@@ -11,9 +12,10 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Factories
     public class DomainFactoriesContainerController : WorkspaceArtifactControllerBase<DomainFactoriesContainerArtifact>
     {
         public DomainFactoriesContainerController(
+            OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
             ILogger<DomainFactoriesContainerController> logger)
-            : base(workspaceController, logger)
+            : base(operationExecutor, workspaceController, logger)
         {
         }
 

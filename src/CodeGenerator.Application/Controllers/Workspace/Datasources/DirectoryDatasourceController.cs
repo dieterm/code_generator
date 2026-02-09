@@ -5,6 +5,7 @@ using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.Directory.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.Directory.ViewModels;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
@@ -17,9 +18,10 @@ public class DirectoryDatasourceController : WorkspaceArtifactControllerBase<Dir
     private DirectoryDatasourceEditViewModel? _editViewModel;
 
     public DirectoryDatasourceController(
+        OperationExecutor operationExecutor,
         WorkspaceTreeViewController workspaceController,
         ILogger<DirectoryDatasourceController> logger)
-        : base(workspaceController, logger)
+        : base(operationExecutor, workspaceController, logger)
     {
     }
 

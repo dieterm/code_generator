@@ -2,6 +2,7 @@ using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
+using CodeGenerator.Shared.Operations;
 using CodeGenerator.Shared.UndoRedo;
 using Microsoft.Extensions.Logging;
 
@@ -13,9 +14,10 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Entities
     public class EntitiesContainerController : WorkspaceArtifactControllerBase<EntitiesContainerArtifact>
     {
         public EntitiesContainerController(
+            OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
             ILogger<EntitiesContainerController> logger)
-            : base(workspaceController, logger)
+            : base(operationExecutor,workspaceController, logger)
         {
         }
 

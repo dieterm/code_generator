@@ -1,6 +1,7 @@
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace
@@ -11,9 +12,10 @@ namespace CodeGenerator.Application.Controllers.Workspace
     public class ViewArtifactController : WorkspaceArtifactControllerBase<ViewArtifact>
     {
         public ViewArtifactController(
+            OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
             ILogger<ViewArtifactController> logger)
-            : base(workspaceController, logger)
+            : base(operationExecutor, workspaceController, logger)
         {
         }
 

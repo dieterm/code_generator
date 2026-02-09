@@ -4,6 +4,7 @@ using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Services;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace
@@ -18,10 +19,11 @@ namespace CodeGenerator.Application.Controllers.Workspace
         private WorkspaceEditViewModel? _editViewModel;
 
         public WorkspaceArtifactController(
+            OperationExecutor operationExecutor,
             IDatasourceFactory datasourceFactory, 
             WorkspaceTreeViewController workspaceController,
             ILogger<WorkspaceArtifactController> logger
-            ): base(workspaceController, logger)
+            ): base(operationExecutor, workspaceController, logger)
         {
             _datasourceFactory = datasourceFactory;
         }

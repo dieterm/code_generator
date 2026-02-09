@@ -4,6 +4,7 @@ using CodeGenerator.Core.Artifacts.CodeGeneration;
 using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Shared.ExtensionMethods;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -15,8 +16,8 @@ namespace CodeGenerator.Application.Controllers.Template
 {
     public class RootArtifactController : TemplateArtifactControllerBase<RootArtifact>
     {
-        public RootArtifactController(TemplateTreeViewController treeViewController, ILogger<RootArtifactController> logger)
-            : base(treeViewController, logger)
+        public RootArtifactController(OperationExecutor operationExecutor, TemplateTreeViewController treeViewController, ILogger<RootArtifactController> logger)
+            : base(operationExecutor, treeViewController, logger)
         {
         }
 

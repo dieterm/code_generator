@@ -2,6 +2,7 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -14,8 +15,8 @@ namespace CodeGenerator.Application.Controllers.Workspace.Scopes
 {
     public class SubScopesContainerController : WorkspaceArtifactControllerBase<SubScopesContainerArtifact>
     {
-        public SubScopesContainerController(WorkspaceTreeViewController treeViewController, ILogger<SubScopesContainerController> logger)
-            : base(treeViewController, logger)
+        public SubScopesContainerController(OperationExecutor operationExecutor, WorkspaceTreeViewController treeViewController, ILogger<SubScopesContainerController> logger)
+            : base(operationExecutor, treeViewController, logger)
         {
         }
 

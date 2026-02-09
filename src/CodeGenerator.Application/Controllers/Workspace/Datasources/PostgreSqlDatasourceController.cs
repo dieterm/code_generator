@@ -3,6 +3,7 @@ using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.PostgreSql.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.PostgreSql.ViewModels;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
@@ -15,9 +16,10 @@ public class PostgreSqlDatasourceController : WorkspaceArtifactControllerBase<Po
     private PostgreSqlDatasourceEditViewModel? _editViewModel;
 
     public PostgreSqlDatasourceController(
+        OperationExecutor operationExecutor,
         WorkspaceTreeViewController workspaceController,
         ILogger<PostgreSqlDatasourceController> logger)
-        : base(workspaceController, logger)
+        : base(operationExecutor, workspaceController, logger)
     {
     }
 

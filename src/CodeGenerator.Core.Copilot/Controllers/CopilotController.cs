@@ -7,8 +7,10 @@ using CodeGenerator.Core.Copilot.ViewModels;
 using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Operations;
 using CodeGenerator.Shared.Ribbon;
 using GitHub.Copilot.SDK;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Core.Copilot.Controllers
@@ -20,6 +22,7 @@ namespace CodeGenerator.Core.Copilot.Controllers
         private CopilotClient? _client;
         private CopilotSession? _session;
         private WorkspaceTools? _workspaceTools;
+        private CopilotOperationBridge? _operationBridge;
 
         private const string SystemPromptContent =
             "You are a workspace assistant for a code generator application. " +
@@ -33,6 +36,7 @@ namespace CodeGenerator.Core.Copilot.Controllers
             "First call GetWorkspaceInfo and ListScopes to understand the workspace structure before making changes.";
 
         public CopilotController(
+            OperationExecutor operationExecutor,
             CopilotChatViewModel copilotChatViewModel,
             IWindowManagerService windowManagerService,
             RibbonBuilder ribbonBuilder,
@@ -40,7 +44,7 @@ namespace CodeGenerator.Core.Copilot.Controllers
             IMessageBoxService messageboxService,
             IFileSystemDialogService fileSystemDialogService,
             ILogger<CopilotController> logger)
-            : base(windowManagerService, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
+            : base(operationExecutor, windowManagerService, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
         {
             _copilotChatViewModel = copilotChatViewModel;
         }
@@ -49,6 +53,13 @@ namespace CodeGenerator.Core.Copilot.Controllers
         {
             _workspaceContextProvider = ServiceProviderHolder.GetRequiredService<IWorkspaceContextProvider>();
             _copilotChatViewModel.SendMessageRequested += OnSendMessageRequested;
+
+            // Register all IOperation implementations in the executor
+            var operations = ServiceProviderHolder.GetServices<IOperation>();
+            foreach (var operation in operations)
+            {
+                _operationExecutor.Register(operation);
+            }
         }
 
         public void ShowCopilot()
@@ -68,9 +79,15 @@ namespace CodeGenerator.Core.Copilot.Controllers
                 _copilotChatViewModel.StatusText = "Connecting...";
 
                 _workspaceTools = new WorkspaceTools(_workspaceContextProvider!, InvokeOnUiThread);
+                _operationBridge = new CopilotOperationBridge(_operationExecutor, InvokeOnUiThread);
 
                 _client = new CopilotClient();
                 await _client.StartAsync();
+
+                // Combine read-only query tools and operation-based mutation tools
+                var tools = new List<AIFunction>();
+                tools.AddRange(_workspaceTools.GetAllTools());
+                tools.AddRange(_operationBridge.GenerateTools());
 
                 _session = await _client.CreateSessionAsync(new SessionConfig
                 {
@@ -81,7 +98,7 @@ namespace CodeGenerator.Core.Copilot.Controllers
                         Mode = SystemMessageMode.Append,
                         Content = SystemPromptContent
                     },
-                    Tools = _workspaceTools.GetAllTools()
+                    Tools = tools
                 });
 
                 _copilotChatViewModel.IsConnected = true;

@@ -6,6 +6,7 @@ using CodeGenerator.Application.ViewModels.Template;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,12 @@ namespace CodeGenerator.Application.Controllers.Template
     {
         private TemplateParametersViewModel? _editViewModel;
         private readonly WorkspaceTreeViewController _workspaceController;
+
+        public TemplateArtifactController(OperationExecutor operationExecutor, WorkspaceTreeViewController workspaceController, TemplateTreeViewController treeViewController, ILogger<TemplateArtifactController> logger)
+            : base(operationExecutor, treeViewController, logger)
+        {
+            _workspaceController = workspaceController;
+        }
 
         private void EnsureEditViewModel(TemplateArtifact templateArtifact)
         {
@@ -70,12 +77,7 @@ namespace CodeGenerator.Application.Controllers.Template
 
         public TemplateParametersViewModel? EditViewModel => _editViewModel;
 
-        public TemplateArtifactController(WorkspaceTreeViewController workspaceController, TemplateTreeViewController treeViewController, ILogger<TemplateArtifactController> logger) 
-            : base(treeViewController, logger)
-        {
-            _workspaceController = workspaceController;
-            //treeViewController.TemplateSelected += TreeViewModel_TemplateSelected;
-        }
+
 
         protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(TemplateArtifact templateArtifact)
         {

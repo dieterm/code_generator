@@ -4,6 +4,7 @@ using CodeGenerator.Core.Artifacts.Views;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.MessageBus;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Base
@@ -15,14 +16,15 @@ namespace CodeGenerator.Application.Controllers.Base
     {
         protected ILogger Logger { get; }
         protected TTreeView TreeViewController { get; }
-
+        protected OperationExecutor OperationExecutor { get; }
         /// <summary>
         /// Access to the clipboard service
         /// </summary>
         protected ArtifactClipboardService ClipboardService => ArtifactClipboardService.Instance;
 
-        protected ArtifactControllerBase(TTreeView treeViewController, ILogger logger)
+        protected ArtifactControllerBase(OperationExecutor operationExecutor, TTreeView treeViewController, ILogger logger)
         {
+            OperationExecutor = operationExecutor;
             TreeViewController = treeViewController;
             Logger = logger;
         }

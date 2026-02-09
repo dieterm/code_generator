@@ -3,6 +3,7 @@ using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly.ViewModels;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
@@ -15,9 +16,10 @@ public class DotNetAssemblyDatasourceController : WorkspaceArtifactControllerBas
     private DotNetAssemblyDatasourceEditViewModel? _editViewModel;
 
     public DotNetAssemblyDatasourceController(
+            OperationExecutor operationExecutor,
         WorkspaceTreeViewController workspaceController,
         ILogger<DotNetAssemblyDatasourceController> logger)
-        : base(workspaceController, logger)
+        : base(operationExecutor, workspaceController, logger)
     {
     }
 

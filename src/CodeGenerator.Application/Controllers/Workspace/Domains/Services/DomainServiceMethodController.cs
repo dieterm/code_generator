@@ -1,6 +1,7 @@
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Services;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Domains.Services
@@ -10,10 +11,10 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Services
     /// </summary>
     public class DomainServiceMethodController : WorkspaceArtifactControllerBase<DomainServiceMethodArtifact>
     {
-        public DomainServiceMethodController(
+        public DomainServiceMethodController(OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
             ILogger<DomainServiceMethodController> logger)
-            : base(workspaceController, logger)
+            : base(operationExecutor, workspaceController, logger)
         {
         }
 

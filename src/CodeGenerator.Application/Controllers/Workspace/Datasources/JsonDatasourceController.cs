@@ -7,6 +7,7 @@ using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.Json.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.Json.ViewModels;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
@@ -19,9 +20,10 @@ public class JsonDatasourceController : WorkspaceArtifactControllerBase<JsonData
     private JsonDatasourceEditViewModel? _editViewModel;
 
     public JsonDatasourceController(
+            OperationExecutor operationExecutor,
         WorkspaceTreeViewController workspaceController,
         ILogger<JsonDatasourceController> logger)
-        : base(workspaceController, logger)
+        : base(operationExecutor, workspaceController, logger)
     {
     }
 

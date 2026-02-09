@@ -3,6 +3,7 @@ using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.SqlServer.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.SqlServer.ViewModels;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
@@ -15,9 +16,10 @@ public class SqlServerDatasourceController : WorkspaceArtifactControllerBase<Sql
     private SqlServerDatasourceEditViewModel? _editViewModel;
 
     public SqlServerDatasourceController(
+            OperationExecutor operationExecutor,
         WorkspaceTreeViewController workspaceController,
         ILogger<SqlServerDatasourceController> logger)
-        : base(workspaceController, logger)
+        : base(operationExecutor, workspaceController, logger)
     {
     }
 

@@ -12,6 +12,7 @@ using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Presentation.WinForms.ViewModels;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Operations;
 using CodeGenerator.Shared.Ribbon;
 using Microsoft.Extensions.Logging;
 
@@ -28,8 +29,8 @@ namespace CodeGenerator.Application.Controllers
         private readonly TemplateController _templateController;
 
 
-        public ApplicationController( MainViewModel viewModel, SettingsController settingsController, WorkspaceController workspaceController, GenerationController generationController, TemplateController templateController, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IApplicationService applicationService, ApplicationMessageBus messageBus, IMessageBoxService messageBoxService, IFileSystemDialogService fileSystemDialogService, ILogger<ApplicationController> logger) 
-            : base(windowManagerService, ribbonBuilder, messageBus, messageBoxService, fileSystemDialogService, logger)
+        public ApplicationController(OperationExecutor operationExecutor, MainViewModel viewModel, SettingsController settingsController, WorkspaceController workspaceController, GenerationController generationController, TemplateController templateController, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IApplicationService applicationService, ApplicationMessageBus messageBus, IMessageBoxService messageBoxService, IFileSystemDialogService fileSystemDialogService, ILogger<ApplicationController> logger) 
+            : base(operationExecutor, windowManagerService, ribbonBuilder, messageBus, messageBoxService, fileSystemDialogService, logger)
         {
             _mainViewModel = viewModel;
             _settingsController = settingsController;

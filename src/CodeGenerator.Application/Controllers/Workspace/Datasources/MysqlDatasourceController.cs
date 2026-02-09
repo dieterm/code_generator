@@ -3,6 +3,7 @@ using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql.ViewModels;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Datasources
@@ -15,9 +16,10 @@ namespace CodeGenerator.Application.Controllers.Workspace.Datasources
         private MysqlDatasourceEditViewModel? _editViewModel;
 
         public MysqlDatasourceController(
+            OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
             ILogger<MysqlDatasourceController> logger)
-            : base(workspaceController, logger)
+            : base(operationExecutor, workspaceController, logger)
         {
             
         }

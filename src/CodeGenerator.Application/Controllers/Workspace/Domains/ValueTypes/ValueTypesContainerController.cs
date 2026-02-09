@@ -1,6 +1,7 @@
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Domains.ValueTypes
@@ -11,9 +12,10 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.ValueTypes
     public class ValueTypesContainerController : WorkspaceArtifactControllerBase<ValueTypesContainerArtifact>
     {
         public ValueTypesContainerController(
+            OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
             ILogger<ValueTypesContainerController> logger)
-            : base(workspaceController, logger)
+            : base(operationExecutor, workspaceController, logger)
         {
         }
 

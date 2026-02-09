@@ -3,6 +3,7 @@ using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.ViewModels;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Domains
@@ -15,9 +16,10 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
         private DomainEditViewModel? _editViewModel;
 
         public DomainController(
+            OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
             ILogger<DomainController> logger)
-            : base(workspaceController, logger)
+            : base(operationExecutor, workspaceController, logger)
         {
         }
 

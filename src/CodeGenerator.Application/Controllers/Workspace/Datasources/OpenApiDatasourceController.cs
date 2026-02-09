@@ -6,6 +6,7 @@ using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.OpenApi.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.OpenApi.ViewModels;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
@@ -18,9 +19,10 @@ public class OpenApiDatasourceController : WorkspaceArtifactControllerBase<OpenA
     private OpenApiDatasourceEditViewModel? _editViewModel;
 
     public OpenApiDatasourceController(
+            OperationExecutor operationExecutor,
         WorkspaceTreeViewController workspaceController,
         ILogger<OpenApiDatasourceController> logger)
-        : base(workspaceController, logger)
+        : base(operationExecutor, workspaceController, logger)
     {
     }
 

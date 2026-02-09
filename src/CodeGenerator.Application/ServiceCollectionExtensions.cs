@@ -39,6 +39,8 @@ using CodeGenerator.Core.Workspaces.Datasources.SqlServer;
 using CodeGenerator.Core.Workspaces.Datasources.Xml;
 using CodeGenerator.Core.Workspaces.Datasources.Yaml;
 using CodeGenerator.Core.Workspaces.MessageBus;
+using CodeGenerator.Core.Workspaces.Operations.Domains;
+using CodeGenerator.Core.Workspaces.Operations.Scopes;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain;
@@ -46,6 +48,7 @@ using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.ProgrammingLanguages.CSharp;
 using CodeGenerator.Generators.CodeArchitectureLayers;
 using CodeGenerator.Presentation.WinForms.ViewModels;
+using CodeGenerator.Shared.Operations;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.UndoRedo;
 using CodeGenerator.TemplateEngines.DotNetProject;
@@ -201,7 +204,24 @@ public static class ServiceCollectionExtensions
         
         // Register Undo/Redo
         services.AddSingleton<UndoRedoManager>();
-        
+
+        // Register Operations
+        services.AddSingleton<OperationExecutor>();
+        services.AddSingleton<AddScopeToWorkspaceOperation>();
+        services.AddSingleton<IOperation, AddScopeToWorkspaceOperation>(sp => sp.GetRequiredService<AddScopeToWorkspaceOperation>());
+        services.AddSingleton<AddSubScopeToScopeOperation>();
+        services.AddSingleton<IOperation, AddSubScopeToScopeOperation>(sp => sp.GetRequiredService<AddSubScopeToScopeOperation>());
+        services.AddSingleton<AddDomainToScopeOperation>();
+        services.AddSingleton<IOperation, AddDomainToScopeOperation>(sp => sp.GetRequiredService<AddDomainToScopeOperation>());
+        services.AddSingleton<AddEntityToDomainOperation>();
+        services.AddSingleton<IOperation, AddEntityToDomainOperation>(sp => sp.GetRequiredService<AddEntityToDomainOperation>());
+        services.AddSingleton<AddEntityWithPropertiesToDomainOperation>();
+        services.AddSingleton<IOperation, AddEntityWithPropertiesToDomainOperation>(sp => sp.GetRequiredService<AddEntityWithPropertiesToDomainOperation>());
+        services.AddSingleton<AddPropertyToEntityOperation>();
+        services.AddSingleton<IOperation, AddPropertyToEntityOperation>(sp => sp.GetRequiredService<AddPropertyToEntityOperation>());
+        services.AddSingleton<AddValueTypeToDomainOperation>();
+        services.AddSingleton<IOperation, AddValueTypeToDomainOperation>(sp => sp.GetRequiredService<AddValueTypeToDomainOperation>());
+
         services.AddWorkspaceServices(configuration);
 
         // Register Services

@@ -13,10 +13,12 @@ using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Core.Workspaces.MessageBus;
+using CodeGenerator.Core.Workspaces.Operations.Scopes;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Operations;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.UndoRedo;
 using CodeGenerator.Shared.ViewModels;
@@ -49,6 +51,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
         public UndoRedoManager UndoRedoManager => _undoRedoManager;
 
         public WorkspaceTreeViewController(
+            OperationExecutor operationExecutor,
             UndoRedoManager undoRedoManager,
             WorkspaceMessageBus workspaceMessageBus,
             TemplateManager templateManager,
@@ -58,7 +61,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             IWindowManagerService windowManagerService,
             IMessageBoxService messageBoxService,
             ILogger<WorkspaceTreeViewController> logger)
-            : base(windowManagerService, messageBoxService, logger)
+            : base(operationExecutor, windowManagerService, messageBoxService, logger)
         {
             _undoRedoManager = undoRedoManager;
             _workspaceMessageBus = workspaceMessageBus;
@@ -175,7 +178,9 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
             var datasourcesContainer = workspace.AddChild(new DatasourcesContainerArtifact());
             var scopesContainer = workspace.AddChild(new ScopesContainerArtifact());
-
+            //var addScopeOperation = ServiceProviderHolder.GetRequiredService<AddScopeOperation>();
+            //addScopeOperation.Execute(new AddScopeParams { ScopeName = ScopeArtifact.DEFAULT_SCOPE_SHARED });
+            //addScopeOperation.Execute(new AddScopeParams { ScopeName = ScopeArtifact.DEFAULT_SCOPE_APPLICATION });
             var codeArchitectureManager = ServiceProviderHolder.GetRequiredService<CodeArchitectureManager>();
             var codeArchitecture = codeArchitectureManager.GetById(WorkspaceSettings.Instance.DefaultCodeArchitectureId);
             if (codeArchitecture != null)

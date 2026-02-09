@@ -14,6 +14,7 @@ using CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.ExtensionMethods;
+using CodeGenerator.Shared.Operations;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.TemplateEngines.Scriban;
@@ -39,7 +40,16 @@ namespace CodeGenerator.Application.Controllers.Template
         private WorkspaceArtifactDetailsViewModel? _artifactDetailsViewModel;
         private readonly TemplateManager _templateManager;
 
-        public TemplateTreeViewController(TemplateManager templateManager, TemplateEngineManager templateEngineManager, WorkspaceTreeViewController workspaceController, RibbonBuilder ribbonBuilder, IWindowManagerService windowManagerService, IMessageBoxService messageBoxService, ILogger<TemplateTreeViewController> logger) : base(windowManagerService, messageBoxService, logger)
+        public TemplateTreeViewController(
+            OperationExecutor operationExecutor, 
+            TemplateManager templateManager, 
+            TemplateEngineManager templateEngineManager, 
+            WorkspaceTreeViewController workspaceController,
+            RibbonBuilder ribbonBuilder, 
+            IWindowManagerService windowManagerService, 
+            IMessageBoxService messageBoxService, 
+            ILogger<TemplateTreeViewController> logger)
+            : base(operationExecutor, windowManagerService, messageBoxService, logger)
         {
             _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
             _ribbonBuilder = ribbonBuilder ?? throw new ArgumentNullException(nameof(ribbonBuilder));

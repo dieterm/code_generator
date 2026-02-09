@@ -2,6 +2,7 @@ using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
+using CodeGenerator.Shared.Operations;
 using DocumentFormat.OpenXml.Bibliography;
 using Microsoft.Extensions.Logging;
 
@@ -14,10 +15,8 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Entities
     {
         private EntityEditViewFieldEditViewModel? _editViewModel;
 
-        public EntityEditViewFieldController(
-            WorkspaceTreeViewController workspaceController,
-            ILogger<EntityEditViewFieldController> logger)
-            : base(workspaceController, logger)
+        public EntityEditViewFieldController(OperationExecutor operationExecutor, WorkspaceTreeViewController workspaceController, ILogger<EntityEditViewFieldController> logger)
+            : base(operationExecutor, workspaceController, logger)
         {
         }
 

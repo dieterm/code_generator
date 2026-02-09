@@ -1,5 +1,6 @@
 ﻿using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,8 @@ namespace CodeGenerator.Application.Controllers.Template
     public abstract class TemplateArtifactControllerBase<TArtifact> : ArtifactControllerBase<TemplateTreeViewController, TArtifact>, ITemplateArtifactController
         where TArtifact : class, IArtifact
     {
-        protected TemplateArtifactControllerBase(TemplateTreeViewController treeViewController, ILogger logger) 
-            : base(treeViewController, logger)
+        protected TemplateArtifactControllerBase(OperationExecutor operationExecutor, TemplateTreeViewController treeViewController, ILogger logger) 
+            : base(operationExecutor, treeViewController, logger)
         {
 
         }

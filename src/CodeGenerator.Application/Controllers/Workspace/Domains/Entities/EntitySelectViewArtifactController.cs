@@ -2,6 +2,7 @@ using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Domains.Entities
@@ -13,10 +14,8 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Entities
     {
         private EntitySelectViewEditViewModel? _editViewModel;
 
-        public EntitySelectViewArtifactController(
-            WorkspaceTreeViewController workspaceController,
-            ILogger<EntitySelectViewArtifactController> logger)
-            : base(workspaceController, logger)
+        public EntitySelectViewArtifactController(OperationExecutor operationExecutor, WorkspaceTreeViewController workspaceController, ILogger<EntitySelectViewArtifactController> logger)
+            : base(operationExecutor, workspaceController, logger)
         {
         }
 

@@ -2,6 +2,7 @@ using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.ViewModels.Workspace.Domains.Factories;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Factories;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Domains.Factories
@@ -13,10 +14,8 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Factories
     {
         private DomainFactoryEditViewModel? _editViewModel;
 
-        public DomainFactoryController(
-            WorkspaceTreeViewController workspaceController,
-            ILogger<DomainFactoryController> logger)
-            : base(workspaceController, logger)
+        public DomainFactoryController(OperationExecutor operationExecutor, WorkspaceTreeViewController workspaceController, ILogger<DomainFactoryController> logger)
+            : base(operationExecutor, workspaceController, logger)
         {
         }
 

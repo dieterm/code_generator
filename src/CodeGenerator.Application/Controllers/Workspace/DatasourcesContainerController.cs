@@ -2,6 +2,7 @@ using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Services;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace
@@ -16,8 +17,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
         //protected WorkspaceTreeViewController TreeViewController => (WorkspaceTreeViewController)base.TreeViewController;
 
-        public DatasourcesContainerController(IDatasourceFactory datasourceFactory, WorkspaceTreeViewController workspaceController, ILogger<DatasourcesContainerController> logger)
-            : base(workspaceController, logger)
+        public DatasourcesContainerController(OperationExecutor operationExecutor, IDatasourceFactory datasourceFactory, WorkspaceTreeViewController workspaceController, ILogger<DatasourcesContainerController> logger)
+            : base(operationExecutor, workspaceController, logger)
         {
             _datasourceFactory = datasourceFactory;
         }

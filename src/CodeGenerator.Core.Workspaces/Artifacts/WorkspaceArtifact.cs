@@ -1,7 +1,9 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Core.Workspaces.MessageBus.EventHandlers;
+using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Core.Workspaces.ViewModels;
 using CodeGenerator.Domain.CodeArchitecture;
@@ -174,6 +176,22 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         /// Gets the scopes container
         /// </summary>
         public ScopesContainerArtifact Scopes { get { return this.EnsureChildArtifactExists<ScopesContainerArtifact>(); } }
+
+        //public ScopeArtifact? FindScopeOrDefault(string scopeName)
+        //{
+        //    return Scopes.FindScope(scopeName, false);
+        //}
+
+        public ScopeArtifact? FindScope(string scopeName, bool exceptionIfNotFound = true)
+        {
+            return Scopes.FindScope(scopeName, exceptionIfNotFound);
+        }
+
+        public DomainArtifact? FindDomain(string scopeName, string domainName, bool exceptionIfNotFound = true)
+        {
+            var scope = FindScope(scopeName);
+            return scope?.FindDomain(domainName, exceptionIfNotFound);
+        }
 
         public bool CanBeginEdit()
         {

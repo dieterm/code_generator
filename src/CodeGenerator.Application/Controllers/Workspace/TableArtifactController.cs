@@ -12,6 +12,7 @@ using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.Databases.RelationalDatabases;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Operations;
 using CodeGenerator.TemplateEngines.Scriban;
 using Microsoft.Extensions.Logging;
 using System;
@@ -34,11 +35,12 @@ namespace CodeGenerator.Application.Controllers.Workspace
         }
 
         public TableArtifactController(
+            OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
             TemplateEngineManager templateEngineManager,
             IWindowManagerService windowManagerService,
             ILogger<TableArtifactController> logger)
-            : base(workspaceController, logger)
+            : base(operationExecutor, workspaceController, logger)
         {
             _templateEngineManager = templateEngineManager;
             _windowManagerService = windowManagerService;

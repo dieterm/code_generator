@@ -3,6 +3,7 @@ using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels.Generation;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Operations;
 using CodeGenerator.Shared.ViewModels;
 using Microsoft.Extensions.Logging;
 
@@ -22,11 +23,12 @@ namespace CodeGenerator.Application.Controllers.Generation
         public event EventHandler<ViewModelBase?>? ShowArtifactDetailsRequested;
 
         public GenerationTreeViewController(
+            OperationExecutor operationExecutor,
             GenerationDetailsViewModel detailsViewModel,
             IWindowManagerService windowManagerService,
             IMessageBoxService messageBoxService,
             ILogger<GenerationTreeViewController> logger)
-            : base(windowManagerService, messageBoxService, logger)
+            : base(operationExecutor, windowManagerService, messageBoxService, logger)
         {
             _detailsViewModel = detailsViewModel;
         }

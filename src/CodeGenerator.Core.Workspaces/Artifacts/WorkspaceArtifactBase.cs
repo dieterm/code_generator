@@ -75,6 +75,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             }
 
             if (Workspace == null) return;
+            return;
             // record action for undo/redo
             ServiceProviderHolder.GetRequiredService<UndoRedoManager>().RecordAction(new ChildChangeAction(
                 sender!,

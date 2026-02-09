@@ -6,6 +6,7 @@ using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.Yaml.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.Yaml.ViewModels;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
@@ -18,9 +19,10 @@ public class YamlDatasourceController : WorkspaceArtifactControllerBase<YamlData
     private YamlDatasourceEditViewModel? _editViewModel;
 
     public YamlDatasourceController(
+        OperationExecutor operationExecutor,
         WorkspaceTreeViewController workspaceController,
         ILogger<YamlDatasourceController> logger)
-        : base(workspaceController, logger)
+        : base(operationExecutor, workspaceController, logger)
     {
     }
 

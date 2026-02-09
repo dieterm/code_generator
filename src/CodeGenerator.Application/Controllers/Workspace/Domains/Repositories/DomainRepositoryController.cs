@@ -1,6 +1,7 @@
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Repositories;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Domains.Repositories
@@ -11,9 +12,10 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Repositories
     public class DomainRepositoryController : WorkspaceArtifactControllerBase<DomainRepositoryArtifact>
     {
         public DomainRepositoryController(
+            OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
             ILogger<DomainRepositoryController> logger)
-            : base(workspaceController, logger)
+            : base(operationExecutor, workspaceController, logger)
         {
         }
 

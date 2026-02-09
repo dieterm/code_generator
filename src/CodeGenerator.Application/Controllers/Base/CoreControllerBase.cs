@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CodeGenerator.Shared.Operations;
 
 namespace CodeGenerator.Application.Controllers.Base
 {
@@ -20,8 +21,9 @@ namespace CodeGenerator.Application.Controllers.Base
         protected readonly ApplicationMessageBus _messageBus;
         protected readonly IWindowManagerService _windowManagerService;
         protected readonly RibbonBuilder _ribbonBuilder;
+        protected readonly OperationExecutor _operationExecutor;
 
-        public CoreControllerBase(IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger logger)
+        public CoreControllerBase(OperationExecutor operationExecutor, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger logger)
         {
             _windowManagerService = windowManagerService;
             _ribbonBuilder = ribbonBuilder;
@@ -29,6 +31,7 @@ namespace CodeGenerator.Application.Controllers.Base
             _messageBoxService = messageboxService;
             _fileSystemDialogService = fileSystemDialogService;
             _logger = logger;
+            _operationExecutor = operationExecutor;
         }
 
 

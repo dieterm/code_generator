@@ -3,6 +3,7 @@ using CodeGenerator.Application.ViewModels.Base;
 using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Shared.Operations;
 using CodeGenerator.Shared.ViewModels;
 using Microsoft.Extensions.Logging;
 
@@ -86,8 +87,9 @@ public abstract class ArtifactTreeViewController<TTreeViewModel> : IArtifactTree
     protected ILogger Logger { get; }
     protected IWindowManagerService WindowManagerService { get; }
     protected IMessageBoxService MessageBoxService { get; }
+    protected OperationExecutor OperationExecutor { get; }
 
-    protected ArtifactTreeViewController(
+    protected ArtifactTreeViewController(OperationExecutor operationExecutor,
         IWindowManagerService windowManagerService,
         IMessageBoxService messageBoxService,
         ILogger logger)
@@ -95,6 +97,7 @@ public abstract class ArtifactTreeViewController<TTreeViewModel> : IArtifactTree
         WindowManagerService = windowManagerService;
         MessageBoxService = messageBoxService;
         Logger = logger;
+        OperationExecutor = operationExecutor;
     }
 
     /// <summary>

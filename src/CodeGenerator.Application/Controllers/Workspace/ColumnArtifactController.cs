@@ -5,6 +5,7 @@ using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Models;
 using CodeGenerator.Core.Workspaces.Services;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace
@@ -18,10 +19,11 @@ namespace CodeGenerator.Application.Controllers.Workspace
         private ColumnEditViewModel? _editViewModel;
 
         public ColumnArtifactController(
+            OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
             IDatasourceFactory datasourceFactory,
             ILogger<ColumnArtifactController> logger)
-            : base(workspaceController, logger)
+            : base(operationExecutor, workspaceController, logger)
         {
             _datasourceFactory = datasourceFactory;
         }

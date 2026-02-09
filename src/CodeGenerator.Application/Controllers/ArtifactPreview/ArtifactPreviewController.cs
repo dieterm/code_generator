@@ -6,6 +6,7 @@ using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Shared.ExtensionMethods;
+using CodeGenerator.Shared.Operations;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.ViewModels;
 using Microsoft.Extensions.Logging;
@@ -20,8 +21,15 @@ namespace CodeGenerator.Application.Controllers.ArtifactPreview
 {
     public class ArtifactPreviewController : CoreControllerBase
     {
-        public ArtifactPreviewController(IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<ArtifactPreviewController> logger) 
-            : base(windowManagerService, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
+        public ArtifactPreviewController(
+            OperationExecutor operationExecutor,
+            IWindowManagerService windowManagerService,
+            RibbonBuilder ribbonBuilder,
+            ApplicationMessageBus messageBus,
+            IMessageBoxService messageboxService,
+            IFileSystemDialogService fileSystemDialogService,
+            ILogger<ArtifactPreviewController> logger) 
+            : base(operationExecutor, windowManagerService, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
         {
             
         }

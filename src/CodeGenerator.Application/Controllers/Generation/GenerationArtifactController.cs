@@ -5,6 +5,7 @@ using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.ExtensionMethods;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Generation
@@ -15,10 +16,10 @@ namespace CodeGenerator.Application.Controllers.Generation
     /// </summary>
     public class GenerationArtifactController : GenerationArtifactControllerBase<IArtifact>
     {
-        public GenerationArtifactController(
+        public GenerationArtifactController(OperationExecutor operationExecutor,
             GenerationTreeViewController treeViewController,
             ILogger<GenerationArtifactController> logger)
-            : base(treeViewController, logger)
+            : base(operationExecutor, treeViewController, logger)
         {
         }
 

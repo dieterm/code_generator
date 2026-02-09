@@ -185,6 +185,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.TemplateEngin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core.Copilot", "CodeGenerator.Core.Copilot\CodeGenerator.Core.Copilot.csproj", "{77484791-DF9A-4A16-B7D8-7595A410DC93}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Copilot", "Copilot", "{749E5A48-DBB8-43E5-AB88-A7A6EA684F65}"
+	ProjectSection(SolutionItems) = preProject
+		..\docs\Copilot\workspace-operations-architecture.md = ..\docs\Copilot\workspace-operations-architecture.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -407,6 +412,7 @@ Global
 		{54AA83B9-F514-4E6B-A211-FA7D2368431C} = {ED8AA5E0-9601-4995-910B-776F8204C303}
 		{C4B5B82B-5E1C-43ED-88CE-58EDBF414520} = {E9F8E255-2538-42FC-AD05-7742FE416432}
 		{075240A2-1740-46EA-BD75-8526F5B0A869} = {4856C5FE-741C-4773-A485-3E261182F82D}
+		{749E5A48-DBB8-43E5-AB88-A7A6EA684F65} = {C07A3E83-0321-4673-AA42-47F3D68755B5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF76BCB8-B816-4DA2-B1B6-D1F900E7DD06}

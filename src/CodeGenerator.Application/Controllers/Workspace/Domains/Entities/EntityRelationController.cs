@@ -2,6 +2,7 @@ using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Core.Workspaces.ViewModels;
+using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Domains.Entities
@@ -13,10 +14,10 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Entities
     {
         private EntityRelationEditViewModel? _editViewModel;
 
-        public EntityRelationController(
+        public EntityRelationController(OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
             ILogger<EntityRelationController> logger)
-            : base(workspaceController, logger)
+            : base(operationExecutor, workspaceController, logger)
         {
         }
 
