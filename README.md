@@ -1,5 +1,7 @@
 ﻿# CodeGenerator
 
+![Scriban Template Example](docs/copilot_integration.png)
+
 ![Scriban Template Example](docs/scriban_template.png)
 
 A powerful, extensible .NET 8 code generation framework designed to accelerate software development by automating the creation of boilerplate code from various data sources.
