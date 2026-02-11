@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 namespace CodeGenerator.Core.CodeElements.ViewModels;
 
-public class StructElementEditViewModel : CodeElementEditViewModel
+public class StructElementEditViewModel : CodeElementEditViewModel<StructElement>
 {
     private StructElementArtifact? _artifact;
 

@@ -2,7 +2,9 @@
 using CodeGenerator.Application.Controllers.Copilot;
 using CodeGenerator.Core.CodeElements.Controllers;
 using CodeGenerator.Core.CodeElements.ViewModels;
+using CodeGenerator.Core.CodeElements.ViewModels.Statements;
 using CodeGenerator.Core.CodeElements.Views;
+using CodeGenerator.Core.CodeElements.Views.Statements;
 using CodeGenerator.Shared.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -84,6 +86,24 @@ namespace CodeGenerator.Core.CodeElements
             services.AddTransient<IView<ConstructorElementEditViewModel>, ConstructorElementEditView>();
             services.AddTransient<IView<PropertyElementEditViewModel>, PropertyElementEditView>();
             services.AddTransient<IView<FieldElementEditViewModel>, FieldElementEditView>();
+
+            // Statement Edit Views
+            services.AddTransient<IView<RawStatementEditViewModel>, RawStatementEditView>();
+            services.AddTransient<IView<CommentStatementEditViewModel>, CommentStatementEditView>();
+            services.AddTransient<IView<CompositeStatementEditViewModel>, CompositeStatementEditView>();
+            services.AddTransient<IView<AssignmentStatementEditViewModel>, AssignmentStatementEditView>();
+            services.AddTransient<IView<CatchBlockEditViewModel>, CatchBlockEditView>();
+            services.AddTransient<IView<ElseIfBranchEditViewModel>, ElseIfBranchEditView>();
+            services.AddTransient<IView<ForEachStatementEditViewModel>, ForEachStatementEditView>();
+            services.AddTransient<IView<ForStatementEditViewModel>, ForStatementEditView>();
+            services.AddTransient<IView<IfStatementEditViewModel>, IfStatementEditView>();
+            services.AddTransient<IView<ReturnStatementEditViewModel>, ReturnStatementEditView>();
+            services.AddTransient<IView<SwitchCaseEditViewModel>, SwitchCaseEditView>();
+            services.AddTransient<IView<SwitchStatementEditViewModel>, SwitchStatementEditView>();
+            services.AddTransient<IView<ThrowStatementEditViewModel>, ThrowStatementEditView>();
+            services.AddTransient<IView<TryCatchStatementEditViewModel>, TryCatchStatementEditView>();
+            services.AddTransient<IView<UsingStatementEditViewModel>, UsingStatementEditView>();
+            services.AddTransient<IView<WhileStatementEditViewModel>, WhileStatementEditView>();
 
             return services;
         }

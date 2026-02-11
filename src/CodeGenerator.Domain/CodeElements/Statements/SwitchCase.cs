@@ -3,7 +3,7 @@ namespace CodeGenerator.Domain.CodeElements
     /// <summary>
     /// Represents a switch case
     /// </summary>
-    public class SwitchCase
+    public class SwitchCase : StatementElement
     {
         /// <summary>
         /// Case label values

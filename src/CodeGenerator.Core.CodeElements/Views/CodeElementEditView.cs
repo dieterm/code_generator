@@ -1,4 +1,5 @@
 using CodeGenerator.Core.CodeElements.ViewModels;
+using CodeGenerator.Domain.CodeElements;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
 using System.ComponentModel;
@@ -9,16 +10,16 @@ namespace CodeGenerator.Core.CodeElements.Views;
 /// Base View for editing CodeElementArtifactBase properties.
 /// Provides Name, AccessModifier, Modifiers, Documentation and RawCode fields.
 /// </summary>
-public partial class CodeElementEditView : UserControl, IView<CodeElementEditViewModel>
+public partial class CodeElementEditView : UserControl, IView<CodeElementEditViewModel<CodeElement>>
 {
-    private CodeElementEditViewModel? _viewModel;
+    private CodeElementEditViewModel<CodeElement>? _viewModel;
 
     public CodeElementEditView()
     {
         InitializeComponent();
     }
 
-    public void BindViewModel(CodeElementEditViewModel? viewModel)
+    public void BindViewModel(CodeElementEditViewModel<CodeElement>? viewModel)
     {
         if (_viewModel != null)
             _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
@@ -42,7 +43,7 @@ public partial class CodeElementEditView : UserControl, IView<CodeElementEditVie
 
     public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
     {
-        BindViewModel((CodeElementEditViewModel)(object)viewModel);
+        BindViewModel((CodeElementEditViewModel<CodeElement>)(object)viewModel);
     }
 
     protected override void Dispose(bool disposing)

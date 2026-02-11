@@ -11,7 +11,7 @@ namespace CodeGenerator.Core.CodeElements.ViewModels;
 /// <summary>
 /// ViewModel for editing CodeFileElementArtifact properties
 /// </summary>
-public class CodeFileElementEditViewModel : CodeElementEditViewModel
+public class CodeFileElementEditViewModel : CodeElementEditViewModel<CodeFileElement>
 {
     private CodeFileElementArtifact? _codeFile;
 

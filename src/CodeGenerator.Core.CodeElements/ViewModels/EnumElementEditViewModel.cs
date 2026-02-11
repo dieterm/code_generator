@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 namespace CodeGenerator.Core.CodeElements.ViewModels;
 
-public class EnumElementEditViewModel : CodeElementEditViewModel
+public class EnumElementEditViewModel : CodeElementEditViewModel<EnumElement>
 {
     private EnumElementArtifact? _artifact;
 

@@ -11,18 +11,18 @@ namespace CodeGenerator.Core.CodeElements.ViewModels;
 /// Base ViewModel for editing CodeElementArtifactBase properties.
 /// Provides Name, AccessModifier, Modifiers, Documentation and RawCode fields.
 /// </summary>
-public class CodeElementEditViewModel : ViewModelBase
+public class CodeElementEditViewModel<T> : ViewModelBase where T : CodeElement
 {
-    private CodeElementArtifactBase? _baseArtifact;
+    private CodeElementArtifactBase<T>? _baseArtifact;
     protected bool _isLoading;
 
     public CodeElementEditViewModel()
     {
         NameField = new SingleLineTextFieldModel { Label = "Name", Name = nameof(CodeElementArtifactBase.Name) };
-        AccessModifierField = new ComboboxFieldModel { Label = "Access Modifier", Name = nameof(CodeElementArtifactBase.AccessModifier) };
-        ModifiersField = new MultiSelectFieldModel { Label = "Modifiers", Name = nameof(CodeElementArtifactBase.Modifiers) };
-        DocumentationField = new SingleLineTextFieldModel { Label = "Documentation", Name = nameof(CodeElementArtifactBase.Documentation) };
-        RawCodeField = new SingleLineTextFieldModel { Label = "Raw Code", Name = nameof(CodeElementArtifactBase.RawCode) };
+        AccessModifierField = new ComboboxFieldModel { Label = "Access Modifier", Name = nameof(CodeElementArtifactBase<T>.AccessModifier) };
+        ModifiersField = new MultiSelectFieldModel { Label = "Modifiers", Name = nameof(CodeElementArtifactBase<T>.Modifiers) };
+        DocumentationField = new SingleLineTextFieldModel { Label = "Documentation", Name = nameof(CodeElementArtifactBase<T>.Documentation) };
+        RawCodeField = new SingleLineTextFieldModel { Label = "Raw Code", Name = nameof(CodeElementArtifactBase<T>.RawCode) };
 
         InitializeAccessModifierItems();
         InitializeModifiersItems();
@@ -58,7 +58,7 @@ public class CodeElementEditViewModel : ViewModelBase
     /// Sets the base artifact and loads the base fields.
     /// Subclasses should call this from their Artifact setter.
     /// </summary>
-    protected void SetBaseArtifact(CodeElementArtifactBase? artifact)
+    protected void SetBaseArtifact(CodeElementArtifactBase<T>? artifact)
     {
         if (_baseArtifact != null)
             _baseArtifact.PropertyChanged -= BaseArtifact_PropertyChanged;

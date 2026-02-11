@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 namespace CodeGenerator.Core.CodeElements.ViewModels;
 
-public class ParameterElementEditViewModel : CodeElementEditViewModel
+public class ParameterElementEditViewModel : CodeElementEditViewModel<ParameterElement>
 {
     private ParameterElementArtifact? _artifact;
 

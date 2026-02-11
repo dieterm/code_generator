@@ -19,12 +19,20 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
         protected CodeElementArtifactBase(ArtifactState artifactState) : base(artifactState) 
         { }
         public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("braces");
-
-        public virtual string? Name { get; set; }
-        public virtual AccessModifier AccessModifier { get; set; }
-        public virtual ElementModifiers Modifiers { get; set; }
-        public virtual string? Documentation { get; set; }
-        public virtual string? RawCode { get; set; }
+        public override string TreeNodeText => Name;
+        public virtual string? Name { 
+            get { return GetValue<string?>(nameof(Name)); }
+            set {
+                if(SetValue<string?>(nameof(Name), value))
+                {
+                    RaisePropertyChangedEvent(nameof(TreeNodeText));
+                }
+            } 
+        }
+        //public virtual AccessModifier AccessModifier { get; set; }
+        //public virtual ElementModifiers Modifiers { get; set; }
+        //public virtual string? Documentation { get; set; }
+        //public virtual string? RawCode { get; set; }
     }
 
     public abstract class CodeElementArtifactBase<T> : CodeElementArtifactBase, IEditableTreeNode where T : CodeElement
@@ -62,7 +70,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
         /// <summary>
         /// ComboboxField with values from AccessModifier enum
         /// </summary>
-        public override AccessModifier AccessModifier
+        public virtual AccessModifier AccessModifier
         {
             get { return CodeElement.AccessModifier; }
             set { CodeElement.AccessModifier = value; }
@@ -70,7 +78,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
         /// <summary>
         /// Additional modifiers (static, abstract, virtual, etc.)
         /// </summary>
-        public override ElementModifiers Modifiers
+        public virtual ElementModifiers Modifiers
         {
             get { return CodeElement.Modifiers; }
             set { CodeElement.Modifiers = value; }
@@ -79,7 +87,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
         /// <summary>
         /// SingleLineTextField
         /// </summary>
-        public override string? Documentation
+        public virtual string? Documentation
         {
             get => CodeElement.Documentation;
             set => CodeElement.Documentation = value;
@@ -88,7 +96,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
         /// <summary>
         /// SingleLineTextField
         /// </summary>
-        public override string? RawCode
+        public virtual string? RawCode
         {
             get => CodeElement.RawCode;
             set => CodeElement.RawCode = string.IsNullOrEmpty(value) ? null : value;

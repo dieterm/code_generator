@@ -3,7 +3,7 @@ namespace CodeGenerator.Domain.CodeElements
     /// <summary>
     /// Represents a catch block
     /// </summary>
-    public class CatchBlock
+    public class CatchBlock : StatementElement
     {
         /// <summary>
         /// Exception type to catch (null for catch-all)

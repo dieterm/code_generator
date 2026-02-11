@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 namespace CodeGenerator.Core.CodeElements.ViewModels;
 
-public class EventElementEditViewModel : CodeElementEditViewModel
+public class EventElementEditViewModel : CodeElementEditViewModel<EventElement>
 {
     private EventElementArtifact? _artifact;
 

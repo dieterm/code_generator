@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 namespace CodeGenerator.Core.CodeElements.ViewModels;
 
-public class IndexerElementEditViewModel : CodeElementEditViewModel
+public class IndexerElementEditViewModel : CodeElementEditViewModel<IndexerElement>
 {
     private IndexerElementArtifact? _artifact;
 
