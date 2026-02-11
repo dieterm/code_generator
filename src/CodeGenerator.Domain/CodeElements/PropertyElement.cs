@@ -43,12 +43,12 @@ namespace CodeGenerator.Domain.CodeElements
         /// <summary>
         /// Getter body expression/statements (for non-auto properties)
         /// </summary>
-        public string? GetterBody { get; set; }
+        public CompositeStatement GetterBody { get; set; } = new();
 
         /// <summary>
         /// Setter body expression/statements (for non-auto properties)
         /// </summary>
-        public string? SetterBody { get; set; }
+        public CompositeStatement SetterBody { get; set; } = new();
 
         /// <summary>
         /// Initial value expression (as code string)

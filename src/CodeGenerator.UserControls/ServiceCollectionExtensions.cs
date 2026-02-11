@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
+using System.Runtime.CompilerServices;
 
 namespace CodeGenerator.UserControls;
 
@@ -17,6 +18,9 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IFieldViewModel, IntegerFieldModel>();
         services.AddTransient<IFieldViewModel, SingleLineTextFieldModel>();
         services.AddTransient<IFieldViewModel, ParameterizedStringFieldModel>();
+        services.AddTransient<IFieldViewModel, StringDictionaryFieldModel>();
+        services.AddTransient<IFieldViewModel, StringListFieldModel>();
+        services.AddTransient<IFieldViewModel, MultiSelectFieldModel>();
 
         return services;
     }

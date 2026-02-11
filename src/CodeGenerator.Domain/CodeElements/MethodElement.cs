@@ -26,14 +26,19 @@ namespace CodeGenerator.Domain.CodeElements
         public List<GenericConstraintElement> GenericConstraints { get; set; } = new();
 
         /// <summary>
+        /// Statements in the method body
+        /// </summary>
+        public CompositeStatement Body { get; } = new();
+
+        /// <summary>
         /// Method body (statements as code string)
         /// </summary>
-        public string? Body { get; set; }
+        //public string? Body { get; set; }
 
         /// <summary>
         /// Whether this method has a body (false for abstract/interface methods)
         /// </summary>
-        public bool HasBody => Body != null;
+        public bool HasBody => Body.Statements.Count > 0;
 
         /// <summary>
         /// Whether this is an expression-bodied method

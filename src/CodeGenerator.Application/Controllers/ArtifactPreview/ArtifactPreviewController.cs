@@ -21,6 +21,8 @@ namespace CodeGenerator.Application.Controllers.ArtifactPreview
 {
     public class ArtifactPreviewController : CoreControllerBase
     {
+        private readonly IWindowManagerService _windowManagerService;
+
         public ArtifactPreviewController(
             OperationExecutor operationExecutor,
             IWindowManagerService windowManagerService,
@@ -29,9 +31,9 @@ namespace CodeGenerator.Application.Controllers.ArtifactPreview
             IMessageBoxService messageboxService,
             IFileSystemDialogService fileSystemDialogService,
             ILogger<ArtifactPreviewController> logger) 
-            : base(operationExecutor, windowManagerService, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
+            : base(operationExecutor, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
         {
-            
+            _windowManagerService = windowManagerService;
         }
 
         public void ShowArtifactPreview(ArtifactPreviewViewModel previewViewModel)

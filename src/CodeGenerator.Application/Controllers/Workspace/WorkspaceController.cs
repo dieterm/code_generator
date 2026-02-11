@@ -35,16 +35,18 @@ namespace CodeGenerator.Application.Controllers.Workspace
         private readonly WorkspaceMessageBus _workspaceMessageBus;
         private readonly UndoRedoManager _undoRedoManager;
         private readonly ICopilotController _copilotController;
+        private readonly IWindowManagerService _windowManagerService;
         public bool HasUnsavedChanges { get {return _workspaceTreeViewController.HasUnsavedChanges; } }
 
         public WorkspaceController(ICopilotController copilotController, UndoRedoManager undoRedoManager, WorkspaceMessageBus workspaceMessageBus, WorkspaceTreeViewController workspaceTreeViewController, WorkspaceRibbonViewModel workspaceRibbonViewModel, OperationExecutor operationExecutor, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<WorkspaceController> logger) 
-            : base(operationExecutor, windowManagerService, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
+            : base(operationExecutor, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
         {
             _undoRedoManager = undoRedoManager ?? throw new ArgumentNullException(nameof(undoRedoManager));
-            _workspaceMessageBus = workspaceMessageBus;
-            _workspaceRibbonViewModel = workspaceRibbonViewModel;
-            _workspaceTreeViewController = workspaceTreeViewController;
-            _copilotController = copilotController;
+            _workspaceMessageBus = workspaceMessageBus ?? throw new ArgumentNullException(nameof(workspaceMessageBus));
+            _workspaceRibbonViewModel = workspaceRibbonViewModel ?? throw new ArgumentNullException(nameof(workspaceRibbonViewModel));
+            _workspaceTreeViewController = workspaceTreeViewController ?? throw new ArgumentNullException(nameof(workspaceTreeViewController));
+            _copilotController = copilotController ?? throw new ArgumentNullException(nameof(copilotController));
+            _windowManagerService = windowManagerService ?? throw new ArgumentNullException(nameof(windowManagerService));
         }
 
         public override void Initialize()

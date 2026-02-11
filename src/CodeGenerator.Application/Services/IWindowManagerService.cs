@@ -14,11 +14,6 @@ namespace CodeGenerator.Application.Services
         void ShowArtifactPreview(ArtifactPreviewViewModel viewModel);
         void ShowGenerationTreeView(GenerationResultTreeViewModel treeViewModel);
         void ShowSettingsWindow(SettingsViewModel settingsViewModel);
-        void ShowWorkspaceTreeView(WorkspaceTreeViewModel treeViewModel);
-        void ShowWorkspaceDetailsView(WorkspaceArtifactDetailsViewModel viewModel);
-        void ShowTemplateTreeView(TemplateTreeViewModel treeViewModel);
-        void ShowTemplateDetailsView(WorkspaceArtifactDetailsViewModel artifactDetailsViewModel);
-        void ShowScribanTemplateEditView(ScribanTemplateEditViewModel viewModel);
-        void ShowCopilotChatView(ViewModelBase viewModel);
+     
     }
 }

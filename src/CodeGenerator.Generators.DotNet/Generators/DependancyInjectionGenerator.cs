@@ -11,6 +11,8 @@ using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.CodeElements;
 using CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection;
 using CodeGenerator.Domain.DotNet;
+using CodeGenerator.Domain.ProgrammingLanguages;
+using CodeGenerator.Domain.ProgrammingLanguages.CSharp;
 using CodeGenerator.Generators.DotNet.Events;
 using CodeGenerator.Generators.DotNet.Workspace;
 using CodeGenerator.Shared;
@@ -89,12 +91,12 @@ namespace CodeGenerator.Generators.DotNet.Generators
             var diFramework = _diManager.GetDotNetFrameworkById(workspace.DependencyInjectionFrameworkId);
             if (diFramework == null) throw new ApplicationException($"Dependancy injection framework with id '{workspace.DependencyInjectionFrameworkId}' not found.");
             // TODO: Unify language usage
-            ProgrammingLanguage language = ProgrammingLanguage.CSharp;
+            ProgrammingLanguage language = CSharpLanguage.Instance;
 
             var workspaceLanguage = args.Result.Workspace.DefaultLanguage;
             if (workspaceLanguage == CodeGenerator.Domain.ProgrammingLanguages.CSharp.CSharpLanguage.Instance.Id)
             {
-                language = ProgrammingLanguage.CSharp;
+                language = CSharpLanguage.Instance;
             }
             else
                 throw new NotImplementedException();
@@ -149,11 +151,11 @@ namespace CodeGenerator.Generators.DotNet.Generators
             diFramework.GetRequiredNuGetPackages().ToList().ForEach(pkg => dotNetProject.AddNuGetPackage(pkg));
             diFramework.GetOptionalNuGetPackages().ToList().ForEach(pkg => dotNetProject.AddNuGetPackage(pkg));
             // TODO: Unify language usage
-            ProgrammingLanguage language = ProgrammingLanguage.CSharp;
+            ProgrammingLanguage language = CSharpLanguage.Instance;
             var workspaceLanguage = e.Result.Workspace.DefaultLanguage;
             if (workspaceLanguage == CodeGenerator.Domain.ProgrammingLanguages.CSharp.CSharpLanguage.Instance.Id)
             {
-                language = ProgrammingLanguage.CSharp;
+                language = CSharpLanguage.Instance;
             }
             else
                 throw new NotImplementedException();

@@ -109,8 +109,8 @@ namespace CodeGenerator.Domain.DependancyInjectionFrameworks
                 Modifiers = ElementModifiers.Override,
                 Documentation = "Override to register bindings in the kernel"
             };
-            loadMethod.Body = "// Add bindings here\n// Bind<IService>().To<Service>().InSingletonScope();";
-
+            loadMethod.Body.AddCommentLine("Add bindings here");
+            loadMethod.Body.AddCommentLine("Bind<IService>().To<Service>().InSingletonScope();");
             classElement.Methods.Add(loadMethod);
 
             return classElement;

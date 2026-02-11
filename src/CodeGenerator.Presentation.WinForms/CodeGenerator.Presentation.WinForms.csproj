@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeGenerator.Application\CodeGenerator.Application.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.CodeElements\CodeGenerator.Core.CodeElements.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Copilot\CodeGenerator.Core.Copilot.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Settings.Views\CodeGenerator.Core.Settings.Views.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Csv\CodeGenerator.Core.Workspaces.Datasources.Csv.csproj" />
@@ -57,6 +58,8 @@
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Xml\CodeGenerator.Core.Workspaces.Datasources.Xml.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Yaml\CodeGenerator.Core.Workspaces.Datasources.Yaml.csproj" />
     <ProjectReference Include="..\CodeGenerator.Domain.DotNet\CodeGenerator.Domain.DotNet.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Domain.ProgrammingLanguages.CSharp\CodeGenerator.Domain.ProgrammingLanguages.CSharp.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Domain.ProgrammingLanguages.Python\CodeGenerator.Domain.ProgrammingLanguages.Python.csproj" />
     <ProjectReference Include="..\CodeGenerator.Domain\CodeGenerator.Domain.csproj" />
     <ProjectReference Include="..\CodeGenerator.Generators.DotNet.ApplicationScope\CodeGenerator.Generators.DotNet.ApplicationScope.csproj" />
     <ProjectReference Include="..\CodeGenerator.Generators.DotNet.WinformsRibbonApplication\CodeGenerator.Generators.DotNet.WinformsRibbonApplication.csproj" />
@@ -83,6 +86,9 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>LucideIcons_#ffffff.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ArtifactPreviewView.cs">
+      <SubType>UserControl</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>

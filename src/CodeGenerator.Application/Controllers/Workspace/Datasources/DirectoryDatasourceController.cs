@@ -7,6 +7,7 @@ using CodeGenerator.Core.Workspaces.Datasources.Directory.ViewModels;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
+using PropertyValueChangedEventArgs = CodeGenerator.Core.Workspaces.Datasources.Directory.ViewModels.PropertyValueChangedEventArgs;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
 

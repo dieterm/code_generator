@@ -5,6 +5,7 @@ using CodeGenerator.Core.Workspaces.Datasources.SqlServer.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.SqlServer.ViewModels;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
+using PropertyValueChangedEventArgs = CodeGenerator.Core.Workspaces.Datasources.SqlServer.ViewModels.PropertyValueChangedEventArgs;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
 

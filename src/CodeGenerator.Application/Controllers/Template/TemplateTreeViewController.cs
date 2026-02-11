@@ -20,6 +20,7 @@ using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.TemplateEngines.Scriban;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Application.Controllers.Template
 {
-    public class TemplateTreeViewController : ArtifactTreeViewController<TemplateTreeViewModel>, IDisposable
+    public class TemplateTreeViewController : ArtifactTreeViewController<TemplateTreeViewModel, ITemplateArtifactController>, IDisposable
     {
         private readonly RibbonBuilder _ribbonBuilder;
         
@@ -39,30 +40,31 @@ namespace CodeGenerator.Application.Controllers.Template
         private readonly TemplateEngineManager _templateEngineManager;
         private WorkspaceArtifactDetailsViewModel? _artifactDetailsViewModel;
         private readonly TemplateManager _templateManager;
-
+        private readonly ITemplateWindowManagerService _windowManagerService;
         public TemplateTreeViewController(
             OperationExecutor operationExecutor, 
             TemplateManager templateManager, 
             TemplateEngineManager templateEngineManager, 
             WorkspaceTreeViewController workspaceController,
-            RibbonBuilder ribbonBuilder, 
-            IWindowManagerService windowManagerService, 
+            RibbonBuilder ribbonBuilder,
+            ITemplateWindowManagerService windowManagerService, 
             IMessageBoxService messageBoxService, 
             ILogger<TemplateTreeViewController> logger)
-            : base(operationExecutor, windowManagerService, messageBoxService, logger)
+            : base(operationExecutor, messageBoxService, logger)
         {
             _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
             _ribbonBuilder = ribbonBuilder ?? throw new ArgumentNullException(nameof(ribbonBuilder));
             _workspaceController = workspaceController ?? throw new ArgumentNullException(nameof(workspaceController));
             _templateEngineManager = templateEngineManager ?? throw new ArgumentNullException(nameof(templateEngineManager));
+            _windowManagerService = windowManagerService ?? throw new ArgumentNullException(nameof(windowManagerService));
         }
 
-        protected override IEnumerable<IArtifactController> LoadArtifactControllers()
-        {
-            // Get all registered ITemplateArtifactController implementations from DI container
-            var controllers = ServiceProviderHolder.GetServices<ITemplateArtifactController>();
-            return controllers;
-        }
+        //protected override IEnumerable<IArtifactController> LoadArtifactControllers()
+        //{
+        //    // Get all registered ITemplateArtifactController implementations from DI container
+        //    var controllers = ServiceProviderHolder.GetServices<ITemplateArtifactController>();
+        //    return controllers;
+        //}
 
         private TargetTemplateFolder _targetTemplateFolder;
         public TargetTemplateFolder TargetTemplateFolder {
@@ -144,7 +146,7 @@ namespace CodeGenerator.Application.Controllers.Template
             }
             TargetTemplateFolder = targetTemplateFolder;
             LoadTemplates(TreeViewModel);
-            WindowManagerService.ShowTemplateTreeView(TreeViewModel);
+            _windowManagerService.ShowTemplateTreeView(TreeViewModel);
         }
 
         private void TreeViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -234,14 +236,13 @@ namespace CodeGenerator.Application.Controllers.Template
             if (templateInstance == null)
                 return;
 
-            var windowService = ServiceProviderHolder.GetRequiredService<IWindowManagerService>();
             var editViewModel = new ScribanTemplateEditViewModel
             {
                 TemplateFilePath = templateArtifact.FilePath,
                 TabLabel = templateArtifact.FileName,
                 TemplateInstance = templateInstance
             };
-            windowService.ShowScribanTemplateEditView(editViewModel);
+            _windowManagerService.ShowScribanTemplateEditView(editViewModel);
         }
         private async Task<ITemplateInstance?> CreateTemplateInstanceAsync(TemplateArtifact templateArtifact, Dictionary<string, object?> parameters, CancellationToken cancellationToken = default)
         {
@@ -476,7 +477,7 @@ namespace CodeGenerator.Application.Controllers.Template
                 _artifactDetailsViewModel = new WorkspaceArtifactDetailsViewModel();
             }
             _artifactDetailsViewModel.DetailsViewModel = detailsModel;
-            WindowManagerService.ShowTemplateDetailsView(_artifactDetailsViewModel);
+            _windowManagerService.ShowTemplateDetailsView(_artifactDetailsViewModel);
         }
     }
 }

@@ -1,7 +1,7 @@
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Controllers.Workspace;
-using CodeGenerator.Application.ViewModels.Base;
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.ViewModels;
 using CodeGenerator.Core.Workspaces.Artifacts;
 
 namespace CodeGenerator.Application.ViewModels.Workspace

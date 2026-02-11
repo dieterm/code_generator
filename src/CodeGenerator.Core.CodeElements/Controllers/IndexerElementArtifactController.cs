@@ -1,0 +1,66 @@
+﻿using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.CodeElements.Artifacts;
+using CodeGenerator.Core.CodeElements.ViewModels;
+using CodeGenerator.Shared.Operations;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CodeGenerator.Core.CodeElements.Controllers
+{
+    public class IndexerElementArtifactController : CodeElementArtifactControllerBase<IndexerElementArtifact>
+    {
+        private IndexerElementEditViewModel? _editViewModel;
+
+        public IndexerElementArtifactController(OperationExecutor operationExecutor, CodeElementsTreeViewController treeViewController, ILogger<IndexerElementArtifactController> logger)
+            : base(operationExecutor, treeViewController, logger) { }
+
+        protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(IndexerElementArtifact artifact)
+        {
+            yield return new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
+            {
+                Id = "indexer_properties",
+                Text = "Properties",
+                Execute = async (a) => await ShowPropertiesAsync(artifact)
+            };
+            yield return new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
+            {
+                Id = "RemoveIndexer",
+                Text = "Remove Indexer",
+                IconKey = "RemoveIndexerIcon",
+                Execute = async (artifact) =>
+                {
+                    var indexArtifact = (artifact as IndexerElementArtifact)!;
+                    var parent = artifact.Parent as IndexersContainerArtifact;
+                    parent?.RemoveIndexerElement(indexArtifact);
+                }
+            };
+        }
+
+        protected override Task OnSelectedInternalAsync(IndexerElementArtifact artifact, CancellationToken cancellationToken)
+        {
+            return ShowPropertiesAsync(artifact);
+        }
+
+        private Task ShowPropertiesAsync(IndexerElementArtifact artifact)
+        {
+            if (_editViewModel == null)
+            {
+                _editViewModel = new IndexerElementEditViewModel();
+                _editViewModel.ValueChanged += OnEditViewModelValueChanged;
+            }
+            _editViewModel.Artifact = artifact;
+            TreeViewController.ShowArtifactDetailsView(_editViewModel);
+            return Task.CompletedTask;
+        }
+
+        private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
+        {
+            TreeViewController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
+        }
+    }
+}

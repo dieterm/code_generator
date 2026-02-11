@@ -1,9 +1,14 @@
+using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Domain.ProgrammingLanguages;
+using CodeGenerator.Domain.ProgrammingLanguages.CSharp;
+using System.Text.Json;
+
 namespace CodeGenerator.Domain.CodeElements
 {
     /// <summary>
     /// Represents a complete source code file
     /// </summary>
-    public class CodeFileElement : CodeElement
+    public class CodeFileElement : CodeElement, ICodeElementWithUsings
     {
         /// <summary>
         /// File name (without extension)
@@ -72,7 +77,7 @@ namespace CodeGenerator.Domain.CodeElements
         /// <summary>
         /// The target programming language
         /// </summary>
-        public ProgrammingLanguage Language { get; set; } = ProgrammingLanguage.CSharp;
+        public ProgrammingLanguage Language { get; set; } = CSharpLanguage.Instance;
 
         public CodeFileElement() { }
 
@@ -85,7 +90,7 @@ namespace CodeGenerator.Domain.CodeElements
         {
             FileName = fileName;
             Language = language;
-            FileExtension = GetDefaultExtension(language);
+            FileExtension = language.FileExtension;
         }
 
         /// <summary>
@@ -108,57 +113,22 @@ namespace CodeGenerator.Domain.CodeElements
             Namespaces.Add(ns);
             return this;
         }
-
-        private static string GetDefaultExtension(ProgrammingLanguage language)
+        private static readonly JsonSerializerOptions JsonOptions = new()
         {
-            return language switch
-            {
-                ProgrammingLanguage.CSharp => ".cs",
-                ProgrammingLanguage.VisualBasic => ".vb",
-                ProgrammingLanguage.FSharp => ".fs",
-                ProgrammingLanguage.Python => ".py",
-                ProgrammingLanguage.JavaScript => ".js",
-                ProgrammingLanguage.TypeScript => ".ts",
-                ProgrammingLanguage.Java => ".java",
-                ProgrammingLanguage.Kotlin => ".kt",
-                ProgrammingLanguage.Swift => ".swift",
-                ProgrammingLanguage.Go => ".go",
-                ProgrammingLanguage.Rust => ".rs",
-                ProgrammingLanguage.Cpp => ".cpp",
-                ProgrammingLanguage.CppHeader => ".h",
-                ProgrammingLanguage.Php => ".php",
-                ProgrammingLanguage.Ruby => ".rb",
-                _ => ".txt"
-            };
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
+        public static CodeFileElement FromJson(string jsonData)
+        {
+            var workspaceState = JsonSerializer.Deserialize<CodeFileElement>(jsonData, JsonOptions);
+            return workspaceState!;  
+        }
+
+        public string ToJson()
+        {
+            return JsonSerializer.Serialize(this, JsonOptions);
         }
     }
 
-    /// <summary>
-    /// Supported programming languages for code generation
-    /// </summary>
-    public enum ProgrammingLanguage
-    {
-        CSharp,
-        VisualBasic,
-        FSharp,
-        Python,
-        JavaScript,
-        TypeScript,
-        Java,
-        Kotlin,
-        Swift,
-        Go,
-        Rust,
-        Cpp,
-        CppHeader,
-        Php,
-        Ruby,
-        Sql,
-        Html,
-        Css,
-        Xml,
-        Json,
-        Yaml,
-        Other
-    }
 }

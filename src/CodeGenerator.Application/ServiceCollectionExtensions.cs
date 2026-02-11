@@ -46,6 +46,7 @@ using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.ProgrammingLanguages.CSharp;
+using CodeGenerator.Domain.ProgrammingLanguages.Python;
 using CodeGenerator.Generators.CodeArchitectureLayers;
 using CodeGenerator.Presentation.WinForms.ViewModels;
 using CodeGenerator.Shared.Operations;
@@ -76,6 +77,7 @@ public static class ServiceCollectionExtensions
         // Register CodeGenerators
         // TODO: use DI-container to register generators instead of static registration
         CSharpCodeGeneratorExtensions.RegisterCSharpCodeGenerator();
+        PythonCodeGeneratorExtensions.RegisterPythonCodeGenerator();
 
         // Artifact Preview Controllers & ViewModels
         services.AddSingleton<ArtifactPreviewController>();
@@ -111,7 +113,7 @@ public static class ServiceCollectionExtensions
         // Register Workspace Controllers
         services.AddSingleton<WorkspaceController>();
         services.AddSingleton<WorkspaceTreeViewController>();
-        services.AddSingleton<IWorkspaceContextProvider>(sp => sp.GetRequiredService<WorkspaceTreeViewController>());
+        services.AddSingleton<IWorkspaceContextProvider>(sp => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<WorkspaceTreeViewController>(sp));
         services.AddSingleton<IDatasourceFactory, DatasourceFactory>();
        
         services.AddSingleton<WorkspaceRibbonViewModel>();
@@ -209,23 +211,23 @@ public static class ServiceCollectionExtensions
         // Register Operations
         services.AddSingleton<OperationExecutor>();
         services.AddSingleton<AddScopeToWorkspaceOperation>();
-        services.AddSingleton<IOperation, AddScopeToWorkspaceOperation>(sp => sp.GetRequiredService<AddScopeToWorkspaceOperation>());
+        services.AddSingleton<IOperation, AddScopeToWorkspaceOperation>(sp => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<AddScopeToWorkspaceOperation>(sp));
         services.AddSingleton<AddSubScopeToScopeOperation>();
-        services.AddSingleton<IOperation, AddSubScopeToScopeOperation>(sp => sp.GetRequiredService<AddSubScopeToScopeOperation>());
+        services.AddSingleton<IOperation, AddSubScopeToScopeOperation>(sp => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<AddSubScopeToScopeOperation>(sp));
         services.AddSingleton<AddDomainToScopeOperation>();
-        services.AddSingleton<IOperation, AddDomainToScopeOperation>(sp => sp.GetRequiredService<AddDomainToScopeOperation>());
+        services.AddSingleton<IOperation, AddDomainToScopeOperation>(sp => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<AddDomainToScopeOperation>(sp));
         services.AddSingleton<AddEntityToDomainOperation>();
-        services.AddSingleton<IOperation, AddEntityToDomainOperation>(sp => sp.GetRequiredService<AddEntityToDomainOperation>());
+        services.AddSingleton<IOperation, AddEntityToDomainOperation>(sp => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<AddEntityToDomainOperation>(sp));
         //services.AddSingleton<AddEntityWithPropertiesToDomainOperation>();
         //services.AddSingleton<IOperation, AddEntityWithPropertiesToDomainOperation>(sp => sp.GetRequiredService<AddEntityWithPropertiesToDomainOperation>());
         services.AddSingleton<AddPropertyToEntityOperation>();
-        services.AddSingleton<IOperation, AddPropertyToEntityOperation>(sp => sp.GetRequiredService<AddPropertyToEntityOperation>());
+        services.AddSingleton<IOperation, AddPropertyToEntityOperation>(sp => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<AddPropertyToEntityOperation>(sp));
         services.AddSingleton<AddPropertyToEntityStateOperation>();
-        services.AddSingleton<IOperation, AddPropertyToEntityStateOperation>(sp => sp.GetRequiredService<AddPropertyToEntityStateOperation>());
+        services.AddSingleton<IOperation, AddPropertyToEntityStateOperation>(sp => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<AddPropertyToEntityStateOperation>(sp));
         services.AddSingleton<AddPropertyToValueTypeOperation>();
-        services.AddSingleton<IOperation, AddPropertyToValueTypeOperation>(sp => sp.GetRequiredService<AddPropertyToValueTypeOperation>());
+        services.AddSingleton<IOperation, AddPropertyToValueTypeOperation>(sp => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<AddPropertyToValueTypeOperation>(sp));
         services.AddSingleton<AddValueTypeToDomainOperation>();
-        services.AddSingleton<IOperation, AddValueTypeToDomainOperation>(sp => sp.GetRequiredService<AddValueTypeToDomainOperation>());
+        services.AddSingleton<IOperation, AddValueTypeToDomainOperation>(sp => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<AddValueTypeToDomainOperation>(sp));
 
         services.AddWorkspaceServices(configuration);
 
@@ -253,7 +255,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<TemplateEngineManager>();
         // Register Template Engines
         services.AddSingleton<DotNetProjectTemplateEngine>();
-        services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.DotNetProject.DotNetProjectTemplateEngine>((q) => q.GetRequiredService<DotNetProjectTemplateEngine>());
+        services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.DotNetProject.DotNetProjectTemplateEngine>((q) => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<DotNetProjectTemplateEngine>(q  ));
         
         services.AddSingleton<CodeGenerator.TemplateEngines.DotNetProject.Services.DotNetProjectService>();
         services.AddSingleton<ITemplateEngine, CodeGenerator.TemplateEngines.Scriban.ScribanTemplateEngine>();

@@ -5,6 +5,7 @@ using CodeGenerator.Core.Workspaces.Datasources.Excel.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.Excel.ViewModels;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
+using PropertyValueChangedEventArgs = CodeGenerator.Core.Workspaces.Datasources.Excel.ViewModels.PropertyValueChangedEventArgs;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
 

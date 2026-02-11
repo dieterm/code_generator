@@ -102,7 +102,7 @@ namespace CodeGenerator.Domain.DependancyInjectionFrameworks
                 Modifiers = ElementModifiers.Static,
                 Documentation = "Creates and configures the Simple Injector container"
             };
-            configureMethod.Body = @"var container = new Container();
+            var body = @"var container = new Container();
 container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
 // Register services here
@@ -112,6 +112,7 @@ container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 container.Verify();
 
 return container;";
+            configureMethod.Body.AddRawStatement(body);
 
             classElement.Methods.Add(configureMethod);
 

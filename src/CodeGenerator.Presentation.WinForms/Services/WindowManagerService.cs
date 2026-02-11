@@ -1,25 +1,31 @@
 ﻿using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
+using CodeGenerator.Application.ViewModels.Generation;
 using CodeGenerator.Application.ViewModels.Template;
 using CodeGenerator.Application.ViewModels.Workspace;
+using CodeGenerator.Core.Artifacts.ViewModels;
+using CodeGenerator.Core.CodeElements.Services;
+using CodeGenerator.Core.CodeElements.ViewModels;
+using CodeGenerator.Core.CodeElements.Views;
+using CodeGenerator.Core.Copilot;
+using CodeGenerator.Core.Copilot.Services;
+using CodeGenerator.Core.Copilot.ViewModels;
 using CodeGenerator.Core.Settings.ViewModels;
 using CodeGenerator.Core.Settings.Views;
-using CodeGenerator.Shared.ExtensionMethods;
 using CodeGenerator.Presentation.WinForms.Views;
-using Syncfusion.Windows.Forms.Tools;
-using CodeGenerator.Application.ViewModels.Generation;
-using CodeGenerator.Shared.ViewModels;
-using CodeGenerator.Shared;
-using CodeGenerator.Shared.Views;
-using CodeGenerator.Presentation.WinForms.Views.Template;
 using CodeGenerator.Presentation.WinForms.Views.Application;
-using CodeGenerator.Core.Copilot;
-using CodeGenerator.Core.Copilot.ViewModels;
+using CodeGenerator.Presentation.WinForms.Views.Template;
+using CodeGenerator.Shared;
+using CodeGenerator.Shared.ExtensionMethods;
+using CodeGenerator.Shared.ViewModels;
+using CodeGenerator.Shared.Views;
+using Microsoft.DotNet.DesignTools.ViewModels;
+using Syncfusion.Windows.Forms.Tools;
 
 
 namespace CodeGenerator.Presentation.WinForms.Services
 {
-    public class WindowManagerService : IWindowManagerService
+    public class WindowManagerService : IWindowManagerService, ITemplateWindowManagerService, ICopilotWindowManagerService, IWorkspaceWindowManagerService, ICodeElementsWindowManagerService
     {       
         private readonly DockingManager dockingManager;
         private readonly MainView mainView;
@@ -47,10 +53,6 @@ namespace CodeGenerator.Presentation.WinForms.Services
             else
             {
                 dockingManager.SetDockVisibility(_generationResultTreeView, true);
-                //if (!_generationResultTreeView.Visible)
-                //{
-                //    dockingManager.DockControl(_generationResultTreeView, this, DockingStyle.Right, 4);
-                //}
             }
 
             _generationResultTreeView.BindViewModel(treeViewModel);
@@ -210,15 +212,70 @@ namespace CodeGenerator.Presentation.WinForms.Services
         }
 
         private CopilotChatView? _copilotChatView;
-        public void ShowCopilotChatView(ViewModelBase viewModel)
+        public void ShowCopilotChatView(CopilotChatViewModel copilotViewModel)
         {
-            var copilotViewModel = (viewModel as CopilotChatViewModel)!;
             if (_copilotChatView == null || _copilotChatView.IsDisposed) {
                 _copilotChatView = new CopilotChatView();
             }
             _copilotChatView.BindViewModel(copilotViewModel);
             dockingManager.DockAsDocument(_copilotChatView);
             dockingManager.SetDockLabel(_copilotChatView, "Copilot Chat");
+        }
+
+        private CodeElementArtifactDetailsView? _codeElementDetailsView;
+        public void ShowCodeElementsDetailsView(CodeElementArtifactDetailsViewModel detailsViewModel)
+        {
+            if (_codeElementDetailsView == null || _codeElementDetailsView.IsDisposed)
+            {
+                _codeElementDetailsView = new CodeElementArtifactDetailsView();
+
+                dockingManager.DockControl(_codeElementDetailsView, mainView, DockingStyle.Left, 4);
+                dockingManager.SetEnableDocking(_codeElementDetailsView, true);
+                dockingManager.SetControlSize(_codeElementDetailsView, new Size(500, mainView.Height - 50));
+                dockingManager.SetDockLabel(_codeElementDetailsView, "Code Element Details");
+            }
+            else
+            {
+                dockingManager.SetDockVisibility(_codeElementDetailsView, true);
+            }
+
+            _codeElementDetailsView.BindViewModel(detailsViewModel);
+        }
+
+        private CodeElementsEditorView? _codeElementEditorView;
+        public void ShowCodeElementsEditor(CodeElementsEditorViewModel editorViewModel)
+        {
+            if (_codeElementEditorView == null || _codeElementEditorView.IsDisposed)
+            {
+                _codeElementEditorView = new CodeElementsEditorView();
+                dockingManager.DockAsDocument(_codeElementEditorView);
+                dockingManager.SetDockLabel(_codeElementEditorView, "Code Element Editor");
+            }
+            else
+            {
+                dockingManager.SetDockVisibility(_codeElementEditorView, true);
+            }
+            _codeElementEditorView.BindViewModel(editorViewModel);
+        }
+
+        private CodeElementsTreeView? _codeElementsTreeView;
+        public void ShowCodeElementsTreeView(CodeElementsTreeViewModel treeViewModel)
+        {
+            if (_codeElementsTreeView == null || _codeElementsTreeView.IsDisposed)
+            {
+                _codeElementsTreeView = new CodeElementsTreeView();
+
+                dockingManager.DockControl(_codeElementsTreeView, mainView, DockingStyle.Left, 4);
+                dockingManager.SetEnableDocking(_codeElementsTreeView, true);
+                dockingManager.SetControlSize(_codeElementsTreeView, new Size(300, mainView.Height - 50));
+                dockingManager.SetDockLabel(_codeElementsTreeView, "Code Elements");
+            }
+            else
+            {
+                dockingManager.SetDockVisibility(_codeElementsTreeView, true);
+            }
+
+            _codeElementsTreeView.BindViewModel(treeViewModel);
         }
         #endregion
 

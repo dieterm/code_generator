@@ -37,7 +37,7 @@ namespace CodeGenerator.Generators.DotNet.Workspace
             // use CodeGenerator.Domain.CodeElements to generate a C# class based on the entity artifact
             // use artifact.Name, artifact.States, artifact.Relations, etc. to build the class
             var workspace = artifact.Workspace;
-            var codeFileElement = new CodeFileElement($"{artifact.Name}.cs", ProgrammingLanguage.CSharp);
+            var codeFileElement = new CodeFileElement($"{artifact.Name}.cs", CSharpLanguage.Instance);
             var classElement = new Domain.CodeElements.ClassElement
             {
                 Name = artifact.Name,
@@ -83,11 +83,12 @@ namespace CodeGenerator.Generators.DotNet.Workspace
                     });
                 }
             }
-            classElement.Methods.Add(new MethodElement("ToString")
+            var toStringMethod = new MethodElement("ToString")
             {
                 AccessModifier = AccessModifier.Public,
-                Body = $"return $\"{artifact.Name} [Id={{Id}}]\";"
-            });
+            };
+            toStringMethod.Body.AddRawStatement($"return $\"{artifact.Name} [Id={{Id}}]\";");
+            classElement.Methods.Add(toStringMethod);
             classElement.Methods.Add(new MethodElement()
             {
                 RawCode = "\tpublic EntityArtifact ToEntityArtifact() \n{\n SomeCodeHere();\n }"

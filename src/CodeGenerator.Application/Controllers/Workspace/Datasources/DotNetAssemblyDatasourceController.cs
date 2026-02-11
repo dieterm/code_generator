@@ -5,6 +5,7 @@ using CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly.ViewModels;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
+using PropertyValueChangedEventArgs = CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly.ViewModels.PropertyValueChangedEventArgs;
 
 namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
 

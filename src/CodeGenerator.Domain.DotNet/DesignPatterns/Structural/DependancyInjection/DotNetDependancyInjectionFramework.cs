@@ -230,7 +230,7 @@ namespace CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection
             bodyBuilder.AppendLine();
             bodyBuilder.AppendLine("return services;");
 
-            method.Body = bodyBuilder.ToString();
+            method.Body.AddRawStatement(bodyBuilder.ToString());
 
             return method;
         }

@@ -1,7 +1,7 @@
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Controllers.Generation;
-using CodeGenerator.Application.ViewModels.Base;
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.ViewModels;
 
 namespace CodeGenerator.Application.ViewModels.Generation
 {

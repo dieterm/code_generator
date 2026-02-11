@@ -13,7 +13,7 @@ namespace CodeGenerator.Domain.CodeElements
         /// <summary>
         /// Constructor body (statements as code string)
         /// </summary>
-        public string? Body { get; set; }
+        public CompositeStatement Body { get; set; } = new();
 
         /// <summary>
         /// Base constructor call (null if not calling base)

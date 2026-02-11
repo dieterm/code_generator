@@ -27,10 +27,10 @@ namespace CodeGenerator.Application.Controllers
         private readonly GenerationController _generationController;
         private readonly SettingsController _settingsController;
         private readonly TemplateController _templateController;
-
+        private readonly IWindowManagerService _windowManagerService;
 
         public ApplicationController(OperationExecutor operationExecutor, MainViewModel viewModel, SettingsController settingsController, WorkspaceController workspaceController, GenerationController generationController, TemplateController templateController, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IApplicationService applicationService, ApplicationMessageBus messageBus, IMessageBoxService messageBoxService, IFileSystemDialogService fileSystemDialogService, ILogger<ApplicationController> logger) 
-            : base(operationExecutor, windowManagerService, ribbonBuilder, messageBus, messageBoxService, fileSystemDialogService, logger)
+            : base(operationExecutor, ribbonBuilder, messageBus, messageBoxService, fileSystemDialogService, logger)
         {
             _mainViewModel = viewModel;
             _settingsController = settingsController;
@@ -38,6 +38,7 @@ namespace CodeGenerator.Application.Controllers
             _workspaceController = workspaceController;
             _generationController = generationController;
             _templateController = templateController;
+            _windowManagerService = windowManagerService;
         }
 
         public override void Initialize()

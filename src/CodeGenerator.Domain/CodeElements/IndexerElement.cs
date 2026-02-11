@@ -28,12 +28,12 @@ namespace CodeGenerator.Domain.CodeElements
         /// <summary>
         /// Getter body
         /// </summary>
-        public string? GetterBody { get; set; }
+        public CompositeStatement GetterBody { get; set; } = new();
 
         /// <summary>
         /// Setter body
         /// </summary>
-        public string? SetterBody { get; set; }
+        public CompositeStatement SetterBody { get; set; } = new();
 
         /// <summary>
         /// Access modifier for the getter (if different from indexer)

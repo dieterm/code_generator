@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeGenerator.Application\CodeGenerator.Application.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Domain.DotNet\CodeGenerator.Domain.DotNet.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Domain.ProgrammingLanguages.CSharp\CodeGenerator.Domain.ProgrammingLanguages.CSharp.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Domain\CodeGenerator.Domain.csproj" />
+    <ProjectReference Include="..\CodeGenerator.UserControls.Views\CodeGenerator.UserControls.Views.csproj" />
+  </ItemGroup>
+
+</Project>

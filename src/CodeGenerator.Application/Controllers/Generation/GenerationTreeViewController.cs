@@ -13,7 +13,7 @@ namespace CodeGenerator.Application.Controllers.Generation
     /// Controller for the generation result artifact tree.
     /// Coordinates between generation artifact controllers and the UI.
     /// </summary>
-    public class GenerationTreeViewController : ArtifactTreeViewController<GenerationTreeViewModel>
+    public class GenerationTreeViewController : ArtifactTreeViewController<GenerationTreeViewModel, IGenerationArtifactController>
     {
         private readonly GenerationDetailsViewModel _detailsViewModel;
 
@@ -28,7 +28,7 @@ namespace CodeGenerator.Application.Controllers.Generation
             IWindowManagerService windowManagerService,
             IMessageBoxService messageBoxService,
             ILogger<GenerationTreeViewController> logger)
-            : base(operationExecutor, windowManagerService, messageBoxService, logger)
+            : base(operationExecutor, messageBoxService, logger)
         {
             _detailsViewModel = detailsViewModel;
         }

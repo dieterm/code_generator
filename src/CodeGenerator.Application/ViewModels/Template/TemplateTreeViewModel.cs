@@ -1,9 +1,9 @@
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Controllers.Template;
-using CodeGenerator.Application.ViewModels.Base;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.CodeGeneration;
 using CodeGenerator.Core.Artifacts.FileSystem;
+using CodeGenerator.Core.Artifacts.ViewModels;
 using CodeGenerator.Core.Templates;
 
 namespace CodeGenerator.Application.ViewModels.Template;
@@ -37,7 +37,7 @@ public class TemplateTreeViewModel : ArtifactTreeViewModel<TemplateTreeViewContr
     /// <summary>
     /// Event raised when context menu commands are needed
     /// </summary>
-    public event Func<IArtifact, IEnumerable<ArtifactTreeNodeCommand>>? GetContextMenuCommandsRequested;
+    //public event Func<IArtifact, IEnumerable<ArtifactTreeNodeCommand>>? GetContextMenuCommandsRequested;
 
     /// <summary>
     /// Event raised when double-click handling is needed

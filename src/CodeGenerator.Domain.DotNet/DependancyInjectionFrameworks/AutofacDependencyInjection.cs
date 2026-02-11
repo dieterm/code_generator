@@ -99,8 +99,9 @@ namespace CodeGenerator.Domain.DependancyInjectionFrameworks
                 Documentation = "Override to add registrations to the container"
             };
             loadMethod.Parameters.Add(new ParameterElement("builder", new TypeReference("ContainerBuilder")));
-            loadMethod.Body = "// Add registrations here\n// builder.RegisterType<MyService>().As<IMyService>();";
-
+            //loadMethod.Body = "// Add registrations here\n// builder.RegisterType<MyService>().As<IMyService>();";
+            loadMethod.Body.AddCommentLine("Add registrations here");
+            loadMethod.Body.AddCommentLine("builder.RegisterType<MyService>().As<IMyService>();");
             classElement.Methods.Add(loadMethod);
 
             return classElement;

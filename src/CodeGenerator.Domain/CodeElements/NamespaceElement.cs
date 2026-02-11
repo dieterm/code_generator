@@ -3,7 +3,7 @@ namespace CodeGenerator.Domain.CodeElements
     /// <summary>
     /// Represents a namespace declaration that contains types
     /// </summary>
-    public class NamespaceElement : CodeElement
+    public class NamespaceElement : CodeElement,ICodeElementWithUsings
     {
         /// <summary>
         /// Full namespace path (e.g., "MyCompany.MyProduct.Domain")

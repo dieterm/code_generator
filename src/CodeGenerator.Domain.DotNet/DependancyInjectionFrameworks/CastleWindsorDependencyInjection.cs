@@ -107,10 +107,11 @@ namespace CodeGenerator.Domain.DependancyInjectionFrameworks
             };
             installMethod.Parameters.Add(new ParameterElement("container", new TypeReference("IWindsorContainer")));
             installMethod.Parameters.Add(new ParameterElement("store", new TypeReference("IConfigurationStore")));
-            installMethod.Body = @"// Register services here
-// container.Register(
-//     Component.For<IService>().ImplementedBy<Service>().LifestyleSingleton()
-// );";
+
+            installMethod.Body.AddCommentLine("Register services here");
+            installMethod.Body.AddCommentLine("container.Register(");
+            installMethod.Body.AddCommentLine("    Component.For<IService>().ImplementedBy<Service>().LifestyleSingleton()");
+            installMethod.Body.AddCommentLine(");");
 
             classElement.Methods.Add(installMethod);
 

@@ -1,6 +1,7 @@
 ﻿using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Controllers.Copilot;
 using CodeGenerator.Application.Services;
+using CodeGenerator.Core.Copilot.Services;
 using CodeGenerator.Core.Copilot.Settings;
 using CodeGenerator.Core.Copilot.Tools;
 using CodeGenerator.Core.Copilot.ViewModels;
@@ -23,6 +24,7 @@ namespace CodeGenerator.Core.Copilot.Controllers
         private CopilotSession? _session;
         private WorkspaceTools? _workspaceTools;
         private CopilotOperationBridge? _operationBridge;
+        private readonly ICopilotWindowManagerService _windowManagerService;
 
         private const string SystemPromptContent =
             "You are a workspace assistant for a code generator application. " +
@@ -38,15 +40,16 @@ namespace CodeGenerator.Core.Copilot.Controllers
         public CopilotController(
             OperationExecutor operationExecutor,
             CopilotChatViewModel copilotChatViewModel,
-            IWindowManagerService windowManagerService,
+            ICopilotWindowManagerService windowManagerService,
             RibbonBuilder ribbonBuilder,
             ApplicationMessageBus messageBus,
             IMessageBoxService messageboxService,
             IFileSystemDialogService fileSystemDialogService,
             ILogger<CopilotController> logger)
-            : base(operationExecutor, windowManagerService, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
+            : base(operationExecutor, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
         {
             _copilotChatViewModel = copilotChatViewModel;
+            _windowManagerService = windowManagerService;
         }
 
         public override void Initialize()

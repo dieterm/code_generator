@@ -24,7 +24,7 @@ namespace CodeGenerator.Application.Controllers.Generation
         private readonly GenerationTreeViewController _generationTreeViewController;
         private readonly GenerationDetailsViewModel _detailsViewModel;
         private readonly GeneratorOrchestrator _generatorOrchestrator;
-
+        private readonly IWindowManagerService _windowManagerService;
         public GenerationController(
             OperationExecutor operationExecutor,
             GeneratorOrchestrator generatorOrchestrator,
@@ -38,13 +38,14 @@ namespace CodeGenerator.Application.Controllers.Generation
             ApplicationMessageBus messageBus,
             IFileSystemDialogService fileSystemDialogService,
             ILogger<GenerationController> logger)
-            : base(operationExecutor, windowManagerService, ribbonBuilder, messageBus, messageService, fileSystemDialogService, logger)
+            : base(operationExecutor, ribbonBuilder, messageBus, messageService, fileSystemDialogService, logger)
         {
             _generatorOrchestrator = generatorOrchestrator ?? throw new ArgumentNullException(nameof(generatorOrchestrator));
             _generationTreeViewController = generationTreeViewController ?? throw new ArgumentNullException(nameof(generationTreeViewController));
             _detailsViewModel = detailsViewModel ?? throw new ArgumentNullException(nameof(detailsViewModel));
             _treeViewModel = treeViewModel ?? throw new ArgumentNullException(nameof(treeViewModel));
             _generationRibbonViewModel = generationRibbonViewModel ?? throw new ArgumentNullException(nameof(generationRibbonViewModel));
+            _windowManagerService = windowManagerService ?? throw new ArgumentNullException(nameof(windowManagerService));
         }
 
         public override void Initialize()

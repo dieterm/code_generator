@@ -1,4 +1,5 @@
 using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Application.Controllers.CodeElements;
 using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
@@ -21,8 +22,11 @@ public class TemplateController : CoreControllerBase
 {
     private readonly TemplateRibbonViewModel _templateRibbonViewModel;
     private readonly TemplateTreeViewController _templateTreeViewController;
-
-    public TemplateController(OperationExecutor operationExecutor,
+    private readonly IWindowManagerService _windowManagerService;
+    private readonly ICodeElementsController _codeElementsController;
+    public TemplateController(
+        ICodeElementsController codeElementsController,
+        OperationExecutor operationExecutor,
         TemplateRibbonViewModel templateRibbonViewModel,
         TemplateTreeViewController templateTreeViewController,
         IWindowManagerService windowManagerService,
@@ -31,10 +35,12 @@ public class TemplateController : CoreControllerBase
         IMessageBoxService messageBoxService,
         IFileSystemDialogService fileSystemDialogService,
         ILogger<TemplateController> logger)
-        : base(operationExecutor, windowManagerService, ribbonBuilder, messageBus, messageBoxService, fileSystemDialogService, logger)
+        : base(operationExecutor, ribbonBuilder, messageBus, messageBoxService, fileSystemDialogService, logger)
     {
-        _templateRibbonViewModel = templateRibbonViewModel;
-        _templateTreeViewController = templateTreeViewController;
+        _templateRibbonViewModel = templateRibbonViewModel ?? throw new ArgumentNullException(nameof(templateRibbonViewModel));
+        _templateTreeViewController = templateTreeViewController ?? throw new ArgumentNullException(nameof(templateTreeViewController));
+        _windowManagerService = windowManagerService ?? throw new ArgumentNullException(nameof(windowManagerService));
+        _codeElementsController = codeElementsController ?? throw new ArgumentNullException(nameof(codeElementsController));
     }
 
     public override void Initialize()
@@ -48,7 +54,7 @@ public class TemplateController : CoreControllerBase
 
     private void OnRequestShowCodeElementsTool(object? sender, EventArgs e)
     {
-        throw new NotImplementedException();
+        _codeElementsController.ShowCodeElements();
     }
 
     private void OnRequestRefreshTemplates(object? sender, EventArgs e)

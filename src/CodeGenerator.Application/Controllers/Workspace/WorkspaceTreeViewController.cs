@@ -36,7 +36,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// Main controller for workspace operations
     /// Coordinates between artifact controllers and the UI
     /// </summary>
-    public class WorkspaceTreeViewController : ArtifactTreeViewController<WorkspaceTreeViewModel>, IWorkspaceContextProvider
+    public class WorkspaceTreeViewController : ArtifactTreeViewController<WorkspaceTreeViewModel, IWorkspaceArtifactController>, IWorkspaceContextProvider
     {
         private readonly IDatasourceFactory _datasourceFactory;
         private readonly WorkspaceFileService _workspaceFileService;
@@ -44,7 +44,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
         private readonly WorkspaceMessageBus _workspaceMessageBus;
         private readonly UndoRedoManager _undoRedoManager;
         private WorkspaceArtifactDetailsViewModel? _workspaceDetailsViewModel;
-
+        private readonly IWorkspaceWindowManagerService _windowManagerService;
         /// <summary>
         /// The UndoRedoManager for this workspace
         /// </summary>
@@ -58,16 +58,17 @@ namespace CodeGenerator.Application.Controllers.Workspace
             IDatasourceFactory datasourceFactory,
             WorkspaceFileService workspaceFileService,
             RibbonBuilder ribbonBuilder,
-            IWindowManagerService windowManagerService,
+            IWorkspaceWindowManagerService windowManagerService,
             IMessageBoxService messageBoxService,
             ILogger<WorkspaceTreeViewController> logger)
-            : base(operationExecutor, windowManagerService, messageBoxService, logger)
+            : base(operationExecutor, messageBoxService, logger)
         {
             _undoRedoManager = undoRedoManager;
             _workspaceMessageBus = workspaceMessageBus;
             _datasourceFactory = datasourceFactory;
             _workspaceFileService = workspaceFileService;
             _templateManager = templateManager;
+            _windowManagerService = windowManagerService;
         }
 
         /// <summary>
@@ -322,29 +323,29 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
         private void ShowWorkspaceTreeView()
         {
-            WindowManagerService.ShowWorkspaceTreeView(TreeViewModel!);
+            _windowManagerService.ShowWorkspaceTreeView(TreeViewModel!);
         }
 
-        private async void WorkspaceTreeViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(WorkspaceTreeViewModel.SelectedArtifact))
-            {
-                if (TreeViewModel?.SelectedArtifact != null)
-                {
-                    OnArtifactSelected(TreeViewModel.SelectedArtifact);
+        //private async void WorkspaceTreeViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        //{
+        //    if (e.PropertyName == nameof(WorkspaceTreeViewModel.SelectedArtifact))
+        //    {
+        //        if (TreeViewModel?.SelectedArtifact != null)
+        //        {
+        //            OnArtifactSelected(TreeViewModel.SelectedArtifact);
 
-                    var artifactController = GetController(TreeViewModel.SelectedArtifact);
-                    if (artifactController != null)
-                        await artifactController.OnSelectedAsync(TreeViewModel.SelectedArtifact);
-                    else
-                        Debug.WriteLine("No controller found for selected artifact {0}", TreeViewModel.SelectedArtifact.TreeNodeText);
-                } 
-                else
-                {
-                    ShowArtifactDetailsView(null);
-                }
-            }
-        }
+        //            var artifactController = GetController(TreeViewModel.SelectedArtifact);
+        //            if (artifactController != null)
+        //                await artifactController.OnSelectedAsync(TreeViewModel.SelectedArtifact);
+        //            else
+        //                Debug.WriteLine("No controller found for selected artifact {0}", TreeViewModel.SelectedArtifact.TreeNodeText);
+        //        } 
+        //        else
+        //        {
+        //            ShowArtifactDetailsView(null);
+        //        }
+        //    }
+        //}
 
         public override void ShowArtifactDetailsView(ViewModelBase? detailsModel)
         {
@@ -353,7 +354,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 _workspaceDetailsViewModel = new WorkspaceArtifactDetailsViewModel();
             }
             _workspaceDetailsViewModel.DetailsViewModel = detailsModel;
-            WindowManagerService.ShowWorkspaceDetailsView(_workspaceDetailsViewModel);
+            _windowManagerService.ShowWorkspaceDetailsView(_workspaceDetailsViewModel);
         }
 
         //public DomainArtifact AddDomain(string domainName)

@@ -1,6 +1,8 @@
 using CodeGenerator.Domain.CodeElements;
+using CodeGenerator.Domain.CodeElements.Statements;
 using CodeGenerator.Domain.ProgrammingLanguages;
 using CodeGenerator.Domain.ProgrammingLanguages.CSharp;
+using CodeGenerator.Domain.ProgrammingLanguages.Python;
 using System.Text;
 
 namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
@@ -824,27 +826,14 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
                     }
                     getterLine.Append("get");
 
-                    if (!string.IsNullOrEmpty(prop.GetterBody))
+                    if (prop.GetterBody.HasStatements)
                     {
-                        if (prop.GetterBody.Contains('\n'))
-                        {
-                            sb.AppendLine(getterLine.ToString());
-                            sb.AppendLine(Line("{").TrimEnd());
-                            IncreaseIndent();
-                            foreach (var bodyLine in prop.GetterBody.Split('\n'))
-                            {
-                                sb.AppendLine(Line(bodyLine.Trim()).TrimEnd());
-                            }
-                            DecreaseIndent();
-                            sb.AppendLine(Line("}").TrimEnd());
-                        }
-                        else
-                        {
-                            getterLine.Append(" => ");
-                            getterLine.Append(prop.GetterBody);
-                            getterLine.Append(';');
-                            sb.AppendLine(getterLine.ToString());
-                        }
+                        sb.AppendLine(getterLine.ToString());
+                        sb.AppendLine(Line("{").TrimEnd());
+                        IncreaseIndent();
+                        GenerateStatements(sb, prop.GetterBody.Statements);
+                        DecreaseIndent();
+                        sb.AppendLine(Line("}").TrimEnd());
                     }
                     else
                     {
@@ -864,27 +853,14 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
                     }
                     setterLine.Append(prop.IsInitOnly ? "init" : "set");
 
-                    if (!string.IsNullOrEmpty(prop.SetterBody))
+                    if (prop.SetterBody.HasStatements)
                     {
-                        if (prop.SetterBody.Contains('\n'))
-                        {
-                            sb.AppendLine(setterLine.ToString());
-                            sb.AppendLine(Line("{").TrimEnd());
-                            IncreaseIndent();
-                            foreach (var bodyLine in prop.SetterBody.Split('\n'))
-                            {
-                                sb.AppendLine(Line(bodyLine.Trim()).TrimEnd());
-                            }
-                            DecreaseIndent();
-                            sb.AppendLine(Line("}").TrimEnd());
-                        }
-                        else
-                        {
-                            setterLine.Append(" => ");
-                            setterLine.Append(prop.SetterBody);
-                            setterLine.Append(';');
-                            sb.AppendLine(setterLine.ToString());
-                        }
+                        sb.AppendLine(setterLine.ToString());
+                        sb.AppendLine(Line("{").TrimEnd());
+                        IncreaseIndent();
+                        GenerateStatements(sb, prop.SetterBody.Statements);
+                        DecreaseIndent();
+                        sb.AppendLine(Line("}").TrimEnd());
                     }
                     else
                     {
@@ -1001,17 +977,7 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
 
             // Method body
             IncreaseIndent();
-            if (!string.IsNullOrEmpty(method.Body))
-            {
-                foreach (var bodyLine in method.Body.Split('\n'))
-                {
-                    var trimmedLine = bodyLine.TrimEnd('\r');
-                    if (!string.IsNullOrWhiteSpace(trimmedLine))
-                        sb.AppendLine(Line(trimmedLine.TrimStart()).TrimEnd());
-                    else
-                        sb.AppendLine();
-                }
-            }
+            GenerateStatements(sb, method.Body.Statements);
             DecreaseIndent();
             sb.AppendLine(Line("}").TrimEnd());
 
@@ -1078,17 +1044,7 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
 
             // Constructor body
             IncreaseIndent();
-            if (!string.IsNullOrEmpty(ctor.Body))
-            {
-                foreach (var bodyLine in ctor.Body.Split('\n'))
-                {
-                    var trimmedLine = bodyLine.TrimEnd('\r');
-                    if (!string.IsNullOrWhiteSpace(trimmedLine))
-                        sb.AppendLine(Line(trimmedLine.TrimStart()).TrimEnd());
-                    else
-                        sb.AppendLine();
-                }
-            }
+            GenerateStatements(sb, ctor.Body.Statements);
             DecreaseIndent();
             sb.AppendLine(Line("}").TrimEnd());
 
@@ -1236,15 +1192,12 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
                 }
                 getterLine.Append("get");
 
-                if (!string.IsNullOrEmpty(indexer.GetterBody))
+                if (indexer.GetterBody.HasStatements)
                 {
                     sb.AppendLine(getterLine.ToString());
                     sb.AppendLine(Line("{").TrimEnd());
                     IncreaseIndent();
-                    foreach (var bodyLine in indexer.GetterBody.Split('\n'))
-                    {
-                        sb.AppendLine(Line(bodyLine.Trim()).TrimEnd());
-                    }
+                    GenerateStatements(sb, indexer.GetterBody.Statements);
                     DecreaseIndent();
                     sb.AppendLine(Line("}").TrimEnd());
                 }
@@ -1266,15 +1219,12 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
                 }
                 setterLine.Append("set");
 
-                if (!string.IsNullOrEmpty(indexer.SetterBody))
+                if (indexer.SetterBody.HasStatements)
                 {
                     sb.AppendLine(setterLine.ToString());
                     sb.AppendLine(Line("{").TrimEnd());
                     IncreaseIndent();
-                    foreach (var bodyLine in indexer.SetterBody.Split('\n'))
-                    {
-                        sb.AppendLine(Line(bodyLine.Trim()).TrimEnd());
-                    }
+                    GenerateStatements(sb, indexer.SetterBody.Statements);
                     DecreaseIndent();
                     sb.AppendLine(Line("}").TrimEnd());
                 }
@@ -1333,17 +1283,7 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
             sb.AppendLine(Line("{").TrimEnd());
 
             IncreaseIndent();
-            if (!string.IsNullOrEmpty(op.Body))
-            {
-                foreach (var bodyLine in op.Body.Split('\n'))
-                {
-                    var trimmedLine = bodyLine.TrimEnd('\r');
-                    if (!string.IsNullOrWhiteSpace(trimmedLine))
-                        sb.AppendLine(Line(trimmedLine.TrimStart()).TrimEnd());
-                    else
-                        sb.AppendLine();
-                }
-            }
+            GenerateStatements(sb, op.Body.Statements);
             DecreaseIndent();
             sb.AppendLine(Line("}").TrimEnd());
 
@@ -1502,6 +1442,231 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
             }
 
             return sb.ToString();
+        }
+
+        #endregion
+
+        #region Statement Generation
+
+        /// <summary>
+        /// Generates a list of statements into the StringBuilder
+        /// </summary>
+        private void GenerateStatements(StringBuilder sb, List<StatementElement> statements)
+        {
+            foreach (var statement in statements)
+            {
+                GenerateStatement(sb, statement);
+            }
+        }
+
+        /// <summary>
+        /// Generates a single statement into the StringBuilder
+        /// </summary>
+        private void GenerateStatement(StringBuilder sb, StatementElement statement)
+        {
+            if (statement.RawCode != null)
+            {
+                foreach (var rawLine in statement.RawCode.Split('\n'))
+                {
+                    var trimmed = rawLine.TrimEnd('\r');
+                    if (!string.IsNullOrWhiteSpace(trimmed))
+                        sb.AppendLine(Line(trimmed.TrimStart()).TrimEnd());
+                    else
+                        sb.AppendLine();
+                }
+                return;
+            }
+
+            switch (statement)
+            {
+                case CompositeStatement composite:
+                    GenerateStatements(sb, composite.Statements);
+                    break;
+
+                case RawStatementElement raw:
+                    foreach (var rawLine in raw.Code.Split('\n'))
+                    {
+                        var trimmed = rawLine.TrimEnd('\r');
+                        if (!string.IsNullOrWhiteSpace(trimmed))
+                            sb.AppendLine(Line(trimmed.TrimStart()).TrimEnd());
+                        else
+                            sb.AppendLine();
+                    }
+                    break;
+
+                case CommentStatement comment:
+                    sb.AppendLine(Line($"// {comment.Text}").TrimEnd());
+                    break;
+
+                case AssignmentStatement assignment:
+                    sb.AppendLine(Line($"{assignment.Left} = {assignment.Right};").TrimEnd());
+                    break;
+
+                case ReturnStatementElement returnStmt:
+                    if (string.IsNullOrEmpty(returnStmt.Expression))
+                        sb.AppendLine(Line("return;").TrimEnd());
+                    else
+                        sb.AppendLine(Line($"return {returnStmt.Expression};").TrimEnd());
+                    break;
+
+                case ThrowStatementElement throwStmt:
+                    if (string.IsNullOrEmpty(throwStmt.Expression))
+                        sb.AppendLine(Line("throw;").TrimEnd());
+                    else
+                        sb.AppendLine(Line($"throw {throwStmt.Expression};").TrimEnd());
+                    break;
+
+                case IfStatementElement ifStmt:
+                    sb.AppendLine(Line($"if ({ifStmt.Condition})").TrimEnd());
+                    sb.AppendLine(Line("{").TrimEnd());
+                    IncreaseIndent();
+                    GenerateStatements(sb, ifStmt.ThenStatements);
+                    DecreaseIndent();
+                    sb.AppendLine(Line("}").TrimEnd());
+
+                    foreach (var elseIf in ifStmt.ElseIfBranches)
+                    {
+                        sb.AppendLine(Line($"else if ({elseIf.Condition})").TrimEnd());
+                        sb.AppendLine(Line("{").TrimEnd());
+                        IncreaseIndent();
+                        GenerateStatements(sb, elseIf.Statements);
+                        DecreaseIndent();
+                        sb.AppendLine(Line("}").TrimEnd());
+                    }
+
+                    if (ifStmt.ElseStatements.Count > 0)
+                    {
+                        sb.AppendLine(Line("else").TrimEnd());
+                        sb.AppendLine(Line("{").TrimEnd());
+                        IncreaseIndent();
+                        GenerateStatements(sb, ifStmt.ElseStatements);
+                        DecreaseIndent();
+                        sb.AppendLine(Line("}").TrimEnd());
+                    }
+                    break;
+
+                case ForStatementElement forStmt:
+                    sb.AppendLine(Line($"for ({forStmt.Initializer}; {forStmt.Condition}; {forStmt.Incrementer})").TrimEnd());
+                    sb.AppendLine(Line("{").TrimEnd());
+                    IncreaseIndent();
+                    GenerateStatements(sb, forStmt.Body);
+                    DecreaseIndent();
+                    sb.AppendLine(Line("}").TrimEnd());
+                    break;
+
+                case ForEachStatementElement forEachStmt:
+                    var varType = forEachStmt.VariableType != null
+                        ? GenerateTypeReference(forEachStmt.VariableType)
+                        : "var";
+                    sb.AppendLine(Line($"foreach ({varType} {forEachStmt.VariableName} in {forEachStmt.Collection})").TrimEnd());
+                    sb.AppendLine(Line("{").TrimEnd());
+                    IncreaseIndent();
+                    GenerateStatements(sb, forEachStmt.Body);
+                    DecreaseIndent();
+                    sb.AppendLine(Line("}").TrimEnd());
+                    break;
+
+                case WhileStatementElement whileStmt:
+                    sb.AppendLine(Line($"while ({whileStmt.Condition})").TrimEnd());
+                    sb.AppendLine(Line("{").TrimEnd());
+                    IncreaseIndent();
+                    GenerateStatements(sb, whileStmt.Body);
+                    DecreaseIndent();
+                    sb.AppendLine(Line("}").TrimEnd());
+                    break;
+
+                case SwitchStatementElement switchStmt:
+                    sb.AppendLine(Line($"switch ({switchStmt.Expression})").TrimEnd());
+                    sb.AppendLine(Line("{").TrimEnd());
+                    IncreaseIndent();
+                    foreach (var caseBlock in switchStmt.Cases)
+                    {
+                        foreach (var label in caseBlock.Labels)
+                        {
+                            sb.AppendLine(Line($"case {label}:").TrimEnd());
+                        }
+                        if (!string.IsNullOrEmpty(caseBlock.Pattern))
+                        {
+                            var whenClause = !string.IsNullOrEmpty(caseBlock.WhenClause) ? $" when {caseBlock.WhenClause}" : "";
+                            sb.AppendLine(Line($"case {caseBlock.Pattern}{whenClause}:").TrimEnd());
+                        }
+                        IncreaseIndent();
+                        GenerateStatements(sb, caseBlock.Statements);
+                        DecreaseIndent();
+                    }
+                    if (switchStmt.DefaultStatements.Count > 0)
+                    {
+                        sb.AppendLine(Line("default:").TrimEnd());
+                        IncreaseIndent();
+                        GenerateStatements(sb, switchStmt.DefaultStatements);
+                        DecreaseIndent();
+                    }
+                    DecreaseIndent();
+                    sb.AppendLine(Line("}").TrimEnd());
+                    break;
+
+                case TryCatchStatementElement tryCatch:
+                    sb.AppendLine(Line("try").TrimEnd());
+                    sb.AppendLine(Line("{").TrimEnd());
+                    IncreaseIndent();
+                    GenerateStatements(sb, tryCatch.TryStatements);
+                    DecreaseIndent();
+                    sb.AppendLine(Line("}").TrimEnd());
+
+                    foreach (var catchBlock in tryCatch.CatchBlocks)
+                    {
+                        var catchLine = new StringBuilder("catch");
+                        if (catchBlock.ExceptionType != null)
+                        {
+                            catchLine.Append($" ({GenerateTypeReference(catchBlock.ExceptionType)}");
+                            if (!string.IsNullOrEmpty(catchBlock.ExceptionVariable))
+                                catchLine.Append($" {catchBlock.ExceptionVariable}");
+                            catchLine.Append(')');
+                        }
+                        if (!string.IsNullOrEmpty(catchBlock.WhenFilter))
+                        {
+                            catchLine.Append($" when ({catchBlock.WhenFilter})");
+                        }
+                        sb.AppendLine(Line(catchLine.ToString()).TrimEnd());
+                        sb.AppendLine(Line("{").TrimEnd());
+                        IncreaseIndent();
+                        GenerateStatements(sb, catchBlock.Statements);
+                        DecreaseIndent();
+                        sb.AppendLine(Line("}").TrimEnd());
+                    }
+
+                    if (tryCatch.HasFinally)
+                    {
+                        sb.AppendLine(Line("finally").TrimEnd());
+                        sb.AppendLine(Line("{").TrimEnd());
+                        IncreaseIndent();
+                        GenerateStatements(sb, tryCatch.FinallyStatements);
+                        DecreaseIndent();
+                        sb.AppendLine(Line("}").TrimEnd());
+                    }
+                    break;
+
+                case UsingStatementElement usingStmt:
+                    if (usingStmt.IsDeclaration)
+                    {
+                        sb.AppendLine(Line($"using {usingStmt.Resource};").TrimEnd());
+                        GenerateStatements(sb, usingStmt.Body);
+                    }
+                    else
+                    {
+                        sb.AppendLine(Line($"using ({usingStmt.Resource})").TrimEnd());
+                        sb.AppendLine(Line("{").TrimEnd());
+                        IncreaseIndent();
+                        GenerateStatements(sb, usingStmt.Body);
+                        DecreaseIndent();
+                        sb.AppendLine(Line("}").TrimEnd());
+                    }
+                    break;
+
+                default:
+                    // Unknown statement type — skip
+                    break;
+            }
         }
 
         #endregion

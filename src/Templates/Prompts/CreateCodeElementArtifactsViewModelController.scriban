@@ -1,0 +1,20 @@
+Genereer een EditView en EditViewModel voor {{ ArtifactName }}.
+Zet de EditView in folder "D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Core.CodeElements\Views\".
+Kijk als voorbeeld naar de EditView "D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Core.CodeElements\Views\CodeFileElementEditView.cs" voor een CodeFileElementArtifact.
+Zet de EditViewModel in folder "D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Core.CodeElements\ViewModels\".
+Kijk als voorbeeld naar de EditViewModel "D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Core.CodeElements\ViewModels\CodeFileElementEditViewModel.cs" voor een CodeFileElementArtifact.
+
+Registreer de EditView in de DI-container:
+D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Core.CodeElements\ServiceCollectionExtensions.cs
+Met deze code:
+services.AddTransient<IView<{{ ElementName}}EditViewModel>, {{ ElementName }}EditView>();
+
+Genereer een ArtifactController voor {{ ArtifactName }}.
+Kijk als voorbeeld naar de CodeFileElementArtifactController en de NamespaceElementArtifactController.
+Implementeer ook de OnSelectedInternalAsync van de {{ ArtifactName }}Controller om de EditView te tonen.
+Voeg ook een Delete-ArtifactTreeNodeCommand toe zoals in de NamespaceElementArtifactController.
+
+Registreer de ArtifactController in de DI-Container:
+D:\Cloud\GitHub\code_generator_main\src\CodeGenerator.Core.CodeElements\ServiceCollectionExtensions.cs
+Met deze code:
+services.AddSingleton<ICodeElementArtifactController, {{ ArtifactName }}Controller>();

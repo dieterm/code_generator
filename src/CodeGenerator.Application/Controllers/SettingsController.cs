@@ -24,16 +24,17 @@ namespace CodeGenerator.Application.Controllers
         private readonly GeneratorSettingsManager _generatorSettingsManager;
         private readonly TemplateManager _templateManager;
         private readonly TemplateEngineSettingsManager _templateEngineSettingsManager;
-
-		public SettingsController(OperationExecutor operationExecutor, TemplateEngineSettingsManager templateEngineSettingsManager, TemplateManager templateManager, ApplicationSettingsManager applicationSettingsManager, WorkspaceSettingsManager workspaceSettingsManager, GeneratorSettingsManager generatorSettingsManager, SettingsViewModel settingsViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IMessageBoxService messageBoxService, IFileSystemDialogService fileSystemDialogService, ApplicationMessageBus messageBus, ILogger<SettingsController> logger)
-			: base(operationExecutor, windowManagerService, ribbonBuilder, messageBus, messageBoxService, fileSystemDialogService, logger)
+        private readonly IWindowManagerService _windowManagerService;
+        public SettingsController(OperationExecutor operationExecutor, TemplateEngineSettingsManager templateEngineSettingsManager, TemplateManager templateManager, ApplicationSettingsManager applicationSettingsManager, WorkspaceSettingsManager workspaceSettingsManager, GeneratorSettingsManager generatorSettingsManager, SettingsViewModel settingsViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IMessageBoxService messageBoxService, IFileSystemDialogService fileSystemDialogService, ApplicationMessageBus messageBus, ILogger<SettingsController> logger)
+			: base(operationExecutor, ribbonBuilder, messageBus, messageBoxService, fileSystemDialogService, logger)
 		{
-			_templateEngineSettingsManager = templateEngineSettingsManager;
-			_settingsViewModel = settingsViewModel;
-			_applicationSettingsManager = applicationSettingsManager;
-			_workspaceSettingsManager = workspaceSettingsManager;
-			_generatorSettingsManager = generatorSettingsManager;
-            _templateManager = templateManager;
+			_windowManagerService = windowManagerService ?? throw new ArgumentNullException(nameof(windowManagerService));
+			_templateEngineSettingsManager = templateEngineSettingsManager ?? throw new ArgumentNullException(nameof(templateEngineSettingsManager));
+			_settingsViewModel = settingsViewModel ?? throw new ArgumentNullException(nameof(settingsViewModel));
+			_applicationSettingsManager = applicationSettingsManager ?? throw new ArgumentNullException(nameof(applicationSettingsManager));
+			_workspaceSettingsManager = workspaceSettingsManager ?? throw new ArgumentNullException(nameof(workspaceSettingsManager));
+			_generatorSettingsManager = generatorSettingsManager ?? throw new ArgumentNullException(nameof(generatorSettingsManager));
+            _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         }
 		private string? WorkspaceSettingsDefaultTemplateFolder { get; set; }
         /// <summary>

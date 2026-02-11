@@ -23,7 +23,11 @@ namespace CodeGenerator.Domain.CodeElements
         /// <summary>
         /// Operator body
         /// </summary>
-        public string? Body { get; set; }
+        //public string? Body { get; set; }
+        /// <summary>
+        /// Statements in the method body
+        /// </summary>
+        public CompositeStatement Body { get; } = new();
 
         /// <summary>
         /// Whether this is an implicit or explicit conversion operator
