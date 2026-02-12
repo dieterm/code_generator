@@ -13,7 +13,7 @@ namespace CodeGenerator.Domain.CodeElements
         /// <summary>
         /// Loop body statements
         /// </summary>
-        public List<StatementElement> Body { get; set; } = new();
+        public CompositeStatement Body { get; set; } = new();
 
         public WhileStatementElement() { }
 

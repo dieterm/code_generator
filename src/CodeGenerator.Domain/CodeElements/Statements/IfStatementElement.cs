@@ -13,12 +13,12 @@ namespace CodeGenerator.Domain.CodeElements
         /// <summary>
         /// Statements to execute if condition is true
         /// </summary>
-        public List<StatementElement> ThenStatements { get; set; } = new();
+        public CompositeStatement ThenStatements { get; set; } = new();
 
         /// <summary>
         /// Statements to execute if condition is false
         /// </summary>
-        public List<StatementElement> ElseStatements { get; set; } = new();
+        public CompositeStatement ElseStatements { get; set; } = new();
 
         /// <summary>
         /// Else-if branches

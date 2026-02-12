@@ -84,6 +84,7 @@ namespace CodeGenerator.Domain.CodeElements
         public CodeFileElement(string fileName)
         {
             FileName = fileName;
+            FileExtension = Language.FileExtension;
         }
 
         public CodeFileElement(string fileName, ProgrammingLanguage language)

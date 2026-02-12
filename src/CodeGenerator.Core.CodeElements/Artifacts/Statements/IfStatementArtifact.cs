@@ -6,14 +6,9 @@ namespace CodeGenerator.Core.CodeElements.Artifacts.Statements
     {
         public IfStatementArtifact(IfStatementElement statement) : base(statement)
         {
-            foreach (var child in statement.ThenStatements)
-            {
-                AddChild(StatementArtifactFactory.Create(child));
-            }
-            foreach (var child in statement.ElseStatements)
-            {
-                AddChild(StatementArtifactFactory.Create(child));
-            }
+            AddChild(new CompositeStatementArtifact(StatementElement.ThenStatements, true) { Name = nameof(ThenStatements) });
+            AddChild(new CompositeStatementArtifact(StatementElement.ElseStatements, true) { Name = nameof(ElseStatements) });
+            
             foreach (var branch in statement.ElseIfBranches)
             {
                 AddChild(StatementArtifactFactory.Create(branch));
@@ -33,9 +28,9 @@ namespace CodeGenerator.Core.CodeElements.Artifacts.Statements
             }
         }
 
-        public List<StatementElement> ThenStatements => StatementElement.ThenStatements;
+        public CompositeStatement ThenStatements => StatementElement.ThenStatements;
 
-        public List<StatementElement> ElseStatements => StatementElement.ElseStatements;
+        public CompositeStatement ElseStatements => StatementElement.ElseStatements;
 
         public List<ElseIfBranch> ElseIfBranches => StatementElement.ElseIfBranches;
     }

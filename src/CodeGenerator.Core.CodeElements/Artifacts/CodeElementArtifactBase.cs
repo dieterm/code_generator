@@ -73,7 +73,14 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
         public virtual AccessModifier AccessModifier
         {
             get { return CodeElement.AccessModifier; }
-            set { CodeElement.AccessModifier = value; }
+            set
+            {
+                if (CodeElement.AccessModifier != value)
+                {
+                    CodeElement.AccessModifier = value;
+                    RaisePropertyChangedEvent(nameof(AccessModifier));
+                }
+            }
         }
         /// <summary>
         /// Additional modifiers (static, abstract, virtual, etc.)
@@ -81,7 +88,14 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
         public virtual ElementModifiers Modifiers
         {
             get { return CodeElement.Modifiers; }
-            set { CodeElement.Modifiers = value; }
+            set
+            {
+                if (CodeElement.Modifiers != value)
+                {
+                    CodeElement.Modifiers = value;
+                    RaisePropertyChangedEvent(nameof(Modifiers));
+                }
+            }
         }
 
         /// <summary>
@@ -90,7 +104,14 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
         public virtual string? Documentation
         {
             get => CodeElement.Documentation;
-            set => CodeElement.Documentation = value;
+            set
+            {
+                if (CodeElement.Documentation != value)
+                {
+                    CodeElement.Documentation = value;
+                    RaisePropertyChangedEvent(nameof(Documentation));
+                }
+            }
         }
 
         /// <summary>
@@ -99,7 +120,15 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
         public virtual string? RawCode
         {
             get => CodeElement.RawCode;
-            set => CodeElement.RawCode = string.IsNullOrEmpty(value) ? null : value;
+            set
+            {
+                var newValue = string.IsNullOrEmpty(value) ? null : value;
+                if (CodeElement.RawCode != newValue)
+                {
+                    CodeElement.RawCode = newValue;
+                    RaisePropertyChangedEvent(nameof(RawCode));
+                }
+            }
         }
 
         public virtual bool CanBeginEdit()

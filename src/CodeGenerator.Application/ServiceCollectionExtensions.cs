@@ -79,6 +79,10 @@ public static class ServiceCollectionExtensions
         CSharpCodeGeneratorExtensions.RegisterCSharpCodeGenerator();
         PythonCodeGeneratorExtensions.RegisterPythonCodeGenerator();
 
+        // Register CodeParsers
+        CSharpCodeParserExtensions.RegisterCSharpCodeParser();
+        PythonCodeParserExtensions.RegisterPythonCodeParser();
+
         // Artifact Preview Controllers & ViewModels
         services.AddSingleton<ArtifactPreviewController>();
         services.AddTransient<ArtifactPreviewViewModel>();

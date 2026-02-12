@@ -13,7 +13,7 @@ namespace CodeGenerator.Domain.CodeElements
         /// <summary>
         /// Using block statements
         /// </summary>
-        public List<StatementElement> Body { get; set; } = new();
+        public CompositeStatement Body { get; set; } = new();
 
         /// <summary>
         /// Whether this is a using declaration (C# 8+)

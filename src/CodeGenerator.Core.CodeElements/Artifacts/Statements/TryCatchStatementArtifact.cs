@@ -6,25 +6,21 @@ namespace CodeGenerator.Core.CodeElements.Artifacts.Statements
     {
         public TryCatchStatementArtifact(TryCatchStatementElement statement) : base(statement)
         {
-            foreach (var child in statement.TryStatements)
-            {
-                AddChild(StatementArtifactFactory.Create(child));
-            }
+            AddChild(new CompositeStatementArtifact(statement.TryStatements, true) { Name = nameof(TryStatements) });
+            AddChild(new CompositeStatementArtifact(statement.FinallyStatements, true) { Name = nameof(FinallyStatements) });
+
             foreach (var catchBlock in statement.CatchBlocks)
             {
                 AddChild(StatementArtifactFactory.Create(catchBlock));
             }
-            foreach (var child in statement.FinallyStatements)
-            {
-                AddChild(StatementArtifactFactory.Create(child));
-            }
+
         }
 
-        public List<StatementElement> TryStatements => StatementElement.TryStatements;
+        public CompositeStatement TryStatements => StatementElement.TryStatements;
 
         public List<CatchBlock> CatchBlocks => StatementElement.CatchBlocks;
 
-        public List<StatementElement> FinallyStatements => StatementElement.FinallyStatements;
+        public CompositeStatement FinallyStatements => StatementElement.FinallyStatements;
 
         public bool HasFinally => StatementElement.HasFinally;
     }

@@ -18,6 +18,6 @@ namespace CodeGenerator.Domain.CodeElements
         /// <summary>
         /// Default case statements
         /// </summary>
-        public List<StatementElement> DefaultStatements { get; set; } = new();
+        public CompositeStatement DefaultStatements { get; set; } = new();
     }
 }

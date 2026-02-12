@@ -32,6 +32,7 @@ namespace CodeGenerator.Core.CodeElements.Views
                 editControl.DataBindings.Clear();
                 editControl.DataBindings.Add("Text", ViewModel, nameof(ViewModel.Text), false, DataSourceUpdateMode.OnPropertyChanged);
                 editControl.ApplyConfiguration(ViewModel.Syntax);
+                editControl.Closing += (s, e) => e.Action = Syncfusion.Windows.Forms.Edit.Enums.SaveChangesAction.Discard;
             }
         }
 

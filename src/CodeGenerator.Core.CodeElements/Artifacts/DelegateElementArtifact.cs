@@ -17,8 +17,15 @@ public class DelegateElementArtifact : CodeElementArtifactBase<DelegateElement>
 
     public string ReturnTypeName
     {
-        get => CodeElement.ReturnType.TypeName;
-        set => CodeElement.ReturnType.TypeName = value;
+        get { return CodeElement.ReturnType.TypeName; }
+        set
+        {
+            if (CodeElement.ReturnType.TypeName != value)
+            {
+                CodeElement.ReturnType.TypeName = value;
+                RaisePropertyChangedEvent(nameof(ReturnTypeName));
+            }
+        }
     }
 
     public ParametersContainerArtifact Parameters => Children.OfType<ParametersContainerArtifact>().Single();

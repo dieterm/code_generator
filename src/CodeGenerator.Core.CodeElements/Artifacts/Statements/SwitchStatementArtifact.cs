@@ -10,10 +10,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts.Statements
             {
                 AddChild(StatementArtifactFactory.Create(switchCase));
             }
-            foreach (var child in statement.DefaultStatements)
-            {
-                AddChild(StatementArtifactFactory.Create(child));
-            }
+            AddChild(new CompositeStatementArtifact(StatementElement.DefaultStatements, true) { Name = nameof(DefaultStatements) });
         }
 
         public string Expression
@@ -31,6 +28,6 @@ namespace CodeGenerator.Core.CodeElements.Artifacts.Statements
 
         public List<SwitchCase> Cases => StatementElement.Cases;
 
-        public List<StatementElement> DefaultStatements => StatementElement.DefaultStatements;
+        public CompositeStatement DefaultStatements => StatementElement.DefaultStatements;
     }
 }

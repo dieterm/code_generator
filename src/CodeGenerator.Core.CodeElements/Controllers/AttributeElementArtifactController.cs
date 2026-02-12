@@ -35,6 +35,9 @@ public class AttributeElementArtifactController : CodeElementArtifactControllerB
 
     private Task DeleteAttributeAsync(AttributeElementArtifact artifact)
     {
+        throw new NotImplementedException("TODO: remove attributeElement from parent codelement -> can be many types");
+        //artifact.CodeElement.Attributes.Remove(artifact);
+        //(artifact.Parent as CodeElementArtifactBase).
         artifact.Parent?.RemoveChild(artifact);
         return Task.CompletedTask;
     }

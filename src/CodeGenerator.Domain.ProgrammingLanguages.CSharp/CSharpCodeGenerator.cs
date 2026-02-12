@@ -1520,7 +1520,7 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
                     sb.AppendLine(Line($"if ({ifStmt.Condition})").TrimEnd());
                     sb.AppendLine(Line("{").TrimEnd());
                     IncreaseIndent();
-                    GenerateStatements(sb, ifStmt.ThenStatements);
+                    GenerateStatements(sb, ifStmt.ThenStatements.Statements);
                     DecreaseIndent();
                     sb.AppendLine(Line("}").TrimEnd());
 
@@ -1529,17 +1529,17 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
                         sb.AppendLine(Line($"else if ({elseIf.Condition})").TrimEnd());
                         sb.AppendLine(Line("{").TrimEnd());
                         IncreaseIndent();
-                        GenerateStatements(sb, elseIf.Statements);
+                        GenerateStatements(sb, elseIf.Statements.Statements);
                         DecreaseIndent();
                         sb.AppendLine(Line("}").TrimEnd());
                     }
 
-                    if (ifStmt.ElseStatements.Count > 0)
+                    if (ifStmt.ElseStatements.Statements.Count > 0)
                     {
                         sb.AppendLine(Line("else").TrimEnd());
                         sb.AppendLine(Line("{").TrimEnd());
                         IncreaseIndent();
-                        GenerateStatements(sb, ifStmt.ElseStatements);
+                        GenerateStatements(sb, ifStmt.ElseStatements.Statements);
                         DecreaseIndent();
                         sb.AppendLine(Line("}").TrimEnd());
                     }
@@ -1549,7 +1549,7 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
                     sb.AppendLine(Line($"for ({forStmt.Initializer}; {forStmt.Condition}; {forStmt.Incrementer})").TrimEnd());
                     sb.AppendLine(Line("{").TrimEnd());
                     IncreaseIndent();
-                    GenerateStatements(sb, forStmt.Body);
+                    GenerateStatements(sb, forStmt.Body.Statements);
                     DecreaseIndent();
                     sb.AppendLine(Line("}").TrimEnd());
                     break;
@@ -1561,7 +1561,7 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
                     sb.AppendLine(Line($"foreach ({varType} {forEachStmt.VariableName} in {forEachStmt.Collection})").TrimEnd());
                     sb.AppendLine(Line("{").TrimEnd());
                     IncreaseIndent();
-                    GenerateStatements(sb, forEachStmt.Body);
+                    GenerateStatements(sb, forEachStmt.Body.Statements);
                     DecreaseIndent();
                     sb.AppendLine(Line("}").TrimEnd());
                     break;
@@ -1570,7 +1570,7 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
                     sb.AppendLine(Line($"while ({whileStmt.Condition})").TrimEnd());
                     sb.AppendLine(Line("{").TrimEnd());
                     IncreaseIndent();
-                    GenerateStatements(sb, whileStmt.Body);
+                    GenerateStatements(sb, whileStmt.Body.Statements);
                     DecreaseIndent();
                     sb.AppendLine(Line("}").TrimEnd());
                     break;
@@ -1591,14 +1591,14 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
                             sb.AppendLine(Line($"case {caseBlock.Pattern}{whenClause}:").TrimEnd());
                         }
                         IncreaseIndent();
-                        GenerateStatements(sb, caseBlock.Statements);
+                        GenerateStatements(sb, caseBlock.Statements.Statements);
                         DecreaseIndent();
                     }
-                    if (switchStmt.DefaultStatements.Count > 0)
+                    if (switchStmt.DefaultStatements.Statements.Count > 0)
                     {
                         sb.AppendLine(Line("default:").TrimEnd());
                         IncreaseIndent();
-                        GenerateStatements(sb, switchStmt.DefaultStatements);
+                        GenerateStatements(sb, switchStmt.DefaultStatements.Statements);
                         DecreaseIndent();
                     }
                     DecreaseIndent();
@@ -1609,7 +1609,7 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
                     sb.AppendLine(Line("try").TrimEnd());
                     sb.AppendLine(Line("{").TrimEnd());
                     IncreaseIndent();
-                    GenerateStatements(sb, tryCatch.TryStatements);
+                    GenerateStatements(sb, tryCatch.TryStatements.Statements);
                     DecreaseIndent();
                     sb.AppendLine(Line("}").TrimEnd());
 
@@ -1630,7 +1630,7 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
                         sb.AppendLine(Line(catchLine.ToString()).TrimEnd());
                         sb.AppendLine(Line("{").TrimEnd());
                         IncreaseIndent();
-                        GenerateStatements(sb, catchBlock.Statements);
+                        GenerateStatements(sb, catchBlock.Statements.Statements);
                         DecreaseIndent();
                         sb.AppendLine(Line("}").TrimEnd());
                     }
@@ -1640,7 +1640,7 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
                         sb.AppendLine(Line("finally").TrimEnd());
                         sb.AppendLine(Line("{").TrimEnd());
                         IncreaseIndent();
-                        GenerateStatements(sb, tryCatch.FinallyStatements);
+                        GenerateStatements(sb, tryCatch.FinallyStatements.Statements);
                         DecreaseIndent();
                         sb.AppendLine(Line("}").TrimEnd());
                     }
@@ -1650,14 +1650,14 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.CSharp
                     if (usingStmt.IsDeclaration)
                     {
                         sb.AppendLine(Line($"using {usingStmt.Resource};").TrimEnd());
-                        GenerateStatements(sb, usingStmt.Body);
+                        GenerateStatements(sb, usingStmt.Body.Statements);
                     }
                     else
                     {
                         sb.AppendLine(Line($"using ({usingStmt.Resource})").TrimEnd());
                         sb.AppendLine(Line("{").TrimEnd());
                         IncreaseIndent();
-                        GenerateStatements(sb, usingStmt.Body);
+                        GenerateStatements(sb, usingStmt.Body.Statements);
                         DecreaseIndent();
                         sb.AppendLine(Line("}").TrimEnd());
                     }

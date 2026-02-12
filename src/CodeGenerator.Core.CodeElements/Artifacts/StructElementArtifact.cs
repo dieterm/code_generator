@@ -22,19 +22,40 @@ public class StructElementArtifact : CodeElementArtifactBase<StructElement>
     public bool IsRecord
     {
         get => CodeElement.IsRecord;
-        set => CodeElement.IsRecord = value;
+        set
+        {
+            if (CodeElement.IsRecord != value)
+            {
+                CodeElement.IsRecord = value;
+                RaisePropertyChangedEvent(nameof(IsRecord));
+            }
+        }
     }
 
     public bool IsReadonly
     {
         get => CodeElement.IsReadonly;
-        set => CodeElement.IsReadonly = value;
+        set
+        {
+            if (CodeElement.IsReadonly != value)
+            {
+                CodeElement.IsReadonly = value;
+                RaisePropertyChangedEvent(nameof(IsReadonly));
+            }
+        }
     }
 
     public bool IsRef
     {
         get => CodeElement.IsRef;
-        set => CodeElement.IsRef = value;
+        set
+        {
+            if (CodeElement.IsRef != value)
+            {
+                CodeElement.IsRef = value;
+                RaisePropertyChangedEvent(nameof(IsRef));
+            }
+        }
     }
 
     public FieldsContainerArtifact Fields => Children.OfType<FieldsContainerArtifact>().Single();

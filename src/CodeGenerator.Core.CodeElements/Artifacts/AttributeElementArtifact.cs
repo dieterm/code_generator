@@ -11,12 +11,15 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
 
         public string AttributeName
         {
-            get => CodeElement.AttributeName;
+            get { return CodeElement.AttributeName; }
             set
             {
-                CodeElement.AttributeName = value;
-                RaisePropertyChangedEvent(nameof(AttributeName));
-                RaisePropertyChangedEvent(nameof(TreeNodeText));
+                if (CodeElement.AttributeName != value)
+                {
+                    CodeElement.AttributeName = value;
+                    RaisePropertyChangedEvent(nameof(AttributeName));
+                    RaisePropertyChangedEvent(nameof(TreeNodeText));
+                }
             }
         }
 
@@ -27,9 +30,18 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
         /// </summary>
         public AttributeTarget Target
         {
-            get => CodeElement.Target;
-            set => CodeElement.Target = value;
+            get { return CodeElement.Target; }
+            set
+            {
+                if (CodeElement.Target != value)
+                {
+                    CodeElement.Target = value;
+                    RaisePropertyChangedEvent(nameof(Target));
+                }
+            }
         }
+
+
 
         public List<string> Arguments => CodeElement.Arguments;
 

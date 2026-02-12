@@ -23,6 +23,6 @@ namespace CodeGenerator.Domain.CodeElements
         /// <summary>
         /// Catch block statements
         /// </summary>
-        public List<StatementElement> Statements { get; set; } = new();
+        public CompositeStatement Statements { get; set; } = new();
     }
 }

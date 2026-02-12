@@ -6,10 +6,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts.Statements
     {
         public SwitchCaseArtifact(SwitchCase statement) : base(statement)
         {
-            foreach (var child in statement.Statements)
-            {
-                AddChild(StatementArtifactFactory.Create(child));
-            }
+            AddChild(new CompositeStatementArtifact(StatementElement.Statements, true) { Name = nameof(Statements) });
         }
 
         public List<string> Labels => StatementElement.Labels;
@@ -40,6 +37,6 @@ namespace CodeGenerator.Core.CodeElements.Artifacts.Statements
             }
         }
 
-        public List<StatementElement> Statements => StatementElement.Statements;
+        public CompositeStatement Statements => StatementElement.Statements;
     }
 }

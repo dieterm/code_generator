@@ -10,13 +10,27 @@ public class FieldElementArtifact : CodeElementArtifactBase<FieldElement>
 
     public string TypeName
     {
-        get => CodeElement.Type.TypeName;
-        set => CodeElement.Type.TypeName = value;
+        get { return CodeElement.Type.TypeName; }
+        set
+        {
+            if (CodeElement.Type.TypeName != value)
+            {
+                CodeElement.Type.TypeName = value;
+                RaisePropertyChangedEvent(nameof(TypeName));
+            }
+        }
     }
 
     public string? InitialValue
     {
-        get => CodeElement.InitialValue;
-        set => CodeElement.InitialValue = value;
+        get { return CodeElement.InitialValue; }
+        set
+        {
+            if (CodeElement.InitialValue != value)
+            {
+                CodeElement.InitialValue = value;
+                RaisePropertyChangedEvent(nameof(InitialValue));
+            }
+        }
     }
 }

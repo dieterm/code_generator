@@ -79,10 +79,7 @@ namespace CodeGenerator.Core.CodeElements.Controllers
         }
         public void ShowCodeElementsTreeView()
         {
-            //_treeViewController.Sho
-            _treeViewController.TreeViewModel.RootArtifact = new CodeFileElementArtifact(new CodeFileElement("Example", CSharpLanguage.Instance));
-            //_treeViewModel.RootArtifact = new CodeFileElementArtifact(new CodeFileElement("Example", CSharpLanguage.Instance));
-            _windowManagerService.ShowCodeElementsTreeView(_treeViewController.TreeViewModel);
+            _treeViewController.ShowNewCodeFileElementTreeView("Example", CSharpLanguage.Instance);
         }
 
         public void ShowCodeElements()

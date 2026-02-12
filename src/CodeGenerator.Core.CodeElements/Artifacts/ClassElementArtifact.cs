@@ -23,8 +23,15 @@ public class ClassElementArtifact : CodeElementArtifactBase<ClassElement>
 
     public bool IsRecord
     {
-        get => CodeElement.IsRecord;
-        set => CodeElement.IsRecord = value;
+        get { return CodeElement.IsRecord; }
+        set
+        {
+            if (CodeElement.IsRecord != value)
+            {
+                CodeElement.IsRecord = value;
+                RaisePropertyChangedEvent(nameof(IsRecord));
+            }
+        }
     }
 
     public FieldsContainerArtifact Fields => Children.OfType<FieldsContainerArtifact>().Single();

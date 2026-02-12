@@ -8,25 +8,55 @@ using System.ComponentModel;
 namespace CodeGenerator.Core.CodeElements.ViewModels;
 
 /// <summary>
-/// Base ViewModel for editing CodeElementArtifactBase properties.
+/// Non-generic base ViewModel for editing CodeElementArtifactBase properties.
+/// Provides Name, AccessModifier, Modifiers, Documentation and RawCode fields.
+/// Used by CodeElementEditView to avoid generic covariance issues.
+/// </summary>
+public abstract class CodeElementEditViewModel : ViewModelBase
+{
+    public SingleLineTextFieldModel NameField { get; }
+    public ComboboxFieldModel AccessModifierField { get; }
+    public MultiSelectFieldModel ModifiersField { get; }
+    public SingleLineTextFieldModel DocumentationField { get; }
+    public SingleLineTextFieldModel RawCodeField { get; }
+
+    protected CodeElementEditViewModel()
+    {
+        NameField = new SingleLineTextFieldModel { Label = "Name", Name = nameof(CodeElementArtifactBase.Name) };
+        AccessModifierField = new ComboboxFieldModel { Label = "Access Modifier", Name = "AccessModifier" };
+        ModifiersField = new MultiSelectFieldModel { Label = "Modifiers", Name = "Modifiers" };
+        DocumentationField = new SingleLineTextFieldModel { Label = "Documentation", Name = "Documentation" };
+        RawCodeField = new SingleLineTextFieldModel { Label = "Raw Code", Name = "RawCode" };
+
+        InitializeAccessModifierItems();
+        InitializeModifiersItems();
+    }
+
+    private void InitializeAccessModifierItems()
+    {
+        var items = new List<ComboboxItem>();
+        foreach (var modifier in Enum.GetValues<AccessModifier>())
+            items.Add(new ComboboxItem { DisplayName = modifier.ToString(), Value = modifier });
+        AccessModifierField.Items = items;
+    }
+
+    private void InitializeModifiersItems()
+    {
+        ModifiersField.LoadFromFlagsEnum(ElementModifiers.None);
+    }
+}
+
+/// <summary>
+/// Generic ViewModel for editing CodeElementArtifactBase properties.
 /// Provides Name, AccessModifier, Modifiers, Documentation and RawCode fields.
 /// </summary>
-public class CodeElementEditViewModel<T> : ViewModelBase where T : CodeElement
+public class CodeElementEditViewModel<T> : CodeElementEditViewModel where T : CodeElement
 {
     private CodeElementArtifactBase<T>? _baseArtifact;
     protected bool _isLoading;
 
     public CodeElementEditViewModel()
     {
-        NameField = new SingleLineTextFieldModel { Label = "Name", Name = nameof(CodeElementArtifactBase.Name) };
-        AccessModifierField = new ComboboxFieldModel { Label = "Access Modifier", Name = nameof(CodeElementArtifactBase<T>.AccessModifier) };
-        ModifiersField = new MultiSelectFieldModel { Label = "Modifiers", Name = nameof(CodeElementArtifactBase<T>.Modifiers) };
-        DocumentationField = new SingleLineTextFieldModel { Label = "Documentation", Name = nameof(CodeElementArtifactBase<T>.Documentation) };
-        RawCodeField = new SingleLineTextFieldModel { Label = "Raw Code", Name = nameof(CodeElementArtifactBase<T>.RawCode) };
-
-        InitializeAccessModifierItems();
-        InitializeModifiersItems();
-
         NameField.PropertyChanged += OnFieldChanged;
         AccessModifierField.PropertyChanged += OnComboboxFieldChanged;
         ModifiersField.PropertyChanged += OnMultiSelectFieldChanged;
@@ -39,12 +69,6 @@ public class CodeElementEditViewModel<T> : ViewModelBase where T : CodeElement
     /// that sets this via SetBaseArtifact.
     /// </summary>
     protected CodeElementArtifactBase? BaseArtifact => _baseArtifact;
-
-    public SingleLineTextFieldModel NameField { get; }
-    public ComboboxFieldModel AccessModifierField { get; }
-    public MultiSelectFieldModel ModifiersField { get; }
-    public SingleLineTextFieldModel DocumentationField { get; }
-    public SingleLineTextFieldModel RawCodeField { get; }
 
     public event EventHandler<ArtifactPropertyChangedEventArgs>? ValueChanged;
 
@@ -67,19 +91,6 @@ public class CodeElementEditViewModel<T> : ViewModelBase where T : CodeElement
 
         if (_baseArtifact != null)
             _baseArtifact.PropertyChanged += BaseArtifact_PropertyChanged;
-    }
-
-    private void InitializeAccessModifierItems()
-    {
-        var items = new List<ComboboxItem>();
-        foreach (var modifier in Enum.GetValues<AccessModifier>())
-            items.Add(new ComboboxItem { DisplayName = modifier.ToString(), Value = modifier });
-        AccessModifierField.Items = items;
-    }
-
-    private void InitializeModifiersItems()
-    {
-        ModifiersField.LoadFromFlagsEnum(ElementModifiers.None);
     }
 
     private void BaseArtifact_PropertyChanged(object? sender, PropertyChangedEventArgs e)

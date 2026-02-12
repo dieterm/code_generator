@@ -7,6 +7,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts;
 
 public class CodeFileElementArtifact : CodeElementArtifactBase<CodeFileElement>
 {
+
     public CodeFileElementArtifact(CodeFileElement codeFileElement)
         : base(codeFileElement)
     {
@@ -27,9 +28,17 @@ public class CodeFileElementArtifact : CodeElementArtifactBase<CodeFileElement>
     /// <summary>
     /// SingleLineTextField
     /// </summary>
-    public string? FileHeader { 
-        get => CodeElement.FileHeader; 
-        set => CodeElement.FileHeader = value; 
+    public string? FileHeader
+    {
+        get { return CodeElement.FileHeader; }
+        set
+        {
+            if (CodeElement.FileHeader != value)
+            {
+                CodeElement.FileHeader = value;
+                RaisePropertyChangedEvent(nameof(FileHeader));
+            }
+        }
     }
     /// <summary>
     /// ignore
@@ -42,8 +51,15 @@ public class CodeFileElementArtifact : CodeElementArtifactBase<CodeFileElement>
     /// </summary>
     public bool? NullableContext
     {
-        get => CodeElement.NullableContext;
-        set => CodeElement.NullableContext = value;
+        get { return CodeElement.NullableContext; }
+        set
+        {
+            if (CodeElement.NullableContext != value)
+            {
+                CodeElement.NullableContext = value;
+                RaisePropertyChangedEvent(nameof(NullableContext));
+            }
+        }
     }
 
     /// <summary>
@@ -51,8 +67,15 @@ public class CodeFileElementArtifact : CodeElementArtifactBase<CodeFileElement>
     /// </summary>
     public bool UseImplicitUsings
     {
-        get => CodeElement.UseImplicitUsings;
-        set => CodeElement.UseImplicitUsings = value;
+        get { return CodeElement.UseImplicitUsings; }
+        set
+        {
+            if (CodeElement.UseImplicitUsings != value)
+            {
+                CodeElement.UseImplicitUsings = value;
+                RaisePropertyChangedEvent(nameof(UseImplicitUsings));
+            }
+        }
     }
 
     /// <summary>
@@ -61,8 +84,15 @@ public class CodeFileElementArtifact : CodeElementArtifactBase<CodeFileElement>
     /// </summary>
     public ProgrammingLanguage Language
     {
-        get => CodeElement.Language;
-        set => CodeElement.Language = value;
+        get { return CodeElement.Language; }
+        set
+        {
+            if (CodeElement.Language != value)
+            {
+                CodeElement.Language = value;
+                RaisePropertyChangedEvent(nameof(Language));
+            }
+        }
     }
 
     public CodeFileUsingsContainerArtifact Usings => Children.OfType<CodeFileUsingsContainerArtifact>().Single();

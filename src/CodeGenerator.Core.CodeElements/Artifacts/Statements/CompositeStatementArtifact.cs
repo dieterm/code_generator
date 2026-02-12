@@ -10,10 +10,11 @@ namespace CodeGenerator.Core.CodeElements.Artifacts.Statements
 {
     public class CompositeStatementArtifact : StatementArtifactBase<CompositeStatement>
     {
-        public CompositeStatementArtifact(CompositeStatement codeElement) : base(codeElement)
+        public bool IsReadOnly { get; private set; }
+        public CompositeStatementArtifact(CompositeStatement codeElement, bool isReadOnly) : base(codeElement)
         {
-
-            foreach(var statement in codeElement.Statements)
+            IsReadOnly = isReadOnly;
+            foreach (var statement in codeElement.Statements)
             {
                 AddChild(StatementArtifactFactory.Create(statement));
             }

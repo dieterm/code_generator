@@ -1,4 +1,5 @@
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.CodeElements.Artifacts.Statements;
 using CodeGenerator.Domain.CodeElements;
 
 namespace CodeGenerator.Core.CodeElements.Artifacts;
@@ -8,34 +9,63 @@ public class MethodElementArtifact : CodeElementArtifactBase<MethodElement>
     public MethodElementArtifact(MethodElement methodElement) : base(methodElement)
     {
         AddChild(new ParametersContainerArtifact(methodElement.Parameters));
+        AddChild(new CompositeStatementArtifact(methodElement.Body, true) { Name = nameof(Body) });
     }
 
     public MethodElementArtifact(ArtifactState artifactState) : base(artifactState) { }
 
     public string ReturnTypeName
     {
-        get => CodeElement.ReturnType.TypeName;
-        set => CodeElement.ReturnType.TypeName = value;
+        get { return CodeElement.ReturnType.TypeName; }
+        set
+        {
+            if (CodeElement.ReturnType.TypeName != value)
+            {
+                CodeElement.ReturnType.TypeName = value;
+                RaisePropertyChangedEvent(nameof(ReturnTypeName));
+            }
+        }
     }
 
     public CompositeStatement Body => CodeElement.Body;
 
     public bool IsExpressionBodied
     {
-        get => CodeElement.IsExpressionBodied;
-        set => CodeElement.IsExpressionBodied = value;
+        get { return CodeElement.IsExpressionBodied; }
+        set
+        {
+            if (CodeElement.IsExpressionBodied != value)
+            {
+                CodeElement.IsExpressionBodied = value;
+                RaisePropertyChangedEvent(nameof(IsExpressionBodied));
+            }
+        }
     }
 
     public string? ExpressionBody
     {
-        get => CodeElement.ExpressionBody;
-        set => CodeElement.ExpressionBody = value;
+        get { return CodeElement.ExpressionBody; }
+        set
+        {
+            if (CodeElement.ExpressionBody != value)
+            {
+                CodeElement.ExpressionBody = value;
+                RaisePropertyChangedEvent(nameof(ExpressionBody));
+            }
+        }
     }
 
     public bool IsExtensionMethod
     {
-        get => CodeElement.IsExtensionMethod;
-        set => CodeElement.IsExtensionMethod = value;
+        get { return CodeElement.IsExtensionMethod; }
+        set
+        {
+            if (CodeElement.IsExtensionMethod != value)
+            {
+                CodeElement.IsExtensionMethod = value;
+                RaisePropertyChangedEvent(nameof(IsExtensionMethod));
+            }
+        }
     }
 
     public ParametersContainerArtifact Parameters => Children.OfType<ParametersContainerArtifact>().Single();

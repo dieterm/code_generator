@@ -1,6 +1,7 @@
 ﻿using CodeGenerator.Application.Controllers.CodeElements;
 using CodeGenerator.Application.Controllers.Copilot;
 using CodeGenerator.Core.CodeElements.Controllers;
+using CodeGenerator.Core.CodeElements.Controllers.Statements;
 using CodeGenerator.Core.CodeElements.ViewModels;
 using CodeGenerator.Core.CodeElements.ViewModels.Statements;
 using CodeGenerator.Core.CodeElements.Views;
@@ -60,7 +61,26 @@ namespace CodeGenerator.Core.CodeElements
             services.AddSingleton<ICodeElementArtifactController, IndexerElementArtifactController>();
             services.AddSingleton<ICodeElementArtifactController, OperatorsContainerArtifactController>();
             services.AddSingleton<ICodeElementArtifactController, OperatorElementArtifactController>();
-
+            
+            // Statement controllers
+            services.AddSingleton<ICodeElementArtifactController, CompositeStatementArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, AssignmentStatementArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, CatchBlockArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, CommentStatementArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, ElseIfBranchArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, ForEachStatementArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, ForStatementArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, IfStatementArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, RawStatementArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, ReturnStatementArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, SwitchCaseArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, SwitchStatementArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, ThrowStatementArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, TryCatchStatementArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, UsingStatementArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, WhileStatementArtifactController>();
+            
+            // Views
             services.AddTransient<IView<CodeElementArtifactDetailsViewModel>, CodeElementArtifactDetailsView>();
             
             // ViewModels
@@ -73,6 +93,7 @@ namespace CodeGenerator.Core.CodeElements
             services.AddTransient<IView<ClassElementEditViewModel>, ClassElementEditView>();
             services.AddTransient<IView<DelegateElementEditViewModel>, DelegateElementEditView>();
             services.AddTransient<IView<EnumElementEditViewModel>, EnumElementEditView>();
+            services.AddTransient<IView<EnumMemberElementEditViewModel>, EnumMemberElementEditView>();
             services.AddTransient<IView<InterfaceElementEditViewModel>, InterfaceElementEditView>();
             services.AddTransient<IView<NamespaceElementEditViewModel>, NamespaceElementEditView>();
             services.AddTransient<IView<StructElementEditViewModel>, StructElementEditView>();

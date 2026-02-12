@@ -10,8 +10,15 @@ public class EnumMemberElementArtifact : CodeElementArtifactBase<EnumMemberEleme
 
     public object? Value
     {
-        get => CodeElement.Value;
-        set => CodeElement.Value = value;
+        get { return CodeElement.Value; }
+        set
+        {
+            if (!Equals(CodeElement.Value, value))
+            {
+                CodeElement.Value = value;
+                RaisePropertyChangedEvent(nameof(Value));
+            }
+        }
     }
 
     public bool HasExplicitValue => CodeElement.HasExplicitValue;

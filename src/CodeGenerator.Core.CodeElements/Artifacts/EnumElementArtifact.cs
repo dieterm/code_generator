@@ -17,8 +17,15 @@ public class EnumElementArtifact : CodeElementArtifactBase<EnumElement>
 
     public bool IsFlags
     {
-        get => CodeElement.IsFlags;
-        set => CodeElement.IsFlags = value;
+        get { return CodeElement.IsFlags; }
+        set
+        {
+            if (CodeElement.IsFlags != value)
+            {
+                CodeElement.IsFlags = value;
+                RaisePropertyChangedEvent(nameof(IsFlags));
+            }
+        }
     }
 
     public EnumMembersContainerArtifact Members => Children.OfType<EnumMembersContainerArtifact>().Single();

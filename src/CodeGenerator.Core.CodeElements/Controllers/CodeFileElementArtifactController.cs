@@ -34,7 +34,23 @@ namespace CodeGenerator.Core.CodeElements.Controllers
                 Id = "show_code_output",
                 Text = "Show Code Output",
                 IconKey = "braces",
-                Execute = async (a) => await ShowCodeOutputAsync(artifact)
+                Execute = (a) => { TreeViewController.ShowCodeOutputAsync(artifact); return Task.CompletedTask; }
+            });
+
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
+            {
+                Id = "show_generation_code_output",
+                Text = "Show Generation Code Output",
+                IconKey = "braces",
+                Execute = (a) => { TreeViewController.ShowGenerationCodeOutputAsync(artifact); return Task.CompletedTask; }
+            });
+
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
+            {
+                Id = "parse_code_file",
+                Text = "Parse Code File",
+                IconKey = "braces",
+                Execute = (a) => { TreeViewController.ParseCodeFileAsync(artifact); return Task.CompletedTask; }
             });
 
             // Rename command
@@ -62,14 +78,7 @@ namespace CodeGenerator.Core.CodeElements.Controllers
             return commands;
         }
 
-        private async Task ShowCodeOutputAsync(CodeFileElementArtifact artifact)
-        {
-            if (artifact.Language == null) return;
-            var generator = ProgrammingLanguageCodeGenerators.GetGenerator(artifact.Language);
-            if (generator == null) return;
-            var code = generator.GenerateCodeFile(artifact.CodeElement);
-            _codeElementsController.ShowCodeElementsEditor(code, artifact.Language);
-        }
+        
 
         protected override Task OnSelectedInternalAsync(CodeFileElementArtifact artifact, CancellationToken cancellationToken)
         {

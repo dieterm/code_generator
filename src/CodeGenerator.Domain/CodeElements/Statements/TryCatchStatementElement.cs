@@ -8,7 +8,7 @@ namespace CodeGenerator.Domain.CodeElements
         /// <summary>
         /// Try block statements
         /// </summary>
-        public List<StatementElement> TryStatements { get; set; } = new();
+        public CompositeStatement TryStatements { get; set; } = new();
 
         /// <summary>
         /// Catch blocks
@@ -18,11 +18,11 @@ namespace CodeGenerator.Domain.CodeElements
         /// <summary>
         /// Finally block statements
         /// </summary>
-        public List<StatementElement> FinallyStatements { get; set; } = new();
+        public CompositeStatement FinallyStatements { get; set; } = new();
 
         /// <summary>
         /// Whether there is a finally block
         /// </summary>
-        public bool HasFinally => FinallyStatements.Count > 0;
+        public bool HasFinally => FinallyStatements.Statements.Count > 0;
     }
 }

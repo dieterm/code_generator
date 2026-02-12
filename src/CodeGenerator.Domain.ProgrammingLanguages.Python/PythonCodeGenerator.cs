@@ -1135,8 +1135,8 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.Python
                 case IfStatementElement ifStmt:
                     sb.AppendLine(Line($"if {ifStmt.Condition}:").TrimEnd());
                     IncreaseIndent();
-                    if (ifStmt.ThenStatements.Count > 0)
-                        GenerateStatements(sb, ifStmt.ThenStatements);
+                    if (ifStmt.ThenStatements.Statements.Count > 0)
+                        GenerateStatements(sb, ifStmt.ThenStatements.Statements);
                     else
                         sb.AppendLine(Line("pass").TrimEnd());
                     DecreaseIndent();
@@ -1145,18 +1145,18 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.Python
                     {
                         sb.AppendLine(Line($"elif {elseIf.Condition}:").TrimEnd());
                         IncreaseIndent();
-                        if (elseIf.Statements.Count > 0)
-                            GenerateStatements(sb, elseIf.Statements);
+                        if (elseIf.Statements.Statements.Count > 0)
+                            GenerateStatements(sb, elseIf.Statements.Statements);
                         else
                             sb.AppendLine(Line("pass").TrimEnd());
                         DecreaseIndent();
                     }
 
-                    if (ifStmt.ElseStatements.Count > 0)
+                    if (ifStmt.ElseStatements.Statements.Count > 0)
                     {
                         sb.AppendLine(Line("else:").TrimEnd());
                         IncreaseIndent();
-                        GenerateStatements(sb, ifStmt.ElseStatements);
+                        GenerateStatements(sb, ifStmt.ElseStatements.Statements);
                         DecreaseIndent();
                     }
                     break;
@@ -1166,8 +1166,8 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.Python
                     sb.AppendLine(Line($"# for ({forStmt.Initializer}; {forStmt.Condition}; {forStmt.Incrementer})").TrimEnd());
                     sb.AppendLine(Line($"while {forStmt.Condition ?? "True"}:").TrimEnd());
                     IncreaseIndent();
-                    if (forStmt.Body.Count > 0)
-                        GenerateStatements(sb, forStmt.Body);
+                    if (forStmt.Body.Statements.Count > 0)
+                        GenerateStatements(sb, forStmt.Body.Statements);
                     else
                         sb.AppendLine(Line("pass").TrimEnd());
                     if (!string.IsNullOrEmpty(forStmt.Incrementer))
@@ -1178,8 +1178,8 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.Python
                 case ForEachStatementElement forEachStmt:
                     sb.AppendLine(Line($"for {forEachStmt.VariableName} in {forEachStmt.Collection}:").TrimEnd());
                     IncreaseIndent();
-                    if (forEachStmt.Body.Count > 0)
-                        GenerateStatements(sb, forEachStmt.Body);
+                    if (forEachStmt.Body.Statements.Count > 0)
+                        GenerateStatements(sb, forEachStmt.Body.Statements);
                     else
                         sb.AppendLine(Line("pass").TrimEnd());
                     DecreaseIndent();
@@ -1188,8 +1188,8 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.Python
                 case WhileStatementElement whileStmt:
                     sb.AppendLine(Line($"while {whileStmt.Condition}:").TrimEnd());
                     IncreaseIndent();
-                    if (whileStmt.Body.Count > 0)
-                        GenerateStatements(sb, whileStmt.Body);
+                    if (whileStmt.Body.Statements.Count > 0)
+                        GenerateStatements(sb, whileStmt.Body.Statements);
                     else
                         sb.AppendLine(Line("pass").TrimEnd());
                     DecreaseIndent();
@@ -1206,17 +1206,17 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.Python
                             : caseBlock.Pattern ?? "_";
                         sb.AppendLine(Line($"case {caseLabel}:").TrimEnd());
                         IncreaseIndent();
-                        if (caseBlock.Statements.Count > 0)
-                            GenerateStatements(sb, caseBlock.Statements);
+                        if (caseBlock.Statements.Statements.Count > 0)
+                            GenerateStatements(sb, caseBlock.Statements.Statements);
                         else
                             sb.AppendLine(Line("pass").TrimEnd());
                         DecreaseIndent();
                     }
-                    if (switchStmt.DefaultStatements.Count > 0)
+                    if (switchStmt.DefaultStatements.Statements.Count > 0)
                     {
                         sb.AppendLine(Line("case _:").TrimEnd());
                         IncreaseIndent();
-                        GenerateStatements(sb, switchStmt.DefaultStatements);
+                        GenerateStatements(sb, switchStmt.DefaultStatements.Statements);
                         DecreaseIndent();
                     }
                     DecreaseIndent();
@@ -1225,8 +1225,8 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.Python
                 case TryCatchStatementElement tryCatch:
                     sb.AppendLine(Line("try:").TrimEnd());
                     IncreaseIndent();
-                    if (tryCatch.TryStatements.Count > 0)
-                        GenerateStatements(sb, tryCatch.TryStatements);
+                    if (tryCatch.TryStatements.Statements.Count > 0)
+                        GenerateStatements(sb, tryCatch.TryStatements.Statements);
                     else
                         sb.AppendLine(Line("pass").TrimEnd());
                     DecreaseIndent();
@@ -1243,8 +1243,8 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.Python
                         exceptLine.Append(':');
                         sb.AppendLine(Line(exceptLine.ToString()).TrimEnd());
                         IncreaseIndent();
-                        if (catchBlock.Statements.Count > 0)
-                            GenerateStatements(sb, catchBlock.Statements);
+                        if (catchBlock.Statements.Statements.Count > 0)
+                            GenerateStatements(sb, catchBlock.Statements.Statements);
                         else
                             sb.AppendLine(Line("pass").TrimEnd());
                         DecreaseIndent();
@@ -1254,7 +1254,7 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.Python
                     {
                         sb.AppendLine(Line("finally:").TrimEnd());
                         IncreaseIndent();
-                        GenerateStatements(sb, tryCatch.FinallyStatements);
+                        GenerateStatements(sb, tryCatch.FinallyStatements.Statements);
                         DecreaseIndent();
                     }
                     break;
@@ -1263,8 +1263,8 @@ namespace CodeGenerator.Domain.ProgrammingLanguages.Python
                     // Python 'with' statement
                     sb.AppendLine(Line($"with {usingStmt.Resource}:").TrimEnd());
                     IncreaseIndent();
-                    if (usingStmt.Body.Count > 0)
-                        GenerateStatements(sb, usingStmt.Body);
+                    if (usingStmt.Body.Statements.Count > 0)
+                        GenerateStatements(sb, usingStmt.Body.Statements);
                     else
                         sb.AppendLine(Line("pass").TrimEnd());
                     DecreaseIndent();

@@ -6,10 +6,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts.Statements
     {
         public CatchBlockArtifact(CatchBlock statement) : base(statement)
         {
-            foreach (var child in statement.Statements)
-            {
-                AddChild(StatementArtifactFactory.Create(child));
-            }
+            AddChild(new CompositeStatementArtifact(statement.Statements, true) { Name = nameof(Statements) });
         }
 
         public TypeReference? ExceptionType
@@ -51,6 +48,6 @@ namespace CodeGenerator.Core.CodeElements.Artifacts.Statements
             }
         }
 
-        public List<StatementElement> Statements => StatementElement.Statements;
+        public CompositeStatement Statements => StatementElement.Statements;
     }
 }

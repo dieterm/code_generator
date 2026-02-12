@@ -24,9 +24,17 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
         /// <summary>
         /// BooleanField
         /// </summary>
-        public bool IsGlobal { 
-            get { return CodeElement.IsGlobal; } 
-            set { CodeElement.IsGlobal = value; } 
+        public bool IsGlobal
+        {
+            get { return CodeElement.IsGlobal; }
+            set
+            {
+                if (CodeElement.IsGlobal != value)
+                {
+                    CodeElement.IsGlobal = value;
+                    RaisePropertyChangedEvent(nameof(IsGlobal));
+                }
+            }
         }
 
         /// <summary>
@@ -35,7 +43,14 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
         public string Namespace
         {
             get { return CodeElement.Namespace; }
-            set { CodeElement.Namespace = value; }
+            set
+            {
+                if (CodeElement.Namespace != value)
+                {
+                    CodeElement.Namespace = value;
+                    RaisePropertyChangedEvent(nameof(Namespace));
+                }
+            }
         }
 
         /// <summary>
@@ -44,7 +59,14 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
         public string? Alias
         {
             get { return CodeElement.Alias; }
-            set { CodeElement.Alias = value; }
+            set
+            {
+                if (CodeElement.Alias != value)
+                {
+                    CodeElement.Alias = value;
+                    RaisePropertyChangedEvent(nameof(Alias));
+                }
+            }
         }
 
 

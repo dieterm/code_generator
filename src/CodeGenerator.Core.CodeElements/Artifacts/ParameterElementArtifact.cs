@@ -10,25 +10,53 @@ public class ParameterElementArtifact : CodeElementArtifactBase<ParameterElement
 
     public string TypeName
     {
-        get => CodeElement.Type.TypeName;
-        set => CodeElement.Type.TypeName = value;
+        get { return CodeElement.Type.TypeName; }
+        set
+        {
+            if (CodeElement.Type.TypeName != value)
+            {
+                CodeElement.Type.TypeName = value;
+                RaisePropertyChangedEvent(nameof(TypeName));
+            }
+        }
     }
 
     public ParameterModifier Modifier
     {
-        get => CodeElement.Modifier;
-        set => CodeElement.Modifier = value;
+        get { return CodeElement.Modifier; }
+        set
+        {
+            if (CodeElement.Modifier != value)
+            {
+                CodeElement.Modifier = value;
+                RaisePropertyChangedEvent(nameof(Modifier));
+            }
+        }
     }
 
     public string? DefaultValue
     {
-        get => CodeElement.DefaultValue;
-        set => CodeElement.DefaultValue = value;
+        get { return CodeElement.DefaultValue; }
+        set
+        {
+            if (CodeElement.DefaultValue != value)
+            {
+                CodeElement.DefaultValue = value;
+                RaisePropertyChangedEvent(nameof(DefaultValue));
+            }
+        }
     }
 
     public bool IsExtensionMethodThis
     {
-        get => CodeElement.IsExtensionMethodThis;
-        set => CodeElement.IsExtensionMethodThis = value;
+        get { return CodeElement.IsExtensionMethodThis; }
+        set
+        {
+            if (CodeElement.IsExtensionMethodThis != value)
+            {
+                CodeElement.IsExtensionMethodThis = value;
+                RaisePropertyChangedEvent(nameof(IsExtensionMethodThis));
+            }
+        }
     }
 }

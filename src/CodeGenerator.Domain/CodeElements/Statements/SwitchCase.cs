@@ -23,6 +23,6 @@ namespace CodeGenerator.Domain.CodeElements
         /// <summary>
         /// Case statements
         /// </summary>
-        public List<StatementElement> Statements { get; set; } = new();
+        public CompositeStatement Statements { get; set; } = new();
     }
 }

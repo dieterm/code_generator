@@ -10,13 +10,27 @@ public class EventElementArtifact : CodeElementArtifactBase<EventElement>
 
     public string TypeName
     {
-        get => CodeElement.Type.TypeName;
-        set => CodeElement.Type.TypeName = value;
+        get { return CodeElement.Type.TypeName; }
+        set
+        {
+            if (CodeElement.Type.TypeName != value)
+            {
+                CodeElement.Type.TypeName = value;
+                RaisePropertyChangedEvent(nameof(TypeName));
+            }
+        }
     }
 
     public bool IsFieldLike
     {
-        get => CodeElement.IsFieldLike;
-        set => CodeElement.IsFieldLike = value;
+        get { return CodeElement.IsFieldLike; }
+        set
+        {
+            if (CodeElement.IsFieldLike != value)
+            {
+                CodeElement.IsFieldLike = value;
+                RaisePropertyChangedEvent(nameof(IsFieldLike));
+            }
+        }
     }
 }

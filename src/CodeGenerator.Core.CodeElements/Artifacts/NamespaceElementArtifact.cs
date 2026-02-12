@@ -29,8 +29,15 @@ public class NamespaceElementArtifact : CodeElementArtifactBase<NamespaceElement
 
     public bool IsFileScoped
     {
-        get => CodeElement.IsFileScoped;
-        set => CodeElement.IsFileScoped = value;
+        get { return CodeElement.IsFileScoped; }
+        set
+        {
+            if (CodeElement.IsFileScoped != value)
+            {
+                CodeElement.IsFileScoped = value;
+                RaisePropertyChangedEvent(nameof(IsFileScoped));
+            }
+        }
     }
 
     public TypesContainerArtifact Types => Children.OfType<TypesContainerArtifact>().Single();

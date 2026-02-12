@@ -6,10 +6,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts.Statements
     {
         public WhileStatementArtifact(WhileStatementElement statement) : base(statement)
         {
-            foreach (var child in statement.Body)
-            {
-                AddChild(StatementArtifactFactory.Create(child));
-            }
+            AddChild(new CompositeStatementArtifact(statement.Body, true) { Name = nameof(Body) });
         }
 
         public string Condition
@@ -25,6 +22,6 @@ namespace CodeGenerator.Core.CodeElements.Artifacts.Statements
             }
         }
 
-        public List<StatementElement> Body => StatementElement.Body;
+        public CompositeStatement Body => StatementElement.Body;
     }
 }

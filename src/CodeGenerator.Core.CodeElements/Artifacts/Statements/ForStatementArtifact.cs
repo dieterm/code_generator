@@ -6,10 +6,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts.Statements
     {
         public ForStatementArtifact(ForStatementElement statement) : base(statement)
         {
-            foreach (var child in statement.Body)
-            {
-                AddChild(StatementArtifactFactory.Create(child));
-            }
+            AddChild(new CompositeStatementArtifact(statement.Body, true) { Name = nameof(Body) });
         }
 
         public string? Initializer
@@ -51,6 +48,6 @@ namespace CodeGenerator.Core.CodeElements.Artifacts.Statements
             }
         }
 
-        public List<StatementElement> Body => StatementElement.Body;
+        public CompositeStatement Body => StatementElement.Body;
     }
 }

@@ -9,7 +9,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts.Statements
         {
             return statementElement switch
             {
-                CompositeStatement composite => new CompositeStatementArtifact(composite),
+                CompositeStatement composite => new CompositeStatementArtifact(composite, false),
                 CommentStatement comment => new CommentStatementArtifact(comment),
                 RawStatementElement raw => new RawStatementArtifact(raw),
                 AssignmentStatement assignment => new AssignmentStatementArtifact(assignment),

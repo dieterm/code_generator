@@ -23,5 +23,15 @@ namespace CodeGenerator.Core.CodeElements.Artifacts.Statements
         {
             throw new NotImplementedException("Deserialization constructor not implemented for StatementArtifactBase");
         }
+
+        public virtual string? RawCode { 
+            get { return StatementElement.RawCode; } 
+            set { 
+                if (StatementElement.RawCode != value) {
+                    StatementElement.RawCode = value;
+                    RaisePropertyChangedEvent(nameof(RawCode));
+                }
+            } 
+        }
     }
 }
