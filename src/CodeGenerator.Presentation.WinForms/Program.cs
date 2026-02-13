@@ -1,6 +1,7 @@
 using CodeGenerator.Application;
 using CodeGenerator.Application.Controllers;
 using CodeGenerator.Application.Services;
+using CodeGenerator.Plugin.Host;
 using CodeGenerator.Presentation.WinForms.Services;
 using CodeGenerator.Shared;
 using Microsoft.Extensions.Configuration;
@@ -52,11 +53,21 @@ namespace CodeGenerator.Presentation.WinForms
             // Configure DI container for all components
             services.AddApplicationServices(configuration);
             services.AddPresentationServices(configuration);
+
+            // Register PluginManager as singleton
+            services.AddSingleton<PluginManager>();
             
             var serviceProvider = services.BuildServiceProvider();
             
             // Store service provider for global access
             ServiceProviderHolder.Initialize(serviceProvider);
+
+            // Wire up PluginViewFactory as fallback for the ViewFactory
+            ViewFactory.PluginViewFactoryFallback = PluginViewFactory.Instance.TryCreateView;
+
+            // Load global plugins (from <app>/Plugins/)
+            var pluginManager = ServiceProviderHolder.GetRequiredService<PluginManager>();
+            pluginManager.LoadGlobalPlugins();
 
             // Get application controller and start
             using (var scope = serviceProvider.CreateScope())
@@ -65,6 +76,9 @@ namespace CodeGenerator.Presentation.WinForms
                 applicationController.Initialize();
                 applicationController.StartApplication();
             }
+
+            // Dispose plugin manager (shuts down all plugins)
+            pluginManager.Dispose();
 
             // Dispose service provider
             if (serviceProvider is IDisposable disposable)

@@ -17,6 +17,7 @@ using CodeGenerator.Core.Workspaces.Operations.Scopes;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.CodeArchitecture;
+using CodeGenerator.Plugin.Host;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Operations;
 using CodeGenerator.Shared.Ribbon;
@@ -45,6 +46,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
         private readonly UndoRedoManager _undoRedoManager;
         private WorkspaceArtifactDetailsViewModel? _workspaceDetailsViewModel;
         private readonly IWorkspaceWindowManagerService _windowManagerService;
+        private readonly PluginManager _pluginManager;
         /// <summary>
         /// The UndoRedoManager for this workspace
         /// </summary>
@@ -60,6 +62,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             RibbonBuilder ribbonBuilder,
             IWorkspaceWindowManagerService windowManagerService,
             IMessageBoxService messageBoxService,
+            PluginManager pluginManager,
             ILogger<WorkspaceTreeViewController> logger)
             : base(operationExecutor, messageBoxService, logger)
         {
@@ -69,6 +72,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             _workspaceFileService = workspaceFileService;
             _templateManager = templateManager;
             _windowManagerService = windowManagerService;
+            _pluginManager = pluginManager;
         }
 
         /// <summary>
@@ -132,6 +136,12 @@ namespace CodeGenerator.Application.Controllers.Workspace
             { 
                 // Set workspace directory on TemplateManager (ensures template folders exist)
                 _templateManager.SetWorkspaceDirectory(CurrentWorkspace.WorkspaceDirectory);
+
+                // Load workspace plugins
+                if (!string.IsNullOrEmpty(CurrentWorkspace.WorkspaceDirectory))
+                {
+                    _pluginManager.LoadWorkspacePlugins(CurrentWorkspace.WorkspaceDirectory);
+                }
             }
             
             ShowWorkspaceTreeView();
@@ -267,6 +277,10 @@ namespace CodeGenerator.Application.Controllers.Workspace
             if (CurrentWorkspace != null)
             {
                 Logger.LogInformation("Closing workspace '{Name}'", CurrentWorkspace.Name);
+
+                // Unload workspace plugins before clearing workspace references
+                _pluginManager.UnloadWorkspacePlugins();
+
                 // Clear workspace directory from TemplateManager
                 _templateManager.SetWorkspaceDirectory(null);
             }

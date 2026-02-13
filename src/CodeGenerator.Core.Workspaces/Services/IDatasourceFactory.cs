@@ -28,6 +28,8 @@ namespace CodeGenerator.Core.Workspaces.Services
         /// Get a specific provider by type identifier
         /// </summary>
         IDatasourceProvider? GetProvider(string typeId);
+        void RegisterProvider(IDatasourceProvider provider);
+        void UnregisterProvider(string typeId);
     }
 
     /// <summary>
