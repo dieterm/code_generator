@@ -1,0 +1,8 @@
+namespace {{ Namespace }};
+
+public class {{ Entity.name }} : EntityBase 
+{
+{{- for propertyArtifact in Entity.entity_properties }}
+	public {{ propertyArtifact.data_type | csharp_type }} {{ propertyArtifact.property_name }} { get; set; }
+{{- end }}
+}

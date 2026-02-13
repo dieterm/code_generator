@@ -69,6 +69,7 @@ public static class ServiceCollectionExtensions
         // Register Generators
         services.AddDotNetWinformsRibbonApplicationGeneratorServices(configuration);
         services.AddDotNetApplicationScopeGeneratorServices(configuration);
+        services.AddDotNetDomainLayerGeneratorServices(configuration);
         // Main form
         services.AddSingleton<MainView>();
         services.AddSingleton<WindowManagerService>((s) => new WindowManagerService(Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<MainView>(s)));

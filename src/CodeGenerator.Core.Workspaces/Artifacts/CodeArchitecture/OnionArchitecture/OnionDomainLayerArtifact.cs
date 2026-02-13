@@ -47,5 +47,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
                  throw new InvalidOperationException($"Domain '{domainName}' not found in scope '{scope.Name}'. Available domains: {string.Join(", ", this.Select(d => d.Name))}");
             return domain;
         }
+
+        
     }
 }

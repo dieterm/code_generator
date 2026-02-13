@@ -10,6 +10,7 @@ using CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Core.Workspaces.ViewModels;
+using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Models;
 using CodeGenerator.Shared.Views.TreeNode;
@@ -106,9 +107,13 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
                     return string.Empty;
 
                 var paremeteraisedString = new ParameterizedString(namespacePattern);
+                
                 var parameters = new Dictionary<string, string>
                 {
                     { DomainArtifact.CONTEXT_PARAMETER_DOMAIN_NAME, Name },
+                    { ScopeArtifact.CONTEXT_PARAMETER_PARENT_SCOPE_NAME, Scope.Name  },
+                    { ScopeArtifact.CONTEXT_PARAMETER_SCOPE_NAMESPACE, Scope.Namespace },
+                    { CodeArchitectureLayerArtifact.CONTEXT_PARAMETER_LAYER_NAME, (Parent as CodeArchitectureLayerArtifact)?.LayerName ?? "?LayerName?" },
                     { WorkspaceArtifact.CONTEXT_PARAMETER_WORKSPACE_ROOT_NAMESPACE, GetWorkspaceRootNamespace() }
                 };
 
@@ -119,7 +124,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
         private string GetWorkspaceRootNamespace()
         {
             var workspaceContext = ServiceProviderHolder.GetRequiredService<IWorkspaceContextProvider>();
-            return workspaceContext.CurrentWorkspace?.RootNamespace ?? "MyCompany.MyProduct";
+            return workspaceContext.CurrentWorkspace?.RootNamespace ?? string.Empty;
         }
 
         /// <summary>

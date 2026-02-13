@@ -33,7 +33,7 @@ namespace CodeGenerator.Core.Workspaces
             services.AddSingleton<WorkspaceFileService>();
 
             // Message bus event handlers
-            services.AddSingleton<IWorkspaceMessageBusSubscriber, WorkspaceArtifactConstructionSubscriber>();
+            //services.AddSingleton<IWorkspaceMessageBusSubscriber, WorkspaceArtifactConstructionSubscriber>();
             
             // Onion architecture layer factories
             services.AddSingleton<IOnionArchitectureLayerFactory, OnionApplicationLayerFactory>();

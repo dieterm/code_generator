@@ -62,6 +62,14 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities
             }
         }
 
+        public EntityArtifact? SourceEntity
+        {
+            get
+            {
+                return Parent?.Parent as EntityArtifact;
+            }
+        }
+
         /// <summary>
         /// The cardinality on the source side (this entity)
         /// </summary>

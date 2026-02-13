@@ -12,6 +12,13 @@ namespace CodeGenerator.Domain.CodeElements
 {
     public class CodeFileArtifact : FileArtifact
     {
+        public CodeFileArtifact(CodeFileElement codeFileElement)
+            : base(codeFileElement.Name)
+        {
+            CodeFile = codeFileElement;
+            FileName = CodeFile.FullFileName;
+            AddDecorator(new TextContentDecorator(TEXT_CONTENT_DECORATOR_KEY)).Generating += CodeFileArtifact_Generating;
+        }
         public CodeFileArtifact(string fileTitle, ProgrammingLanguage programmingLanguage)
             : base(fileTitle)
         {

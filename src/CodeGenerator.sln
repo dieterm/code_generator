@@ -198,6 +198,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core.Artifact
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Domain.ProgrammingLanguages.Python", "CodeGenerator.Domain.ProgrammingLanguages.Python\CodeGenerator.Domain.ProgrammingLanguages.Python.csproj", "{E9B9AD32-23B6-4D8D-A2C9-586F71D5A3EA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Generators.DotNet.DomainLayer", "CodeGenerator.Generators.DotNet.DomainLayer\CodeGenerator.Generators.DotNet.DomainLayer.csproj", "{8ECAA0B4-1778-4854-954F-C7B987A026E0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -395,6 +397,10 @@ Global
 		{E9B9AD32-23B6-4D8D-A2C9-586F71D5A3EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9B9AD32-23B6-4D8D-A2C9-586F71D5A3EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9B9AD32-23B6-4D8D-A2C9-586F71D5A3EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8ECAA0B4-1778-4854-954F-C7B987A026E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8ECAA0B4-1778-4854-954F-C7B987A026E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8ECAA0B4-1778-4854-954F-C7B987A026E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8ECAA0B4-1778-4854-954F-C7B987A026E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -439,6 +445,7 @@ Global
 		{749E5A48-DBB8-43E5-AB88-A7A6EA684F65} = {C07A3E83-0321-4673-AA42-47F3D68755B5}
 		{BA333ED9-74C0-4800-9241-3B95F45A9722} = {ED8AA5E0-9601-4995-910B-776F8204C303}
 		{E9B9AD32-23B6-4D8D-A2C9-586F71D5A3EA} = {09654CDA-46FB-4A25-BB90-65E726316AA5}
+		{8ECAA0B4-1778-4854-954F-C7B987A026E0} = {ED8AA5E0-9601-4995-910B-776F8204C303}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF76BCB8-B816-4DA2-B1B6-D1F900E7DD06}

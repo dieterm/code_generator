@@ -20,6 +20,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities
             EnsureEntityViewsContainerExists();
 
             EntityStates.ChildRemoved += States_ChildRemoved;
+
+            PublishArtifactConstructionEvent();
         }
 
         
