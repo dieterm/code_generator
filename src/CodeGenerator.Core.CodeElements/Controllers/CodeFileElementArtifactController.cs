@@ -52,6 +52,22 @@ namespace CodeGenerator.Core.CodeElements.Controllers
                 IconKey = "braces",
                 Execute = (a) => { TreeViewController.ParseCodeFileAsync(artifact); return Task.CompletedTask; }
             });
+            var jsonOperationsGroup = "JsonOperations";
+            commands.Add(new ArtifactTreeNodeCommand(jsonOperationsGroup)
+            {
+                Id = "convert_to_json",
+                Text = "Convert to JSON",
+                IconKey = "braces",
+                Execute = (a) => { TreeViewController.ConvertToJson(artifact); return Task.CompletedTask; }
+            });
+
+            commands.Add(new ArtifactTreeNodeCommand(jsonOperationsGroup)
+            {
+                Id = "load_from_json",
+                Text = "Load from JSON",
+                IconKey = "braces",
+                Execute = (a) => { TreeViewController.LoadFromJson(artifact); return Task.CompletedTask; }
+            });
 
             // Rename command
             commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_RENAME)

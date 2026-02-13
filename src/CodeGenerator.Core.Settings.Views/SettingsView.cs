@@ -6,6 +6,7 @@ using CodeGenerator.Shared.Views;
 using CodeGenerator.UserControls.ViewModels;
 using CodeGenerator.UserControls.Views;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 
 namespace CodeGenerator.Core.Settings.Views
 {
@@ -81,10 +82,26 @@ namespace CodeGenerator.Core.Settings.Views
 
         private UserControl? CreateFieldView(ISettingsItem settingsItem)
         {
-            var fieldName = settingsItem.FieldViewModel.GetType().Name.Replace("Model", "");
-            var userControl = ServiceProviderHolder.ServiceProvider.GetRequiredKeyedService<UserControl>(fieldName);
-            (userControl as IView).BindViewModel((ViewModelBase)settingsItem.FieldViewModel);
-            return userControl;
+            try
+            {
+                var viewFactory = ServiceProviderHolder.GetRequiredService<IViewFactory>();
+                var view = viewFactory.CreateView((ViewModelBase)settingsItem.FieldViewModel);
+                //var fieldName = settingsItem.FieldViewModel.GetType().Name.Replace("Model", "");
+                //var userControl = viewFactory.CreateFieldView(fieldName, settingsItem.FieldViewModel);
+                if(view is UserControl userControl) { 
+                    return userControl;
+                }
+                else
+                {
+                    Debug.WriteLine($"View created for {settingsItem.Name} is not a UserControl.");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to create field view for {settingsItem.Name}: {ex}");
+                return null;
+            }
         }
 
         private void tvSettingSection_AfterSelect(object sender, TreeViewEventArgs e)

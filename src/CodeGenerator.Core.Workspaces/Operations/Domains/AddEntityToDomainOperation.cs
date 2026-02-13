@@ -1,3 +1,4 @@
+using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
@@ -27,8 +28,12 @@ namespace CodeGenerator.Core.Workspaces.Operations.Domains
             if (string.IsNullOrWhiteSpace(parameters.EntityName))
                 return "Entity name cannot be empty.";
 
-            var domain = _workspaceContextProvider.CurrentWorkspace.FindDescendantById<DomainArtifact>(parameters.EntitiesContainerId);
-            var existingEntity = domain.Entities.GetEntities().FirstOrDefault(e => e.Name.Equals(parameters.EntityName, StringComparison.OrdinalIgnoreCase));
+            var entitiesContainer = _workspaceContextProvider.CurrentWorkspace.FindDescendantById<EntitiesContainerArtifact>(parameters.EntitiesContainerId);
+            if (entitiesContainer == null)
+                return $"Entities container with id '{parameters.EntitiesContainerId}' not found.";
+            var domain = entitiesContainer.Parent as DomainArtifact;
+            var entities = entitiesContainer.GetEntities();
+            var existingEntity = entities.FirstOrDefault(e => e.Name.Equals(parameters.EntityName, StringComparison.OrdinalIgnoreCase));
             if (existingEntity != null)
                 return $"Entity '{parameters.EntityName}' with id '{existingEntity.Id}' already exists in domain '{domain.Name}'.";
 
@@ -41,7 +46,10 @@ namespace CodeGenerator.Core.Workspaces.Operations.Domains
             if (validationError != null)
                 return OperationResult.Fail(validationError);
 
-            parameters.ParentDomain = _workspaceContextProvider.CurrentWorkspace!.FindDescendantById<DomainArtifact>(parameters.EntitiesContainerId);
+            var entitiesContainer = _workspaceContextProvider.CurrentWorkspace!.FindDescendantById<EntitiesContainerArtifact>(parameters.EntitiesContainerId);
+            if (entitiesContainer == null)
+                return OperationResult.Fail($"Entities container with id '{parameters.EntitiesContainerId}' not found.");
+            parameters.ParentDomain = entitiesContainer.Parent as DomainArtifact;
             parameters.CreatedEntity = new EntityArtifact(parameters.EntityName);
             parameters.ParentDomain!.AddEntity(parameters.CreatedEntity);
 

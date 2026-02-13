@@ -5,6 +5,15 @@ namespace CodeGenerator.Domain.CodeElements
     /// </summary>
     public abstract class CodeElement
     {
+        protected CodeElement()
+        {
+            AssemblyTypeFullyQualifiedName = GetType().AssemblyQualifiedName ?? string.Empty;
+        }
+        /// <summary>
+        /// Used for json deserialization to determine the concrete type of code element. Should be set to the assembly qualified name of the concrete class.
+        /// </summary>
+        public string AssemblyTypeFullyQualifiedName { get; set; }
+
         public string? RawCode { get; set; }
 
         /// <summary>

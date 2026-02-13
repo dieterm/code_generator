@@ -153,6 +153,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IWorkspaceArtifactController, EntityStatesContainerController>();
         services.AddSingleton<IWorkspaceArtifactController, EntityStateController>();
         services.AddSingleton<IWorkspaceArtifactController, PropertyController>();
+        services.AddSingleton<IWorkspaceArtifactController, PropertiesContainerController>();
         services.AddSingleton<IWorkspaceArtifactController, EntityRelationsContainerController>();
         services.AddSingleton<IWorkspaceArtifactController, EntityRelationController>();
         services.AddSingleton<IWorkspaceArtifactController, ValueTypesContainerController>();

@@ -1,5 +1,6 @@
 using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.Templates.Settings;
 using CodeGenerator.Shared;
 using Microsoft.Extensions.Logging;
 using PlantUml.Net;
@@ -143,5 +144,16 @@ public class PlantUmlTemplateEngine : FileBasedTemplateEngine<PlantUmlTemplate, 
             OutputFormat.LaTeX => "diagram.tex",
             _ => "diagram.png"
         };
+    }
+
+    protected override TemplateEngineSettingsDescription CreateSettingsDescription()
+    {
+        return new PlantUmlTemplateEngineSettingsDescription(
+            id: TEMPLATE_ENGINE_ID,
+            name: "PlantUML Template Engine",
+            description: "Renders PlantUML diagrams to image files (PNG, SVG, etc.) based on .puml template definitions.",
+            category: "Diagramming",
+            iconKey: "plantuml_icon"
+        );
     }
 }

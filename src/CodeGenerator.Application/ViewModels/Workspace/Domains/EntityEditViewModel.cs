@@ -38,8 +38,8 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
                 if (_entity != null)
                 {
                     _entity.PropertyChanged -= Entity_PropertyChanged;
-                    _entity.States.ChildAdded -= States_ChildChanged;
-                    _entity.States.ChildRemoved -= States_ChildChanged;
+                    _entity.EntityStates.ChildAdded -= States_ChildChanged;
+                    _entity.EntityStates.ChildRemoved -= States_ChildChanged;
                 }
                 if (SetProperty(ref _entity, value))
                 {
@@ -47,8 +47,8 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
                     if (_entity != null)
                     {
                         _entity.PropertyChanged += Entity_PropertyChanged;
-                        _entity.States.ChildAdded += States_ChildChanged;
-                        _entity.States.ChildRemoved += States_ChildChanged;
+                        _entity.EntityStates.ChildAdded += States_ChildChanged;
+                        _entity.EntityStates.ChildRemoved += States_ChildChanged;
                     }
                 }
             }

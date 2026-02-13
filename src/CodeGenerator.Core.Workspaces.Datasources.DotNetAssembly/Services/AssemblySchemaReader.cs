@@ -31,8 +31,19 @@ public class AssemblySchemaReader
             var assembly = Assembly.LoadFrom(filePath);
             result.AssemblyFullName = assembly.FullName;
 
-            // Get all public types
-            var types = assembly.GetExportedTypes()
+            // Get all public types, handling assemblies with unresolvable dependencies
+            Type[] exportedTypes;
+            try
+            {
+                exportedTypes = assembly.GetExportedTypes();
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                // Some types couldn't be loaded due to missing dependencies - use the ones that did load
+                exportedTypes = ex.Types.Where(t => t != null).ToArray()!;
+            }
+
+            var types = exportedTypes
                 .Where(t => !t.IsNested) // Exclude nested types at top level
                 .OrderBy(t => t.Namespace)
                 .ThenBy(t => t.Name)
@@ -78,7 +89,18 @@ public class AssemblySchemaReader
         try
         {
             var assembly = Assembly.LoadFrom(filePath);
-            var types = assembly.GetExportedTypes()
+
+            Type[] exportedTypes;
+            try
+            {
+                exportedTypes = assembly.GetExportedTypes();
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                exportedTypes = ex.Types.Where(t => t != null).ToArray()!;
+            }
+
+            var types = exportedTypes
                 .Where(t => !t.IsNested)
                 .ToList();
 
@@ -119,7 +141,18 @@ public class AssemblySchemaReader
             throw new FileNotFoundException("Assembly file not found", filePath);
 
         var assembly = Assembly.LoadFrom(filePath);
-        var type = assembly.GetExportedTypes()
+
+        Type[] exportedTypes;
+        try
+        {
+            exportedTypes = assembly.GetExportedTypes();
+        }
+        catch (ReflectionTypeLoadException ex)
+        {
+            exportedTypes = ex.Types.Where(t => t != null).ToArray()!;
+        }
+
+        var type = exportedTypes
             .FirstOrDefault(t => t.FullName == typeName || t.Name == typeName);
 
         if (type == null)

@@ -35,10 +35,10 @@ namespace CodeGenerator.Core.Templates
         /// <summary>
         /// Override to provide a custom settings description.
         /// </summary>
-        protected virtual TemplateEngineSettingsDescription CreateSettingsDescription()
-        {
-            return new TemplateEngineSettingsDescription(Id, DisplayName, DisplayName);
-        }
+        protected abstract TemplateEngineSettingsDescription CreateSettingsDescription();
+        //{
+        //    return new TemplateEngineSettingsDescription(Id, DisplayName, DisplayName);
+        //}
 
         /// <inheritdoc/>
         public virtual bool SupportsTemplateType(TemplateType templateType)

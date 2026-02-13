@@ -14,23 +14,25 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities
             : base()
         {
             Name = name;
-
+            EnsurePropertiesContainerExists();
             EnsureEntityStatesContainerExists();
             EnsureEntityRelationsContainerExists();
             EnsureEntityViewsContainerExists();
 
-            States.ChildRemoved += States_ChildRemoved;
+            EntityStates.ChildRemoved += States_ChildRemoved;
         }
 
+        
 
         public EntityArtifact(ArtifactState state)
             : base(state)
         {
+            EnsurePropertiesContainerExists();
             EnsureEntityStatesContainerExists();
             EnsureEntityRelationsContainerExists();
             EnsureEntityViewsContainerExists();
 
-            States.ChildRemoved += States_ChildRemoved;
+            EntityStates.ChildRemoved += States_ChildRemoved;
         }
 
 
@@ -86,10 +88,23 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities
             get => GetStates().FirstOrDefault(s => s.Id == DefaultStateId);
         }
 
+        public PropertiesContainerArtifact EntityProperties => EnsurePropertiesContainerExists();
+
+        private PropertiesContainerArtifact EnsurePropertiesContainerExists()
+        {
+            var existing = Children.OfType<PropertiesContainerArtifact>().FirstOrDefault();
+            if (existing == null)
+            {
+                existing = new PropertiesContainerArtifact();
+                AddChild(existing);
+            }
+            return existing;
+        }
+
         /// <summary>
         /// Gets the EntityStatesContainerArtifact for this entity
         /// </summary>
-        public EntityStatesContainerArtifact States => EnsureEntityStatesContainerExists();
+        public EntityStatesContainerArtifact EntityStates => EnsureEntityStatesContainerExists();
 
         private EntityStatesContainerArtifact EnsureEntityStatesContainerExists()
         {
@@ -105,7 +120,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities
         /// <summary>
         /// Gets the EntityRelationsContainerArtifact for this entity
         /// </summary>
-        public EntityRelationsContainerArtifact Relations => EnsureEntityRelationsContainerExists();
+        public EntityRelationsContainerArtifact EntityRelations => EnsureEntityRelationsContainerExists();
 
         private EntityRelationsContainerArtifact EnsureEntityRelationsContainerExists()
         {
@@ -121,7 +136,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities
         /// <summary>
         /// Gets the EntityViewsContainerArtifact for this entity
         /// </summary>
-        public EntityViewsContainerArtifact Views => EnsureEntityViewsContainerExists();
+        public EntityViewsContainerArtifact EntityViews => EnsureEntityViewsContainerExists();
 
         private EntityViewsContainerArtifact EnsureEntityViewsContainerExists()
         {
@@ -163,13 +178,13 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities
         /// Get all states for this entity
         /// </summary>
         public IEnumerable<EntityStateArtifact> GetStates() =>
-            States.GetStates();
+            EntityStates.GetStates();
 
         /// <summary>
         /// Get all relations for this entity
         /// </summary>
         public IEnumerable<EntityRelationArtifact> GetRelations() =>
-            Relations.GetRelations();
+            EntityRelations.GetRelations();
 
         public bool CanBeginEdit() => true;
 
@@ -183,15 +198,21 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities
         public EntityStateArtifact AddEntityState(string name)
         {
             var state = new EntityStateArtifact(name);
-            States.AddState(state);
+            EntityStates.AddState(state);
             return state;
         }
 
         public EntityRelationArtifact AddEntityRelation(string name)
         {
             var relation = new EntityRelationArtifact(name);
-            Relations.AddRelation(relation);
+            EntityRelations.AddRelation(relation);
             return relation;
+        }
+
+        public PropertyArtifact AddProperty(PropertyArtifact createdProperty)
+        {
+            EntityProperties.AddProperty(createdProperty);
+            return createdProperty;
         }
     }
 }

@@ -182,6 +182,11 @@ namespace CodeGenerator.TemplateEngines.Folder
             }
         }
 
+        protected override TemplateEngineSettingsDescription CreateSettingsDescription()
+        {
+            return new FolderTemplateEngineSettingsDescription(Id, DisplayName, "Processes a folder of template files and subfolders, applying template rendering to each file based on its extension and aggregating the results into a structured artifact output.");
+        }
+
         //private async Task<IEnumerable<IArtifact>> ParseTemplateFolder(string templateFolder, IArtifact? parentArtifact, GeneratorSettings settings, TemplateEngineManager templateEngineManager, GenerationResult result, string parentNamespace)
         //{
 

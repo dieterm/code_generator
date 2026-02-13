@@ -20,8 +20,8 @@ namespace CodeGenerator.Core.Workspaces.Operations.Domains
 
         [Description("Whether the property is nullable")]
         public bool IsNullable { get; set; }
-
+        
+        public EntityArtifact? Entity { get; internal set; }
         public PropertyArtifact? CreatedProperty;
-        public EntityStateArtifact? ParentState;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.Templates.Settings;
 using Microsoft.Extensions.Logging;
 using Mono.TextTemplating;
 using System.CodeDom.Compiler;
@@ -327,7 +328,17 @@ namespace CodeGenerator.TemplateEngines.T4
 
         public override ITemplateInstance CreateTemplateInstance(ITemplate template)
         {
-            throw new NotImplementedException();
+            var t4Template = template as T4Template;
+            if(t4Template == null)
+            {
+                throw new ArgumentException($"Invalid template type: expected {typeof(T4Template).FullName}, got {template.GetType().FullName}");
+            }
+            return new T4TemplateInstance(t4Template);
+        }
+
+        protected override TemplateEngineSettingsDescription CreateSettingsDescription()
+        {
+            return new T4TemplateEngineSettingsDescription(Id, DisplayName, "T4 template engine using Mono.TextTemplating");
         }
     }
 }

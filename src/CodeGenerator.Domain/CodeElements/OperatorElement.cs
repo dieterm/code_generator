@@ -27,7 +27,7 @@ namespace CodeGenerator.Domain.CodeElements
         /// <summary>
         /// Statements in the method body
         /// </summary>
-        public CompositeStatement Body { get; } = new();
+        public CompositeStatement Body { get; set; } = new();
 
         /// <summary>
         /// Whether this is an implicit or explicit conversion operator

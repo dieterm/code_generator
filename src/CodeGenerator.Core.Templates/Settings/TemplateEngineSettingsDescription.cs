@@ -7,12 +7,10 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Core.Templates.Settings
 {
-    public class TemplateEngineSettingsDescription
+    public abstract class TemplateEngineSettingsDescription
     {
-        public TemplateEngineSettings GetDefaultSettings()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract TemplateEngineSettings GetDefaultSettings();
+        
 
         /// <summary>
         /// Unique identifier for this template engine

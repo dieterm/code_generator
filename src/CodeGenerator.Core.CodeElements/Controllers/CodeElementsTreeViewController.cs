@@ -176,5 +176,28 @@ namespace CodeGenerator.Core.CodeElements.Controllers
             var codeFileElement = parser.ParseCodeFile(code, fileTitle);
             TreeViewModel.RootArtifact = new CodeFileElementArtifact(codeFileElement);
         }
+
+        public void ConvertToJson(CodeFileElementArtifact artifact)
+        {
+            var codeFileElement = artifact.CodeElement;
+            var json = codeFileElement.ToJson();
+            var messageBus = ServiceProviderHolder.GetRequiredService<ApplicationMessageBus>();
+            messageBus.ShowArtifactPreview(new Application.ViewModels.ArtifactPreviewViewModel { 
+                FileName = artifact.Name + ".json", 
+                TextContent = json, 
+                TextLanguageSchema = Application.ViewModels.ArtifactPreviewViewModel.KnownLanguages.JScript 
+            });
+        }
+
+        public void LoadFromJson(CodeFileElementArtifact artifact)
+        {
+            var fileSystemDialogService = ServiceProviderHolder.GetRequiredService<IFileSystemDialogService>();
+            var filter = "JSON Files|*.json|All Files|*.*";
+            var filePath = fileSystemDialogService.OpenFile(filter);
+            if (filePath == null) return;
+            var json = System.IO.File.ReadAllText(filePath);
+            var codeFileElement = CodeFileElement.FromJson(json);
+            TreeViewModel.RootArtifact = new CodeFileElementArtifact(codeFileElement);
+        }
     }
 }

@@ -28,7 +28,7 @@ namespace CodeGenerator.Domain.CodeElements
         /// <summary>
         /// Statements in the method body
         /// </summary>
-        public CompositeStatement Body { get; } = new();
+        public CompositeStatement Body { get; set; } = new();
 
         /// <summary>
         /// Method body (statements as code string)

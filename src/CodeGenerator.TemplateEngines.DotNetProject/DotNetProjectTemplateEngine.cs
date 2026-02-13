@@ -2,12 +2,14 @@
 using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Settings;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.Templates.Settings;
 using CodeGenerator.Domain.DotNet;
 using CodeGenerator.Domain.DotNet.ProjectType;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Models;
 using CodeGenerator.TemplateEngines.DotNetProject.Models;
 using CodeGenerator.TemplateEngines.DotNetProject.Services;
+using CodeGenerator.TemplateEngines.DotNetProject.Settings;
 using CodeGenerator.TemplateEngines.Scriban;
 using Microsoft.Extensions.Logging;
 using System;
@@ -176,6 +178,9 @@ namespace CodeGenerator.TemplateEngines.DotNetProject
             return parentFolder?.Children ?? artifacts;
         }
 
-        
+        protected override TemplateEngineSettingsDescription CreateSettingsDescription()
+        {
+            return new DotNetProjectTemplateEngineSettingsDescription(Id, DisplayName, "DotNet Project Template Engine");
+        }
     }
 }

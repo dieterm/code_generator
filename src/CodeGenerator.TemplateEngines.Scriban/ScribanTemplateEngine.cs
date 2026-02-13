@@ -261,7 +261,15 @@ public class ScribanTemplateEngine : FileBasedTemplateEngine<ScribanTemplate, Sc
                 // convert methodname to snake case and add to BuildinFunctionsTooltips
                 var snakeCaseName = _templateHelper.SnakeCase(method.Name);
                 workspaceHelperFunctions.Add(snakeCaseName);
-                var summary = method.GetXmlDocsSummary();
+                string summary;
+                try
+                {
+                    summary = method.GetXmlDocsSummary();
+                }
+                catch (Exception)
+                {
+                    summary = string.Empty;
+                }
                 BuildinFunctionsTooltips.Add(snakeCaseName, $"{snakeCaseName} -> {summary} (WorkspaceTemplateHelpers)");
             }
         }
@@ -660,5 +668,10 @@ public class ScribanTemplateEngine : FileBasedTemplateEngine<ScribanTemplate, Sc
             instance.OutputFileName = Path.GetFileNameWithoutExtension(fileTemplate.FilePath);
         }
         return instance;
+    }
+
+    protected override TemplateEngineSettingsDescription CreateSettingsDescription()
+    {
+        return new ScribanTemplateEngineSettingsDescription(Id, DisplayName, "Scriban-based template engine supporting .scriban files and inline templates with powerful built-in functions and extensibility.");
     }
 }

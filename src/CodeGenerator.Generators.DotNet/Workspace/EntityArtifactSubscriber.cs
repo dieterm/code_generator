@@ -51,7 +51,7 @@ namespace CodeGenerator.Generators.DotNet.Workspace
                 InitialValue = "Guid.NewGuid()"
             });
             // Add properties for each state
-            foreach (var state in artifact.States)
+            foreach (var state in artifact.EntityStates)
             {
                 classElement.Properties.Add(new PropertyElement(state.Name, new TypeReference("string"))
                 {
@@ -59,7 +59,7 @@ namespace CodeGenerator.Generators.DotNet.Workspace
                     IsAutoImplemented = true
                 });
             }
-            foreach (var relation in artifact.Relations.Where(r => r.TargetEntity != null))
+            foreach (var relation in artifact.EntityRelations.Where(r => r.TargetEntity != null))
             {
                 var typeRef = new TypeReference(relation.TargetEntity!.Name);
                 if (relation.SourceCardinality == RelationCardinality.ZeroOrMany)

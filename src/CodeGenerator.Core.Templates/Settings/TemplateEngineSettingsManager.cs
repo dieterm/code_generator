@@ -46,7 +46,16 @@ namespace CodeGenerator.Core.Templates.Settings
 
                 foreach (var settingsDescription in settingsDescriptions)
                 {
-                    RegisterTemplateEngine(settingsDescription);
+                    try
+                    {
+                        RegisterTemplateEngine(settingsDescription);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger?.LogError(ex, "Failed to register template engine: {Id}", settingsDescription.Id);
+                        //throw;
+                    }
+                    
                 }
 
                 // Register generator templates with the TemplateManager

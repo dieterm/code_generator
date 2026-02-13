@@ -1,4 +1,5 @@
 using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Domain.CodeElements.Serialization;
 using CodeGenerator.Domain.ProgrammingLanguages;
 using CodeGenerator.Domain.ProgrammingLanguages.CSharp;
 using System.Text.Json;
@@ -117,13 +118,18 @@ namespace CodeGenerator.Domain.CodeElements
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             WriteIndented = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters =
+            {
+                new CodeElementJsonConverter(),
+                new ProgrammingLanguageJsonConverter()
+            }
         };
 
         public static CodeFileElement FromJson(string jsonData)
         {
-            var workspaceState = JsonSerializer.Deserialize<CodeFileElement>(jsonData, JsonOptions);
-            return workspaceState!;  
+            var result = JsonSerializer.Deserialize<CodeElement>(jsonData, JsonOptions);
+            return (CodeFileElement)result!;
         }
 
         public string ToJson()
