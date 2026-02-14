@@ -19,9 +19,10 @@ public class ExcelDatasourceProvider : IDatasourceProvider
         {
             TypeId = TypeId,
             DisplayName = "Excel File",
-            Category = "File",
+            Category = DatasourceCategory.File,
             Description = "Import data from an Excel file (*.xlsx, *.xls)",
-            IconKey = "file-spreadsheet"
+            IconKey = "file-spreadsheet",
+            FilePickerFilter = "Excel Files (*.xlsx)|*.xlsx|Excel 97-2003 Files (*.xls)|*.xls"
         };
     }
 

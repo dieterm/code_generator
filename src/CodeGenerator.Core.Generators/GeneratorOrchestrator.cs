@@ -144,7 +144,9 @@ public class GeneratorOrchestrator
             });
 
             // publish event to allow generators to contribute
-            MessageBus.Publish(new CreatingArtifactEventArgs(result, result.RootArtifact));
+            //MessageBus.Publish(new CreatingArtifactEventArgs(result, result.RootArtifact));
+            MessageBus.RootArtifactCreated();
+
             progress?.Report(new GenerationProgress
             {
                 CurrentStep = "Finalizing Root Artifact",

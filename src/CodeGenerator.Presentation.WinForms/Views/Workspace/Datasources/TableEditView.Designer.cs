@@ -22,6 +22,8 @@ namespace CodeGenerator.Presentation.WinForms.Views
             tableLayoutGeneral = new TableLayoutPanel();
             txtName = new SingleLineTextField();
             txtSchema = new SingleLineTextField();
+            btnLoadData = new Button();
+            pnlProperties = new Panel();
             grpGeneral.SuspendLayout();
             tableLayoutGeneral.SuspendLayout();
             SuspendLayout();
@@ -85,11 +87,31 @@ namespace CodeGenerator.Presentation.WinForms.Views
             txtSchema.Size = new Size(362, 36);
             txtSchema.TabIndex = 1;
             // 
+            // btnLoadData
+            // 
+            btnLoadData.Location = new Point(10, 170);
+            btnLoadData.Name = "btnLoadData";
+            btnLoadData.Size = new Size(95, 23);
+            btnLoadData.TabIndex = 2;
+            btnLoadData.Text = "Load Data";
+            btnLoadData.UseVisualStyleBackColor = true;
+            // 
+            // pnlProperties
+            // 
+            pnlProperties.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            pnlProperties.AutoScroll = true;
+            pnlProperties.Location = new Point(10, 199);
+            pnlProperties.Name = "pnlProperties";
+            pnlProperties.Size = new Size(380, 88);
+            pnlProperties.TabIndex = 3;
+            // 
             // TableEditView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
+            Controls.Add(pnlProperties);
+            Controls.Add(btnLoadData);
             Controls.Add(grpGeneral);
             Controls.Add(lblTitle);
             Name = "TableEditView";
@@ -109,5 +131,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
         private TableLayoutPanel tableLayoutGeneral;
         private SingleLineTextField txtName;
         private SingleLineTextField txtSchema;
+        private Button btnLoadData;
+        private Panel pnlProperties;
     }
 }

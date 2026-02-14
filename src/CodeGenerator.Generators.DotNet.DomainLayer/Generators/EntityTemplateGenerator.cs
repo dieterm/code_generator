@@ -125,6 +125,13 @@ namespace CodeGenerator.Generators.DotNet.DomainLayer.Generators
                     await GenerateEntityByCodeFile(e, scope, domain, entityArtifact, domainFolderArtifact, domainNamespace);
                 }
             }
+
+            // add support for subdomains
+            foreach(var subDomain in domain.SubDomains)
+            {
+                var moreThanOneSubDomain = 2; // always force creation of subfolder for subdomains
+                await GenerateEntitiesForDomain(e, scope, subDomain, domainFolderArtifact, moreThanOneSubDomain, entitiesRootNamespace);
+            }
         }
 
         private Task GenerateEntityByCodeFile(DotNetProjectArtifactCreatedEventArgs e, ScopeArtifact scope, DomainArtifact domain, EntityArtifact entityArtifact, FolderArtifact domainFolderArtifact, string domainNamespace)

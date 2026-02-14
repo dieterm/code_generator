@@ -18,6 +18,7 @@ public static class ServiceCollectionExtensions
     {
         // Register Generators
         services.AddTransient<IMessageBusAwareGenerator, CodeArchitectureLayerGenerator>();
+        services.AddTransient<IMessageBusAwareGenerator, ReadmeDocumentationGenerator>();
 
         return services;
     }

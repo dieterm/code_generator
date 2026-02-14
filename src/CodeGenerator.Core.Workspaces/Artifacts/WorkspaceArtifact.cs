@@ -158,7 +158,13 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
                     RaisePropertyChangedEvent(nameof(WorkspaceDirectory));
             }
         }
-
+        /// <summary>
+        /// Information about the workspace/project, used in documentation and README generation
+        /// </summary>
+        public string Documentation {
+            get { return GetValue<string>(nameof(Documentation)); }
+            set { SetValue(nameof(Documentation), value); }
+        }
         /// <summary>
         /// Directory containing the workspace
         /// </summary>
@@ -209,6 +215,9 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         }
 
         public override WorkspaceArtifact? Workspace => this;
+
+        
+
         protected override WorkspaceArtifactContext GetOwnContext()
         {
             var namespaceParameters = new Dictionary<string, string>();
@@ -220,6 +229,21 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
                 Namespace = RootNamespace,
                 OutputPath = OutputDirectory                
             };
+        }
+
+        public IEnumerable<ScopeArtifact> GetAllScopes(bool onlyUserScopes, bool includeSubScopes)
+        {
+            IEnumerable<ScopeArtifact> scopes = Scopes;
+            if (includeSubScopes) 
+                scopes = FindDescendants<ScopeArtifact>();
+            
+            foreach (var scope in scopes)
+            {
+                if(scope.IsDefaultScope() && onlyUserScopes)
+                    continue;
+                yield return scope;
+                
+            }
         }
     }
 }

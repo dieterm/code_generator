@@ -1,8 +1,12 @@
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using CodeGenerator.Core.Artifacts.Templates;
 
 namespace CodeGenerator.Application.ViewModels.Workspace.Datasources
 {
@@ -14,6 +18,12 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Datasources
         private TableArtifact? _table;
         private bool _isLoading;
 
+        public event EventHandler? RequestLoadData;
+        public event EventHandler<CreateFromSelectionEventArgs>? RequestCreateEntities;
+        public event EventHandler<CreateFromSelectionEventArgs>? RequestCreateValueTypes;
+
+        public RelayCommand LoadDataCommand { get; }
+
         public TableEditViewModel()
         {
             NameField = new SingleLineTextFieldModel { Label = "Table Name", Name = "Name" };
@@ -22,7 +32,11 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Datasources
             // Subscribe to field changes
             NameField.PropertyChanged += OnFieldChanged;
             SchemaField.PropertyChanged += OnFieldChanged;
+
+            LoadDataCommand = new RelayCommand((a) => RequestLoadData?.Invoke(this, EventArgs.Empty), (a) => Table?.HasDecorator<TemplateDatasourceProviderDecorator>() ?? false);
         }
+
+        public ObservableCollection<MultiSelectFieldModel> PropertiesDistinctValues { get; } = new ObservableCollection<MultiSelectFieldModel>();
 
         /// <summary>
         /// The table being edited
@@ -75,6 +89,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Datasources
             {
                 NameField.Value = _table.Name;
                 SchemaField.Value = _table.Schema;
+                LoadDataCommand.RaiseCanExecuteChanged();
             }
             finally
             {
@@ -99,6 +114,28 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Datasources
 
             _table.Name = NameField.Value?.ToString() ?? "Table";
             _table.Schema = SchemaField.Value?.ToString() ?? "";
+        }
+
+        public void OnCreateEntities(MultiSelectFieldModel multiSelectFieldModel, DomainArtifact domain)
+        {
+            RequestCreateEntities?.Invoke(this, new CreateFromSelectionEventArgs(multiSelectFieldModel, domain));
+        }
+
+        public void OnCreateValueTypes(MultiSelectFieldModel multiSelectFieldModel, DomainArtifact domain)
+        {
+            RequestCreateValueTypes?.Invoke(this, new CreateFromSelectionEventArgs(multiSelectFieldModel, domain));
+        }
+    }
+
+    public class CreateFromSelectionEventArgs : EventArgs
+    {
+        public MultiSelectFieldModel MultiSelectFieldModel { get; }
+        public DomainArtifact TargetDomain { get; }
+
+        public CreateFromSelectionEventArgs(MultiSelectFieldModel multiSelectFieldModel, DomainArtifact targetDomain)
+        {
+            MultiSelectFieldModel = multiSelectFieldModel;
+            TargetDomain = targetDomain;
         }
     }
 }

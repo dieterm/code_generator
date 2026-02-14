@@ -19,9 +19,10 @@ public class OpenApiDatasourceProvider : IDatasourceProvider
         {
             TypeId = TypeId,
             DisplayName = "OpenAPI/Swagger",
-            Category = "File",
+            Category = DatasourceCategory.File,
             Description = "Import schemas from an OpenAPI/Swagger specification file (*.yaml, *.json)",
-            IconKey = "file-code"
+            IconKey = "file-code",
+            FilePickerFilter = "OpenAPI Files (*.yaml;*.yml;*.json)|*.yaml;*.yml;*.json|YAML Files (*.yaml;*.yml)|*.yaml;*.yml|JSON Files (*.json)|*.json"
         };
     }
 

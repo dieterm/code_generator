@@ -27,6 +27,7 @@ namespace CodeGenerator.Generators.DotNet.Generators
 {
     public class DependancyInjectionGenerator : GeneratorBase
     {
+        public const string GENERATOR_ID = "DotNet.DependancyInjectionGenerator";
         public const string PLACEHOLDER_DI_CONTAINER_SETUP = "DiContainerSetup";
         public const string PLACEHOLDER_DI_CONTAINER_SETUP_USINGS = "DiContainerSetupUsings";
         public const string SERVICE_PROVIDER_HOLDER_TEMPLATE_NAME = "ServiceProviderHolder.cs";
@@ -262,7 +263,7 @@ namespace CodeGenerator.Generators.DotNet.Generators
 
         protected override GeneratorSettingsDescription ConfigureSettingsDescription()
         {
-            var generatorId = nameof(DependancyInjectionGenerator);
+            var generatorId = GENERATOR_ID;
             var name = "Dependancy Injection Generator";
             var description = "Generates dependancy injection code for .NET projects based on selected frameworks.";
             var settingsDescription = new GeneratorSettingsDescription(generatorId, name, description);

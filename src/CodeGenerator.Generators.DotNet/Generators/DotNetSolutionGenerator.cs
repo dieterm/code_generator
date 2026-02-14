@@ -27,8 +27,9 @@ namespace CodeGenerator.Generators.DotNet.Generators
 {
     public class DotNetSolutionGenerator : GeneratorBase
     {
+        public const string GENERATOR_ID = "DotNet.SolutionGenerator";
         private Action<DotNetProjectArtifactCreatedEventArgs>? _unsubscribe_dotnet_project_created_handler;
-        private Func<CreatedArtifactEventArgs, Task>? _unsubscribe_created_root_artifact_handler;
+        private Func<RootArtifactCreatedEventArgs, Task>? _unsubscribe_created_root_artifact_handler;
 
         private readonly ILogger<DotNetSolutionGenerator> _logger;
         private readonly DotNetProjectTemplateEngine _dotNetProjectTemplateEngine;
@@ -46,11 +47,7 @@ namespace CodeGenerator.Generators.DotNet.Generators
             _unsubscribe_dotnet_project_created_handler = messageBus.Subscribe<DotNetProjectArtifactCreatedEventArgs>(
                (e) => OnDotNetProjectCreated(e)
            );
-            _unsubscribe_created_root_artifact_handler = messageBus.Subscribe<CreatedArtifactEventArgs>(
-
-                async (e) => await OnCreatedRootArtifact(e),
-                (e) => e.Artifact is RootArtifact
-            );
+            _unsubscribe_created_root_artifact_handler = messageBus.Subscribe<RootArtifactCreatedEventArgs>(OnCreatedRootArtifact);
         }
 
         protected void OnDotNetProjectCreated(DotNetProjectArtifactCreatedEventArgs e)
@@ -64,7 +61,7 @@ namespace CodeGenerator.Generators.DotNet.Generators
         /// <summary>
         /// When we get here, the entire workspace is generated (including all DotNetProjectArtifacts
         /// </summary>
-        protected async Task OnCreatedRootArtifact(CreatedArtifactEventArgs e)
+        protected async Task OnCreatedRootArtifact(RootArtifactCreatedEventArgs e)
         {
             if (!Enabled)
                 return;
@@ -181,7 +178,8 @@ namespace CodeGenerator.Generators.DotNet.Generators
                     solutionArtifact.AddProjectReference(projectArtifact);
                 }
             }
-            AddChildArtifactToParent(e.Artifact, solutionArtifact, e.Result);
+            var srcFolder = CreateFolder("src", e.RootArtifact, e.Result);
+            AddChildArtifactToParent(srcFolder, solutionArtifact, e.Result);
 
             solutionArtifact.AllProjectReferencesGenerated += SolutionArtifact_AllProjectReferencesGenerated;
         }
@@ -200,7 +198,7 @@ namespace CodeGenerator.Generators.DotNet.Generators
                 .ToList();
 
             //var solutionFilePath = await _dotNetProjectService.CreateSolutionAsync(solutionArtifact.Name, solutionArtifact.GetFolderPath(), solutionArtifact.SolutionType.ToString(), new List<string>());
-            var dotNetSolution = new DotNetSolution(solutionArtifact.Name);
+            var dotNetSolution = solutionArtifact.Solution;
             // use solutionArtifact.SolutionType to determine whether to generate .sln or .slnx format
 
             //int totalProjects = solutionArtifact.ProjectReferences.Count;
@@ -226,6 +224,9 @@ namespace CodeGenerator.Generators.DotNet.Generators
                 applicationMessageBus.ReportApplicationStatus($"Failed to get folder path for solution {solutionArtifact.Name}. Cannot save solution file.");
                 return;
             }
+            var result = ServiceProviderHolder.GetRequiredService<GeneratorOrchestrator>().CurrentGenerationResult;
+            if (result == null) throw new InvalidOperationException("No current generation result available to request placeholder content.");
+            MessageBus.Publish(new DotNetSolutionArtifactGeneratedEventArgs(solutionArtifact, dotNetSolution, result));
             switch (solutionArtifact.SolutionType)
             {
                 case DotNetSolutionType.sln:
@@ -237,52 +238,56 @@ namespace CodeGenerator.Generators.DotNet.Generators
                 default:
                     throw new InvalidOperationException($"Unsupported solution type: {solutionArtifact.SolutionType}");
             }
-            applicationMessageBus.ReportApplicationStatus(".NET Solution Generation complete.");
-        }
-        [Obsolete("This method is no longer used. The solution file is generated in OnCreatedRootArtifact after all project references are set up.")]
-        private async void SolutionArtifact_AllProjectReferencesGenerated_Old(object? sender, EventArgs e)
-        {
-            var applicationMessageBus = ServiceProviderHolder.GetRequiredService<ApplicationMessageBus>();
-            applicationMessageBus.ReportApplicationStatus("Generating .NET solution file...");
-            var solutionArtifact = sender as DotNetSolutionArtifact;
-            if (solutionArtifact == null)
-                return;
-            solutionArtifact.AllProjectReferencesGenerated -= SolutionArtifact_AllProjectReferencesGenerated;
-            _logger.LogInformation($"All project references generated for solution {solutionArtifact.Name}.");
-            var projectFilePaths = solutionArtifact.ProjectReferences
-                .Select(pr => pr.ProjectArtifact.GetProjectFilePath())
-                .ToList();
 
-            var solutionFilePath = await _dotNetProjectService.CreateSolutionAsync(solutionArtifact.Name, solutionArtifact.GetFolderPath(), solutionArtifact.SolutionType.ToString(), new List<string>());
-            int totalProjects = solutionArtifact.ProjectReferences.Count;
-            int currentProjectIndex = 0;
-            foreach (var projectRef in solutionArtifact.ProjectReferences)
-            {
-                var projectFolderArtifact = projectRef.ProjectArtifact.Parent as FolderArtifact;
-                //var scopeArtifact = projectFolderArtifact?.GetDecoratorOfType<LayerArtifactRefDecorator>()?.LayerArtifact.Parent as ScopeArtifact;
-                var solutionSubFolder = projectRef.ProjectArtifact.SolutionSubFolder;
-                _logger.LogInformation($"Adding project {projectRef.ProjectArtifact.Name} to solution {solutionArtifact.Name} in folder {solutionSubFolder}.");
-                var projectFilePath = projectRef.ProjectArtifact.GetProjectFilePath();
-                await _dotNetProjectService.AddProjectToSolutionAsync(solutionFilePath, solutionSubFolder, projectFilePath);
-                currentProjectIndex++;
-                int percentComplete = (int)((currentProjectIndex / (double)totalProjects) * 100);
-
-                applicationMessageBus.ReportTaskProgress($"Added project {projectRef.ProjectArtifact.Name} to solution.", percentComplete);
-            }
             applicationMessageBus.ReportApplicationStatus(".NET Solution Generation complete.");
+            
+            
         }
+
+        //[Obsolete("This method is no longer used. The solution file is generated in OnCreatedRootArtifact after all project references are set up.")]
+        //private async void SolutionArtifact_AllProjectReferencesGenerated_Old(object? sender, EventArgs e)
+        //{
+        //    var applicationMessageBus = ServiceProviderHolder.GetRequiredService<ApplicationMessageBus>();
+        //    applicationMessageBus.ReportApplicationStatus("Generating .NET solution file...");
+        //    var solutionArtifact = sender as DotNetSolutionArtifact;
+        //    if (solutionArtifact == null)
+        //        return;
+        //    solutionArtifact.AllProjectReferencesGenerated -= SolutionArtifact_AllProjectReferencesGenerated;
+        //    _logger.LogInformation($"All project references generated for solution {solutionArtifact.Name}.");
+        //    var projectFilePaths = solutionArtifact.ProjectReferences
+        //        .Select(pr => pr.ProjectArtifact.GetProjectFilePath())
+        //        .ToList();
+
+        //    var solutionFilePath = await _dotNetProjectService.CreateSolutionAsync(solutionArtifact.Name, solutionArtifact.GetFolderPath(), solutionArtifact.SolutionType.ToString(), new List<string>());
+        //    int totalProjects = solutionArtifact.ProjectReferences.Count;
+        //    int currentProjectIndex = 0;
+        //    foreach (var projectRef in solutionArtifact.ProjectReferences)
+        //    {
+        //        var projectFolderArtifact = projectRef.ProjectArtifact.Parent as FolderArtifact;
+        //        //var scopeArtifact = projectFolderArtifact?.GetDecoratorOfType<LayerArtifactRefDecorator>()?.LayerArtifact.Parent as ScopeArtifact;
+        //        var solutionSubFolder = projectRef.ProjectArtifact.SolutionSubFolder;
+        //        _logger.LogInformation($"Adding project {projectRef.ProjectArtifact.Name} to solution {solutionArtifact.Name} in folder {solutionSubFolder}.");
+        //        var projectFilePath = projectRef.ProjectArtifact.GetProjectFilePath();
+        //        await _dotNetProjectService.AddProjectToSolutionAsync(solutionFilePath, solutionSubFolder, projectFilePath);
+        //        currentProjectIndex++;
+        //        int percentComplete = (int)((currentProjectIndex / (double)totalProjects) * 100);
+
+        //        applicationMessageBus.ReportTaskProgress($"Added project {projectRef.ProjectArtifact.Name} to solution.", percentComplete);
+        //    }
+        //    applicationMessageBus.ReportApplicationStatus(".NET Solution Generation complete.");
+        //}
 
         public override void UnsubscribeFromEvents(GeneratorMessageBus messageBus)
         {
             if (_unsubscribe_dotnet_project_created_handler != null)
-                messageBus.Unsubscribe<DotNetProjectArtifactCreatedEventArgs>(_unsubscribe_dotnet_project_created_handler);
+                messageBus.Unsubscribe(_unsubscribe_dotnet_project_created_handler);
             if (_unsubscribe_created_root_artifact_handler != null)
-                messageBus.Unsubscribe<CreatedArtifactEventArgs>(_unsubscribe_created_root_artifact_handler);
+                messageBus.Unsubscribe(_unsubscribe_created_root_artifact_handler);
         }
 
         protected override GeneratorSettingsDescription ConfigureSettingsDescription()
         {
-            var id = nameof(DotNetSolutionGenerator);
+            var id = GENERATOR_ID;
             var name = $".NET Solution Generator";
             var description = $"Generates .NET solution file & handles project references.";
             var settingsDescription = new GeneratorSettingsDescription(id, name, description);

@@ -371,20 +371,13 @@ namespace CodeGenerator.Application.Controllers.Workspace
             _windowManagerService.ShowWorkspaceDetailsView(_workspaceDetailsViewModel);
         }
 
-        //public DomainArtifact AddDomain(string domainName)
-        //{
-        //    var domainArtifact = new DomainArtifact(domainName);
-        //    CurrentWorkspace?.Domains.AddDomain(domainArtifact);
-        //    return domainArtifact;
-        //}
-
         public void CreateEntityFromTableInDomain(TableArtifact table, DomainArtifact domain)
         {
             var entityArtifact = new EntityArtifact(table.Name);
-            var entityState = entityArtifact.AddEntityState(table.Name);
+            //var entityState = entityArtifact.AddEntityState(table.Name);
             foreach (var column in table.GetColumns())
             {
-                entityState.AddProperty(new PropertyArtifact(column.Name, column.DataType, column.IsNullable) { 
+                entityArtifact.AddProperty(new PropertyArtifact(column.Name, column.DataType, column.IsNullable) { 
                     MaxLength = column.MaxLength, 
                     Precision = column.Precision, 
                     Scale = column.Scale 

@@ -26,6 +26,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
     public class DomainArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
         public const string CONTEXT_PARAMETER_DOMAIN_NAME = "DomainName";
+        public const string CONTEXT_PARAMETER_PARENT_DOMAIN_NAMESPACE = "ParentDomainNamespace";
         public const string DEFAULT_DOMAIN_NAME_APPLICATION = "Application";
         public const string DEFAULT_DOMAIN_NAME_SHARED = "Shared";
 
@@ -42,6 +43,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
             EnsureServicesContainerExists();
             EnsureSpecificationsContainerExists();
             EnsureFactoriesContainerExists();
+            EnsureSubDomainsContainerExists();
             PublishArtifactConstructionEvent();
         }
 
@@ -57,9 +59,11 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
             EnsureServicesContainerExists();
             EnsureSpecificationsContainerExists();
             EnsureFactoriesContainerExists();
-
+            EnsureSubDomainsContainerExists();
             PublishArtifactConstructionEvent();
         }
+
+        
 
         public override string TreeNodeText => Name;
 
@@ -111,9 +115,10 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
                 var parameters = new Dictionary<string, string>
                 {
                     { DomainArtifact.CONTEXT_PARAMETER_DOMAIN_NAME, Name },
-                    { ScopeArtifact.CONTEXT_PARAMETER_PARENT_SCOPE_NAME, Scope.Name  },
-                    { ScopeArtifact.CONTEXT_PARAMETER_SCOPE_NAMESPACE, Scope.Namespace },
+                    { ScopeArtifact.CONTEXT_PARAMETER_PARENT_SCOPE_NAME, Scope?.Name  },
+                    { ScopeArtifact.CONTEXT_PARAMETER_SCOPE_NAMESPACE, Scope?.Namespace },
                     { CodeArchitectureLayerArtifact.CONTEXT_PARAMETER_LAYER_NAME, (Parent as CodeArchitectureLayerArtifact)?.LayerName ?? "?LayerName?" },
+                    { DomainArtifact.CONTEXT_PARAMETER_PARENT_DOMAIN_NAMESPACE, ((Parent as SubDomainsContainerArtifact)?.Parent as DomainArtifact)?.Namespace ?? string.Empty },
                     { WorkspaceArtifact.CONTEXT_PARAMETER_WORKSPACE_ROOT_NAMESPACE, GetWorkspaceRootNamespace() }
                 };
 
@@ -142,6 +147,18 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
         public DomainRepositoriesContainerArtifact Repositories => EnsureRepositoriesContainerExists();
         public DomainSpecificationsContainerArtifact Specifications => EnsureSpecificationsContainerExists();
         public DomainFactoriesContainerArtifact Factories => EnsureFactoriesContainerExists();
+        public SubDomainsContainerArtifact SubDomains => EnsureSubDomainsContainerExists();
+
+        private SubDomainsContainerArtifact EnsureSubDomainsContainerExists()
+        {
+            var existing = Children.OfType<SubDomainsContainerArtifact>().SingleOrDefault();
+            if (existing == null)
+            {
+                existing = new SubDomainsContainerArtifact();
+                AddChild(existing);
+            }
+            return existing;
+        }
 
         private DomainFactoriesContainerArtifact EnsureFactoriesContainerExists()
         {
@@ -255,6 +272,10 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
             {
                 { CONTEXT_PARAMETER_DOMAIN_NAME, Name },
             };
+            if(Parent is SubDomainsContainerArtifact subDomainsContainer && subDomainsContainer.Parent is DomainArtifact parentDomain)
+            {
+                namespaceParameters.Add(CONTEXT_PARAMETER_PARENT_DOMAIN_NAMESPACE, parentDomain.Namespace);
+            }
             return new WorkspaceArtifactContext
             {
                 Namespace = Namespace,
@@ -267,8 +288,37 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
             get { 
                 if (Parent is OnionDomainLayerArtifact domainsContainer && domainsContainer.Parent is ScopeArtifact scope)
                     return scope;
+                else if(Parent is SubDomainsContainerArtifact subDomainsContainer && subDomainsContainer.Parent is DomainArtifact parentDomain)
+                    return parentDomain.Scope;
                 return null;
             }
+        }
+
+        public DomainArtifact? ParentDomain
+        {
+            get
+            {
+                if (Parent is SubDomainsContainerArtifact subDomainsContainer && subDomainsContainer.Parent is DomainArtifact parentDomain)
+                    return parentDomain;
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// return the hierarchical name of the domain, including parent domains if any (e.g. "ParentDomain / SubDomain")
+        /// </summary>
+        /// <param name="delimiter">The delimiter to use between domain names.</param>
+        /// <returns>The hierarchical name of the domain.</returns>
+        public string GetDomainHierarchicalName(string delimiter = " / ")
+        {
+            var names = new Stack<string>();
+            var current = this;
+            while (current != null)
+            {
+                names.Push(current.Name);
+                current = current.ParentDomain;
+            }
+            return string.Join(delimiter, names);
         }
     }
 }

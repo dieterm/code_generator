@@ -14,6 +14,7 @@ namespace CodeGenerator.Generators.DotNet.Generators
 {
     public class DotNetProjectGenerator : GeneratorBase
     {
+        public const string GENERATOR_ID = "DotNet.ProjectGenerator";
         private Func<CreatedArtifactEventArgs, Task>? _unsubscribe_created_artifact_layerscope_handler;
   
         public virtual bool ScopeFolderArtifactFilter(CreatedArtifactEventArgs e)
@@ -91,7 +92,7 @@ namespace CodeGenerator.Generators.DotNet.Generators
 
         protected override GeneratorSettingsDescription ConfigureSettingsDescription()
         {
-            var id = nameof(DotNetProjectGenerator);
+            var id = GENERATOR_ID;
             var name = "DotNet Project Generator";
             var description = "Generates .NET project artifacts for each layer in a scoped folder.";
             return new GeneratorSettingsDescription(id, name, description);

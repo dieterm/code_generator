@@ -1,7 +1,9 @@
 using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Services;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -14,8 +16,6 @@ namespace CodeGenerator.Application.Controllers.Workspace
     public class DatasourcesContainerController : WorkspaceArtifactControllerBase<DatasourcesContainerArtifact>
     {
         private readonly IDatasourceFactory _datasourceFactory;
-
-        //protected WorkspaceTreeViewController TreeViewController => (WorkspaceTreeViewController)base.TreeViewController;
 
         public DatasourcesContainerController(OperationExecutor operationExecutor, IDatasourceFactory datasourceFactory, WorkspaceTreeViewController workspaceController, ILogger<DatasourcesContainerController> logger)
             : base(operationExecutor, workspaceController, logger)
@@ -30,7 +30,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             // Group datasource types by category
             var typesByCategory = _datasourceFactory.GetAvailableTypes()
                 .GroupBy(t => t.Category)
-                .OrderBy(g => g.Key);
+                .OrderBy(g => g.Key.DisplayName);
 
             foreach (var categoryGroup in typesByCategory)
             {
@@ -49,9 +49,9 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
                 commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
                 {
-                    Id = $"add_datasource_category_{categoryGroup.Key.Replace(" ", "_").ToLowerInvariant()}",
-                    Text = $"Add {categoryGroup.Key}",
-                    IconKey = GetCategoryIcon(categoryGroup.Key),
+                    Id = $"add_datasource_category_{categoryGroup.Key.Id}",
+                    Text = $"Add {categoryGroup.Key.DisplayName}",
+                    IconKey = categoryGroup.Key.IconKey,
                     SubCommands = categoryCommands
                 });
             }
@@ -65,28 +65,35 @@ namespace CodeGenerator.Application.Controllers.Workspace
             return Task.CompletedTask;
         }
 
-        private string GetCategoryIcon(string category)
-        {
-            return category.ToLowerInvariant() switch
-            {
-                "relational database" => "database",
-                "non-relational database" => "database",
-                "file" => "file",
-                _ => "plus"
-            };
-        }
-
         private async Task AddDatasourceAsync(DatasourcesContainerArtifact container, string typeId)
         {
-            var types = _datasourceFactory.GetAvailableTypes();
-            var typeInfo = types.FirstOrDefault(t => t.TypeId == typeId);
-            if (typeInfo == null) return;
+            var datasourceTypes = _datasourceFactory.GetAvailableTypes();
+            var datasourceTypeInfo = datasourceTypes.FirstOrDefault(t => t.TypeId == typeId);
+            if (datasourceTypeInfo == null) return;
 
-            var datasource = TreeViewController.AddDatasource(typeId, $"New {typeInfo.DisplayName}");
-            if (datasource != null)
+            if (datasourceTypeInfo.Category == DatasourceCategory.File && !string.IsNullOrEmpty(datasourceTypeInfo.FilePickerFilter))
             {
-                await TreeViewController.SaveWorkspaceAsync();
+                var filesystemDialogService = ServiceProviderHolder.GetRequiredService<IFileSystemDialogService>();
+                var filePaths = filesystemDialogService.OpenFiles(datasourceTypeInfo.FilePickerFilter);
+                if (filePaths.Length == 0) return;
+
+                foreach (var filePath in filePaths)
+                {
+                    var datasourceName = Path.GetFileNameWithoutExtension(filePath);
+                    var datasource = TreeViewController.AddDatasource(typeId, datasourceName);
+                    if (datasource != null)
+                    {
+                        var filePathProperty = datasource.GetType().GetProperty("FilePath");
+                        filePathProperty?.SetValue(datasource, filePath);
+                    }
+                }
             }
+            else
+            {
+                TreeViewController.AddDatasource(typeId, $"New {datasourceTypeInfo.DisplayName}");
+            }
+
+            await TreeViewController.SaveWorkspaceAsync();
         }
     }
 }

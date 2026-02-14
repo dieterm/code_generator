@@ -19,7 +19,7 @@ public class PostgreSqlDatasourceProvider : IDatasourceProvider
         {
             TypeId = TypeId,
             DisplayName = "PostgreSQL",
-            Category = "Relational Database",
+            Category = DatasourceCategory.RelationalDatabase,
             Description = "Connect to a PostgreSQL database",
             IconKey = "database"
         };

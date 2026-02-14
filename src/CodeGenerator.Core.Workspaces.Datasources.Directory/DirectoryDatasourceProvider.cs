@@ -19,7 +19,7 @@ public class DirectoryDatasourceProvider : IDatasourceProvider
         {
             TypeId = TypeId,
             DisplayName = "Directory",
-            Category = "File System",
+            Category = DatasourceCategory.FileSystem,
             Description = "Import file and folder structure from a directory",
             IconKey = "folder-open"
         };

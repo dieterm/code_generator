@@ -22,39 +22,42 @@ namespace CodeGenerator.Generators.CodeArchitectureLayers
 {
     public class CodeArchitectureLayerGenerator : GeneratorBase
     {
-        private Action<CreatingArtifactEventArgs>? _unsubscribeHandler;
+        private Action<RootArtifactCreatedEventArgs>? _unsubscribeHandler;
         public override void SubscribeToEvents(GeneratorMessageBus messageBus)
         {
-            _unsubscribeHandler = messageBus.Subscribe<CreatingArtifactEventArgs>(OnCreatingRootArtifact, (e) => e.Artifact is RootArtifact);
+            _unsubscribeHandler = messageBus.Subscribe<RootArtifactCreatedEventArgs>(OnCreatingRootArtifact);
         }
 
         public override void UnsubscribeFromEvents(GeneratorMessageBus messageBus)
         {
             if (_unsubscribeHandler != null)
-                messageBus.Unsubscribe<CreatingArtifactEventArgs>(_unsubscribeHandler);
+                messageBus.Unsubscribe<RootArtifactCreatedEventArgs>(_unsubscribeHandler);
         }
 
-        private void OnCreatingRootArtifact(CreatingArtifactEventArgs args)
+        private void OnCreatingRootArtifact(RootArtifactCreatedEventArgs args)
         {
             if (!Enabled)
                 return;
 
+            var srcFolder = CreateFolder("src", args.RootArtifact, args.Result);
+            
+
             foreach (var scope in args.Result.Workspace.Scopes)
             {
                 // recursively create folders for each scope & sub-scopes
-                CreateScopeFolder(scope, args, args.Artifact); 
+                CreateScopeFolder(scope, args.Result, srcFolder); 
             }
         }
 
-        private void CreateScopeFolder(ScopeArtifact scope, CreatingArtifactEventArgs args, IArtifact parentArtifact)
+        private void CreateScopeFolder(ScopeArtifact scope, GenerationResult generationResult, IArtifact parentArtifact)
         {
             var folderName = scope.Name;
             var scopeFolderArtifact = new FolderArtifact(folderName);
             scopeFolderArtifact.AddDecorator(new ScopeArtifactRefDecorator(scope));
-            AddChildArtifactToParent(parentArtifact, scopeFolderArtifact, args.Result);
+            AddChildArtifactToParent(parentArtifact, scopeFolderArtifact, generationResult);
             foreach(var subScope in scope.SubScopes)
             {
-                CreateScopeFolder(subScope, args, scopeFolderArtifact);
+                CreateScopeFolder(subScope, generationResult, scopeFolderArtifact);
             }
         }
 

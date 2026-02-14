@@ -19,9 +19,10 @@ public class DotNetAssemblyDatasourceProvider : IDatasourceProvider
         {
             TypeId = TypeId,
             DisplayName = ".NET Assembly",
-            Category = "File",
+            Category = DatasourceCategory.File,
             Description = "Import types from a .NET assembly (*.dll, *.exe)",
-            IconKey = "file-cog"
+            IconKey = "file-cog",
+            FilePickerFilter = "DLL Assembly (*.dll)|*.dll|EXE Assembly (*.exe)|*.exe"
         };
     }
 

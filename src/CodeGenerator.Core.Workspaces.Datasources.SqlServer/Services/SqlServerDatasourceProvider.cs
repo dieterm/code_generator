@@ -19,7 +19,7 @@ public class SqlServerDatasourceProvider : IDatasourceProvider
         {
             TypeId = TypeId,
             DisplayName = "SQL Server",
-            Category = "Relational Database",
+            Category = DatasourceCategory.RelationalDatabase,
             Description = "Connect to a Microsoft SQL Server database",
             IconKey = "database"
         };

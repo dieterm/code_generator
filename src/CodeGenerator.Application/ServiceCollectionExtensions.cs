@@ -143,11 +143,12 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IWorkspaceArtifactController, IndexArtifactController>();
         services.AddSingleton<IWorkspaceArtifactController, ForeignKeyArtifactController>();
 
-        services.AddSingleton<IWorkspaceArtifactController, DomainLayerController>();
+        services.AddSingleton<IWorkspaceArtifactController, OnionDomainLayerController>();
         services.AddSingleton<IWorkspaceArtifactController, ScopesContainerController>();
         services.AddSingleton<IWorkspaceArtifactController, SubScopesContainerController>();
         services.AddSingleton<IWorkspaceArtifactController, ScopeArtifactController>();
         services.AddSingleton<IWorkspaceArtifactController, DomainController>();
+        services.AddSingleton<IWorkspaceArtifactController, SubDomainsContainerController>();
         services.AddSingleton<IWorkspaceArtifactController, EntitiesContainerController>();
         services.AddSingleton<IWorkspaceArtifactController, EntityController>();
         services.AddSingleton<IWorkspaceArtifactController, EntityStatesContainerController>();
@@ -223,8 +224,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IOperation, AddDomainToScopeOperation>(sp => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<AddDomainToScopeOperation>(sp));
         services.AddSingleton<AddEntityToDomainOperation>();
         services.AddSingleton<IOperation, AddEntityToDomainOperation>(sp => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<AddEntityToDomainOperation>(sp));
-        //services.AddSingleton<AddEntityWithPropertiesToDomainOperation>();
-        //services.AddSingleton<IOperation, AddEntityWithPropertiesToDomainOperation>(sp => sp.GetRequiredService<AddEntityWithPropertiesToDomainOperation>());
+        services.AddSingleton<AddSubDomainOperation>();
+        services.AddSingleton<IOperation, AddSubDomainOperation>(sp => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<AddSubDomainOperation>(sp));
         services.AddSingleton<AddPropertyToEntityOperation>();
         services.AddSingleton<IOperation, AddPropertyToEntityOperation>(sp => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<AddPropertyToEntityOperation>(sp));
         services.AddSingleton<AddPropertyToEntityStateOperation>();

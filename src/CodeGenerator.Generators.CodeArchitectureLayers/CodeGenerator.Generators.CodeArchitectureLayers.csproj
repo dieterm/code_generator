@@ -11,6 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MarkdownBuilder" Version="0.2.0" />
+    <PackageReference Include="OfficeIMO.Markdown" Version="0.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CodeGenerator.Core.Artifacts\CodeGenerator.Core.Artifacts.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Generators\CodeGenerator.Core.Generators.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Templates\CodeGenerator.Core.Templates.csproj" />

@@ -19,9 +19,10 @@ public class CsvDatasourceProvider : IDatasourceProvider
         {
             TypeId = TypeId,
             DisplayName = "CSV File",
-            Category = "File",
+            Category = DatasourceCategory.File,
             Description = "Import data from a CSV file (*.csv)",
-            IconKey = "file-text"
+            IconKey = "file-text",
+            FilePickerFilter = "CSV Files (*.csv)|*.csv"
         };
     }
 

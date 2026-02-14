@@ -14,6 +14,14 @@ public interface IFileSystemDialogService
     string? OpenFile(string filter, string? initialDirectory = null);
 
     /// <summary>
+    /// Show an open file dialog that allows selecting multiple files
+    /// </summary>
+    /// <param name="filter">File filter (e.g., "Text files (*.txt)|*.txt|All files (*.*)|*.*")</param>
+    /// <param name="initialDirectory">Initial directory to show</param>
+    /// <returns>Selected file paths, or empty array if cancelled</returns>
+    string[] OpenFiles(string filter, string? initialDirectory = null);
+
+    /// <summary>
     /// Show a save file dialog
     /// </summary>
     /// <param name="filter">File filter (e.g., "Text files (*.txt)|*.txt|All files (*.*)|*.*")</param>

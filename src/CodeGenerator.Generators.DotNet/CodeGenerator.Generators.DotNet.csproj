@@ -26,6 +26,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Markdig" Version="0.45.0" />
+    <PackageReference Include="MarkdownBuilder" Version="0.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CodeGenerator.Core.Artifacts\CodeGenerator.Core.Artifacts.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Generators\CodeGenerator.Core.Generators.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Templates\CodeGenerator.Core.Templates.csproj" />
@@ -37,6 +42,10 @@
     <ProjectReference Include="..\CodeGenerator.TemplateEngines.DotNetProject\CodeGenerator.TemplateEngines.DotNetProject.csproj" />
     <ProjectReference Include="..\CodeGenerator.Generators.CodeArchitectureLayers\CodeGenerator.Generators.CodeArchitectureLayers.csproj" />
     <ProjectReference Include="..\CodeGenerator.TemplateEngines.Scriban\CodeGenerator.TemplateEngines.Scriban.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Helpers\" />
   </ItemGroup>
 
 </Project>

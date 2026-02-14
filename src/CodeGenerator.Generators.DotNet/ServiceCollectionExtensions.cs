@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IMessageBusAwareGenerator, DotNetProjectGenerator>();
         services.AddTransient<IMessageBusAwareGenerator, DotNetSolutionGenerator>();
         services.AddTransient<IMessageBusAwareGenerator, DependancyInjectionGenerator>();
-        
+        services.AddTransient<IMessageBusAwareGenerator, ProjectStructureDocumentationGenerator>();
 
         services.AddSingleton<IWorkspaceMessageBusSubscriber, EntityArtifactSubscriber>();
         return services;

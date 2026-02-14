@@ -19,9 +19,10 @@ public class YamlDatasourceProvider : IDatasourceProvider
         {
             TypeId = TypeId,
             DisplayName = "YAML File",
-            Category = "File",
+            Category = DatasourceCategory.File,
             Description = "Import data from a YAML file (*.yaml, *.yml)",
-            IconKey = "file-code"
+            IconKey = "file-code",
+            FilePickerFilter = "YAML Files (*.yaml;*.yml)|*.yaml;*.yml"
         };
     }
 

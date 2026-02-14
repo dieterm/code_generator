@@ -20,6 +20,19 @@ public class FileSystemDialogService : IFileSystemDialogService
         return dialog.ShowDialog() == DialogResult.OK ? dialog.FileName : null;
     }
 
+    public string[] OpenFiles(string filter, string? initialDirectory = null)
+    {
+        using var dialog = new OpenFileDialog
+        {
+            Filter = filter,
+            InitialDirectory = initialDirectory ?? string.Empty,
+            RestoreDirectory = true,
+            Multiselect = true
+        };
+
+        return dialog.ShowDialog() == DialogResult.OK ? dialog.FileNames : Array.Empty<string>();
+    }
+
     public string? SaveFile(string filter, string? initialDirectory = null, string? defaultFileName = null)
     {
         using var dialog = new SaveFileDialog

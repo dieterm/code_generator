@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Generators.MessageBus;
 using CodeGenerator.Core.Generators.Settings;
 using CodeGenerator.Core.Settings.Generators;
@@ -137,6 +138,21 @@ namespace CodeGenerator.Core.Generators
             {
                 result.Errors.AddRange(output.Errors);
             }
+        }
+        /// <summary>
+        /// Check if a FolderArtifact with the given name exists on the parent's Children-collection.
+        /// If not present, a new FolderArtifact is created, and a CreatingArtifactEvent and CreatedArtifactEvent are published via the MessageBus.
+        /// </summary>
+        public FolderArtifact CreateFolder(string folderName, IArtifact parent, GenerationResult result)
+        {
+            var folderArtifact = parent.Children.OfType<FolderArtifact>().FirstOrDefault(f => f.FolderName.Equals(folderName, StringComparison.OrdinalIgnoreCase));
+            if (folderArtifact == null)
+            {
+                folderArtifact = new FolderArtifact(folderName);
+                AddChildArtifactToParent(parent, folderArtifact, result);
+            }
+
+            return folderArtifact;
         }
     }
 }

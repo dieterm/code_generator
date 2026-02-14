@@ -5,17 +5,22 @@ using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Application.ViewModels.Workspace.Datasources;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.FileSystem;
+using CodeGenerator.Core.Artifacts.Templates;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.Databases.RelationalDatabases;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Operations;
 using CodeGenerator.TemplateEngines.Scriban;
+using CodeGenerator.UserControls.ViewModels;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Dynamic;
 
 namespace CodeGenerator.Application.Controllers.Workspace
 {
@@ -294,9 +299,67 @@ namespace CodeGenerator.Application.Controllers.Workspace
             {
                 _editViewModel = new TableEditViewModel();
                 _editViewModel.ValueChanged += OnEditViewModelValueChanged;
+                _editViewModel.RequestCreateEntities += EditViewModel_RequestCreateEntities;
+                _editViewModel.RequestCreateValueTypes += EditViewModel_RequestCreateValueTypes;
+                _editViewModel.RequestLoadData += EditViewModel_RequestLoadData;
             }
 
             _editViewModel.Table = artifact;
+        }
+
+        private async void EditViewModel_RequestLoadData(object? sender, EventArgs e)
+        {
+            _editViewModel.PropertiesDistinctValues.Clear();
+
+            var dataProvider = _editViewModel.Table?.GetDecoratorOfType<TemplateDatasourceProviderDecorator>();
+            if (dataProvider == null) return;
+            var data = await dataProvider?.LoadDataAsync(Logger, null, null, CancellationToken.None);
+
+            Dictionary<string, List<string>> columnValues = new Dictionary<string, List<string>>();
+
+            if (data != null) {
+                foreach(IDictionary<string, object?> row in data)
+                {
+                    foreach(var kvp in row)
+                    {
+                        var propertyValue = kvp.Value?.ToString();
+                        if (propertyValue != null)
+                        {
+                            if (!columnValues.ContainsKey(kvp.Key))
+                            {
+                                columnValues[kvp.Key] = new List<string>();
+                            }
+                            if(!columnValues[kvp.Key].Contains(propertyValue))
+                                columnValues[kvp.Key].Add(propertyValue);
+                        }
+                    }
+                }
+            }
+
+           
+            foreach(var kvp in columnValues) {
+                _editViewModel.PropertiesDistinctValues.Add(new UserControls.ViewModels.MultiSelectFieldModel {
+                    Label = kvp.Key,
+                    Name = kvp.Key,
+                    Items = kvp.Value.Distinct().Select(v => new ComboboxItem { DisplayName = v, Value = v }).ToList()
+                });
+            }
+        }
+
+        private void EditViewModel_RequestCreateValueTypes(object? sender, CreateFromSelectionEventArgs e)
+        {
+            foreach (var entry in e.MultiSelectFieldModel.SelectedItems)
+            {
+                e.TargetDomain.AddValueType(new ValueTypeArtifact(entry.DisplayName));
+            }
+        }
+
+        private void EditViewModel_RequestCreateEntities(object? sender, CreateFromSelectionEventArgs e)
+        {
+            foreach (var entry in e.MultiSelectFieldModel.SelectedItems)
+            {
+                e.TargetDomain.AddEntity(new EntityArtifact(entry.DisplayName));
+            }
         }
 
         private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)

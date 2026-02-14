@@ -1,6 +1,7 @@
 ﻿using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Domain.DotNet.ProjectType;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace CodeGenerator.Domain.DotNet
         {
             Name = solutionName;
             SolutionType = solutionType;
+            Solution = new DotNetSolution(solutionName);
             _treeNodeIcon = new ResourceManagerTreeNodeIcon($"dotnet_solution");
         }
 
@@ -62,7 +64,7 @@ namespace CodeGenerator.Domain.DotNet
                 }
             }
         }
-
+        public DotNetSolution Solution { get; }
         public DotNetSolutionType SolutionType
         {
             get { return GetValue<DotNetSolutionType>(nameof(SolutionType)); }

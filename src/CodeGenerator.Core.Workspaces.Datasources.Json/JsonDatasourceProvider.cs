@@ -19,9 +19,10 @@ public class JsonDatasourceProvider : IDatasourceProvider
         {
             TypeId = TypeId,
             DisplayName = "JSON File",
-            Category = "File",
+            Category = DatasourceCategory.File,
             Description = "Import data from a JSON file (*.json)",
-            IconKey = "file-json"
+            IconKey = "file-json",
+            FilePickerFilter = "JSON Files (*.json)|*.json"
         };
     }
 

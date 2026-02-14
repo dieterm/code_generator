@@ -19,9 +19,10 @@ public class XmlDatasourceProvider : IDatasourceProvider
         {
             TypeId = TypeId,
             DisplayName = "XML File",
-            Category = "File",
+            Category = DatasourceCategory.File,
             Description = "Import data from an XML file (*.xml)",
-            IconKey = "file-code"
+            IconKey = "file-code",
+            FilePickerFilter = "XML Files (*.xml)|*.xml"
         };
     }
 

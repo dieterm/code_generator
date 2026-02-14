@@ -20,7 +20,7 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Services
             {
                 TypeId = TypeId,
                 DisplayName = "MySQL / MariaDB",
-                Category = "Relational Database",
+                Category = DatasourceCategory.RelationalDatabase,
                 Description = "Connect to a MySQL or MariaDB database",
                 IconKey = "database"
             };

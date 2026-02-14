@@ -1,3 +1,4 @@
+using CodeGenerator.Core.Artifacts.CodeGeneration;
 using CodeGenerator.Core.Generators.MessageBus;
 using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Shared;
@@ -23,5 +24,13 @@ public class GeneratorMessageBus : MessageBus<GeneratorContextEventArgs>
         var eventArgs = new RequestingPlaceholderContentEventArgs(placeholderName, result);
         Publish(eventArgs);
         return string.Join(Environment.NewLine, eventArgs.Content.Values);
+    }
+
+    public void RootArtifactCreated()
+    {
+        var result = ServiceProviderHolder.GetRequiredService<GeneratorOrchestrator>().CurrentGenerationResult;
+        if(result==null) throw new InvalidOperationException("No current generation result available to publish RootArtifactCreated event.");
+        var eventArgs = new RootArtifactCreatedEventArgs(result.RootArtifact, result);
+        Publish(eventArgs);
     }
 }
