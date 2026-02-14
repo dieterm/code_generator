@@ -13,7 +13,7 @@ namespace CodeGenerator.Domain.DotNet
         public string Id { get; }
         public string Name { get; }
 
-        public abstract void SetPropertyItems(DotNetProjectArtifact projectArtifact, Project project);
+        public abstract void SetPropertyItems(DotNetProjectArtifact projectArtifact, Microsoft.Build.Evaluation.Project project);
 
         protected DotNetProjectType(string id, string name)
         {

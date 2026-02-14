@@ -10,6 +10,7 @@ using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Core.Workspaces.Generators;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.DotNet;
+using CodeGenerator.Domain.DotNet.ProjectType;
 using CodeGenerator.Generators.DotNet.Events;
 using CodeGenerator.Shared;
 using CodeGenerator.TemplateEngines.DotNetProject;
@@ -198,6 +199,60 @@ namespace CodeGenerator.Generators.DotNet.Generators
                 .Select(pr => pr.ProjectArtifact.GetProjectFilePath())
                 .ToList();
 
+            //var solutionFilePath = await _dotNetProjectService.CreateSolutionAsync(solutionArtifact.Name, solutionArtifact.GetFolderPath(), solutionArtifact.SolutionType.ToString(), new List<string>());
+            var dotNetSolution = new DotNetSolution(solutionArtifact.Name);
+            // use solutionArtifact.SolutionType to determine whether to generate .sln or .slnx format
+
+            //int totalProjects = solutionArtifact.ProjectReferences.Count;
+            //int currentProjectIndex = 0;
+            foreach (var projectRef in solutionArtifact.ProjectReferences)
+            {
+               // var projectFolderArtifact = projectRef.ProjectArtifact.Parent as FolderArtifact;
+                //var scopeArtifact = projectFolderArtifact?.GetDecoratorOfType<LayerArtifactRefDecorator>()?.LayerArtifact.Parent as ScopeArtifact;
+                //var solutionSubFolder = projectRef.ProjectArtifact.SolutionSubFolder;
+                //_logger.LogInformation($"Adding project {projectRef.ProjectArtifact.Name} to solution {solutionArtifact.Name} in folder {solutionSubFolder}.");
+                //var projectFilePath = projectRef.ProjectArtifact.GetProjectFilePath();
+                //await _dotNetProjectService.AddProjectToSolutionAsync(solutionFilePath, solutionSubFolder, projectFilePath);
+                dotNetSolution.AddProjectReference(projectRef);
+                //currentProjectIndex++;
+                //int percentComplete = (int)((currentProjectIndex / (double)totalProjects) * 100);
+             
+                //applicationMessageBus.ReportTaskProgress($"Added project {projectRef.ProjectArtifact.Name} to solution.", percentComplete);
+            }
+            var solutionFolder = solutionArtifact.GetFolderPath();
+            if(solutionFolder==null)
+            {
+                _logger.LogError($"Failed to get folder path for solution {solutionArtifact.Name}. Cannot save solution file.");
+                applicationMessageBus.ReportApplicationStatus($"Failed to get folder path for solution {solutionArtifact.Name}. Cannot save solution file.");
+                return;
+            }
+            switch (solutionArtifact.SolutionType)
+            {
+                case DotNetSolutionType.sln:
+                        dotNetSolution.SaveAsSlnFile(solutionFolder);
+                    break;
+                case DotNetSolutionType.slnx:
+                        dotNetSolution.SaveAsSlnxFile(solutionFolder);
+                    break;
+                default:
+                    throw new InvalidOperationException($"Unsupported solution type: {solutionArtifact.SolutionType}");
+            }
+            applicationMessageBus.ReportApplicationStatus(".NET Solution Generation complete.");
+        }
+        [Obsolete("This method is no longer used. The solution file is generated in OnCreatedRootArtifact after all project references are set up.")]
+        private async void SolutionArtifact_AllProjectReferencesGenerated_Old(object? sender, EventArgs e)
+        {
+            var applicationMessageBus = ServiceProviderHolder.GetRequiredService<ApplicationMessageBus>();
+            applicationMessageBus.ReportApplicationStatus("Generating .NET solution file...");
+            var solutionArtifact = sender as DotNetSolutionArtifact;
+            if (solutionArtifact == null)
+                return;
+            solutionArtifact.AllProjectReferencesGenerated -= SolutionArtifact_AllProjectReferencesGenerated;
+            _logger.LogInformation($"All project references generated for solution {solutionArtifact.Name}.");
+            var projectFilePaths = solutionArtifact.ProjectReferences
+                .Select(pr => pr.ProjectArtifact.GetProjectFilePath())
+                .ToList();
+
             var solutionFilePath = await _dotNetProjectService.CreateSolutionAsync(solutionArtifact.Name, solutionArtifact.GetFolderPath(), solutionArtifact.SolutionType.ToString(), new List<string>());
             int totalProjects = solutionArtifact.ProjectReferences.Count;
             int currentProjectIndex = 0;
@@ -211,7 +266,7 @@ namespace CodeGenerator.Generators.DotNet.Generators
                 await _dotNetProjectService.AddProjectToSolutionAsync(solutionFilePath, solutionSubFolder, projectFilePath);
                 currentProjectIndex++;
                 int percentComplete = (int)((currentProjectIndex / (double)totalProjects) * 100);
-             
+
                 applicationMessageBus.ReportTaskProgress($"Added project {projectRef.ProjectArtifact.Name} to solution.", percentComplete);
             }
             applicationMessageBus.ReportApplicationStatus(".NET Solution Generation complete.");

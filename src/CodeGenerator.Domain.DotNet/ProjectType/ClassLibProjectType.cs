@@ -35,6 +35,7 @@ namespace CodeGenerator.Domain.DotNet.ProjectType
 
         public override IEnumerable<DotNetLanguage> SupportedLanguages => _supportedLanguages;
         public override IEnumerable<TargetFramework> SupportedFrameworks => _supportedFrameworks;
+        
         public override void SetPropertyItems(DotNetProjectArtifact projectArtifact, Microsoft.Build.Evaluation.Project project)
         {
             // <TargetFramework>net8.0</TargetFramework>

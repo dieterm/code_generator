@@ -205,6 +205,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Plugin.Host", "CodeGenerator.Plugin.Host\CodeGenerator.Plugin.Host.csproj", "{4FAEF958-F5CE-409F-B673-CA686496D168}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "06 Plugins", "06 Plugins", "{DEB5DB60-F96A-4DFC-9873-6FAC23B82D4F}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\..\Documenten\FolderStructure (2020_10_21 17_18_04 UTC).txt = ..\..\..\..\Documenten\FolderStructure (2020_10_21 17_18_04 UTC).txt
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Plugin.TestPlugin", "Plugins\CodeGenerator.Plugin.TestPlugin\CodeGenerator.Plugin.TestPlugin.csproj", "{4667AA3A-1789-4E92-AD69-4EDB5C9AED3B}"
 EndProject
