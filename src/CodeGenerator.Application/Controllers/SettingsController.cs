@@ -4,10 +4,12 @@ using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Settings.Application;
 using CodeGenerator.Core.Settings.Generators;
+using CodeGenerator.Core.Settings.Interfaces;
 using CodeGenerator.Core.Settings.ViewModels;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Templates.Settings;
 using CodeGenerator.Core.Workspaces.Settings;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.Operations;
 using CodeGenerator.Shared.Ribbon;
 using Microsoft.Extensions.Logging;
@@ -25,6 +27,7 @@ namespace CodeGenerator.Application.Controllers
         private readonly TemplateManager _templateManager;
         private readonly TemplateEngineSettingsManager _templateEngineSettingsManager;
         private readonly IWindowManagerService _windowManagerService;
+		private readonly ISettingsManager _llmSettingsManager;
         public SettingsController(OperationExecutor operationExecutor, TemplateEngineSettingsManager templateEngineSettingsManager, TemplateManager templateManager, ApplicationSettingsManager applicationSettingsManager, WorkspaceSettingsManager workspaceSettingsManager, GeneratorSettingsManager generatorSettingsManager, SettingsViewModel settingsViewModel, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, IMessageBoxService messageBoxService, IFileSystemDialogService fileSystemDialogService, ApplicationMessageBus messageBus, ILogger<SettingsController> logger)
 			: base(operationExecutor, ribbonBuilder, messageBus, messageBoxService, fileSystemDialogService, logger)
 		{
@@ -35,6 +38,7 @@ namespace CodeGenerator.Application.Controllers
 			_workspaceSettingsManager = workspaceSettingsManager ?? throw new ArgumentNullException(nameof(workspaceSettingsManager));
 			_generatorSettingsManager = generatorSettingsManager ?? throw new ArgumentNullException(nameof(generatorSettingsManager));
             _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
+			_llmSettingsManager = ServiceProviderHolder.GetKeyedService<ISettingsManager>("LlmSettingsManager")!;
         }
 		private string? WorkspaceSettingsDefaultTemplateFolder { get; set; }
         /// <summary>
@@ -49,7 +53,7 @@ namespace CodeGenerator.Application.Controllers
             _templateEngineSettingsManager.DiscoverAndRegisterTemplateEngines();
             _generatorSettingsManager.LoadSettings();
             _generatorSettingsManager.DiscoverAndRegisterGenerators();
-
+			_llmSettingsManager.LoadSettings();
 
             if (Directory.Exists(_workspaceSettingsManager.Settings.DefaultTemplateFolder)) {
                 WorkspaceSettingsDefaultTemplateFolder = _workspaceSettingsManager.Settings.DefaultTemplateFolder;
@@ -103,6 +107,7 @@ namespace CodeGenerator.Application.Controllers
 			_logger.LogInformation("Loading settings...");
 			_settingsViewModel.SettingsSections.Clear();
             _settingsViewModel.SettingsSections.Add(_applicationSettingsManager.GetSettingsViewModelSection());
+            _settingsViewModel.SettingsSections.Add(_llmSettingsManager.GetSettingsViewModelSection());
             _settingsViewModel.SettingsSections.Add(_workspaceSettingsManager.GetSettingsViewModelSection());
             _settingsViewModel.SettingsSections.Add(_templateEngineSettingsManager.GetSettingsViewModelSection());
             _settingsViewModel.SettingsSections.Add(_generatorSettingsManager.GetSettingsViewModelSection());
@@ -112,6 +117,7 @@ namespace CodeGenerator.Application.Controllers
 		public void SaveSettings()
 		{
             _applicationSettingsManager.SaveSettings();
+			_llmSettingsManager.SaveSettings();
 			_workspaceSettingsManager.SaveSettings();
 			_templateEngineSettingsManager.SaveSettings();
             _generatorSettingsManager.SaveSettings();

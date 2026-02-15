@@ -34,11 +34,11 @@ namespace CodeGenerator.Application.Controllers.Workspace
         private readonly WorkspaceTreeViewController _workspaceTreeViewController;
         private readonly WorkspaceMessageBus _workspaceMessageBus;
         private readonly UndoRedoManager _undoRedoManager;
-        private readonly ICopilotController _copilotController;
+        private readonly ILlmController _copilotController;
         private readonly IWindowManagerService _windowManagerService;
         public bool HasUnsavedChanges { get {return _workspaceTreeViewController.HasUnsavedChanges; } }
 
-        public WorkspaceController(ICopilotController copilotController, UndoRedoManager undoRedoManager, WorkspaceMessageBus workspaceMessageBus, WorkspaceTreeViewController workspaceTreeViewController, WorkspaceRibbonViewModel workspaceRibbonViewModel, OperationExecutor operationExecutor, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<WorkspaceController> logger) 
+        public WorkspaceController(ILlmController copilotController, UndoRedoManager undoRedoManager, WorkspaceMessageBus workspaceMessageBus, WorkspaceTreeViewController workspaceTreeViewController, WorkspaceRibbonViewModel workspaceRibbonViewModel, OperationExecutor operationExecutor, IWindowManagerService windowManagerService, RibbonBuilder ribbonBuilder, ApplicationMessageBus messageBus, IMessageBoxService messageboxService, IFileSystemDialogService fileSystemDialogService, ILogger<WorkspaceController> logger) 
             : base(operationExecutor, ribbonBuilder, messageBus, messageboxService, fileSystemDialogService, logger)
         {
             _undoRedoManager = undoRedoManager ?? throw new ArgumentNullException(nameof(undoRedoManager));
@@ -67,8 +67,12 @@ namespace CodeGenerator.Application.Controllers.Workspace
             _copilotController.Initialize();
         }
 
-        private void OnRequestShowCopilot(object? sender, EventArgs e)
+        private async void OnRequestShowCopilot(object? sender, string? providerId)
         {
+            if(!string.IsNullOrEmpty(providerId))
+            {
+                await _copilotController.SwitchProviderAsync(providerId);
+            }
             _copilotController.ShowCopilot();
         }
 
@@ -422,13 +426,18 @@ namespace CodeGenerator.Application.Controllers.Workspace
                         .WithDropDownItemsProvider(() => _workspaceRibbonViewModel.GetRedoDropDownItems())
                     .Build();
 
-            workspaceTabBuilder.AddToolStrip("toolstripWorkspaceCopilot", "Copilot")
-                    .AddButton("btnShowCopilot", "Copilot")
+            var copilotButton = workspaceTabBuilder.AddToolStrip("toolstripWorkspaceCopilot", "Copilot")
+                    .AddDropDownButton("btnShowCopilot", "Copilot")
                         .WithSize(RibbonButtonSize.Large)
                         .WithDisplayStyle(RibbonButtonDisplayStyle.ImageAndText)
                         .WithImage("copilot")
-                        .WithCommand(_workspaceRibbonViewModel.ShowCopilotCommand)
-                    .Build();
+                        .WithCommand(_workspaceRibbonViewModel.ShowCopilotCommand);
+            var llmController = ServiceProviderHolder.GetRequiredService<ILlmController>();
+            foreach(var provider in llmController.GetAvailableProviders())
+            {
+                    copilotButton.AddDropDownItem($"btnShowCopilot_{provider.ProviderId}", provider.DisplayName, (vm) => _workspaceRibbonViewModel.ShowCopilotCommand.Execute(provider.ProviderId));
+            }
+            copilotButton.Build();
 
             workspaceTabBuilder.Build();
         }

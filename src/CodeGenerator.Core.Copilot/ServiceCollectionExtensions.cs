@@ -17,7 +17,7 @@ namespace CodeGenerator.Core.Copilot
             IConfiguration configuration)
         {
             configuration.GetSection("Copilot").Bind(CopilotSettings.Instance);
-            services.AddSingleton<ICopilotController, CopilotController>();
+            services.AddSingleton<ILlmController, CopilotController>();
             services.AddSingleton<CopilotChatViewModel>();
 
             return services;

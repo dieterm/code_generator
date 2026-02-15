@@ -8,7 +8,10 @@ using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Application.ViewModels.Workspace.Domains.Factories;
 using CodeGenerator.Application.ViewModels.Workspace.Domains.Specifications;
 using CodeGenerator.Core.Artifacts.TreeNode;
-using CodeGenerator.Core.Copilot;
+using CodeGenerator.Core.LLM;
+using CodeGenerator.Core.LLM.Copilot;
+using CodeGenerator.Core.LLM.Ollama;
+using CodeGenerator.Core.LLM.Services;
 using CodeGenerator.Core.CodeElements;
 using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Workspaces.Datasources.Csv;
@@ -39,7 +42,6 @@ using CodeGenerator.Generators.DotNet.WinformsRibbonApplication;
 using CodeGenerator.Generators.DotNet.ApplicationScope;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using CodeGenerator.Core.Copilot.Services;
 using CodeGenerator.Core.CodeElements.Services;
 
 namespace CodeGenerator.Presentation.WinForms;
@@ -61,7 +63,12 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IFileSystemDialogService, FileSystemDialogService>();
         services.AddSingleton<IRibbonRenderer, SyncfusionRibbonRenderer>();
         services.AddSharedUserControlViews();
-        services.AddCopilotServices(configuration);
+
+        // Register LLM abstraction layer + providers (replaces AddCopilotServices)
+        services.AddLlmServices(configuration);
+        services.AddCopilotLlmProvider(configuration);
+        services.AddOllamaLlmProvider(configuration);
+
         services.AddCodeElementsServices(configuration);
         // Register Datasources
         services.AddCsvDatasourceServices(configuration);
@@ -75,7 +82,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<WindowManagerService>((s) => new WindowManagerService(Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<MainView>(s)));
         services.AddSingleton<IWindowManagerService>((s) => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<WindowManagerService>(s));
         services.AddSingleton<ITemplateWindowManagerService>((s) => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<WindowManagerService>(s));
-        services.AddSingleton<ICopilotWindowManagerService>((s) => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<WindowManagerService>(s));
+        services.AddSingleton<ILlmWindowManagerService>((s) => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<WindowManagerService>(s));
         services.AddSingleton<IWorkspaceWindowManagerService>((s) => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<WindowManagerService>(s));
         services.AddSingleton<ICodeElementsWindowManagerService>((s) => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<WindowManagerService>(s));
         // Resources

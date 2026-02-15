@@ -7,9 +7,9 @@ using CodeGenerator.Core.Artifacts.ViewModels;
 using CodeGenerator.Core.CodeElements.Services;
 using CodeGenerator.Core.CodeElements.ViewModels;
 using CodeGenerator.Core.CodeElements.Views;
-using CodeGenerator.Core.Copilot;
-using CodeGenerator.Core.Copilot.Services;
-using CodeGenerator.Core.Copilot.ViewModels;
+using CodeGenerator.Core.LLM.Services;
+using CodeGenerator.Core.LLM.ViewModels;
+using CodeGenerator.Core.LLM.Views;
 using CodeGenerator.Core.Settings.ViewModels;
 using CodeGenerator.Core.Settings.Views;
 using CodeGenerator.Presentation.WinForms.Views;
@@ -25,7 +25,7 @@ using Syncfusion.Windows.Forms.Tools;
 
 namespace CodeGenerator.Presentation.WinForms.Services
 {
-    public class WindowManagerService : IWindowManagerService, ITemplateWindowManagerService, ICopilotWindowManagerService, IWorkspaceWindowManagerService, ICodeElementsWindowManagerService
+    public class WindowManagerService : IWindowManagerService, ITemplateWindowManagerService, ILlmWindowManagerService, IWorkspaceWindowManagerService, ICodeElementsWindowManagerService
     {       
         private readonly DockingManager dockingManager;
         private readonly MainView mainView;
@@ -211,15 +211,15 @@ namespace CodeGenerator.Presentation.WinForms.Services
             var view = ServiceProviderHolder.GetRequiredService<IView<TViewModel>>();
         }
 
-        private CopilotChatView? _copilotChatView;
-        public void ShowCopilotChatView(CopilotChatViewModel copilotViewModel)
+        private LlmChatView? _llmChatView;
+        public void ShowLlmChatView(LlmChatViewModel llmViewModel)
         {
-            if (_copilotChatView == null || _copilotChatView.IsDisposed) {
-                _copilotChatView = new CopilotChatView();
+            if (_llmChatView == null || _llmChatView.IsDisposed) {
+                _llmChatView = new LlmChatView();
             }
-            _copilotChatView.BindViewModel(copilotViewModel);
-            dockingManager.DockAsDocument(_copilotChatView);
-            dockingManager.SetDockLabel(_copilotChatView, "Copilot Chat");
+            _llmChatView.BindViewModel(llmViewModel);
+            dockingManager.DockAsDocument(_llmChatView);
+            dockingManager.SetDockLabel(_llmChatView, "AI Chat");
         }
 
         private CodeElementArtifactDetailsView? _codeElementDetailsView;

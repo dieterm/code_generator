@@ -44,7 +44,9 @@
   <ItemGroup>
     <ProjectReference Include="..\CodeGenerator.Application\CodeGenerator.Application.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.CodeElements\CodeGenerator.Core.CodeElements.csproj" />
-    <ProjectReference Include="..\CodeGenerator.Core.Copilot\CodeGenerator.Core.Copilot.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.LLM\CodeGenerator.Core.LLM.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.LLM.Copilot\CodeGenerator.Core.LLM.Copilot.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Core.LLM.Ollama\CodeGenerator.Core.LLM.Ollama.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Settings.Views\CodeGenerator.Core.Settings.Views.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Csv\CodeGenerator.Core.Workspaces.Datasources.Csv.csproj" />
     <ProjectReference Include="..\CodeGenerator.Core.Workspaces.Datasources.Directory\CodeGenerator.Core.Workspaces.Datasources.Directory.csproj" />

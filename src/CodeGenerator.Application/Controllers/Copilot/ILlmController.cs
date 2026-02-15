@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Application.Controllers.Copilot
 {
-    public interface ICopilotController : IControllerBase
+    public interface ILlmController : IControllerBase
     {
         void ShowCopilot();
+        IEnumerable<(string ProviderId, string DisplayName)> GetAvailableProviders();
+        Task SwitchProviderAsync(string providerId);
     }
 }

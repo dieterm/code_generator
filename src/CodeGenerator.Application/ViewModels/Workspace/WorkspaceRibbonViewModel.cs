@@ -24,7 +24,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         public event EventHandler? RequestSaveWorkspace;
         public event EventHandler? RequestCloseWorkspace;
         public event EventHandler? RequestShowTemplates;
-        public event EventHandler? RequestShowCopilot;
+        public event EventHandler<string?>? RequestShowCopilot;
         public event EventHandler? RequestUndo;
         public event EventHandler? RequestRedo;
         public event EventHandler<int>? RequestUndoMultiple;
@@ -53,7 +53,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             SaveWorkspaceCommand = new RelayCommand((e) => RequestSaveWorkspace?.Invoke(this, EventArgs.Empty), CanRequestSaveWorkspace);
             CloseWorkspaceCommand = new RelayCommand((e) => RequestCloseWorkspace?.Invoke(this, EventArgs.Empty), CanRequestCloseWorkspace);
             ShowTemplatesCommand = new RelayCommand((e) => RequestShowTemplates?.Invoke(this, EventArgs.Empty), CanShowTemplates);
-            ShowCopilotCommand = new RelayCommand((e) => RequestShowCopilot?.Invoke(this, EventArgs.Empty), CanShowCopilot);
+            ShowCopilotCommand = new RelayCommand((e) => RequestShowCopilot?.Invoke(this, e as string), CanShowCopilot);
             UndoCommand = new RelayCommand((e) => RequestUndo?.Invoke(this, EventArgs.Empty), _ => _undoRedoManager.CanUndo);
             RedoCommand = new RelayCommand((e) => RequestRedo?.Invoke(this, EventArgs.Empty), _ => _undoRedoManager.CanRedo);
         }

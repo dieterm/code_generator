@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Core.Copilot.Controllers
 {
-    public class CopilotController : CoreControllerBase, ICopilotController
+    public class CopilotController : CoreControllerBase, ILlmController
     {
         private readonly CopilotChatViewModel _copilotChatViewModel;
         private IWorkspaceContextProvider? _workspaceContextProvider;
@@ -73,6 +73,16 @@ namespace CodeGenerator.Core.Copilot.Controllers
             {
                 _ = ConnectAsync();
             }
+        }
+
+        public IEnumerable<(string ProviderId, string DisplayName)> GetAvailableProviders()
+        {
+            return [("GitHubCopilot", "GitHub Copilot")];
+        }
+
+        public Task SwitchProviderAsync(string providerId)
+        {
+            return Task.CompletedTask;
         }
 
         private async Task ConnectAsync()
