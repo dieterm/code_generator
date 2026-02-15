@@ -20,6 +20,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         public WorkspaceEditViewModel()
         {
             NameField = new SingleLineTextFieldModel { Label = "Workspace Name", Name = nameof(WorkspaceArtifact.Name) };
+            DescriptionField = new MultiLineTextFieldModel { Label = "Description", Name = nameof(WorkspaceArtifact.Description) };
             RootNamespaceField = new SingleLineTextFieldModel { Label = "Root Namespace", Name = nameof(WorkspaceArtifact.RootNamespace) };
             OutputDirectoryField = new FolderFieldModel { Label = "Default Output Directory", Name = nameof(WorkspaceArtifact.OutputDirectory) };
             DefaultTargetFrameworkField = new ComboboxFieldModel { Label = "Target Framework", Name = nameof(WorkspaceArtifact.DefaultTargetFramework) };
@@ -48,6 +49,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
 
             // Subscribe to field changes
             NameField.PropertyChanged += OnFieldChanged;
+            DescriptionField.PropertyChanged += OnFieldChanged;
             RootNamespaceField.PropertyChanged += OnFieldChanged;
             OutputDirectoryField.PropertyChanged += OnFieldChanged;
             DefaultTargetFrameworkField.PropertyChanged += OnFieldChanged;
@@ -95,6 +97,11 @@ namespace CodeGenerator.Application.ViewModels.Workspace
         public SingleLineTextFieldModel NameField { get; }
 
         /// <summary>
+        /// Workspace description field
+        /// </summary>
+        public MultiLineTextFieldModel DescriptionField { get; }
+
+        /// <summary>
         /// Root namespace field
         /// </summary>
         public SingleLineTextFieldModel RootNamespaceField { get; }
@@ -139,6 +146,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             try
             {
                 NameField.Value = _workspace.Name;
+                DescriptionField.Value = _workspace.Description;
                 RootNamespaceField.Value = _workspace.RootNamespace;
                 OutputDirectoryField.Value = _workspace.OutputDirectory;
                 DefaultTargetFrameworkField.Value = _workspace.DefaultTargetFramework;
@@ -179,6 +187,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace
             if (_workspace == null) return;
 
             _workspace.Name = !string.IsNullOrWhiteSpace(NameField.Value as string) ? NameField.Value as string : "Workspace";
+            _workspace.Description = DescriptionField.Value?.ToString() ?? string.Empty;
             _workspace.RootNamespace = RootNamespaceField.Value?.ToString() ?? "MyCompany.MyProduct";
             _workspace.OutputDirectory = OutputDirectoryField.Value?.ToString() ?? string.Empty;
             _workspace.DefaultTargetFramework = DefaultTargetFrameworkField.Value?.ToString() ?? "net8_0";

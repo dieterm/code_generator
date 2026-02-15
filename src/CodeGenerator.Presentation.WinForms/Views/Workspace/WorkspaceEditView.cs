@@ -41,6 +41,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             
             // Bind fields to their view models
             txtName.BindViewModel(_viewModel.NameField);
+            txtDescription.BindViewModel(_viewModel.DescriptionField);
             txtRootNamespace.BindViewModel(_viewModel.RootNamespaceField);
             folderOutputDirectory.BindViewModel(_viewModel.OutputDirectoryField);
             cbxTargetFramework.BindViewModel(_viewModel.DefaultTargetFrameworkField);

@@ -40,7 +40,7 @@ namespace CodeGenerator.Generators.CodeArchitectureLayers
                 .Create()
                 .FrontMatter(new { title = args.Result.Workspace.Name, tags = args.Result.Workspace.GetAllScopes(true, true).Select(scope => scope.Name).ToArray() })
                 .H1(args.Result.Workspace.Name)
-                .P(args.Result.Workspace.Documentation)
+                .P(args.Result.Workspace.Description)
                 .Callout("info", "Early access", "APIs may change before 1.0.")
                 .H2("Install")
                 .Code("bash", "dotnet tool install -g DomainDetective")

@@ -24,6 +24,6 @@ namespace CodeGenerator.Core.Workspaces.Generators
         public ScopeArtifact? ScopeArtifact { 
             get { return GetValue<ScopeArtifact>(nameof(ScopeArtifact)); }
             set { SetValue<ScopeArtifact>(nameof(ScopeArtifact), value); }
-        }
+        }   
     }
 }

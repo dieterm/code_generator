@@ -161,9 +161,9 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         /// <summary>
         /// Information about the workspace/project, used in documentation and README generation
         /// </summary>
-        public string Documentation {
-            get { return GetValue<string>(nameof(Documentation)); }
-            set { SetValue(nameof(Documentation), value); }
+        public string Description {
+            get { return GetValue<string>(nameof(Description)); }
+            set { SetValue(nameof(Description), value); }
         }
         /// <summary>
         /// Directory containing the workspace
