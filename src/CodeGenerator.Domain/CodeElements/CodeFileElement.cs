@@ -108,13 +108,22 @@ namespace CodeGenerator.Domain.CodeElements
         /// <summary>
         /// Add a namespace with a single type
         /// </summary>
-        public CodeFileElement AddNamespace(string namespaceName, TypeElement type)
+        public NamespaceElement AddNamespace(string namespaceName, TypeElement type)
         {
             var ns = new NamespaceElement(namespaceName);
             ns.Types.Add(type);
             Namespaces.Add(ns);
-            return this;
+            return ns;
         }
+
+        public T AddNamespace<T>(string namespaceName, T type) where T : TypeElement
+        {
+            var ns = new NamespaceElement(namespaceName);
+            ns.Types.Add(type);
+            Namespaces.Add(ns);
+            return type;
+        }
+
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             WriteIndented = true,
@@ -135,6 +144,11 @@ namespace CodeGenerator.Domain.CodeElements
         public string ToJson()
         {
             return JsonSerializer.Serialize(this, JsonOptions);
+        }
+
+        public CodeFileElement Clone()
+        {
+            return CodeFileElement.FromJson(this.ToJson());
         }
     }
 

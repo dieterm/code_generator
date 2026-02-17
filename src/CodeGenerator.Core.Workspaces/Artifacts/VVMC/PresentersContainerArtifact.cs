@@ -14,8 +14,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.VVMC
         {
         }
 
-        public PresentersContainerArtifact(ArtifactState state)
-            : base(state)
+        public PresentersContainerArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
     }

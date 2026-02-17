@@ -19,8 +19,8 @@ public class YamlDatasourceArtifact : DatasourceArtifact
         FilePath = string.Empty;
     }
 
-    public YamlDatasourceArtifact(ArtifactState state)
-        : base(state)
+    public YamlDatasourceArtifact(ArtifactState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

@@ -19,8 +19,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities
             IsNullable = isNullable;
         }
 
-        public PropertyArtifact(ArtifactState state)
-            : base(state)
+        public PropertyArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
 

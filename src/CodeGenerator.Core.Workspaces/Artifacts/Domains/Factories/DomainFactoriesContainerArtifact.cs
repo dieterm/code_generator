@@ -14,8 +14,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Factories
         {
         }
 
-        public DomainFactoriesContainerArtifact(ArtifactState state)
-            : base(state)
+        public DomainFactoriesContainerArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
 

@@ -18,8 +18,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities
             TargetCardinality = RelationCardinality.ZeroOrMany;
         }
 
-        public EntityRelationArtifact(ArtifactState state)
-            : base(state)
+        public EntityRelationArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
 

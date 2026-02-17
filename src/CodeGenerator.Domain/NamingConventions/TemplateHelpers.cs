@@ -1,4 +1,6 @@
-﻿namespace CodeGenerator.Core.Generators;
+﻿using System.Reflection;
+
+namespace CodeGenerator.Core.Generators;
 
 /// <summary>
 /// Helper functions available in templates
@@ -62,5 +64,11 @@ public class TemplateHelpers
         if (input.EndsWith("s", StringComparison.OrdinalIgnoreCase))
             return input.Substring(0, input.Length - 1);
         return input;
+    }
+
+    public string FirstLower(string input)
+    {
+        if(string.IsNullOrEmpty(input)) return input;
+        return char.ToLowerInvariant(input[0]) + input.Substring(1);
     }
 }

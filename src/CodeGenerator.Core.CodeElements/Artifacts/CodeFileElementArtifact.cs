@@ -15,8 +15,8 @@ public class CodeFileElementArtifact : CodeElementArtifactBase<CodeFileElement>
         AddChild(new NamespacesContainerArtifact(codeFileElement));
     }
 
-    public CodeFileElementArtifact(ArtifactState artifactState) 
-        : base(artifactState)
+    public CodeFileElementArtifact(ArtifactState artifactState, List<string> errors) 
+        : base(artifactState, errors)
     {
         CodeElement = CodeFileElement.FromJson((string)artifactState.Properties["CodeElement"]!);
 

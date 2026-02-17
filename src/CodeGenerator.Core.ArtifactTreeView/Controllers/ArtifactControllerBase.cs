@@ -36,7 +36,7 @@ namespace CodeGenerator.Application.Controllers.Base
             return artifact is TArtifact;
         }
 
-        public IEnumerable<ArtifactTreeNodeCommand> GetContextMenuCommands(IArtifact artifact)
+        public virtual IEnumerable<ArtifactTreeNodeCommand> GetContextMenuCommands(IArtifact artifact)
         {
             if (artifact is TArtifact typedArtifact)
             {
@@ -48,10 +48,8 @@ namespace CodeGenerator.Application.Controllers.Base
                 {
                     commands.AddRange(clipboardCommands);
                 }
-                
-                var messageBus = ServiceProviderHolder.GetRequiredService<WorkspaceMessageBus>().PublishArtifactContextMenuOpening(typedArtifact, commands);
-
-                return messageBus.Commands;
+                                
+                return commands;
             }
             return Enumerable.Empty<ArtifactTreeNodeCommand>();
         }

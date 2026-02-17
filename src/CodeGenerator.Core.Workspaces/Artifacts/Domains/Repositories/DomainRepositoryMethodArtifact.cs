@@ -16,8 +16,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Repositories
             ReturnType = "void";
         }
 
-        public DomainRepositoryMethodArtifact(ArtifactState state)
-            : base(state)
+        public DomainRepositoryMethodArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
         

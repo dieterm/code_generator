@@ -11,7 +11,7 @@ public class DelegateElementArtifact : CodeElementArtifactBase<DelegateElement>
         AddChild(new ParametersContainerArtifact(delegateElement.Parameters));
     }
 
-    public DelegateElementArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public DelegateElementArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("braces");
 

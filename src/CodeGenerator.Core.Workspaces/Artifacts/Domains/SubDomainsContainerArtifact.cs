@@ -13,8 +13,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
     {
         public SubDomainsContainerArtifact() { }
 
-        public SubDomainsContainerArtifact(ArtifactState state)
-            : base(state)
+        public SubDomainsContainerArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
             
         }

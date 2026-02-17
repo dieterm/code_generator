@@ -17,8 +17,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             OriginalColumnMappings = new List<ExistingForeignKeyColumnMapping>();
         }
 
-        public ExistingForeignKeyDecorator(ArtifactDecoratorState state)
-            : base(state)
+        public ExistingForeignKeyDecorator(ArtifactDecoratorState state, List<string> errors)
+            : base(state, errors)
         {
             if (OriginalColumnMappings == null)
             {
@@ -116,9 +116,9 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             set => SetValue(nameof(SourceDatasourceName), value);
         }
 
-        public override void RestoreState(IMementoState state)
+        public override void RestoreState(IMementoState state, List<string> errors)
         {
-            base.RestoreState(state);
+            base.RestoreState(state, errors);
             FixListOfObject<ExistingForeignKeyColumnMapping>(nameof(OriginalColumnMappings));
         }
     }

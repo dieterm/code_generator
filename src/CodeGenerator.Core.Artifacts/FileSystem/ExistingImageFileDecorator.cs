@@ -11,7 +11,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
 {
     public class ExistingImageFileDecorator : ArtifactDecorator, IPreviewableDecorator
     {
-        public ExistingImageFileDecorator(ArtifactDecoratorState state) : base(state)
+        public ExistingImageFileDecorator(ArtifactDecoratorState state, List<string> errors) : base(state, errors)
         {
         }
 

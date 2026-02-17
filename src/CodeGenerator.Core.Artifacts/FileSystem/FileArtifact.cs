@@ -23,7 +23,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
             FileName = fileName;
         }
 
-        public FileArtifact(ArtifactState state) : base(state)
+        public FileArtifact(ArtifactState state, List<string> errors) : base(state, errors)
         {
             _fileArtifactDecorator = GetDecoratorOfType<FileArtifactDecorator>() 
                 ?? throw new InvalidOperationException($"FileArtifact must have a {nameof(FileArtifactDecorator)} with key '{FILE_PROPERTIES_DECORATOR_KEY}'");

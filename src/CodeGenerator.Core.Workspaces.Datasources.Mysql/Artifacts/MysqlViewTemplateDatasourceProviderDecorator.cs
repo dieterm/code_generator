@@ -15,8 +15,8 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts
 {
     public class MysqlViewTemplateDatasourceProviderDecorator : TemplateDatasourceProviderDecorator
     {
-        public MysqlViewTemplateDatasourceProviderDecorator(ArtifactDecoratorState state) 
-            : base(state)
+        public MysqlViewTemplateDatasourceProviderDecorator(ArtifactDecoratorState state, List<string> errors) 
+            : base(state, errors)
         {
 
         }

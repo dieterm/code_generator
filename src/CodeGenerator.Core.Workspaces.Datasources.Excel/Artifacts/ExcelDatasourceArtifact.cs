@@ -20,8 +20,8 @@ public class ExcelDatasourceArtifact : DatasourceArtifact
         FirstRowIsHeader = true;
     }
 
-    public ExcelDatasourceArtifact(ArtifactState state)
-        : base(state)
+    public ExcelDatasourceArtifact(ArtifactState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

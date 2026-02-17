@@ -16,7 +16,7 @@ public class OperatorsContainerArtifact : CodeElementArtifactBase, IEnumerable<O
             AddChild(new OperatorElementArtifact(op));
     }
 
-    public OperatorsContainerArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public OperatorsContainerArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public override string TreeNodeText => "Operators";
     public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("folder");

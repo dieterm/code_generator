@@ -20,7 +20,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts.Statements
             }
         }
     
-        protected CompositeStatementArtifact(ArtifactState artifactState) : base(artifactState)
+        protected CompositeStatementArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors)
         { }
         
         public List<StatementElement> Statements { get { return StatementElement.Statements; } }

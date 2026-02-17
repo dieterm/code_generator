@@ -17,8 +17,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities
             PropertyName = propertyName;
         }
 
-        public EntityEditViewFieldArtifact(ArtifactState state)
-            : base(state)
+        public EntityEditViewFieldArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
 

@@ -15,8 +15,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Specifications
             Name = name;
         }
 
-        public DomainSpecificationArtifact(ArtifactState state)
-            : base(state)
+        public DomainSpecificationArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
 

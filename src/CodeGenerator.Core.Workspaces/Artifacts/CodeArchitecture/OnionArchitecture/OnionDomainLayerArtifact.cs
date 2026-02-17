@@ -23,7 +23,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         {
         }
 
-        public OnionDomainLayerArtifact(ArtifactState state) : base(state)
+        public OnionDomainLayerArtifact(ArtifactState state, List<string> errors) : base(state, errors)
         {
         }
 

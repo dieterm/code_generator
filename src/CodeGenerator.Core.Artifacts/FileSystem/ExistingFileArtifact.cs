@@ -27,8 +27,8 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
             }
         }
 
-        public ExistingFileArtifact(ArtifactState state)
-            : base(state)
+        public ExistingFileArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
             _existingFileArtifactDecorator = GetDecoratorOfType<ExistingFileArtifactDecorator>()
                 ?? throw new InvalidOperationException($"ExistingFileArtifact must have a {nameof(ExistingFileArtifactDecorator)} with key '{EXISTING_FILE_PROPERTIES_DECORATOR_KEY}'");

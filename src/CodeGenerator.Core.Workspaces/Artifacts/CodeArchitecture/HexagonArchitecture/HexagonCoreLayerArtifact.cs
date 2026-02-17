@@ -10,7 +10,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.HexagonArchitecture
         {
         }
 
-        public HexagonCoreLayerArtifact(ArtifactState state) : base(state)
+        public HexagonCoreLayerArtifact(ArtifactState state, List<string> errors) : base(state, errors)
         {
         }
 

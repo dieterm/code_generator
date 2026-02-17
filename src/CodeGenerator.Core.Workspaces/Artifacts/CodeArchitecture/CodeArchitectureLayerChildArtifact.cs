@@ -14,8 +14,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.CodeArchitecture
         {
         }
 
-        public CodeArchitectureLayerChildArtifact(ArtifactState state)
-            : base(state)
+        public CodeArchitectureLayerChildArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
 

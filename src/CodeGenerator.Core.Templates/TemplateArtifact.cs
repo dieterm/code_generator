@@ -37,7 +37,7 @@ public class TemplateArtifact : Artifact
         _definition = TemplateDefinition.LoadForTemplate(filePath);
     }
 
-    public TemplateArtifact(ArtifactState state) : base(state)
+    public TemplateArtifact(ArtifactState state, List<string> errors) : base(state, errors)
     {
         FilePath = GetValue<string>(nameof(FilePath)) ?? string.Empty;
         _definition = TemplateDefinition.LoadForTemplate(FilePath);

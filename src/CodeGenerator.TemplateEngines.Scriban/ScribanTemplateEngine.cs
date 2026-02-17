@@ -161,6 +161,7 @@ public class ScribanTemplateEngine : FileBasedTemplateEngine<ScribanTemplate, Sc
     public const string FUNCTION_PLURALIZE = "pluralize";
     public const string FUNCTION_SINGULARIZE = "singularize";
     public const string FUNCTION_NULLABLE_TYPE = "nullable_type";
+    public const string FUNCTION_FIRST_LOWER = "first_lower";
     public const string FUNCTION_IS_COLLECTION = "is_collection";
     public const string FUNCTION_GET_COLLECTION_TYPE = "get_collection_type";
     public const string FUNCTION_CSHARP_TYPE = "csharp_type";
@@ -178,6 +179,7 @@ public class ScribanTemplateEngine : FileBasedTemplateEngine<ScribanTemplate, Sc
         FUNCTION_PLURALIZE,
         FUNCTION_SINGULARIZE,
         FUNCTION_NULLABLE_TYPE,
+        FUNCTION_FIRST_LOWER,
         FUNCTION_IS_COLLECTION,
         FUNCTION_GET_COLLECTION_TYPE,
         FUNCTION_CSHARP_TYPE,
@@ -206,6 +208,8 @@ public class ScribanTemplateEngine : FileBasedTemplateEngine<ScribanTemplate, Sc
         BuildinFunctionsTooltips.Add(FUNCTION_PLURALIZE, $"<text> | {FUNCTION_PLURALIZE} -> eg. 'Customer' becomes 'Customers'");
         _globalFunctions.Import(FUNCTION_SINGULARIZE, _templateHelper.Singularize);
         BuildinFunctionsTooltips.Add(FUNCTION_SINGULARIZE, $"<text> | {FUNCTION_SINGULARIZE} -> eg. 'Customers' becomes 'Customer'");
+        _globalFunctions.Import(FUNCTION_FIRST_LOWER, _templateHelper.FirstLower);
+        BuildinFunctionsTooltips.Add(FUNCTION_FIRST_LOWER, $"<text> | {FUNCTION_FIRST_LOWER} -> eg. 'CustomerAccountNumber' becomes 'customerAccountNumber'");
 
         // Type helpers
         _globalFunctions.Import(FUNCTION_NULLABLE_TYPE, new Func<string, bool, string>((type, nullable) =>

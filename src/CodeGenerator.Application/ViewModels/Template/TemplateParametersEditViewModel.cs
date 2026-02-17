@@ -83,6 +83,10 @@ public class TemplateParametersEditViewModel : ViewModelBase
             {
                 // Update the parameter edit view model
                 ParameterEditViewModel.Parameter = value;
+                if(value != null)
+                {
+                    //ParameterEditViewModel.Parameter.PropertyChanged
+                }
             }
         }
     }

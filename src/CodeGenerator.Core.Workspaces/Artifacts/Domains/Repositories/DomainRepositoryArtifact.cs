@@ -15,8 +15,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Repositories
             Name = name;
         }
 
-        public DomainRepositoryArtifact(ArtifactState state)
-            : base(state)
+        public DomainRepositoryArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
 

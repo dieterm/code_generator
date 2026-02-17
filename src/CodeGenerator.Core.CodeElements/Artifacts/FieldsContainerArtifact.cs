@@ -16,7 +16,7 @@ public class FieldsContainerArtifact : CodeElementArtifactBase, IEnumerable<Fiel
             AddChild(new FieldElementArtifact(field));
     }
 
-    public FieldsContainerArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public FieldsContainerArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public override string TreeNodeText => "Fields";
     public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("folder");

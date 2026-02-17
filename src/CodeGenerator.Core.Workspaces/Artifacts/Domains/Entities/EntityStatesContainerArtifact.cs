@@ -15,8 +15,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities
         {
         }
 
-        public EntityStatesContainerArtifact(ArtifactState state)
-            : base(state)
+        public EntityStatesContainerArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
 

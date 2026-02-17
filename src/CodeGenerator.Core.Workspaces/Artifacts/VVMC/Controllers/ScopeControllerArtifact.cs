@@ -13,7 +13,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.VVMC.Controllers
         {
         }
 
-        public ScopeControllerArtifact(ArtifactState state) : base(state)
+        public ScopeControllerArtifact(ArtifactState state, List<string> errors) : base(state, errors)
         {
         }
     }

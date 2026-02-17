@@ -4,7 +4,7 @@ using CodeGenerator.Domain.CodeElements;
 
 namespace CodeGenerator.Core.CodeElements.Artifacts;
 
-public class StructElementArtifact : CodeElementArtifactBase<StructElement>
+public class StructElementArtifact : TypeElementArtifactBase<StructElement>
 {
     public StructElementArtifact(StructElement structElement) : base(structElement)
     {
@@ -15,7 +15,7 @@ public class StructElementArtifact : CodeElementArtifactBase<StructElement>
         AddChild(new EventsContainerArtifact(structElement.Events));
     }
 
-    public StructElementArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public StructElementArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("braces");
 
@@ -63,4 +63,5 @@ public class StructElementArtifact : CodeElementArtifactBase<StructElement>
     public ConstructorsContainerArtifact Constructors => Children.OfType<ConstructorsContainerArtifact>().Single();
     public MethodsContainerArtifact Methods => Children.OfType<MethodsContainerArtifact>().Single();
     public EventsContainerArtifact Events => Children.OfType<EventsContainerArtifact>().Single();
+   
 }

@@ -66,27 +66,29 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
     }
     private readonly List<IArtifact> _children = new();
 
-    protected Artifact(ArtifactState state) 
-        : base(state) // will call RestoreState, which is overridden in this class below
+    protected Artifact(ArtifactState state, List<string> errors) 
+        : base(state, errors) // will call RestoreState, which is overridden in this class below
     {
 
     }
 
-    public override void RestoreState(IMementoState state)
+    public override void RestoreState(IMementoState state, List<string> errors)
     {
-        base.RestoreState(state);
+        base.RestoreState(state, errors);
         var artifactState = (ArtifactState)state;
         // Initialize decorators
         foreach (var decoratorState in artifactState.Decorators)
         {
-            var decorator = ArtifactDecoratorFactory.CreateArtifactDecorator(decoratorState);
-            AddDecorator(decorator);
+            var decorator = ArtifactDecoratorFactory.CreateArtifactDecorator(decoratorState, errors);
+            if(decorator!=null)
+                AddDecorator(decorator);
         }
         // Initialize children
         foreach (var childState in artifactState.Children)
         {
-            var childArtifact = ArtifactFactory.CreateArtifact(childState);
-            AddChild(childArtifact);
+            var childArtifact = ArtifactFactory.CreateArtifact(childState, errors);
+            if(childArtifact!=null)
+                AddChild(childArtifact);
         }
     }
 

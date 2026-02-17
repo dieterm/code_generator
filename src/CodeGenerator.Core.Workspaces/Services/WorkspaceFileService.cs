@@ -52,7 +52,7 @@ namespace CodeGenerator.Core.Workspaces.Services
         /// <summary>
         /// Load a workspace from a .codegenerator file
         /// </summary>
-        public async Task<WorkspaceArtifact> LoadAsync(string filePath, CancellationToken cancellationToken = default)
+        public async Task<(WorkspaceArtifact Workspace, List<string> Errors)> LoadAsync(string filePath, CancellationToken cancellationToken = default)
         {
             if (!File.Exists(filePath))
             {
@@ -65,12 +65,16 @@ namespace CodeGenerator.Core.Workspaces.Services
             
             var workspaceState = JsonSerializer.Deserialize<ArtifactState>(json, JsonOptions)
                 ?? throw new InvalidOperationException("Failed to deserialize workspace state");
-            var workspaceArtifact = (WorkspaceArtifact)ArtifactFactory.CreateArtifact(workspaceState);
-            
+            var errors = new List<string>();
+            var workspaceArtifact = (WorkspaceArtifact)ArtifactFactory.CreateArtifact(workspaceState, errors);
+            foreach(var error in errors)
+            {
+                _logger.LogError("Error loading workspace: {Error}", error);
+            }
             _logger.LogInformation("Loaded workspace '{Name}' with {Count} datasources", 
                 workspaceArtifact.Name, workspaceArtifact.Datasources.GetDatasources().Count());
             
-            return workspaceArtifact;
+            return (workspaceArtifact, errors);
         }
 
         public string SerializeWorkspace(WorkspaceArtifact workspace)

@@ -18,8 +18,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
             PublishArtifactConstructionEvent();
         }
 
-        public ScopesContainerArtifact(ArtifactState state)
-            : base(state) 
+        public ScopesContainerArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors) 
         {
             PublishArtifactConstructionEvent();
         }

@@ -35,8 +35,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             PublishArtifactConstructionEvent();
         }
 
-        public WorkspaceArtifact(ArtifactState state)
-            : base(state)
+        public WorkspaceArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
 
             PublishArtifactConstructionEvent();

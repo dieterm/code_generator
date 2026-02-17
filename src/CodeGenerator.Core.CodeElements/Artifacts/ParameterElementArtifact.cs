@@ -6,7 +6,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts;
 public class ParameterElementArtifact : CodeElementArtifactBase<ParameterElement>
 {
     public ParameterElementArtifact(ParameterElement parameterElement) : base(parameterElement) { }
-    public ParameterElementArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public ParameterElementArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public string TypeName
     {

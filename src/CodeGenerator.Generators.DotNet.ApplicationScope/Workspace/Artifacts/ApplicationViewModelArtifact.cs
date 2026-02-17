@@ -15,8 +15,8 @@ namespace CodeGenerator.Generators.DotNet.ApplicationScope.Workspace.Artifacts
         {
         }
 
-        public ApplicationViewModelArtifact(ArtifactState state)
-            : base(state)
+        public ApplicationViewModelArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
 

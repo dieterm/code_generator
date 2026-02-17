@@ -16,8 +16,8 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Directory.Artifacts;
 /// </summary>
 public class DirectoryTemplateDatasourceProviderDecorator : TemplateDatasourceProviderDecorator
 {
-    public DirectoryTemplateDatasourceProviderDecorator(ArtifactDecoratorState state)
-        : base(state)
+    public DirectoryTemplateDatasourceProviderDecorator(ArtifactDecoratorState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

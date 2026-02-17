@@ -25,8 +25,8 @@ public class SqlServerDatasourceArtifact : RelationalDatabaseDatasourceArtifact
         TrustServerCertificate = true;
     }
 
-    public SqlServerDatasourceArtifact(ArtifactState state)
-        : base(state)
+    public SqlServerDatasourceArtifact(ArtifactState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

@@ -13,8 +13,8 @@ namespace CodeGenerator.Core.Artifacts
         /// <summary>
         /// Constructor for restoring state from memento
         /// </summary>
-        public ArtifactDecorator(ArtifactDecoratorState state) 
-            : base(state)
+        public ArtifactDecorator(ArtifactDecoratorState state, List<string> errors) 
+            : base(state, errors)
         {
             
         }

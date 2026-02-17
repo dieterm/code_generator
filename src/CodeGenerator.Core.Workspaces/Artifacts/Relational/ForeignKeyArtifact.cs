@@ -19,8 +19,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             OnUpdateAction = ForeignKeyAction.NoAction;
         }
 
-        public ForeignKeyArtifact(ArtifactState state)
-            : base(state)
+        public ForeignKeyArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
             if (ColumnMappings == null)
             {
@@ -137,9 +137,9 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             return ReferencedTableId == tableId;
         }
 
-        public override void RestoreState(IMementoState state)
+        public override void RestoreState(IMementoState state, List<string> errors)
         {
-            base.RestoreState(state);
+            base.RestoreState(state, errors);
 
             // JSON-fix: convert ColumnMappings from List<object> to List<ForeignKeyColumnMapping>
             FixListOfObject<ForeignKeyColumnMapping>(nameof(ColumnMappings));

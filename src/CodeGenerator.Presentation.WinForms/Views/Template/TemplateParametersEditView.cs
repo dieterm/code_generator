@@ -52,6 +52,35 @@ public partial class TemplateParametersEditView : UserControl, IView<TemplatePar
             parameterEditView.BindViewModel(_viewModel.ParameterEditViewModel);
             
             BindFromViewModel();
+            ObserveSelectedParameterDefinition();
+        }
+    }
+
+    private TemplateParameterEditModel? _currentObservedParameterEditModel;
+    private void ObserveSelectedParameterDefinition()
+    {
+        if (_currentObservedParameterEditModel != null)
+        {
+            _currentObservedParameterEditModel.PropertyChanged -= SelectedParameterDefinition_PropertyChanged;
+        }
+
+        _currentObservedParameterEditModel = _viewModel?.SelectedParameterDefinition;
+
+        if (_currentObservedParameterEditModel != null)
+        {
+            _currentObservedParameterEditModel.PropertyChanged += SelectedParameterDefinition_PropertyChanged;
+        }
+    }
+
+    private void SelectedParameterDefinition_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if(e.PropertyName== nameof(TemplateParameterEditModel.Name) )
+        {
+            // If any of the main properties of the parameter change, we need to refresh the list to update the display
+            //RefreshParameterList();
+            //lstParameters.Invalidate(); // Invalidate the list to trigger a redraw without resetting selection
+            
+            //lstParameters.Items[lstParameters.SelectedIndex] = lstParameters.SelectedItem; // Force the ListBox to update the display of the selected item
         }
     }
 
@@ -80,6 +109,7 @@ public partial class TemplateParametersEditView : UserControl, IView<TemplatePar
                 break;
             case nameof(TemplateParametersEditViewModel.SelectedParameterDefinition):
                 UpdateButtonStates();
+                ObserveSelectedParameterDefinition();
                 break;
             case nameof(TemplateParametersEditViewModel.HasUnsavedChanges):
                 btnSave.Enabled = _viewModel?.HasUnsavedChanges ?? false;
@@ -132,7 +162,7 @@ public partial class TemplateParametersEditView : UserControl, IView<TemplatePar
         try
         {
             lstParameters.DataSource = null;
-            lstParameters.DataSource = _viewModel.ParameterDefinitions.ToList();
+            lstParameters.DataSource = new BindingList<TemplateParameterEditModel>(_viewModel.ParameterDefinitions);
             lstParameters.DisplayMember = nameof(TemplateParameterEditModel.Name);
 
             if (_viewModel.SelectedParameterDefinition != null)

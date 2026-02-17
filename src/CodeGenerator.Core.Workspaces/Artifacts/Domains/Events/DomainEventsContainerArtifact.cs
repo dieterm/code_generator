@@ -14,8 +14,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Events
         {
         }
 
-        public DomainEventsContainerArtifact(ArtifactState state)
-            : base(state)
+        public DomainEventsContainerArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
 

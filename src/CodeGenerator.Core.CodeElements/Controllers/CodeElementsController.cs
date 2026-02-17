@@ -27,6 +27,9 @@ namespace CodeGenerator.Core.CodeElements.Controllers
         private readonly CodeElementsEditorViewModel _editorViewModel;
         private readonly CodeElementArtifactDetailsViewModel _detailsViewModel;
         private readonly CodeElementsTreeViewController _treeViewController;
+
+        public CodeElementsTreeViewController TreeViewController { get { return _treeViewController; } }
+
         public CodeElementsController(
             CodeElementsTreeViewController treeViewController,
             //CodeElementsTreeViewModel treeViewModel,
@@ -91,7 +94,9 @@ namespace CodeGenerator.Core.CodeElements.Controllers
 
         public void ShowCodeElements(CodeFileElement codeFileElement)
         {
-            throw new NotImplementedException();
+            _treeViewController.ShowCodeFileElementTreeView(codeFileElement);
+            ShowCodeElementsDetailsView(null);
+            //ShowCodeElementsEditor(string.Empty, CSharpLanguage.Instance);
         }
     }
 }

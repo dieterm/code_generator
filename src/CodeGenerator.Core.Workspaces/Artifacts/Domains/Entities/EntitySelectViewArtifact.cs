@@ -16,8 +16,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities
             Name = name;
         }
 
-        public EntitySelectViewArtifact(ArtifactState state)
-            : base(state)
+        public EntitySelectViewArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
 

@@ -19,8 +19,8 @@ public class XmlDatasourceArtifact : DatasourceArtifact
         FilePath = string.Empty;
     }
 
-    public XmlDatasourceArtifact(ArtifactState state)
-        : base(state)
+    public XmlDatasourceArtifact(ArtifactState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

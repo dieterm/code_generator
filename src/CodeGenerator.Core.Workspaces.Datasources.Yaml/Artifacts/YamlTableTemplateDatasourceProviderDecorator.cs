@@ -9,8 +9,8 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Yaml.Artifacts;
 
 public class YamlTableTemplateDatasourceProviderDecorator : TemplateDatasourceProviderDecorator
 {
-    public YamlTableTemplateDatasourceProviderDecorator(ArtifactDecoratorState state)
-        : base(state)
+    public YamlTableTemplateDatasourceProviderDecorator(ArtifactDecoratorState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

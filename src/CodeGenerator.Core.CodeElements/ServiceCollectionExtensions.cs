@@ -1,10 +1,14 @@
 ﻿using CodeGenerator.Application.Controllers.CodeElements;
 using CodeGenerator.Application.Controllers.Copilot;
 using CodeGenerator.Core.CodeElements.Controllers;
+using CodeGenerator.Core.CodeElements.Controllers.CodeElements;
 using CodeGenerator.Core.CodeElements.Controllers.Statements;
 using CodeGenerator.Core.CodeElements.ViewModels;
+using CodeGenerator.Core.CodeElements.ViewModels.CodeElements;
+using CodeGenerator.Core.CodeElements.ViewModels.EditFields;
 using CodeGenerator.Core.CodeElements.ViewModels.Statements;
 using CodeGenerator.Core.CodeElements.Views;
+using CodeGenerator.Core.CodeElements.Views.EditFields;
 using CodeGenerator.Core.CodeElements.Views.Statements;
 using CodeGenerator.Shared.Views;
 using Microsoft.Extensions.Configuration;
@@ -61,7 +65,12 @@ namespace CodeGenerator.Core.CodeElements
             services.AddSingleton<ICodeElementArtifactController, IndexerElementArtifactController>();
             services.AddSingleton<ICodeElementArtifactController, OperatorsContainerArtifactController>();
             services.AddSingleton<ICodeElementArtifactController, OperatorElementArtifactController>();
-            
+            services.AddSingleton<ICodeElementArtifactController, BaseTypesContainerArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, GenericConstraintsContainerArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, GenericTypeParametersContainerArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, GenericConstraintElementArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, GenericTypeParameterElementArtifactController>();
+
             // Statement controllers
             services.AddSingleton<ICodeElementArtifactController, CompositeStatementArtifactController>();
             services.AddSingleton<ICodeElementArtifactController, AssignmentStatementArtifactController>();
@@ -107,6 +116,8 @@ namespace CodeGenerator.Core.CodeElements
             services.AddTransient<IView<ConstructorElementEditViewModel>, ConstructorElementEditView>();
             services.AddTransient<IView<PropertyElementEditViewModel>, PropertyElementEditView>();
             services.AddTransient<IView<FieldElementEditViewModel>, FieldElementEditView>();
+            services.AddTransient<IView<GenericConstraintElementEditViewModel>, GenericConstraintElementEditView>();
+            services.AddTransient<IView<GenericTypeParameterElementEditViewModel>, GenericTypeParameterElementEditView>();
 
             // Statement Edit Views
             services.AddTransient<IView<RawStatementEditViewModel>, RawStatementEditView>();
@@ -125,6 +136,9 @@ namespace CodeGenerator.Core.CodeElements
             services.AddTransient<IView<TryCatchStatementEditViewModel>, TryCatchStatementEditView>();
             services.AddTransient<IView<UsingStatementEditViewModel>, UsingStatementEditView>();
             services.AddTransient<IView<WhileStatementEditViewModel>, WhileStatementEditView>();
+
+            // Field Edit Views
+            services.AddTransient<IView<CodeFileElementFieldModel>, CodeFileElementField>();
 
             return services;
         }

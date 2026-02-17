@@ -19,7 +19,7 @@ namespace CodeGenerator.Core.Artifacts.CodeGeneration
 
         public override ITreeNodeIcon TreeNodeIcon { get; } = new ResourceManagerTreeNodeIcon("box");
 
-        public RootArtifact(ArtifactState state) : base(state) { }
+        public RootArtifact(ArtifactState state, List<string> errors) : base(state, errors) { }
         public RootArtifact(string treeNodeText, string outputDirectory)
         {
             _treeNodeText = treeNodeText;

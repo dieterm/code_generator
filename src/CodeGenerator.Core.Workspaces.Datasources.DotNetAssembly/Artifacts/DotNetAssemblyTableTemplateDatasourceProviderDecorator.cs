@@ -11,8 +11,8 @@ namespace CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly.Artifacts;
 /// </summary>
 public class DotNetAssemblyTableTemplateDatasourceProviderDecorator : TemplateDatasourceProviderDecorator
 {
-    public DotNetAssemblyTableTemplateDatasourceProviderDecorator(ArtifactDecoratorState state)
-        : base(state)
+    public DotNetAssemblyTableTemplateDatasourceProviderDecorator(ArtifactDecoratorState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

@@ -16,7 +16,7 @@ public class ConstructorsContainerArtifact : CodeElementArtifactBase, IEnumerabl
             AddChild(new ConstructorElementArtifact(ctor));
     }
 
-    public ConstructorsContainerArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public ConstructorsContainerArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public override string TreeNodeText => "Constructors";
     public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("folder");

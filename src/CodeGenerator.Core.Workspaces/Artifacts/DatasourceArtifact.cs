@@ -16,8 +16,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             Description = description ?? string.Empty;
         }
 
-        protected DatasourceArtifact(ArtifactState state)
-            : base(state)
+        protected DatasourceArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
             
         }

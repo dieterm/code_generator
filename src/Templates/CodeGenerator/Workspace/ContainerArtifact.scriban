@@ -1,0 +1,59 @@
+using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Shared.Views.TreeNode;
+using System.Collections;
+
+namespace {{ Namespace }}
+{
+    /// <summary>
+    /// Container artifact for {{ ArtifactName }}
+    /// </summary>
+    public class {{ ContainerName }}ContainerArtifact : WorkspaceArtifactBase, IEnumerable<{{ ArtifactName }}Artifact>
+    {
+        public {{ ContainerName }}ContainerArtifact()
+            : base()
+        {
+        }
+
+        public {{ ContainerName }}ContainerArtifact(ArtifactState state)
+            : base(state)
+        {
+        }
+
+        public override string TreeNodeText => "{{ ContainerName }}";
+
+        public override ITreeNodeIcon TreeNodeIcon { get; } = new ResourceManagerTreeNodeIcon("{{ IconKey }}");
+
+        /// <summary>
+        /// Get all {{ ContainerName }} in this container
+        /// </summary>
+        public IEnumerable<{{ ArtifactName }}Artifact> Get{{ ContainerName }}() =>
+            Children.OfType<{{ ArtifactName }}Artifact>();
+
+        /// <summary>
+        /// Add a {{ ArtifactName }} to this container
+        /// </summary>
+        public void Add{{ ArtifactName }}({{ ArtifactName }}Artifact {{ ArtifactName | first_lower }})
+        {
+            AddChild({{ ArtifactName | first_lower }});
+        }
+
+        /// <summary>
+        /// Remove a {{ ArtifactName }} from this container
+        /// </summary>
+        public void Remove{{ ArtifactName }}({{ ArtifactName }}Artifact {{ ArtifactName | first_lower }})
+        {
+            RemoveChild({{ ArtifactName | first_lower }});
+        }
+
+        public IEnumerator<{{ ArtifactName }}Artifact> GetEnumerator()
+        {
+            return Get{{ ContainerName }}().GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
+}

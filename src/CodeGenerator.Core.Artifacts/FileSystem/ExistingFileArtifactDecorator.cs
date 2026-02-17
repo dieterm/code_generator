@@ -13,7 +13,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
             this.FilePath = filePath;
         }
 
-        public ExistingFileArtifactDecorator(ArtifactDecoratorState state) : base(state)
+        public ExistingFileArtifactDecorator(ArtifactDecoratorState state, List<string> errors) : base(state, errors)
         {
 
         }

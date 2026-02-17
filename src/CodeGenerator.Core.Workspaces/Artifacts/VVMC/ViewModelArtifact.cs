@@ -15,8 +15,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.VVMC
             Name = viewModelName;
         }
 
-        public ViewModelArtifact(ArtifactState state)
-            : base(state)
+        public ViewModelArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
 

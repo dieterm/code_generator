@@ -1,0 +1,56 @@
+using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Shared.Operations;
+using Microsoft.Extensions.Logging;
+
+namespace {{ Namespace }}
+{
+    /// <summary>
+    /// Controller for {{ ContainerArtifactName }}
+    /// </summary>
+    public class {{ ContainerArtifactName }}Controller : WorkspaceArtifactControllerBase<{{ ContainerArtifactName }}Artifact>
+    {
+        public {{ ContainerArtifactName }}Controller(
+            OperationExecutor operationExecutor,
+            WorkspaceTreeViewController workspaceController,
+            ILogger<{{ ContainerArtifactName }}Controller> logger)
+            : base(operationExecutor, workspaceController, logger)
+        {
+        }
+
+        protected override void OnArtifactRenamedInternal({{ ContainerArtifactName }}Artifact artifact, string oldName, string newName)
+        {
+            // Container cannot be renamed
+        }
+
+        protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands({{ ContainerArtifactName }}Artifact artifact)
+        {
+            var commands = new List<ArtifactTreeNodeCommand>();
+
+            // Add {{ AddItemName }} command
+            commands.Add(new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
+            {
+                Id = "add_{{ AddItemName | string.downcase }}",
+                Text = "Add {{ AddItemName }}",
+                IconKey = "plus",
+                Execute = async (a) =>
+                {
+                    var childItem = new {{ ChildArtifactName}}Artifact();
+                    artifact.AddChild(childItem);
+                    TreeViewController.OnArtifactAdded(artifact, childItem);
+                    TreeViewController.RequestBeginRename(childItem);
+                    await Task.CompletedTask;
+                }
+            });
+
+            return commands;
+        }
+
+        protected override Task OnSelectedInternalAsync({{ ContainerArtifactName }}Artifact artifact, CancellationToken cancellationToken)
+        {
+            // No edit view for container
+            TreeViewController.ShowArtifactDetailsView(null);
+            return Task.CompletedTask;
+        }
+    }
+}

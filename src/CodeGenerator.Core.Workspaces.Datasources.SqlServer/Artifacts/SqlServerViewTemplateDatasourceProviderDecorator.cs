@@ -9,8 +9,8 @@ namespace CodeGenerator.Core.Workspaces.Datasources.SqlServer.Artifacts;
 
 public class SqlServerViewTemplateDatasourceProviderDecorator : TemplateDatasourceProviderDecorator
 {
-    public SqlServerViewTemplateDatasourceProviderDecorator(ArtifactDecoratorState state)
-        : base(state)
+    public SqlServerViewTemplateDatasourceProviderDecorator(ArtifactDecoratorState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

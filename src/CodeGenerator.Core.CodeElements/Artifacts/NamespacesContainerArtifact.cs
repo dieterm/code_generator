@@ -15,7 +15,7 @@ public class NamespacesContainerArtifact : CodeElementArtifactBase<CodeFileEleme
         }
     }
 
-    public NamespacesContainerArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public NamespacesContainerArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public override string TreeNodeText => "Namespaces";
     public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("folder");

@@ -4,7 +4,7 @@ using CodeGenerator.Domain.CodeElements;
 
 namespace CodeGenerator.Core.CodeElements.Artifacts;
 
-public class ClassElementArtifact : CodeElementArtifactBase<ClassElement>
+public class ClassElementArtifact : TypeElementArtifactBase<ClassElement>
 {
     public ClassElementArtifact(ClassElement classElement) : base(classElement)
     {
@@ -17,7 +17,11 @@ public class ClassElementArtifact : CodeElementArtifactBase<ClassElement>
         AddChild(new OperatorsContainerArtifact(classElement.Operators));
     }
 
-    public ClassElementArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public ClassElementArtifact(ArtifactState artifactState, List<string> errors) 
+        : base(artifactState, errors) 
+    {
+        
+    }
 
     public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("braces");
 

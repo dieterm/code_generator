@@ -17,7 +17,7 @@ namespace CodeGenerator.Core.Workspaces.Generators
         {
             this.ScopeArtifact = domainArtifact;
         }
-        public ScopeArtifactRefDecorator(ArtifactDecoratorState state) : base(state)
+        public ScopeArtifactRefDecorator(ArtifactDecoratorState state, List<string> errors) : base(state, errors)
         {
             throw new NotImplementedException("ScopeArtifactCodeArchitectureLayerDecorator does not support (deserialization yet)");
         }

@@ -16,7 +16,7 @@ public class MethodsContainerArtifact : CodeElementArtifactBase, IEnumerable<Met
             AddChild(new MethodElementArtifact(method));
     }
 
-    public MethodsContainerArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public MethodsContainerArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public override string TreeNodeText => "Methods";
     public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("folder");

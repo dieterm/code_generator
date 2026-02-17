@@ -18,8 +18,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             ColumnNames = new List<string>();
         }
 
-        public IndexArtifact(ArtifactState state)
-            : base(state)
+        public IndexArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
             if (ColumnNames == null)
             {
@@ -88,9 +88,9 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             ColumnNames.Remove(columnName);
         }
 
-        public override void RestoreState(IMementoState state)
+        public override void RestoreState(IMementoState state, List<string> errors)
         {
-            base.RestoreState(state);
+            base.RestoreState(state, errors);
 
             // JSON-fix: convert ColumnNames from List<object> to List<string>
             FixListOfObject<string>(nameof(ColumnNames));

@@ -17,8 +17,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             Definition = string.Empty;
         }
 
-        public ViewArtifact(ArtifactState state)
-            : base(state)
+        public ViewArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
 

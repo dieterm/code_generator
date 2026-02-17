@@ -26,8 +26,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities
 
         
 
-        public EntityArtifact(ArtifactState state)
-            : base(state)
+        public EntityArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
             EnsurePropertiesContainerExists();
             EnsureEntityStatesContainerExists();

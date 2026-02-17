@@ -69,26 +69,4 @@ namespace CodeGenerator.Domain.CodeElements
             return this;
         }
     }
-
-    /// <summary>
-    /// Represents a constructor initializer (base or this call)
-    /// </summary>
-    public class ConstructorInitializer
-    {
-        /// <summary>
-        /// Arguments passed to the base/this constructor (as code strings)
-        /// </summary>
-        public List<string> Arguments { get; set; } = new();
-    }
-
-    /// <summary>
-    /// Represents a finalizer/destructor
-    /// </summary>
-    public class FinalizerElement : CodeElement
-    {
-        /// <summary>
-        /// Finalizer body (statements as code string)
-        /// </summary>
-        public string? Body { get; set; }
-    }
 }

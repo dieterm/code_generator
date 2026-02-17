@@ -16,7 +16,7 @@ public class PropertiesContainerArtifact : CodeElementArtifactBase, IEnumerable<
             AddChild(new PropertyElementArtifact(prop));
     }
 
-    public PropertiesContainerArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public PropertiesContainerArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public override string TreeNodeText => "Properties";
     public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("folder");

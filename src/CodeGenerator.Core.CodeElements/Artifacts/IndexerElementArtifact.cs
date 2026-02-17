@@ -13,7 +13,7 @@ public class IndexerElementArtifact : CodeElementArtifactBase<IndexerElement>
         AddChild(new CompositeStatementArtifact(indexerElement.SetterBody, true) { Name = nameof(SetterBody) });
     }
 
-    public IndexerElementArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public IndexerElementArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public override string TreeNodeText => $"this[{string.Join(", ", CodeElement.Parameters.Select(p => p.Type.TypeName))}]";
 

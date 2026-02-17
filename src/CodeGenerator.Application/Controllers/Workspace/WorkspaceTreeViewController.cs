@@ -130,9 +130,17 @@ namespace CodeGenerator.Application.Controllers.Workspace
         {
             Logger.LogInformation("Loading workspace from {FilePath}", filePath);
             
-            CurrentWorkspace = await _workspaceFileService.LoadAsync(filePath, cancellationToken);
+            var (workspace, errors) = await _workspaceFileService.LoadAsync(filePath, cancellationToken);
+            CurrentWorkspace = workspace;
             
-            if(CurrentWorkspace != null )
+            if(errors.Count > 0)
+            {
+                var errorMessage = $"Workspace loaded with {errors.Count} errors:\n" + string.Join("\n", errors);
+                Logger.LogWarning(errorMessage);
+                MessageBoxService.ShowError(errorMessage, "Workspace Load Warning");
+            }
+
+            if (CurrentWorkspace != null )
             { 
                 // Set workspace directory on TemplateManager (ensures template folders exist)
                 _templateManager.SetWorkspaceDirectory(CurrentWorkspace.WorkspaceDirectory);

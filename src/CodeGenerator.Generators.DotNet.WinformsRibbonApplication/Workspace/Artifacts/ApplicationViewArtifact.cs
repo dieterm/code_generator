@@ -15,8 +15,8 @@ namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication.Workspace.Ar
         {
         }
 
-        public ApplicationViewArtifact(ArtifactState state)
-            : base(state)
+        public ApplicationViewArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
     }

@@ -24,8 +24,8 @@ namespace CodeGenerator.Domain.CodeArchitecture
             ParentChanged += CodeArchitectureLayerArtifact_ParentChanged;
         }
 
-        public CodeArchitectureLayerArtifact(ArtifactState state)
-            : base(state)
+        public CodeArchitectureLayerArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
             ParentChanged += CodeArchitectureLayerArtifact_ParentChanged;
         }

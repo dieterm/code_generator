@@ -49,8 +49,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
 
         
 
-        public DomainArtifact(ArtifactState state)
-            : base(state)
+        public DomainArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
             EnsureEntitiesContainerExists();
             EnsureValueTypesContainerExists();
@@ -261,9 +261,9 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
            return Entities.AddEntity(entityArtifact);
         }
 
-        public void AddValueType(ValueTypeArtifact valueTypeArtifact)
+        public ValueTypeArtifact AddValueType(ValueTypeArtifact valueTypeArtifact)
         {
-            ValueTypes.AddValueType(valueTypeArtifact);
+            return ValueTypes.AddValueType(valueTypeArtifact);
         }
 
         protected override WorkspaceArtifactContext? GetOwnContext()

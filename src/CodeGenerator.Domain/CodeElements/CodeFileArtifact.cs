@@ -40,7 +40,7 @@ namespace CodeGenerator.Domain.CodeElements
             SetTextContent(code);
         }
 
-        public CodeFileArtifact(ArtifactState state) : base(state)
+        public CodeFileArtifact(ArtifactState state, List<string> errors) : base(state, errors)
         {
             throw new NotSupportedException("TODO: Deserialization constructor is not implemented for CodeFileArtifact. Use the default constructor instead.");
         }

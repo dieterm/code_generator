@@ -4,6 +4,7 @@ using CodeGenerator.Application.Services;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.Events;
 using CodeGenerator.Core.CodeElements.Artifacts;
+using CodeGenerator.Core.CodeElements.Controllers.CodeElements;
 using CodeGenerator.Core.CodeElements.Services;
 using CodeGenerator.Core.CodeElements.ViewModels;
 using CodeGenerator.Core.MessageBus;
@@ -85,6 +86,15 @@ namespace CodeGenerator.Core.CodeElements.Controllers
         {
             TreeViewModel.RootArtifact = new CodeFileElementArtifact(new CodeFileElement(name, language));
             
+            _windowManagerService.ShowCodeElementsTreeView(TreeViewModel);
+
+            ObserveCodeFileElementChanges((CodeFileElementArtifact)TreeViewModel.RootArtifact);
+        }
+
+        public void ShowCodeFileElementTreeView(CodeFileElement codeFileElement)
+        {
+            TreeViewModel.RootArtifact = new CodeFileElementArtifact(codeFileElement);
+
             _windowManagerService.ShowCodeElementsTreeView(TreeViewModel);
 
             ObserveCodeFileElementChanges((CodeFileElementArtifact)TreeViewModel.RootArtifact);

@@ -174,15 +174,60 @@ public abstract class ArtifactTreeViewController<TTreeViewModel, TArtifactContro
         var controller = GetController(artifact);
         if (controller != null)
         {
-            return controller.GetContextMenuCommands(artifact);
+            return MergeContextMenuCommands(controller.GetContextMenuCommands(artifact));
         }
         else if(artifact is WorkspaceArtifactBase workspaceArtifact)
         {
+            throw new InvalidOperationException("Workspace artifacts should have their own controller to provide context menu commands. Please implement a controller for this artifact type.");
             var commands = new List<ArtifactTreeNodeCommand>();
             workspaceArtifact.PublishArtifactContextMenuOpeningEvent(commands);
             return commands;
         }
         return Enumerable.Empty<ArtifactTreeNodeCommand>();
+    }
+
+    /// <summary>
+    /// Merge context menu commands from the controller with same id any additional commands (e.g., from the artifact itself or other sources)
+    /// </summary>
+    private IEnumerable<ArtifactTreeNodeCommand> MergeContextMenuCommands(IEnumerable<ArtifactTreeNodeCommand> commands)
+    {
+        var mergedCommands = new List<ArtifactTreeNodeCommand>();
+        foreach (var command in commands.GroupBy(c => c.Id))
+        {
+            // Here you could implement merging logic if needed, for now we just return the controller commands
+            //yield return command;
+            if(command.Count() == 1)
+            {
+                mergedCommands.Add(command.First());
+            } 
+            else
+            {
+                var newCommand = new ArtifactTreeNodeCommand(command.First().GroupName)
+                {
+                    Id = command.Key,
+                    Text = command.First().Text, // You might want to decide how to handle text/icon for merged commands
+                    IconKey = command.First().IconKey,
+                    GroupName = command.First().GroupName,
+                    CanExecute = (artifact) => command.Any(c => c.CanExecute == null || c.CanExecute(artifact)),
+                    SubCommands = MergeContextMenuCommands(command.SelectMany(c => c.SubCommands ?? Enumerable.Empty<ArtifactTreeNodeCommand>())).ToList(),
+                    Execute = async (artifact) =>
+                    {
+                        foreach (var cmd in command)
+                        {
+                            if (cmd.CanExecute == null || cmd.CanExecute(artifact))
+                            {
+                                if (cmd.Execute != null)
+                                {
+                                    await cmd.Execute(artifact);
+                                }
+                            }
+                        }
+                    }
+                };
+                mergedCommands.Add(newCommand);
+            }
+        }
+        return mergedCommands;
     }
 
     /// <summary>

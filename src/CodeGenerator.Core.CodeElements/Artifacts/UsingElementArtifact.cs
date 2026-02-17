@@ -16,7 +16,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
             
         }
 
-        public UsingElementArtifact(ArtifactState artifactState) : base(artifactState)
+        public UsingElementArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors)
         {
             throw new NotImplementedException();
         }

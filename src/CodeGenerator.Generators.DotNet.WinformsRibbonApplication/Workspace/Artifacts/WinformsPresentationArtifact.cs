@@ -17,8 +17,8 @@ namespace CodeGenerator.Generators.DotNet.WinformsRibbonApplication.Workspace.Ar
         {
             ProjectType = projectType;
         }
-        public WinformsPresentationArtifact(ArtifactState state)
-            : base(state)
+        public WinformsPresentationArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
 
         }

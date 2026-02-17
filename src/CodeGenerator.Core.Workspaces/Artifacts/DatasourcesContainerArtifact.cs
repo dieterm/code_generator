@@ -13,8 +13,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             Id = "datasources_container";
         }
 
-        public DatasourcesContainerArtifact(ArtifactState state)
-            : base(state)
+        public DatasourcesContainerArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
             Id = "datasources_container";
         }

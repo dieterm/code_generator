@@ -12,7 +12,7 @@ public class OperatorElementArtifact : CodeElementArtifactBase<OperatorElement>
         AddChild(new CompositeStatementArtifact(operatorElement.Body, true) { Name = nameof(Body) });
     }
 
-    public OperatorElementArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public OperatorElementArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public override string TreeNodeText => $"operator {CodeElement.OperatorType}";
 

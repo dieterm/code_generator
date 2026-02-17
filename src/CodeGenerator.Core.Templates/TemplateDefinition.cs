@@ -111,9 +111,10 @@ public class TemplateDefinition
     
     public void SaveForTemplate(TemplateArtifact template)
     {
+        template.RenameTemplate(TemplateName);
         var defPath = GetDefinitionFilePath(template.FilePath);
         SaveToFile(defPath);
-        template.RenameTemplate(TemplateName);
+        
     }
 
     public void RenameDefinitionFile(string oldTemplateFilePath, string newTemplateFilePath)
@@ -132,7 +133,7 @@ public class TemplateDefinition
         } 
         else
         {
-            SaveToFile(newDefinitionFilePath);
+            CreateDefault(newDefinitionFilePath).SaveToFile(newDefinitionFilePath);
         }
     }
 

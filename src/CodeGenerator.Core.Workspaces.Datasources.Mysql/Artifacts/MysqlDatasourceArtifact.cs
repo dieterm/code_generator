@@ -24,8 +24,8 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts
             Password = string.Empty;
         }
 
-        public MysqlDatasourceArtifact(ArtifactState state)
-            : base(state)
+        public MysqlDatasourceArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
             
         }

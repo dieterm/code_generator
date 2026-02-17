@@ -19,8 +19,8 @@ public class OpenApiDatasourceArtifact : DatasourceArtifact
         FilePath = string.Empty;
     }
 
-    public OpenApiDatasourceArtifact(ArtifactState state)
-        : base(state)
+    public OpenApiDatasourceArtifact(ArtifactState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

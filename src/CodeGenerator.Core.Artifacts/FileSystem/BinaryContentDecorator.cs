@@ -10,7 +10,7 @@ public class BinaryContentDecorator : ArtifactDecorator
     {
     }
 
-    public BinaryContentDecorator(ArtifactDecoratorState state) : base(state) { }
+    public BinaryContentDecorator(ArtifactDecoratorState state, List<string> errors) : base(state, errors) { }
 
     public byte[]? Content
     {

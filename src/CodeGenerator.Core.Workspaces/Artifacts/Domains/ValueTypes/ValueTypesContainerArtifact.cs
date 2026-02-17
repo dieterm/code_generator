@@ -15,8 +15,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes
         {
         }
 
-        public ValueTypesContainerArtifact(ArtifactState state)
-            : base(state)
+        public ValueTypesContainerArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
 
@@ -33,9 +33,10 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes
         /// <summary>
         /// Add a value type to this container
         /// </summary>
-        public void AddValueType(ValueTypeArtifact valueType)
+        public ValueTypeArtifact AddValueType(ValueTypeArtifact valueType)
         {
             AddChild(valueType);
+            return valueType;
         }
 
         /// <summary>

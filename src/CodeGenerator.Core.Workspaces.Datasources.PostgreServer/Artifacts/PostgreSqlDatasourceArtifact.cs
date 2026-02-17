@@ -25,8 +25,8 @@ public class PostgreSqlDatasourceArtifact : RelationalDatabaseDatasourceArtifact
         SslMode = "Prefer";
     }
 
-    public PostgreSqlDatasourceArtifact(ArtifactState state)
-        : base(state)
+    public PostgreSqlDatasourceArtifact(ArtifactState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

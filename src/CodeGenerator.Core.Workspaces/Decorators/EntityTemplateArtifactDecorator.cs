@@ -10,7 +10,7 @@ namespace CodeGenerator.Core.Workspaces.Decorators
     public class EntityTemplateArtifactDecorator : ArtifactDecorator
     {
         public const string DECORATOR_KEY = "EntityTemplate";
-        public EntityTemplateArtifactDecorator(ArtifactDecoratorState state) : base(state)
+        public EntityTemplateArtifactDecorator(ArtifactDecoratorState state, List<string> errors) : base(state, errors)
         {
         }
 

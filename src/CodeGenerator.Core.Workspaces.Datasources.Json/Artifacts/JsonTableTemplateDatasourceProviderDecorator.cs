@@ -9,8 +9,8 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Json.Artifacts;
 
 public class JsonTableTemplateDatasourceProviderDecorator : TemplateDatasourceProviderDecorator
 {
-    public JsonTableTemplateDatasourceProviderDecorator(ArtifactDecoratorState state)
-        : base(state)
+    public JsonTableTemplateDatasourceProviderDecorator(ArtifactDecoratorState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

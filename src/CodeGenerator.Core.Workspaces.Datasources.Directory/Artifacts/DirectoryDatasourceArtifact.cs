@@ -20,8 +20,8 @@ public class DirectoryDatasourceArtifact : DatasourceArtifact
         SearchPattern = "*.*";
     }
 
-    public DirectoryDatasourceArtifact(ArtifactState state)
-        : base(state)
+    public DirectoryDatasourceArtifact(ArtifactState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

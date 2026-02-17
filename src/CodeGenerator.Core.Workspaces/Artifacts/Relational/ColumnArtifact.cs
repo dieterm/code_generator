@@ -1,7 +1,9 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Domain.DataTypes;
 using CodeGenerator.Shared.Views.TreeNode;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
 {
@@ -17,8 +19,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             IsNullable = isNullable;
         }
 
-        public ColumnArtifact(ArtifactState state)
-            : base(state)
+        public ColumnArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
             
         }
@@ -286,6 +288,18 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         public string[]? GetAllowedValues()
         {
             return AllowedValues?.Split(",");
+        }
+
+        public PropertyArtifact ToPropertyArtifact()
+        {
+            var property = new PropertyArtifact(Name, DataType, IsNullable);
+            property.AllowedValues = AllowedValues;
+            property.MaxLength = MaxLength;
+            property.Precision = Precision;
+            property.Scale = Scale;
+            property.ValueTypeReferenceId = ValueTypeReferenceId;
+            property.Description = $"Mapped from column '{Name}'";
+            return property;
         }
     }
 }

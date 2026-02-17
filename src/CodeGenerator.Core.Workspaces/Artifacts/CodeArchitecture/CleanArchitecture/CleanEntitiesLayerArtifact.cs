@@ -10,7 +10,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.CleanArchitecture
         {
         }
 
-        public CleanEntitiesLayerArtifact(ArtifactState state) : base(state)
+        public CleanEntitiesLayerArtifact(ArtifactState state, List<string> errors) : base(state, errors)
         {
         }
 

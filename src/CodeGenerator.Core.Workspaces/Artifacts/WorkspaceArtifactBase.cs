@@ -59,8 +59,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
 
    
 
-        protected WorkspaceArtifactBase(ArtifactState state)
-    :       base(state)
+        protected WorkspaceArtifactBase(ArtifactState state, List<string> errors)
+    :       base(state, errors)
         {
             ParentChanged += WorkspaceArtifactBase_ParentChanged;
             ChildAdded += WorkspaceArtifactBase_ChildAdded;

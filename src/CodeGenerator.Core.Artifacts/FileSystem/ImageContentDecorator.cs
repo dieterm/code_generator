@@ -12,7 +12,7 @@ public class ImageContentDecorator : BinaryContentDecorator, IPreviewableDecorat
     {
     }
 
-    public ImageContentDecorator(ArtifactDecoratorState state) : base(state) { }
+    public ImageContentDecorator(ArtifactDecoratorState state, List<string> errors) : base(state, errors) { }
 
     public bool CanPreview => Content != null && Content.Length > 0;
 

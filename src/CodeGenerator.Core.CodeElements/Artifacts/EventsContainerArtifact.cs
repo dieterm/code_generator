@@ -16,7 +16,7 @@ public class EventsContainerArtifact : CodeElementArtifactBase, IEnumerable<Even
             AddChild(new EventElementArtifact(evt));
     }
 
-    public EventsContainerArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public EventsContainerArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public override string TreeNodeText => "Events";
     public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("folder");

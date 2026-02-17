@@ -14,8 +14,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         {
         }
 
-        public ExistingViewDecorator(ArtifactDecoratorState state)
-            : base(state)
+        public ExistingViewDecorator(ArtifactDecoratorState state, List<string> errors)
+            : base(state, errors)
         {
         }
 

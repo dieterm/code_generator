@@ -15,8 +15,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.VVMC
             
         }
 
-        public ViewsContainerArtifact(ArtifactState state)
-            : base(state)
+        public ViewsContainerArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
     }

@@ -11,8 +11,8 @@ namespace CodeGenerator.Core.Workspaces.Datasources.OpenApi.Artifacts;
 /// </summary>
 public class OpenApiTableTemplateDatasourceProviderDecorator : TemplateDatasourceProviderDecorator
 {
-    public OpenApiTableTemplateDatasourceProviderDecorator(ArtifactDecoratorState state)
-        : base(state)
+    public OpenApiTableTemplateDatasourceProviderDecorator(ArtifactDecoratorState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

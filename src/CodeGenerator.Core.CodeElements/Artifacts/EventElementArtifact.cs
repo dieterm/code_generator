@@ -6,7 +6,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts;
 public class EventElementArtifact : CodeElementArtifactBase<EventElement>
 {
     public EventElementArtifact(EventElement eventElement) : base(eventElement) { }
-    public EventElementArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public EventElementArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public string TypeName
     {

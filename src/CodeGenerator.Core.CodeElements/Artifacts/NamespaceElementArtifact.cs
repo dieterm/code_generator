@@ -12,7 +12,7 @@ public class NamespaceElementArtifact : CodeElementArtifactBase<NamespaceElement
         AddChild(new TypesContainerArtifact(namespaceElement));
     }
 
-    public NamespaceElementArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public NamespaceElementArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public override string TreeNodeText => CodeElement.FullName ?? "Namespace";
 

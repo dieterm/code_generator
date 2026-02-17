@@ -9,8 +9,8 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Excel.Artifacts;
 
 public class ExcelTableTemplateDatasourceProviderDecorator : TemplateDatasourceProviderDecorator
 {
-    public ExcelTableTemplateDatasourceProviderDecorator(ArtifactDecoratorState state)
-        : base(state)
+    public ExcelTableTemplateDatasourceProviderDecorator(ArtifactDecoratorState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

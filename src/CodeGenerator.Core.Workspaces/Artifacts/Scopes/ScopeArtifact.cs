@@ -55,8 +55,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
             return null;
         }
 
-        public ScopeArtifact(ArtifactState state)
-            : base(state) 
+        public ScopeArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors) 
         {
             PublishArtifactConstructionEvent();
         }

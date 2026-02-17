@@ -19,8 +19,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             ConnectionString = string.Empty;
         }
 
-        protected RelationalDatabaseDatasourceArtifact(ArtifactState state)
-            : base(state)
+        protected RelationalDatabaseDatasourceArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
 

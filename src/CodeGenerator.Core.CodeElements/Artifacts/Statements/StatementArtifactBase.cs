@@ -19,7 +19,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts.Statements
             Name = GetType().Name.Replace("Artifact", "");
         }
 
-        protected StatementArtifactBase(ArtifactState artifactState) : base(artifactState)
+        protected StatementArtifactBase(ArtifactState artifactState, List<string> errors) : base(artifactState, errors)
         {
             throw new NotImplementedException("Deserialization constructor not implemented for StatementArtifactBase");
         }

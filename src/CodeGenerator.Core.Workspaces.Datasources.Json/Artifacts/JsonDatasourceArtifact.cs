@@ -19,8 +19,8 @@ public class JsonDatasourceArtifact : DatasourceArtifact
         FilePath = string.Empty;
     }
 
-    public JsonDatasourceArtifact(ArtifactState state)
-        : base(state)
+    public JsonDatasourceArtifact(ArtifactState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

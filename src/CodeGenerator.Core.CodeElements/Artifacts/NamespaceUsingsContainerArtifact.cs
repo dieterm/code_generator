@@ -14,7 +14,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
         {
         }
 
-        public NamespaceUsingsContainerArtifact(ArtifactState artifactState) : base(artifactState)
+        public NamespaceUsingsContainerArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors)
         {
         }
     }

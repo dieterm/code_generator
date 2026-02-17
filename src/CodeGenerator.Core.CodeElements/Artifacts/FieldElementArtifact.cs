@@ -6,7 +6,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts;
 public class FieldElementArtifact : CodeElementArtifactBase<FieldElement>
 {
     public FieldElementArtifact(FieldElement fieldElement) : base(fieldElement) { }
-    public FieldElementArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public FieldElementArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public string TypeName
     {

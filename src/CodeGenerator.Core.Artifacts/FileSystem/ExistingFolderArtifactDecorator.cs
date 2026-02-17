@@ -12,7 +12,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
         {
 
         }
-        public ExistingFolderArtifactDecorator(ArtifactDecoratorState state) : base(state)
+        public ExistingFolderArtifactDecorator(ArtifactDecoratorState state, List<string> errors) : base(state, errors)
         {
 
         }

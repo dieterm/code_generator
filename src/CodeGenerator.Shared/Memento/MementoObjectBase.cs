@@ -12,10 +12,10 @@ namespace CodeGenerator.Shared.Memento
     {
         public bool IsStateChanged { get; private set; } = false;
 
-        protected MementoObjectBase(IMementoState state)
+        protected MementoObjectBase(IMementoState state, List<string> errors)
             : this()
         {
-            RestoreState(state);
+            RestoreState(state, errors);
         }
 
         protected MementoObjectBase()
@@ -30,7 +30,7 @@ namespace CodeGenerator.Shared.Memento
             base.RaisePropertyChangedEvent(propertyName);
         }
 
-        public virtual void RestoreState(IMementoState state)
+        public virtual void RestoreState(IMementoState state, List<string> errors)
         {
             _properties.Clear();
             foreach (var kvp in state.Properties)

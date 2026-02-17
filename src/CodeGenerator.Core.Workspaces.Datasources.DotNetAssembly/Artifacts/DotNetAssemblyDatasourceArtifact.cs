@@ -19,8 +19,8 @@ public class DotNetAssemblyDatasourceArtifact : DatasourceArtifact
         FilePath = string.Empty;
     }
 
-    public DotNetAssemblyDatasourceArtifact(ArtifactState state)
-        : base(state)
+    public DotNetAssemblyDatasourceArtifact(ArtifactState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

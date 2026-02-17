@@ -1,0 +1,58 @@
+using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Shared.Views.TreeNode;
+
+namespace {{ Namespace }}
+{
+    /// <summary>
+    /// Represents a {{ ArtifactName }}
+    /// </summary>
+    public class {{ ArtifactName }}Artifact : WorkspaceArtifactBase, IEditableTreeNode
+    {
+        public {{ ArtifactName }}Artifact(string name)
+            : base()
+        {
+            Name = name;
+        }
+
+        public {{ ArtifactName }}Artifact(ArtifactState state)
+            : base(state)
+        {
+        }
+
+        public override string TreeNodeText => Name;
+
+        public override ITreeNodeIcon TreeNodeIcon { get; } = new ResourceManagerTreeNodeIcon("{{ IconKey }}");
+
+        /// <summary>
+        /// {{ ArtifactName }} name
+        /// </summary>
+        public string Name
+        {
+            get => GetValue<string>(nameof(Name));
+            set
+            {
+                if (SetValue(nameof(Name), value))
+                    RaisePropertyChangedEvent(nameof(TreeNodeText));
+            }
+        }
+
+        /// <summary>
+        /// Description of the {{ ArtifactName }}
+        /// </summary>
+        public string? Description
+        {
+            get => GetValue<string?>(nameof(Description));
+            set => SetValue(nameof(Description), value);
+        }
+
+        public bool CanBeginEdit() => true;
+
+        public bool Validating(string newName) => !string.IsNullOrWhiteSpace(newName);
+
+        public void EndEdit(string oldName, string newName)
+        {
+            Name = newName;
+        }
+    }
+}

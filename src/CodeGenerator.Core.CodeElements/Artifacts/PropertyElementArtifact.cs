@@ -12,7 +12,7 @@ public class PropertyElementArtifact : CodeElementArtifactBase<PropertyElement>
         AddChild(new CompositeStatementArtifact(propertyElement.GetterBody, true) { Name = nameof(GetterBody) });
         AddChild(new CompositeStatementArtifact(propertyElement.SetterBody, true) { Name = nameof(SetterBody) });   
     }
-    public PropertyElementArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public PropertyElementArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public string TypeName
     {

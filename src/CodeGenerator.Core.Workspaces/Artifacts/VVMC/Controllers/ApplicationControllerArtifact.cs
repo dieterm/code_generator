@@ -8,8 +8,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.VVMC.Controllers
             : base("ApplicationController")
         {
         }
-        public ApplicationControllerArtifact(ArtifactState state)
-            : base(state)
+        public ApplicationControllerArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
     }

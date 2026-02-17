@@ -9,8 +9,8 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Csv.Artifacts;
 
 public class CsvTableTemplateDatasourceProviderDecorator : TemplateDatasourceProviderDecorator
 {
-    public CsvTableTemplateDatasourceProviderDecorator(ArtifactDecoratorState state)
-        : base(state)
+    public CsvTableTemplateDatasourceProviderDecorator(ArtifactDecoratorState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

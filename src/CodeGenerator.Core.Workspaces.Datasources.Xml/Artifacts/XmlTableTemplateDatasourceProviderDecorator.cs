@@ -9,8 +9,8 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Xml.Artifacts;
 
 public class XmlTableTemplateDatasourceProviderDecorator : TemplateDatasourceProviderDecorator
 {
-    public XmlTableTemplateDatasourceProviderDecorator(ArtifactDecoratorState state)
-        : base(state)
+    public XmlTableTemplateDatasourceProviderDecorator(ArtifactDecoratorState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

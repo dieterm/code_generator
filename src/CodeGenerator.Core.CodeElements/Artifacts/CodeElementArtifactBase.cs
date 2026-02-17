@@ -16,7 +16,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
         protected CodeElementArtifactBase()
         { }
 
-        protected CodeElementArtifactBase(ArtifactState artifactState) : base(artifactState) 
+        protected CodeElementArtifactBase(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) 
         { }
         public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("braces");
         public override string TreeNodeText => Name;
@@ -44,7 +44,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
             Name = codeElement.Name;
             AddChild(new AttributesContainerArtifact(codeElement.Attributes));
         }
-        protected CodeElementArtifactBase(ArtifactState artifactState) : base(artifactState) 
+        protected CodeElementArtifactBase(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) 
         { }
 
         public override string TreeNodeText => Name ?? string.Empty;

@@ -12,7 +12,7 @@ public class ConstructorElementArtifact : CodeElementArtifactBase<ConstructorEle
         AddChild(new CompositeStatementArtifact(constructorElement.Body, true) { Name = nameof(Body) });
     }
 
-    public ConstructorElementArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public ConstructorElementArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public override string TreeNodeText => $".ctor({string.Join(", ", CodeElement.Parameters.Select(p => p.Type.TypeName))})";
 

@@ -11,9 +11,9 @@ namespace CodeGenerator.Core.Artifacts
     {
         private static ArtifactFactory Instance { get; } = new ArtifactFactory();
 
-        public static IArtifact CreateArtifact(ArtifactState state)
+        public static IArtifact? CreateArtifact(ArtifactState state, List<string> errors)
         {
-            return Instance.CreateMementoObject(state);
+            return Instance.CreateMementoObject(state, errors);
         }
 
     }

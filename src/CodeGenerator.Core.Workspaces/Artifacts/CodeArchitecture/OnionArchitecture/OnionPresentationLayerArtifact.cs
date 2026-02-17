@@ -18,8 +18,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             
         }
 
-        public OnionPresentationLayerArtifact(ArtifactState state) 
-            : base(state)
+        public OnionPresentationLayerArtifact(ArtifactState state, List<string> errors) 
+            : base(state, errors)
         {
         }
 

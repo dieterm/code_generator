@@ -8,7 +8,7 @@ namespace CodeGenerator.Shared.Memento
         void ResetIsStateChangedFlag();
         bool IsStateChanged { get; }
 
-        void RestoreState(IMementoState state);
+        void RestoreState(IMementoState state, List<string> errors);
 
         IMementoState CaptureState();
     }

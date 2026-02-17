@@ -73,7 +73,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             createObjectCommand.SubCommands.Add(newEntityCommand);
 
 
-            var domains = TreeViewController.CurrentWorkspace!.Scopes.SelectMany(s => s.Domains).ToList();
+            var domains = TreeViewController.CurrentWorkspace!.GetAllScopes(false, true).SelectMany(s => s.Domains).ToList();
             foreach (var domain in domains)
             {
                 var domainCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)

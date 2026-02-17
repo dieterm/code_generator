@@ -10,7 +10,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.NTierArchitecture
         {
         }
 
-        public NTierPresentationLayerArtifact(ArtifactState state) : base(state)
+        public NTierPresentationLayerArtifact(ArtifactState state, List<string> errors) : base(state, errors)
         {
         }
 

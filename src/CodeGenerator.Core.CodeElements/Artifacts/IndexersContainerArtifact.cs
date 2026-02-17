@@ -16,7 +16,7 @@ public class IndexersContainerArtifact : CodeElementArtifactBase, IEnumerable<In
             AddChild(new IndexerElementArtifact(indexer));
     }
 
-    public IndexersContainerArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public IndexersContainerArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public override string TreeNodeText => "Indexers";
     public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("folder");

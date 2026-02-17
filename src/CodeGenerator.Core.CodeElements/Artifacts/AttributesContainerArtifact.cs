@@ -22,7 +22,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
             }
         }
 
-        public AttributesContainerArtifact(ArtifactState artifactState) : base(artifactState)
+        public AttributesContainerArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors)
         {
         }
 

@@ -225,9 +225,9 @@ namespace CodeGenerator.Core.Artifacts
             return ((IMementoObject)Artifact).SetValue(name, value);
         }
 
-        public void RestoreState(IMementoState state)
+        public void RestoreState(IMementoState state, List<string> errors)
         {
-            ((IMementoObject)Artifact).RestoreState(state);
+            ((IMementoObject)Artifact).RestoreState(state, errors);
         }
 
         public IMementoState CaptureState()

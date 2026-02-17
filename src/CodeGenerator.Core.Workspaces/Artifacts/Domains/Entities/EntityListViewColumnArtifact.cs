@@ -16,8 +16,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities
             PropertyPath = propertyPath;
         }
 
-        public EntityListViewColumnArtifact(ArtifactState state)
-            : base(state)
+        public EntityListViewColumnArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
 

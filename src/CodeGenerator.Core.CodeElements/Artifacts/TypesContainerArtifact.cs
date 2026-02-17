@@ -16,7 +16,7 @@ public class TypesContainerArtifact : CodeElementArtifactBase<NamespaceElement>,
         }
     }
 
-    public TypesContainerArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public TypesContainerArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public override string TreeNodeText => "Types";
     public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("folder");

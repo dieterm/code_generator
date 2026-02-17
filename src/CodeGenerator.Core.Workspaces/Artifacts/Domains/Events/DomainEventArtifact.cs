@@ -15,7 +15,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Events
             Name = name;
         }
 
-        public DomainEventArtifact(ArtifactState state) : base(state)
+        public DomainEventArtifact(ArtifactState state, List<string> errors) : base(state, errors)
         {
         }
 

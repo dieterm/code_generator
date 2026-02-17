@@ -9,8 +9,8 @@ namespace CodeGenerator.Core.Artifacts.Templates
 {
     public abstract class TemplateDatasourceProviderDecorator : ArtifactDecorator
     {
-        public TemplateDatasourceProviderDecorator(ArtifactDecoratorState state) 
-            : base(state)
+        public TemplateDatasourceProviderDecorator(ArtifactDecoratorState state, List<string> errors) 
+            : base(state, errors)
         {
         }
         public TemplateDatasourceProviderDecorator(string key) 

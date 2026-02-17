@@ -9,8 +9,8 @@ namespace CodeGenerator.Core.Workspaces.Datasources.PostgreSql.Artifacts;
 
 public class PostgreSqlTableTemplateDatasourceProviderDecorator : TemplateDatasourceProviderDecorator
 {
-    public PostgreSqlTableTemplateDatasourceProviderDecorator(ArtifactDecoratorState state)
-        : base(state)
+    public PostgreSqlTableTemplateDatasourceProviderDecorator(ArtifactDecoratorState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

@@ -16,8 +16,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes
             Name = name;
         }
 
-        public ValueTypeArtifact(ArtifactState state)
-            : base(state)
+        public ValueTypeArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
 

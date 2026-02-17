@@ -15,7 +15,7 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
 
         }
 
-        public TextContentDecorator(ArtifactDecoratorState state) : base(state) { }
+        public TextContentDecorator(ArtifactDecoratorState state, List<string> errors) : base(state, errors) { }
 
         public string? Content
         {

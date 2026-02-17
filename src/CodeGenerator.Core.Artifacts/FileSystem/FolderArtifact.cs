@@ -20,8 +20,8 @@ namespace CodeGenerator.Core.Artifacts.FileSystem
             FolderName = folderName;
         }
 
-        public FolderArtifact(ArtifactState state)
-            : base(state)
+        public FolderArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
             _folderArtifactDecorator = GetDecoratorOfType<FolderArtifactDecorator>()
                 ?? throw new InvalidOperationException($"FolderArtifact must have a {nameof(FolderArtifactDecorator)} with key '{FOLDER_PROPERTIES_DECORATOR_KEY}'");

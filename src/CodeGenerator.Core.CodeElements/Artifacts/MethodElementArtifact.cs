@@ -4,15 +4,17 @@ using CodeGenerator.Domain.CodeElements;
 
 namespace CodeGenerator.Core.CodeElements.Artifacts;
 
-public class MethodElementArtifact : CodeElementArtifactBase<MethodElement>
+public class MethodElementArtifact : CodeElementArtifactBase<MethodElement>, IGenericTypesParametersArtifact
 {
     public MethodElementArtifact(MethodElement methodElement) : base(methodElement)
     {
+        AddChild(new GenericConstraintsContainerArtifact(methodElement.GenericConstraints));
+        AddChild(new GenericTypeParametersContainerArtifact(methodElement.GenericTypeParameters));
         AddChild(new ParametersContainerArtifact(methodElement.Parameters));
         AddChild(new CompositeStatementArtifact(methodElement.Body, true) { Name = nameof(Body) });
     }
 
-    public MethodElementArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public MethodElementArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public string ReturnTypeName
     {
@@ -69,4 +71,6 @@ public class MethodElementArtifact : CodeElementArtifactBase<MethodElement>
     }
 
     public ParametersContainerArtifact Parameters => Children.OfType<ParametersContainerArtifact>().Single();
+    public GenericConstraintsContainerArtifact GenericConstraints => Children.OfType<GenericConstraintsContainerArtifact>().Single();
+    public GenericTypeParametersContainerArtifact GenericTypeParameters => Children.OfType<GenericTypeParametersContainerArtifact>().Single();
 }

@@ -16,7 +16,7 @@ public class EnumMembersContainerArtifact : CodeElementArtifactBase, IEnumerable
             AddChild(new EnumMemberElementArtifact(member));
     }
 
-    public EnumMembersContainerArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public EnumMembersContainerArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public override string TreeNodeText => "Members";
     public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("folder");

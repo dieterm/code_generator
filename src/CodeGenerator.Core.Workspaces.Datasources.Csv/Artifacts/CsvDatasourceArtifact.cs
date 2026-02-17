@@ -22,8 +22,8 @@ public class CsvDatasourceArtifact : DatasourceArtifact
         RowTerminator = "\\n";
     }
 
-    public CsvDatasourceArtifact(ArtifactState state)
-        : base(state)
+    public CsvDatasourceArtifact(ArtifactState state, List<string> errors)
+        : base(state, errors)
     {
     }
 

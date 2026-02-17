@@ -6,7 +6,7 @@ namespace CodeGenerator.Core.CodeElements.Artifacts;
 public class EnumMemberElementArtifact : CodeElementArtifactBase<EnumMemberElement>
 {
     public EnumMemberElementArtifact(EnumMemberElement enumMemberElement) : base(enumMemberElement) { }
-    public EnumMemberElementArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public EnumMemberElementArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public object? Value
     {

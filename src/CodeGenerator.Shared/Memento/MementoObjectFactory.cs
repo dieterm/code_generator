@@ -12,7 +12,7 @@ namespace CodeGenerator.Shared.Memento
         protected MementoObjectFactory()
         {
         }
-        public virtual T CreateMementoObject(TState state)
+        public virtual T? CreateMementoObject(TState state, List<string> errors)
         {
             try
             {
@@ -30,13 +30,15 @@ namespace CodeGenerator.Shared.Memento
 
                 if (type == null)
                 {
-                    throw new InvalidOperationException($"Type '{state.TypeName}' could not be found.");
+                    errors.Add($"Type '{state.TypeName}' could not be found.");
+                    return default;
                 }
                 if (!typeof(IMementoObject).IsAssignableFrom(type))
                 {
-                    throw new InvalidOperationException($"Type '{state.TypeName}' does not implement IMementoObject.");
+                    errors.Add($"Type '{state.TypeName}' does not implement IMementoObject.");
+                    return default;
                 }
-                var instance = (T)Activator.CreateInstance(type, state)!;
+                var instance = (T)Activator.CreateInstance(type, state, errors)!;
 
                 return instance;
             }
@@ -46,8 +48,10 @@ namespace CodeGenerator.Shared.Memento
                 {
                     Debug.WriteLine($"  State Property: {prop.Key} = {prop.Value}");
                 }
-                throw;
+                Debug.WriteLine($"Failed to create memento object of type '{state.TypeName}': {ex}");
+                //throw;
             }
+            return default;
         }
     }
 }

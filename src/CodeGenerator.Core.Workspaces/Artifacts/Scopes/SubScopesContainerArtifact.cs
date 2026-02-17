@@ -20,8 +20,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
             PublishArtifactConstructionEvent();
         }
 
-        public SubScopesContainerArtifact(ArtifactState state)
-            : base(state) 
+        public SubScopesContainerArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors) 
         {
             PublishArtifactConstructionEvent();
         }

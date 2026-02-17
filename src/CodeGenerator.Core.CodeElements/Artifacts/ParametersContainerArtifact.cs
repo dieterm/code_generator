@@ -16,7 +16,7 @@ public class ParametersContainerArtifact : CodeElementArtifactBase, IEnumerable<
             AddChild(new ParameterElementArtifact(param));
     }
 
-    public ParametersContainerArtifact(ArtifactState artifactState) : base(artifactState) { }
+    public ParametersContainerArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
 
     public override string TreeNodeText => "Parameters";
     public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("folder");

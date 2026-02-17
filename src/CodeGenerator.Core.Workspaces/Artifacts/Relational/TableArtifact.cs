@@ -23,8 +23,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             RemovedExistingColumns = new List<string>();
             RemovedExistingIndexes = new List<string>();
         }
-        public TableArtifact(ArtifactState state)
-            : base(state)
+        public TableArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
             FixListOfObject<string>(nameof(RemovedExistingColumns));
             FixListOfObject<string>(nameof(RemovedExistingIndexes));

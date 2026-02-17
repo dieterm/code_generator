@@ -16,8 +16,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Services
             ReturnType = "void";
         }
 
-        public DomainServiceMethodArtifact(ArtifactState state)
-            : base(state)
+        public DomainServiceMethodArtifact(ArtifactState state, List<string> errors)
+            : base(state, errors)
         {
         }
 
