@@ -39,6 +39,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             if (_viewModel == null) return;
 
             // Bind fields to their view models
+            lblFullName.BindViewModel(_viewModel.FullNameField);
             txtName.BindViewModel(_viewModel.NameField);
             txtNamespace.BindViewModel(_viewModel.NamespaceField);
 

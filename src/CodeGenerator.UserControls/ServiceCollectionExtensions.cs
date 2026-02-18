@@ -21,6 +21,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IFieldViewModel, StringDictionaryFieldModel>();
         services.AddTransient<IFieldViewModel, StringListFieldModel>();
         services.AddTransient<IFieldViewModel, MultiSelectFieldModel>();
+        services.AddTransient<IFieldViewModel, LabelFieldModel>();
 
         return services;
     }

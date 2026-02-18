@@ -18,6 +18,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
         private void InitializeComponent()
         {
             lblTitle = new Label();
+            lblFullName = new LabelField();
             txtName = new SingleLineTextField();
             txtNamespace = new ParameterizedStringField();
             tableLayoutPanel = new TableLayoutPanel();
@@ -40,33 +41,44 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             tableLayoutPanel.AutoSize = true;
             tableLayoutPanel.ColumnCount = 1;
             tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel.Controls.Add(txtName, 0, 0);
-            tableLayoutPanel.Controls.Add(txtNamespace, 0, 1);
+            tableLayoutPanel.Controls.Add(lblFullName, 0, 0);
+            tableLayoutPanel.Controls.Add(txtName, 0, 1);
+            tableLayoutPanel.Controls.Add(txtNamespace, 0, 2);
             tableLayoutPanel.Location = new Point(10, 40);
             tableLayoutPanel.Name = "tableLayoutPanel";
-            tableLayoutPanel.RowCount = 2;
+            tableLayoutPanel.RowCount = 3;
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.Size = new Size(380, 150);
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tableLayoutPanel.Size = new Size(380, 200);
             tableLayoutPanel.TabIndex = 1;
+            // 
+            // lblFullName
+            // 
+            lblFullName.Dock = DockStyle.Top;
+            lblFullName.Label = "Full Name:";
+            lblFullName.Location = new Point(3, 3);
+            lblFullName.Name = "lblFullName";
+            lblFullName.Size = new Size(374, 45);
+            lblFullName.TabIndex = 0;
             // 
             // txtName
             // 
             txtName.Dock = DockStyle.Top;
             txtName.Label = "Scope Name:";
-            txtName.Location = new Point(3, 3);
+            txtName.Location = new Point(3, 54);
             txtName.Name = "txtName";
             txtName.Size = new Size(374, 50);
-            txtName.TabIndex = 0;
+            txtName.TabIndex = 1;
             // 
             // txtNamespace
             // 
             txtNamespace.Dock = DockStyle.Top;
             txtNamespace.Label = "Namespace Pattern:";
-            txtNamespace.Location = new Point(3, 59);
+            txtNamespace.Location = new Point(3, 110);
             txtNamespace.Name = "txtNamespace";
             txtNamespace.Size = new Size(374, 80);
-            txtNamespace.TabIndex = 1;
+            txtNamespace.TabIndex = 2;
             // 
             // ScopeEditView
             // 
@@ -76,7 +88,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             Controls.Add(lblTitle);
             Name = "ScopeEditView";
             Padding = new Padding(10);
-            Size = new Size(400, 210);
+            Size = new Size(400, 260);
             tableLayoutPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -86,6 +98,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
 
         private Label lblTitle;
         private TableLayoutPanel tableLayoutPanel;
+        private LabelField lblFullName;
         private SingleLineTextField txtName;
         private ParameterizedStringField txtNamespace;
     }

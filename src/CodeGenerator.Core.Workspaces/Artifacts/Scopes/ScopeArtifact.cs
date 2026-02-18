@@ -20,6 +20,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
 {
     public class ScopeArtifact : WorkspaceArtifactBase, IEditableTreeNode
     {
+        public const string SCOPE_FULL_NAME_SEPERATOR = "/";
         public const string CONTEXT_PARAMETER_SCOPE_NAME = "ScopeName";
         public const string CONTEXT_PARAMETER_SCOPE_NAMESPACE = "ScopeNamespace";
         public const string CONTEXT_PARAMETER_PARENT_SCOPE_NAME = "ParentScopeName";
@@ -78,8 +79,24 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
             {
                 if (SetValue<string>(nameof(Name), value)) { 
                     RaisePropertyChangedEvent(nameof(TreeNodeText));
+                    RaisePropertyChangedEvent(nameof(FullName));
+                    RaisePropertyChangedEvent(nameof(Namespace));
                     RaiseContextChanged();
                 }
+            }
+        }
+        /// <summary>
+        /// Display full name of the scope including parent scopes separated by SCOPE_FULL_NAME_SEPERATOR. 
+        /// E.g. "ParentScope/ChildScope"
+        /// </summary>
+        public string FullName
+        {
+            get
+            {
+                if(GetParentScope() == null)
+                    return Name;
+                else
+                    return $"{GetParentScope()!.FullName}{SCOPE_FULL_NAME_SEPERATOR}{Name}";
             }
         }
 

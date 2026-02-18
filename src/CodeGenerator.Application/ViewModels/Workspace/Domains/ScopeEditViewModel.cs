@@ -17,6 +17,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
 
         public ScopeEditViewModel()
         {
+            FullNameField = new LabelFieldModel { Label = "Full Name", Name = nameof(ScopeArtifact.FullName) };
             NameField = new SingleLineTextFieldModel { Label = "Scope Name", Name = nameof(ScopeArtifact.Name) };
             NamespaceField = new ParameterizedStringFieldModel
             {
@@ -59,6 +60,7 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
             if (e.PropertyName == nameof(ScopeArtifact.Name))
             {
                 NameField.Value = scope!.Name;
+                FullNameField.Value = scope!.FullName;
             }
             else if (e.PropertyName == nameof(ScopeArtifact.NamespacePattern))
             {
@@ -68,7 +70,16 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
             {
                 UpdateNamespaceParameters();
             }
+            else if (e.PropertyName == nameof(ScopeArtifact.FullName))
+            {
+                FullNameField.Value = scope!.FullName;
+            }
         }
+
+        /// <summary>
+        /// Full name field (read-only)
+        /// </summary>
+        public LabelFieldModel FullNameField { get; }
 
         /// <summary>
         /// Scope name field
@@ -92,11 +103,12 @@ namespace CodeGenerator.Application.ViewModels.Workspace.Domains
             _isLoading = true;
             try
             {
+                FullNameField.Value = _scope.FullName;
                 NameField.Value = _scope.Name;
 
                 NamespaceField.Parameters.Clear();
                 UpdateNamespaceParameters();
-
+                
                 NamespaceField.Value = _scope.NamespacePattern;
             }
             finally
