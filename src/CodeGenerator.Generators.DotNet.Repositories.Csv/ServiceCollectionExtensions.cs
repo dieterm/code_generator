@@ -24,7 +24,7 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration)
     {
         // Register Generators
-        //services.AddTransient<IMessageBusAwareGenerator, WinformsRibbonApplicationGenerator>();
+        services.AddTransient<IMessageBusAwareGenerator, CsvValueObjectReaderGenerator>();
 
         // Register Workspace Subscribers
         services.AddSingleton<IWorkspaceMessageBusSubscriber, TableArtifactContextMenuOpeningSubscriber>();

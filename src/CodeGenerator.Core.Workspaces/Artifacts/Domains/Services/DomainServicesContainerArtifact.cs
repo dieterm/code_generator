@@ -55,5 +55,13 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Services
         {
             return GetEnumerator();
         }
+
+        protected override WorkspaceArtifactContext? GetOwnContext()
+        {
+            return new WorkspaceArtifactContext
+            {
+                Namespace = $"{(Parent as DomainArtifact).Namespace}.Services"
+            };
+        }
     }
 }

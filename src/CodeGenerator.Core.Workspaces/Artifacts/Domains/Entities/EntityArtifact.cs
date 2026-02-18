@@ -216,5 +216,10 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities
             EntityProperties.AddProperty(createdProperty);
             return createdProperty;
         }
+
+        protected override WorkspaceArtifactContext? GetOwnContext()
+        {
+            return new WorkspaceArtifactContext { ClassName = Name };
+        }
     }
 }

@@ -1,4 +1,5 @@
 using CodeGenerator.Core.CodeElements.Views.EditFields;
+using CodeGenerator.UserControls.Views;
 
 namespace CodeGenerator.Generators.DotNet.Repositories.Csv.Views
 {
@@ -12,6 +13,9 @@ namespace CodeGenerator.Generators.DotNet.Repositories.Csv.Views
         {
             lblTitle = new Label();
             tableLayoutPanel = new TableLayoutPanel();
+            txtName = new SingleLineTextField();
+            txtDescription = new MultiLineTextField();
+            cmbValueType = new ComboboxField();
             codeFileField = new CodeFileElementField();
             tableLayoutPanel.SuspendLayout();
             SuspendLayout();
@@ -32,22 +36,51 @@ namespace CodeGenerator.Generators.DotNet.Repositories.Csv.Views
             tableLayoutPanel.AutoSize = true;
             tableLayoutPanel.ColumnCount = 1;
             tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel.Controls.Add(codeFileField, 0, 0);
+            tableLayoutPanel.Controls.Add(txtName, 0, 0);
+            tableLayoutPanel.Controls.Add(txtDescription, 0, 1);
+            tableLayoutPanel.Controls.Add(cmbValueType, 0, 2);
+            tableLayoutPanel.Controls.Add(codeFileField, 0, 3);
             tableLayoutPanel.Location = new Point(10, 40);
             tableLayoutPanel.Name = "tableLayoutPanel";
-            tableLayoutPanel.RowCount = 1;
+            tableLayoutPanel.RowCount = 4;
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.Size = new Size(380, 60);
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tableLayoutPanel.Size = new Size(380, 260);
             tableLayoutPanel.TabIndex = 1;
+            // 
+            // txtName
+            // 
+            txtName.Dock = DockStyle.Top;
+            txtName.Label = "Name:";
+            txtName.Name = "txtName";
+            txtName.Size = new Size(374, 50);
+            txtName.TabIndex = 0;
+            // 
+            // txtDescription
+            // 
+            txtDescription.Dock = DockStyle.Top;
+            txtDescription.Label = "Description:";
+            txtDescription.Name = "txtDescription";
+            txtDescription.Size = new Size(374, 100);
+            txtDescription.TabIndex = 1;
+            // 
+            // cmbValueType
+            // 
+            cmbValueType.Dock = DockStyle.Top;
+            cmbValueType.Label = "Value Type:";
+            cmbValueType.Name = "cmbValueType";
+            cmbValueType.Size = new Size(374, 50);
+            cmbValueType.TabIndex = 2;
             // 
             // codeFileField
             // 
             codeFileField.Dock = DockStyle.Top;
             codeFileField.Label = "Code File:";
-            codeFileField.Location = new Point(3, 3);
             codeFileField.Name = "codeFileField";
             codeFileField.Size = new Size(374, 50);
-            codeFileField.TabIndex = 0;
+            codeFileField.TabIndex = 3;
             // 
             // CsvValueObjectReaderImplementationArtifactEditView
             // 
@@ -57,7 +90,7 @@ namespace CodeGenerator.Generators.DotNet.Repositories.Csv.Views
             Controls.Add(lblTitle);
             Name = "CsvValueObjectReaderImplementationArtifactEditView";
             Padding = new Padding(10);
-            Size = new Size(400, 120);
+            Size = new Size(400, 320);
             tableLayoutPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -67,6 +100,9 @@ namespace CodeGenerator.Generators.DotNet.Repositories.Csv.Views
 
         private Label lblTitle;
         private TableLayoutPanel tableLayoutPanel;
+        private SingleLineTextField txtName;
+        private MultiLineTextField txtDescription;
+        private ComboboxField cmbValueType;
         private CodeFileElementField codeFileField;
     }
 }

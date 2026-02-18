@@ -44,6 +44,8 @@ namespace CodeGenerator.Core.LLM.Copilot
         {
             await ConnectAsync();
             _availableModels = await _client!.ListModelsAsync();
+            await _client.DisposeAsync();
+            _client = null;
         }
 
         public async Task ConnectAsync(CancellationToken cancellationToken = default)

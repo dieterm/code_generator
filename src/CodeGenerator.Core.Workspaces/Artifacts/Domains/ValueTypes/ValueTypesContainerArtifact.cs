@@ -56,5 +56,12 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes
         {
             return GetEnumerator();
         }
+
+        protected override WorkspaceArtifactContext? GetOwnContext()
+        {
+            return new WorkspaceArtifactContext { 
+                Namespace = $"{(Parent as DomainArtifact).Namespace}.ValueTypes"
+            };
+        }
     }
 }

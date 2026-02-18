@@ -55,5 +55,10 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         {
             return GetEnumerator();
         }
+
+        protected override WorkspaceArtifactContext? GetOwnContext()
+        {
+            return new WorkspaceArtifactContext { Namespace = $"{(Parent as WorkspaceArtifactBase)?.Context?.Namespace}.Services" };
+        }
     }
 }

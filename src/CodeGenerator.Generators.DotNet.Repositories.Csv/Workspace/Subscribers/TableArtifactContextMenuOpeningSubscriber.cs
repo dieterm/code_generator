@@ -40,30 +40,30 @@ namespace CodeGenerator.Generators.DotNet.Repositories.Csv.Workspace.Subscribers
                 SubCommands = new List<ArtifactTreeNodeCommand>()
             };
 
-            var newRepositoryCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
+            var newServiceCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
-                Id = "new_repository",
-                Text = "New Repository",
+                Id = "new_service",
+                Text = "New Service",
                 IconKey = "script",
                 SubCommands = new List<ArtifactTreeNodeCommand>()
             };
-            createObjectCommand.SubCommands.Add(newRepositoryCommand);
+            createObjectCommand.SubCommands.Add(newServiceCommand);
 
             var newCsvRepositoryCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
             {
-                Id = "new_csv_repository",
-                Text = "New CSV Repository",
+                Id = "new_csv_service",
+                Text = "New CSV ValueType Reader Service",
                 IconKey = "script",
                 SubCommands = new List<ArtifactTreeNodeCommand>()
             };
-            newRepositoryCommand.SubCommands.Add(newCsvRepositoryCommand);
+            newServiceCommand.SubCommands.Add(newCsvRepositoryCommand);
 
             var domains = _workspaceContextProvider.CurrentWorkspace!.GetAllScopes(false, true).SelectMany(s => s.Domains).ToList();
             foreach (var domain in domains)
             {
                 var domainCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
                 {
-                    Id = $"new_entity_{domain.Id}",
+                    Id = $"new_valueType_{domain.Id}",
                     Text = domain.Name,
                     IconKey = "domain",
                     Execute = async (a) =>
@@ -80,23 +80,18 @@ namespace CodeGenerator.Generators.DotNet.Repositories.Csv.Workspace.Subscribers
 
         private void CreateCsvRepositoryFromTableInDomain(TableArtifact artifact, DomainArtifact domain)
         {
-            // 1. add CsvRepositoryBase to Repositories container in the shared scope infrastructure layer
-            // CsvRepositoryBase should be an abstract class inheriting from RepositoryBase or implementing IRepository<T> interface
-            // CsvRepositoryBase should be implementing basic csv handling (using CsvHelper or similar library) and providing abstract methods for mapping between CsvRow and the entity,
-            // as well as for getting the file path for the csv file (which can be based on the table name)
+            // 1. add CsvValueObjectReader to Services container in the infrastructure layer
             // In the generator also make sure the required nuget-packages are added to the dotnetproject artifact (CsvHelper)
             var targetScope = domain.Scope;
-            var servicesNamespace = $"{targetScope.Infrastructure.Context.Namespace}.Services";
-            var infrastructureLayer = targetScope.Infrastructure.Services.AddChild(new CsvValueObjectReaderArtifact(CreateCsvValueObjectReader(servicesNamespace)));
-
+            var servicesNamespace = targetScope.Infrastructure.Services.Context.Namespace;
+            var existingCsvReader = targetScope.Infrastructure.Services.Children.OfType<CsvValueObjectReaderArtifact>().FirstOrDefault();
+            if (existingCsvReader == null) { 
+                var infrastructureLayer = targetScope.Infrastructure.Services.AddChild(new CsvValueObjectReaderArtifact(CreateCsvValueObjectReader(servicesNamespace)));
+            }
             // 2. add CsvRow class to ValueTypes in domain
             var className = $"{artifact.Name}CsvRow";
-            var valueType = domain.AddValueType(new Core.Workspaces.Artifacts.Domains.ValueTypes.ValueTypeArtifact(className));
-
-            foreach (var column in artifact.GetColumns())
-            {
-                valueType.AddProperty(column.ToPropertyArtifact());
-            }
+            var valueType = artifact.ToValueTypeArtifact(className);
+            domain.AddValueType(valueType);
 
             // 3. add CsvValueObjectReaderImplementation class to Services in Infrastructure-layer, inheriting from CsvValueObjectReader and using the '<Table>CsvRow' class
             targetScope.Infrastructure.Services.AddChild(new CsvValueObjectReaderImplementationArtifact(CreateCsvValueObjectReaderImplementation(servicesNamespace, className, artifact.Name), valueType.Id));

@@ -70,6 +70,7 @@ namespace CodeGenerator.Core.CodeElements
             services.AddSingleton<ICodeElementArtifactController, GenericTypeParametersContainerArtifactController>();
             services.AddSingleton<ICodeElementArtifactController, GenericConstraintElementArtifactController>();
             services.AddSingleton<ICodeElementArtifactController, GenericTypeParameterElementArtifactController>();
+            services.AddSingleton<ICodeElementArtifactController, TypeReferenceArtifactController>();
 
             // Statement controllers
             services.AddSingleton<ICodeElementArtifactController, CompositeStatementArtifactController>();
@@ -118,6 +119,7 @@ namespace CodeGenerator.Core.CodeElements
             services.AddTransient<IView<FieldElementEditViewModel>, FieldElementEditView>();
             services.AddTransient<IView<GenericConstraintElementEditViewModel>, GenericConstraintElementEditView>();
             services.AddTransient<IView<GenericTypeParameterElementEditViewModel>, GenericTypeParameterElementEditView>();
+            services.AddTransient<IView<TypeReferenceEditViewModel>, TypeReferenceEditView>();
 
             // Statement Edit Views
             services.AddTransient<IView<RawStatementEditViewModel>, RawStatementEditView>();

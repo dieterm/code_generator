@@ -48,6 +48,7 @@ namespace CodeGenerator.Generators.DotNet.DomainLayer.Generators
 
         private bool DomainLayerFilter(DotNetProjectArtifactCreatedEventArgs args)
         {
+            if (!Enabled) return false;
             return args.Result.Workspace.CodeArchitecture is OnionCodeArchitecture onionCodeArchitecture
                 && args.Layer == onionCodeArchitecture.DomainLayer.LayerName;
         }

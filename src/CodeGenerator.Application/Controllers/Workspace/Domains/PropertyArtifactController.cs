@@ -12,13 +12,13 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
     /// <summary>
     /// Controller for PropertyArtifact
     /// </summary>
-    public class PropertyController : WorkspaceArtifactControllerBase<PropertyArtifact>
+    public class PropertyArtifactController : WorkspaceArtifactControllerBase<PropertyArtifact>
     {
         private PropertyEditViewModel? _editViewModel;
 
-        public PropertyController(OperationExecutor operationExecutor,
+        public PropertyArtifactController(OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
-            ILogger<PropertyController> logger)
+            ILogger<PropertyArtifactController> logger)
             : base(operationExecutor, workspaceController, logger)
         {
         }

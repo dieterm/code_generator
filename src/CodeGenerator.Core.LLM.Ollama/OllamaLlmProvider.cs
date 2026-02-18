@@ -57,11 +57,13 @@ namespace CodeGenerator.Core.LLM.Ollama
                 baseUrl = "http://localhost:11434";
             }
 
-            var response = await _httpClient.GetAsync($"{baseUrl}/api/tags", cancellationToken);
-            response.EnsureSuccessStatusCode();
+            using (var response = await _httpClient.GetAsync($"{baseUrl}/api/tags", cancellationToken)) 
+            { 
+                response.EnsureSuccessStatusCode();
 
-            var tags = await response.Content.ReadFromJsonAsync<Api.OllamaTagsResponse>(cancellationToken: cancellationToken);
-            _availableModels = tags?.Models?.Select(m => m.Name).ToList() ?? new();
+                var tags = await response.Content.ReadFromJsonAsync<Api.OllamaTagsResponse>(cancellationToken: cancellationToken);
+                _availableModels = tags?.Models?.Select(m => m.Name).ToList() ?? new();
+            }
         }
 
         public T? GetSettingsParameter<T>(string key)

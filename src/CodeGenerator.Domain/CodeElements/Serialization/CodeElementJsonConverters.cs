@@ -264,7 +264,31 @@ namespace CodeGenerator.Domain.CodeElements.Serialization
             if (reader.TokenType == JsonTokenType.Null)
                 return null;
 
-            var languageId = reader.GetString();
+            string? languageId;
+
+            if (reader.TokenType == JsonTokenType.String)
+            {
+                languageId = reader.GetString();
+            }
+            else if (reader.TokenType == JsonTokenType.StartObject)
+            {
+                // Handle case where ProgrammingLanguage was serialized as a full object
+                // (e.g., from older data or when this converter was not active during serialization)
+                using var doc = JsonDocument.ParseValue(ref reader);
+                var root = doc.RootElement;
+
+                if (root.TryGetProperty("id", out var idProp))
+                    languageId = idProp.GetString();
+                else if (root.TryGetProperty("Id", out var idProp2))
+                    languageId = idProp2.GetString();
+                else
+                    throw new JsonException("ProgrammingLanguage object does not contain an 'Id' property.");
+            }
+            else
+            {
+                throw new JsonException($"Unexpected token type '{reader.TokenType}' when deserializing ProgrammingLanguage. Expected String or StartObject.");
+            }
+
             if (string.IsNullOrEmpty(languageId))
                 return null;
 

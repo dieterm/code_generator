@@ -11,14 +11,14 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
     /// <summary>
     /// Controller for DomainArtifact
     /// </summary>
-    public class DomainController : WorkspaceArtifactControllerBase<DomainArtifact>
+    public class DomainArtifactController : WorkspaceArtifactControllerBase<DomainArtifact>
     {
         private DomainEditViewModel? _editViewModel;
 
-        public DomainController(
+        public DomainArtifactController(
             OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
-            ILogger<DomainController> logger)
+            ILogger<DomainArtifactController> logger)
             : base(operationExecutor, workspaceController, logger)
         {
         }

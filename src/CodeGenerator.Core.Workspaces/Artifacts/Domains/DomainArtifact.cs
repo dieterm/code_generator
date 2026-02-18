@@ -34,7 +34,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
             : base()
         {
             Name = name;
-            NamespacePattern = $"{{{ScopeArtifact.CONTEXT_PARAMETER_SCOPE_NAMESPACE}}}.{{{CONTEXT_PARAMETER_DOMAIN_NAME}}}";
+            NamespacePattern = $"{{{CodeArchitectureLayerArtifact.CONTEXT_PARAMETER_LAYER_NAMESPACE}}}.{{{CONTEXT_PARAMETER_DOMAIN_NAME}}}";
 
             EnsureEntitiesContainerExists();
             EnsureValueTypesContainerExists();
@@ -111,16 +111,10 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
                     return string.Empty;
 
                 var paremeteraisedString = new ParameterizedString(namespacePattern);
-                
-                var parameters = new Dictionary<string, string>
-                {
-                    { DomainArtifact.CONTEXT_PARAMETER_DOMAIN_NAME, Name },
-                    { ScopeArtifact.CONTEXT_PARAMETER_PARENT_SCOPE_NAME, Scope?.Name  },
-                    { ScopeArtifact.CONTEXT_PARAMETER_SCOPE_NAMESPACE, Scope?.Namespace },
-                    { CodeArchitectureLayerArtifact.CONTEXT_PARAMETER_LAYER_NAME, (Parent as CodeArchitectureLayerArtifact)?.LayerName ?? "?LayerName?" },
-                    { DomainArtifact.CONTEXT_PARAMETER_PARENT_DOMAIN_NAMESPACE, ((Parent as SubDomainsContainerArtifact)?.Parent as DomainArtifact)?.Namespace ?? string.Empty },
-                    { WorkspaceArtifact.CONTEXT_PARAMETER_WORKSPACE_ROOT_NAMESPACE, GetWorkspaceRootNamespace() }
-                };
+
+                var parameters = (Parent as WorkspaceArtifactBase).Context.NamespaceParameters.ToDictionary();
+                parameters[CONTEXT_PARAMETER_DOMAIN_NAME] = Name;
+                parameters[CONTEXT_PARAMETER_PARENT_DOMAIN_NAMESPACE]= ((Parent as SubDomainsContainerArtifact)?.Parent as DomainArtifact)?.Namespace ?? string.Empty;
 
                 return paremeteraisedString.GetOutput(parameters);
             }

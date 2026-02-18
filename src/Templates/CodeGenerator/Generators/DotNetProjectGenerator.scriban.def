@@ -1,0 +1,62 @@
+{
+  "templateName": "DotNetProjectGenerator",
+  "displayName": "DotNetProjectGenerator.scriban",
+  "description": null,
+  "category": null,
+  "tags": null,
+  "version": null,
+  "author": null,
+  "parameters": [
+    {
+      "name": "GeneratorId",
+      "description": null,
+      "fullyQualifiedAssemblyTypeName": "System.String",
+      "required": true,
+      "defaultValue": "DotNet.ValueTypesGenerator",
+      "allowedValues": null,
+      "label": null,
+      "tooltip": null,
+      "displayOrder": 0,
+      "validationPattern": null,
+      "minValue": null,
+      "maxValue": null,
+      "tableDataFilter": null,
+      "tableDataMaxRows": null,
+      "isTemplateDatasourceArtifactData": false
+    },
+    {
+      "name": "GeneratorName",
+      "description": null,
+      "fullyQualifiedAssemblyTypeName": "System.String",
+      "required": true,
+      "defaultValue": "ValueTypes",
+      "allowedValues": null,
+      "label": null,
+      "tooltip": null,
+      "displayOrder": 1,
+      "validationPattern": null,
+      "minValue": null,
+      "maxValue": null,
+      "tableDataFilter": null,
+      "tableDataMaxRows": null,
+      "isTemplateDatasourceArtifactData": false
+    },
+    {
+      "name": "Namespace",
+      "description": null,
+      "fullyQualifiedAssemblyTypeName": "System.String",
+      "required": true,
+      "defaultValue": "CodeGenerator.Generators.DotNet.DomainLayer.Generators",
+      "allowedValues": null,
+      "label": null,
+      "tooltip": null,
+      "displayOrder": 2,
+      "validationPattern": null,
+      "minValue": null,
+      "maxValue": null,
+      "tableDataFilter": null,
+      "tableDataMaxRows": null,
+      "isTemplateDatasourceArtifactData": false
+    }
+  ]
+}

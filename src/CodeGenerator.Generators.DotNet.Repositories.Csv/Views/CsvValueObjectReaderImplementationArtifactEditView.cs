@@ -29,6 +29,9 @@ namespace CodeGenerator.Generators.DotNet.Repositories.Csv.Views
 
             if (_viewModel == null) return;
 
+            txtName.BindViewModel(_viewModel.NameField);
+            txtDescription.BindViewModel(_viewModel.DescriptionField);
+            cmbValueType.BindViewModel(_viewModel.ValueTypeField);
             codeFileField.BindViewModel(_viewModel.CodeFileField);
 
             _viewModel.PropertyChanged += ViewModel_PropertyChanged;

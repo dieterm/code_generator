@@ -59,5 +59,10 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Events
         {
             return !string.IsNullOrWhiteSpace(newName);
         }
+
+        protected override WorkspaceArtifactContext? GetOwnContext()
+        {
+            return new WorkspaceArtifactContext { ClassName = Name };
+        }
     }
 }

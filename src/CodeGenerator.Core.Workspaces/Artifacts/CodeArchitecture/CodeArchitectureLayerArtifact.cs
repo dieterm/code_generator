@@ -14,6 +14,7 @@ namespace CodeGenerator.Domain.CodeArchitecture
     public abstract class CodeArchitectureLayerArtifact : WorkspaceArtifactBase, IDisposable
     {
         public const string CONTEXT_PARAMETER_LAYER_NAME = "LayerName";
+        public const string CONTEXT_PARAMETER_LAYER_NAMESPACE = "LayerNamespace";
 
         private ScopeArtifact? _scope;
         private string _initialScopeName;
@@ -79,12 +80,14 @@ namespace CodeGenerator.Domain.CodeArchitecture
 
         protected override WorkspaceArtifactContext? GetOwnContext()
         {
+            var layerNamespace = $"{Scope.Context!.Namespace}.{LayerName}";
             return new WorkspaceArtifactContext
             {
-                Namespace = Scope.Context!.Namespace + "." + LayerName,
+                Namespace = layerNamespace,
                 NamespaceParameters = (new Dictionary<string, string>
                 {
-                    { CONTEXT_PARAMETER_LAYER_NAME, this.LayerName }
+                    { CONTEXT_PARAMETER_LAYER_NAME, this.LayerName },
+                    { CONTEXT_PARAMETER_LAYER_NAMESPACE, layerNamespace }
                 }).AsReadOnly()
             };
         }

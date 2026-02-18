@@ -1,6 +1,7 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Domain.CodeElements;
+using System.Linq;
 
 namespace CodeGenerator.Core.CodeElements.Artifacts;
 
@@ -12,6 +13,7 @@ public class TypeReferenceArtifact : CodeElementArtifactBase
     {
         TypeReference = typeReference;
         Name = typeReference.TypeName;
+        AddChild(new BaseTypesContainerArtifact(typeReference.GenericArguments));
     }
 
     public TypeReferenceArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors)
@@ -91,8 +93,8 @@ public class TypeReferenceArtifact : CodeElementArtifactBase
             }
         }
     }
-
-    public List<TypeReference> GenericArguments => TypeReference.GenericArguments;
+    public BaseTypesContainerArtifact GenericArguments { get { return Children.OfType<BaseTypesContainerArtifact>().Single()!; } }
+    //public List<TypeReference> GenericArguments => TypeReference.GenericArguments;
 
     private string GetDisplayText()
     {

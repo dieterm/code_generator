@@ -99,5 +99,10 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains.Specifications
         {
             Name = newName;
         }
+
+        protected override WorkspaceArtifactContext? GetOwnContext()
+        {
+            return new WorkspaceArtifactContext { ClassName = Name };
+        }
     }
 }

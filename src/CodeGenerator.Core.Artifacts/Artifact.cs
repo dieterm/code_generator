@@ -329,7 +329,13 @@ public abstract class Artifact : MementoObjectBase<ArtifactState>, IArtifact
     public T? FindDescendantById<T>(string? id) where T: class, IArtifact
     {
         if (string.IsNullOrWhiteSpace(id)) return null;
-        return GetAllDescendants().FirstOrDefault(d => d.Id == id) as T;
+        var artifact = GetAllDescendants().FirstOrDefault(d => d.Id == id);
+        var artifactIsOfTypeT = artifact is T;
+        if(artifact!=null && !artifactIsOfTypeT)
+        {
+            throw new InvalidOperationException($"Artifact with id '{id}' was found but is of type '{artifact.GetType().Name}' instead of expected type '{typeof(T).Name}'.");
+        }
+        return artifact as T;
     }
     public IEnumerable<IArtifact> GetAllDescendants()
     {

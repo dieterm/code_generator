@@ -23,6 +23,7 @@ public static class ServiceCollectionExtensions
     {
         // Register Generators
         services.AddTransient<IMessageBusAwareGenerator, EntityTemplateGenerator>();
+        services.AddTransient<IMessageBusAwareGenerator, ValueTypesGenerator>();
 
         // Workspace Message bus subscribers
         services.AddSingleton<IWorkspaceMessageBusSubscriber, EntityArtifactConstructionSubscriber>();

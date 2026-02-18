@@ -36,5 +36,12 @@ namespace CodeGenerator.Core.CodeElements.Artifacts
             AddChild(artifact);
             return artifact;
         }
+
+        public void RemoveAttributeElement(AttributeElementArtifact artifact)
+        {
+            var attributeElement = artifact.CodeElement;
+            _attributes.Remove(attributeElement);
+            RemoveChild(artifact);
+        }
     }
 }

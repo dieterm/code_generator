@@ -1,6 +1,8 @@
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.Templates;
 using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
+using CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Views.TreeNode;
@@ -8,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
 {
-    
+
     /// <summary>
     /// Represents a database table
     /// </summary>
@@ -30,7 +32,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
             FixListOfObject<string>(nameof(RemovedExistingIndexes));
             if (RemovedExistingColumns == null)
                 RemovedExistingColumns = new List<string>();
-            if(RemovedExistingIndexes == null)
+            if (RemovedExistingIndexes == null)
                 RemovedExistingIndexes = new List<string>();
         }
 
@@ -44,8 +46,9 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         public string Name
         {
             get => GetValue<string>(nameof(Name));
-            set { 
-                if(SetValue(nameof(Name), value))
+            set
+            {
+                if (SetValue(nameof(Name), value))
                     RaisePropertyChangedEvent(nameof(TreeNodeText));
             }
         }
@@ -56,7 +59,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         public string Schema
         {
             get => GetValue<string>(nameof(Schema));
-            set {
+            set
+            {
                 SetValue(nameof(Schema), value);
             }
         }
@@ -76,13 +80,13 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         /// <summary>
         /// Get all columns
         /// </summary>
-        public IEnumerable<ColumnArtifact> GetColumns() => 
+        public IEnumerable<ColumnArtifact> GetColumns() =>
             Children.OfType<ColumnArtifact>();
 
         /// <summary>
         /// Get all indexes
         /// </summary>
-        public IEnumerable<IndexArtifact> GetIndexes() => 
+        public IEnumerable<IndexArtifact> GetIndexes() =>
             Children.OfType<IndexArtifact>();
 
         /// <summary>
@@ -94,7 +98,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         /// <summary>
         /// Get the primary key columns
         /// </summary>
-        public IEnumerable<ColumnArtifact> GetPrimaryKeyColumns() => 
+        public IEnumerable<ColumnArtifact> GetPrimaryKeyColumns() =>
             GetColumns().Where(c => c.IsPrimaryKey);
 
         /// <summary>
@@ -130,14 +134,14 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
         public override void RemoveChild(IArtifact child)
         {
             base.RemoveChild(child);
-            if(child is ColumnArtifact column)
+            if (child is ColumnArtifact column)
             {
-                if(column.HasDecorator<ExistingColumnDecorator>())
+                if (column.HasDecorator<ExistingColumnDecorator>())
                     RemovedExistingColumns.Add(column.Name);
             }
-            else if(child is IndexArtifact index)
+            else if (child is IndexArtifact index)
             {
-                if(index.HasDecorator<ExistingIndexDecorator>())
+                if (index.HasDecorator<ExistingIndexDecorator>())
                     RemovedExistingIndexes.Add(index.Name);
             }
         }
@@ -191,7 +195,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
 
         public bool CanAlterTable()
         {
-            return HasDecorator<ExistingTableDecorator>() &&(RemovedExistingColumns.Count>0 || RemovedExistingIndexes.Count>0 ||  HasExistingNameChanged() || (GetNewColumns().Any() || GetModifiedExistingColumns().Any()));
+            return HasDecorator<ExistingTableDecorator>() && (RemovedExistingColumns.Count > 0 || RemovedExistingIndexes.Count > 0 || HasExistingNameChanged() || (GetNewColumns().Any() || GetModifiedExistingColumns().Any()));
         }
 
         public bool HasExistingNameChanged()
@@ -227,6 +231,16 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Relational
                 .FirstOrDefault(decorator =>
                     string.Equals(decorator.OriginalName, originalColumnName, StringComparison.OrdinalIgnoreCase))
                 ?.Artifact as ColumnArtifact;
+        }
+
+        public ValueTypeArtifact ToValueTypeArtifact(string valueTypeName)
+        {
+            var valueType = new ValueTypeArtifact(valueTypeName);
+            foreach (var column in GetColumns())
+            {
+                valueType.AddProperty(column.ToPropertyArtifact());
+            }
+            return valueType;
         }
     }
 }

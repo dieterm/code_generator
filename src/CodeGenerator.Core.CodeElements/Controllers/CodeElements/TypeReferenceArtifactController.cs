@@ -7,46 +7,49 @@ using Microsoft.Extensions.Logging;
 
 namespace CodeGenerator.Core.CodeElements.Controllers.CodeElements;
 
-public class AttributeElementArtifactController : CodeElementArtifactControllerBase<AttributeElementArtifact>
+public class TypeReferenceArtifactController : CodeElementArtifactControllerBase<TypeReferenceArtifact>
 {
-    private AttributeElementEditViewModel? _editViewModel;
+    private TypeReferenceEditViewModel? _editViewModel;
 
-    public AttributeElementArtifactController(OperationExecutor operationExecutor, CodeElementsTreeViewController treeViewController, ILogger<AttributeElementArtifactController> logger)
+    public TypeReferenceArtifactController(OperationExecutor operationExecutor, CodeElementsTreeViewController treeViewController, ILogger<TypeReferenceArtifactController> logger)
         : base(operationExecutor, treeViewController, logger) { }
 
-    protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(AttributeElementArtifact artifact)
+    protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(TypeReferenceArtifact artifact)
     {
         yield return new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_RENAME)
         {
-            Id = "rename_attribute", Text = "Rename",
+            Id = "rename_type_reference", Text = "Rename",
             Execute = async (a) => TreeViewController.RequestBeginRename(artifact)
         };
         yield return new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
         {
-            Id = "attribute_properties", Text = "Properties",
+            Id = "type_reference_properties", Text = "Properties",
             Execute = async (a) => await ShowPropertiesAsync(artifact)
         };
     }
 
-    public override bool CanDelete(AttributeElementArtifact artifact)
+    public override bool CanDelete(TypeReferenceArtifact artifact)
     {
-        return artifact.Parent is AttributesContainerArtifact;
+        return artifact.Parent is BaseTypesContainerArtifact;
     }
 
-    public override void Delete(AttributeElementArtifact artifact)
+    public override void Delete(TypeReferenceArtifact artifact)
     {
-        var parentContainer = artifact.Parent as AttributesContainerArtifact;
+        var parentContainer = artifact.Parent as BaseTypesContainerArtifact;
         if (parentContainer == null) return;
-        parentContainer.RemoveAttributeElement(artifact);
+        parentContainer.RemoveBaseType(artifact);
     }
 
-    protected override Task OnSelectedInternalAsync(AttributeElementArtifact artifact, CancellationToken cancellationToken) => ShowPropertiesAsync(artifact);
+    protected override Task OnSelectedInternalAsync(TypeReferenceArtifact artifact, CancellationToken cancellationToken)
+    {
+        return ShowPropertiesAsync(artifact);
+    }
 
-    private Task ShowPropertiesAsync(AttributeElementArtifact artifact)
+    private Task ShowPropertiesAsync(TypeReferenceArtifact artifact)
     {
         if (_editViewModel == null)
         {
-            _editViewModel = new AttributeElementEditViewModel();
+            _editViewModel = new TypeReferenceEditViewModel();
             _editViewModel.ValueChanged += OnEditViewModelValueChanged;
         }
 

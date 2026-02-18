@@ -1,0 +1,76 @@
+using CodeGenerator.Core.Generators;
+using CodeGenerator.Core.Generators.Settings;
+using CodeGenerator.Domain.CodeArchitecture;
+using CodeGenerator.Generators.DotNet.Events;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace {{ Namespace }}
+{
+    public class {{ GeneratorName }}Generator : GeneratorBase
+    {
+        public const string GENERATOR_ID = "{{ GeneratorId }}";
+        private readonly ILogger _logger;
+				private Func<DotNetProjectArtifactCreatedEventArgs, Task>? _dotnetprojectcreated_unsubscribe_handler;
+				
+				public {{ GeneratorName }}Generator(ILogger<{{ GeneratorName }}Generator> logger)
+				{
+				    _logger = logger;
+				}
+
+        public override void SubscribeToEvents(GeneratorMessageBus messageBus)
+        {
+            _dotnetprojectcreated_unsubscribe_handler = messageBus.Subscribe<DotNetProjectArtifactCreatedEventArgs>(
+                async (e) => await OnDotNetProjectCreated(e),
+                DomainLayerFilter
+            );
+        }
+
+        private bool DomainLayerFilter(DotNetProjectArtifactCreatedEventArgs args)
+        {
+            if (!Enabled) return false;
+            return args.Result.Workspace.CodeArchitecture is OnionCodeArchitecture onionCodeArchitecture
+                && args.Layer == onionCodeArchitecture.DomainLayer.LayerName;
+        }
+
+        private async Task OnDotNetProjectCreated(DotNetProjectArtifactCreatedEventArgs e)
+        {
+            if (!Enabled) return;
+						if(!(e.Result.Workspace.CodeArchitecture is OnionCodeArchitecture))
+						{
+						    // The code architecture of the workspace is not Onion, this generator is only applicable for Onion architecture, so we skip generation
+						    _logger.LogWarning("The code architecture of the workspace is not Onion, skipping generation");
+						}
+						
+						var scope = e.Result.Workspace.FindScope(e.Scope);
+						
+						var domainLayer = scope.Domains;
+						if (domainLayer == null) {
+						    _logger.LogInformation("No domain layer defined, nothing to generate");
+						    return;
+						}
+            throw new NotImplementedException();
+        }
+
+        public override void UnsubscribeFromEvents(GeneratorMessageBus messageBus)
+        {
+            if(_dotnetprojectcreated_unsubscribe_handler != null)
+            {
+                messageBus.Unsubscribe(_dotnetprojectcreated_unsubscribe_handler);
+                _dotnetprojectcreated_unsubscribe_handler = null;
+            }
+        }
+
+        protected override GeneratorSettingsDescription ConfigureSettingsDescription()
+        {
+            var id = GENERATOR_ID;
+            var name = $"{{ GeneratorName }} Generator";
+            var description = $"Generates ValueType classes for domain layers";
+            var settingsDescription = new GeneratorSettingsDescription(id, name, description);
+            return settingsDescription;
+        }
+    }
+}
