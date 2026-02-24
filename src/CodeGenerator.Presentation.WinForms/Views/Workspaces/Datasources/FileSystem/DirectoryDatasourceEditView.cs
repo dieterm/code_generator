@@ -152,7 +152,7 @@ public partial class DirectoryDatasourceEditView : UserControl, IView<DirectoryD
         }
     }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((DirectoryDatasourceEditViewModel)(object)viewModel);
     }

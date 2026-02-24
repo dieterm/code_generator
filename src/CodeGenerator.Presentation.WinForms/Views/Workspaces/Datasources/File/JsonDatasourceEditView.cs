@@ -136,7 +136,7 @@ public partial class JsonDatasourceEditView : UserControl, IView<JsonDatasourceE
         }
     }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((JsonDatasourceEditViewModel)(object)viewModel);
     }

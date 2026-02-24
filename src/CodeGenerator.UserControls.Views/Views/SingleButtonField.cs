@@ -48,7 +48,7 @@ namespace CodeGenerator.UserControls.Views.Views
             //btnCommand.DataBindings.Add(nameof(btnCommand.CommandParameter), _viewModel, nameof(_viewModel.Target), false, DataSourceUpdateMode.OnPropertyChanged);
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((SingleButtonFieldModel)(object)viewModel);
         }

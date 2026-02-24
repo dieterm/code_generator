@@ -1,4 +1,4 @@
-﻿using CodeGenerator.Core.Artifacts.ViewModels;
+using CodeGenerator.Core.Artifacts.ViewModels;
 using CodeGenerator.Core.CodeElements.ViewModels;
 using CodeGenerator.Presentation.WinForms.Views;
 using CodeGenerator.Shared.ViewModels;
@@ -18,7 +18,7 @@ namespace CodeGenerator.Core.CodeElements.Views
             base.BindViewModel(viewModel);
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((CodeElementsTreeViewModel)(object)viewModel);
         }

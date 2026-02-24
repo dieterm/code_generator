@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Application.ViewModels.Workspace;
+using CodeGenerator.Core.Workspaces.ViewModels.Common;
 using CodeGenerator.Core.Workspaces.ViewModels.Workspace;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
@@ -15,15 +16,15 @@ using System.Windows.Forms;
 
 namespace CodeGenerator.Presentation.WinForms.Views.Workspace
 {
-    public partial class WorkspaceArtifactEditView : UserControl, IView<WorkspaceEditViewModel>
+    public partial class ArtifactEditView : UserControl, IView<IArtifactEditViewModel>
     {
-        private WorkspaceEditViewModel? _viewModel;
-        public WorkspaceArtifactEditView()
+        private IArtifactEditViewModel? _viewModel;
+        public ArtifactEditView()
         {
             InitializeComponent();
         }
 
-        public void BindViewModel(WorkspaceEditViewModel viewModel)
+        public void BindViewModel(IArtifactEditViewModel viewModel)
         {
             _viewModel = viewModel;
             lblTitle.Text = $"{viewModel.ArtifactName} Details";
@@ -40,9 +41,9 @@ namespace CodeGenerator.Presentation.WinForms.Views.Workspace
             tabFields.ResumeLayout();
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
-            BindViewModel((WorkspaceEditViewModel)(object)viewModel);
+            BindViewModel((IArtifactEditViewModel)(object)viewModel);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
 /// </summary>
 public class CsvDatasourceController : WorkspaceArtifactControllerBase<CsvDatasourceArtifact>
 {
-    private CsvDatasourceEditViewModel? _editViewModel;
+    private CsvDatasourceArtifactEditViewModel? _editViewModel;
 
     public CsvDatasourceController(
         OperationExecutor operationExecutor,
@@ -127,9 +127,9 @@ public class CsvDatasourceController : WorkspaceArtifactControllerBase<CsvDataso
     {
         if (_editViewModel == null)
         {
-            _editViewModel = new CsvDatasourceEditViewModel();
-            _editViewModel.ValueChanged += OnEditViewModelValueChanged;
-            _editViewModel.AddTableRequested += OnAddTableRequested;
+            _editViewModel = new CsvDatasourceArtifactEditViewModel();
+            _editViewModel.GeneralTab.EditViewModel.ValueChanged += OnEditViewModelValueChanged;
+            _editViewModel.GeneralTab.EditViewModel.AddTableRequested += OnAddTableRequested;
         }
 
         _editViewModel.Datasource = artifact;

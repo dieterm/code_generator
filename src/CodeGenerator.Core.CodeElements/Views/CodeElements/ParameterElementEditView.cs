@@ -33,7 +33,7 @@ public partial class ParameterElementEditView : UserControl, IView<ParameterElem
 
     private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e) { }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((ParameterElementEditViewModel)(object)viewModel);
     }

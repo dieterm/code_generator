@@ -44,7 +44,7 @@ public partial class TemplateExecutionView : UserControl, IView<TemplateExecutio
         }
     }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((TemplateExecutionViewModel)(object)viewModel);
     }

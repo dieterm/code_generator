@@ -38,7 +38,7 @@ public partial class DelegateElementEditView : UserControl, IView<DelegateElemen
     {
     }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((DelegateElementEditViewModel)(object)viewModel);
     }

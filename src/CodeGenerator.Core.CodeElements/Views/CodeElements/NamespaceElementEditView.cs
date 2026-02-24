@@ -38,7 +38,7 @@ public partial class NamespaceElementEditView : UserControl, IView<NamespaceElem
     {
     }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((NamespaceElementEditViewModel)(object)viewModel);
     }

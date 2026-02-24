@@ -41,7 +41,7 @@ public partial class CodeFileElementEditView : UserControl, IView<CodeFileElemen
     {
     }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((CodeFileElementEditViewModel)(object)viewModel);
     }

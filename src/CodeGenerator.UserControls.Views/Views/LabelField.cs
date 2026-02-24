@@ -93,7 +93,7 @@ namespace CodeGenerator.UserControls.Views
             lblValue.Text = _viewModel.Value?.ToString() ?? string.Empty;
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((LabelFieldModel)(object)viewModel);
         }

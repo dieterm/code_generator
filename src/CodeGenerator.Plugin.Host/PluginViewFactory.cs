@@ -44,7 +44,7 @@ public class PluginViewFactory
     /// Try to create a view for the given ViewModel using plugin-registered mappings.
     /// Returns null if no mapping exists.
     /// </summary>
-    public IView? TryCreateView(ViewModelBase viewModel)
+    public IView? TryCreateView(IViewModel viewModel)
     {
         Type? viewType;
         lock (_lock)

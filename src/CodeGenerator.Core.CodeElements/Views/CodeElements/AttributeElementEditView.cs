@@ -41,7 +41,7 @@ public partial class AttributeElementEditView : UserControl, IView<AttributeElem
     {
     }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((AttributeElementEditViewModel)(object)viewModel);
     }

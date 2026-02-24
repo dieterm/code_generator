@@ -29,7 +29,7 @@ public partial class ReturnStatementEditView : UserControl, IView<ReturnStatemen
 
     private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e) { }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((ReturnStatementEditViewModel)(object)viewModel);
     }

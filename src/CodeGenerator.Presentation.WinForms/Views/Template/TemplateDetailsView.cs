@@ -1,4 +1,4 @@
-﻿using CodeGenerator.Application.ViewModels.Template;
+using CodeGenerator.Application.ViewModels.Template;
 using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Workspaces.Datasources.Mysql.ViewModels;
 using CodeGenerator.Shared;
@@ -69,7 +69,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             }
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((WorkspaceArtifactDetailsViewModel)(object)viewModel);
         }

@@ -45,6 +45,10 @@ namespace CodeGenerator.UserControls.Views
                     detailsControl.Tag = fieldModel;
                     Controls.Add(detailsControl);
                     detailsControl.Dock = DockStyle.Top;
+                } 
+                else
+                {
+                    throw new InvalidOperationException($"View created for {fieldModel.GetType().FullName} is not a UserControl.");
                 }
             }
 
@@ -100,7 +104,7 @@ namespace CodeGenerator.UserControls.Views
             }
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((FieldCollectionModel)(object)viewModel);
         }

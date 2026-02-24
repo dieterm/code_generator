@@ -29,6 +29,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IView<MultiLineTextFieldModel>, MultiLineTextField>();
         services.AddTransient<IView<LabelFieldModel>, LabelField>();
         services.AddTransient<IView<SingleButtonFieldModel>, SingleButtonField>();
+        services.AddTransient<IView<UserControlFieldModel>, UserControlField>();
         return services;
     }
 }

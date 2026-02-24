@@ -1,4 +1,4 @@
-﻿using CodeGenerator.Shared.Models;
+using CodeGenerator.Shared.Models;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
 using CodeGenerator.UserControls.ViewModels;
@@ -73,7 +73,7 @@ namespace CodeGenerator.UserControls.Views
             lblErrorMessage.DataBindings.Clear();
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((ParameterizedStringFieldModel)(object)viewModel);
         }

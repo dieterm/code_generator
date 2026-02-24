@@ -67,7 +67,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             cmbValueTypeReference.Visible = _viewModel.ShowValueTypeReference;
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((PropertyEditViewModel)(object)viewModel);
         }

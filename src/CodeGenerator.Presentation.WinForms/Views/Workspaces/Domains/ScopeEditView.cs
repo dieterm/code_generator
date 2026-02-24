@@ -51,7 +51,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
             // Handle property changes if needed
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((ScopeEditViewModel)(object)viewModel);
         }

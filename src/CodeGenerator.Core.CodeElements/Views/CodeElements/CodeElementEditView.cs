@@ -40,7 +40,7 @@ public partial class CodeElementEditView : UserControl, IView<CodeElementEditVie
     {
     }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel(viewModel as CodeElementEditViewModel);
     }

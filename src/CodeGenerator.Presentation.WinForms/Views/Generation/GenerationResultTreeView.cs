@@ -1,4 +1,4 @@
-﻿using CodeGenerator.Application.ViewModels.Generation;
+using CodeGenerator.Application.ViewModels.Generation;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
 using System.ComponentModel;
@@ -49,7 +49,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             }
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((GenerationResultTreeViewModel)(object)viewModel);
         }

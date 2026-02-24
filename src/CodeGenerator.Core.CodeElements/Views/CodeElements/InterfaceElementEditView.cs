@@ -37,7 +37,7 @@ public partial class InterfaceElementEditView : UserControl, IView<InterfaceElem
     {
     }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((InterfaceElementEditViewModel)(object)viewModel);
     }

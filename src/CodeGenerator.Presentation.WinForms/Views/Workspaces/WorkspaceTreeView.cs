@@ -1,4 +1,4 @@
-﻿using CodeGenerator.Application.ViewModels.Workspace;
+using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
 
@@ -11,7 +11,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Workspace
             base.BindViewModel(viewModel);
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((WorkspaceTreeViewModel)(object)viewModel);
         }

@@ -18,14 +18,14 @@ namespace CodeGenerator.Presentation.WinForms.Services
         /// Optional fallback factory for views registered by plugins.
         /// Set by the plugin host at startup.
         /// </summary>
-        public static Func<ViewModelBase, IView?>? PluginViewFactoryFallback { get; set; }
+        public static Func<IViewModel, IView?>? PluginViewFactoryFallback { get; set; }
 
         public ViewFactory(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
 
-        public IView? CreateView(ViewModelBase viewModel)
+        public virtual IView? CreateView(IViewModel viewModel)
         {
             // Build IView<TViewModel> for the concrete ViewModel type
             var viewModelType = viewModel.GetType();

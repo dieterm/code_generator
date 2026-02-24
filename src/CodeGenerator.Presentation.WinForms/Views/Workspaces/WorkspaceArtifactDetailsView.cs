@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Application.ViewModels.Workspace;
+using CodeGenerator.Core.Workspaces.ViewModels.Common;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
@@ -66,7 +67,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             }
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((WorkspaceArtifactDetailsViewModel)(object)viewModel);
         }

@@ -30,7 +30,7 @@ public partial class UsingStatementEditView : UserControl, IView<UsingStatementE
 
     private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e) { }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((UsingStatementEditViewModel)(object)viewModel);
     }

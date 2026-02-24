@@ -31,7 +31,7 @@ public partial class GenericConstraintElementEditView : UserControl, IView<Gener
 
     private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e) { }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((GenericConstraintElementEditViewModel)(object)viewModel);
     }

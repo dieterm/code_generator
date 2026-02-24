@@ -169,7 +169,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             btnMoveDown.Enabled = selectedIndex >= 0 && selectedIndex < lstSelectedColumns.Items.Count - 1;
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((IndexEditViewModel)(object)viewModel);
         }

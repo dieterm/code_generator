@@ -89,7 +89,7 @@ public partial class CheckboxField : UserControl, IView<CheckboxFieldModel>
         }
     }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((CheckboxFieldModel)(object)viewModel);
     }

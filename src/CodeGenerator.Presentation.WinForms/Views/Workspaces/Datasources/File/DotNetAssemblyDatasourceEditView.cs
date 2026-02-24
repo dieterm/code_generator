@@ -254,7 +254,7 @@ public partial class DotNetAssemblyDatasourceEditView : UserControl, IView<DotNe
         }
     }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((DotNetAssemblyDatasourceEditViewModel)(object)viewModel);
     }

@@ -1,6 +1,6 @@
 ﻿namespace CodeGenerator.Presentation.WinForms.Views.Workspace
 {
-    partial class WorkspaceArtifactEditView
+    partial class ArtifactEditView
     {
         /// <summary> 
         /// Required designer variable.

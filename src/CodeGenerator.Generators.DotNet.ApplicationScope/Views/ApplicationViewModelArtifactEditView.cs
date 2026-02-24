@@ -38,7 +38,7 @@ namespace CodeGenerator.Generators.DotNet.ApplicationScope.Views
         {
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((ApplicationViewModelArtifactEditViewModel)(object)viewModel);
         }

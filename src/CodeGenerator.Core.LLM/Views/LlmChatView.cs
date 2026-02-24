@@ -54,7 +54,7 @@ namespace CodeGenerator.Core.LLM.Views
             RenderAllMessages();
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((LlmChatViewModel)(object)viewModel);
         }

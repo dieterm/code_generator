@@ -28,6 +28,7 @@ using CodeGenerator.Core.Workspaces.Datasources.SqlServer.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Xml.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Yaml.ViewModels;
 using CodeGenerator.Core.Workspaces.ViewModels;
+using CodeGenerator.Core.Workspaces.ViewModels.Common;
 using CodeGenerator.Core.Workspaces.ViewModels.Workspace;
 using CodeGenerator.Generators.DotNet.ApplicationScope;
 using CodeGenerator.Generators.DotNet.Repositories.Csv;
@@ -94,7 +95,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ITreeNodeIconResolver<ResourceManagerTreeNodeIcon>, ResourceManagerTreeNodeIconResolver>();
 
         // View Factory
-        services.AddSingleton<IViewFactory, ViewFactory>();
+        services.AddSingleton<IViewFactory, CodeGeneratorViewFactory>();
 
         // ViewModel ? View registrations (used by IViewFactory / WorkspaceArtifactDetailsView)
         services.AddViewMappings();
@@ -110,7 +111,7 @@ public static class ServiceCollectionExtensions
     {
         // Workspace
         //services.AddTransient<IView<WorkspaceEditViewModel>, WorkspaceEditView>();
-        services.AddTransient<IView<WorkspaceEditViewModel>, WorkspaceArtifactEditView>();
+        services.AddTransient<IView<IArtifactEditViewModel>, ArtifactEditView>();
 
         // Datasources - Relational
         services.AddTransient<IView<MysqlDatasourceEditViewModel>, MysqlDatasourceEditView>();

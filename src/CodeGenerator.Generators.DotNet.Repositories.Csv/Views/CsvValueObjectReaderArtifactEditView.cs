@@ -39,7 +39,7 @@ namespace CodeGenerator.Generators.DotNet.Repositories.Csv.Views
             // Handle property changes if needed
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((CsvValueObjectReaderArtifactEditViewModel)(object)viewModel);
         }

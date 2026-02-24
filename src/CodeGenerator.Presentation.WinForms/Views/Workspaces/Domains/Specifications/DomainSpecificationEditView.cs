@@ -43,7 +43,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Workspace.Domains.Specificat
         {
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((DomainSpecificationEditViewModel)(object)viewModel);
         }

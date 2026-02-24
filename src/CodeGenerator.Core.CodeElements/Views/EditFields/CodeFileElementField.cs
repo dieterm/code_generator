@@ -86,7 +86,7 @@ namespace CodeGenerator.Core.CodeElements.Views.EditFields
             btnSaveCodeFileElement.Command = null;
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((CodeFileElementFieldModel)(object)viewModel);
         }

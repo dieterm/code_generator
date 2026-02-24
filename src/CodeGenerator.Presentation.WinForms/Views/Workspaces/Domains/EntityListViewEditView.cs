@@ -38,7 +38,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
         {
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((EntityListViewEditViewModel)(object)viewModel);
         }

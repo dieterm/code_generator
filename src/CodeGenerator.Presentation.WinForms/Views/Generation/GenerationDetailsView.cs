@@ -66,7 +66,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Generation
             }
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((GenerationDetailsViewModel)(object)viewModel);
         }

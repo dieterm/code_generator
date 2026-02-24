@@ -39,7 +39,7 @@ public partial class OperatorElementEditView : UserControl, IView<OperatorElemen
     {
     }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((OperatorElementEditViewModel)(object)viewModel);
     }

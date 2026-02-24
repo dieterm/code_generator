@@ -31,7 +31,7 @@ public partial class ForStatementEditView : UserControl, IView<ForStatementEditV
 
     private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e) { }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((ForStatementEditViewModel)(object)viewModel);
     }

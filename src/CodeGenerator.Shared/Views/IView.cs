@@ -9,9 +9,9 @@ namespace CodeGenerator.Shared.Views
 {
     public interface IView
     {
-        void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase;
+        void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel;
     }
-    public interface IView<TModel> : IView where TModel : ViewModelBase
+    public interface IView<TModel> : IView where TModel : IViewModel
     {
         void BindViewModel(TModel viewModel);
     }

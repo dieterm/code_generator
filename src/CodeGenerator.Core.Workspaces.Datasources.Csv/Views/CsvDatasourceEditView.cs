@@ -140,7 +140,7 @@ public partial class CsvDatasourceEditView : UserControl, IView<CsvDatasourceEdi
         }
     }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((CsvDatasourceEditViewModel)(object)viewModel);
     }

@@ -119,7 +119,7 @@ namespace CodeGenerator.UserControls.Views
                 : null;
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((StringDictionaryFieldModel)(object)viewModel);
         }

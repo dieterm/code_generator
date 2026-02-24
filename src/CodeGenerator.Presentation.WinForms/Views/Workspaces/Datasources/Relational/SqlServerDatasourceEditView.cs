@@ -200,7 +200,7 @@ public partial class SqlServerDatasourceEditView : UserControl, IView<SqlServerD
             : null;
     }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((SqlServerDatasourceEditViewModel)(object)viewModel);
     }

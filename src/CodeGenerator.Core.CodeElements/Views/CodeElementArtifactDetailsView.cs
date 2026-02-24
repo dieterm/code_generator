@@ -66,7 +66,7 @@ public partial class CodeElementArtifactDetailsView : UserControl, IView<CodeEle
         }
     }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((CodeElementArtifactDetailsViewModel)(object)viewModel);
     }

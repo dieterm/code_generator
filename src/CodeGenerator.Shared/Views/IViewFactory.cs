@@ -14,6 +14,6 @@ namespace CodeGenerator.Shared.Views
         /// Creates and binds a View for the given ViewModel.
         /// Returns null if no View is registered for the ViewModel type.
         /// </summary>
-        IView? CreateView(ViewModelBase viewModel);
+        IView? CreateView(IViewModel viewModel);
     }
 }

@@ -1,4 +1,4 @@
-﻿using CodeGenerator.Core.Settings.Models;
+using CodeGenerator.Core.Settings.Models;
 using CodeGenerator.Core.Settings.ViewModels;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.ViewModels;
@@ -114,7 +114,7 @@ namespace CodeGenerator.Core.Settings.Views
             }
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
            BindViewModel((SettingsViewModel)(object)viewModel);
         }

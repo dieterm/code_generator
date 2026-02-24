@@ -115,7 +115,7 @@ namespace CodeGenerator.UserControls.Views
             return form.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(txt.Text) ? txt.Text : null;
         }
 
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             BindViewModel((StringListFieldModel)(object)viewModel);
         }

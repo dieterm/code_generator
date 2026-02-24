@@ -62,7 +62,7 @@ public partial class TemplateParameterEditView : UserControl, IView<TemplatePara
         }
     }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((TemplateParameterEditViewModel)(object)viewModel);
     }

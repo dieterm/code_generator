@@ -136,7 +136,7 @@ public partial class YamlDatasourceEditView : UserControl, IView<YamlDatasourceE
         }
     }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((YamlDatasourceEditViewModel)(object)viewModel);
     }

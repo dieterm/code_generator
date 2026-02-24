@@ -137,7 +137,7 @@ public partial class XmlDatasourceEditView : UserControl, IView<XmlDatasourceEdi
         }
     }
 
-    public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+    public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
     {
         BindViewModel((XmlDatasourceEditViewModel)(object)viewModel);
     }

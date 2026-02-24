@@ -210,7 +210,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Application
         }
 
         #region IView Implementation
-        public void BindViewModel<TModel>(TModel viewModel) where TModel : ViewModelBase
+        public void BindViewModel<TModel>(TModel viewModel) where TModel : IViewModel
         {
             this.BindViewModel((MainViewModel)(object)viewModel);
         }
