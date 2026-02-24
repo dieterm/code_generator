@@ -19,6 +19,7 @@ using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Application.ViewModels.Generation;
 using CodeGenerator.Application.ViewModels.Template;
 using CodeGenerator.Application.ViewModels.Workspace;
+using CodeGenerator.Core;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Interfaces;
 using CodeGenerator.Core.MessageBus;
@@ -71,6 +72,9 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        // Register Core services (includes MarkdownService)
+        services.AddCodeGeneratorCore();
+
         // Register Domain services
         services.AddDomainServices(configuration);
         services.AddDomainDotNetServices(configuration);

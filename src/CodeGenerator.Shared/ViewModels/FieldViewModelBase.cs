@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,6 +32,10 @@ namespace CodeGenerator.Shared.ViewModels
         private bool DefaultValueSetter(object? value)
         {
             var propertyInfo = Target?.GetType()?.GetProperty(Name);
+            if(propertyInfo?.GetSetMethod() == null)
+            {
+                return false; // Property is read-only
+            }
             propertyInfo?.SetValue(Target, value);
             return propertyInfo!=null;
         }

@@ -2,6 +2,7 @@
 using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
+using CodeGenerator.Core.Workspaces.ViewModels.Scopes;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 using System;
@@ -17,7 +18,7 @@ namespace CodeGenerator.Application.Controllers.Workspace.Scopes
     /// </summary>
     public class ScopeArtifactController : WorkspaceArtifactControllerBase<ScopeArtifact>
     {
-        private ScopeEditViewModel? _editViewModel;
+        private ScopeArtifactEditViewModel? _editViewModel;
 
         public ScopeArtifactController(OperationExecutor operationExecutor, WorkspaceTreeViewController treeViewController, ILogger<ScopeArtifactController> logger)
             : base(operationExecutor, treeViewController, logger)
@@ -94,11 +95,11 @@ namespace CodeGenerator.Application.Controllers.Workspace.Scopes
         {
             if (_editViewModel == null)
             {
-                _editViewModel = new ScopeEditViewModel();
+                _editViewModel = new ScopeArtifactEditViewModel();
                 _editViewModel.ValueChanged += OnEditViewModelValueChanged;
             }
 
-            _editViewModel.Scope = artifact;
+            _editViewModel.Artifact = artifact;
         }
 
         private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)

@@ -13,9 +13,9 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Core.Workspaces.ViewModels.Workspace
 {
-    public class WorkspaceEditViewModel : ArtifactEditViewModel<WorkspaceArtifact, WorkspaceGeneralTabViewModel>
+    public class WorkspaceArtifactEditViewModel : ArtifactEditViewModel<WorkspaceArtifact, WorkspaceGeneralTabViewModel>
     {
-        public WorkspaceEditViewModel()
+        public WorkspaceArtifactEditViewModel()
             : base("Workspace", new WorkspaceGeneralTabViewModel())
         {
 

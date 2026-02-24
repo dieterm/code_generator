@@ -10,10 +10,13 @@ using CodeGenerator.Core.CodeElements.Views;
 using CodeGenerator.Core.LLM.Services;
 using CodeGenerator.Core.LLM.ViewModels;
 using CodeGenerator.Core.LLM.Views;
+using CodeGenerator.Core.Services;
 using CodeGenerator.Core.Settings.ViewModels;
 using CodeGenerator.Core.Settings.Views;
+using CodeGenerator.Core.ViewModels.Browser;
 using CodeGenerator.Presentation.WinForms.Views;
 using CodeGenerator.Presentation.WinForms.Views.Application;
+using CodeGenerator.Presentation.WinForms.Views.Browser;
 using CodeGenerator.Presentation.WinForms.Views.Template;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.ExtensionMethods;
@@ -25,7 +28,7 @@ using Syncfusion.Windows.Forms.Tools;
 
 namespace CodeGenerator.Presentation.WinForms.Services
 {
-    public class WindowManagerService : IWindowManagerService, ITemplateWindowManagerService, ILlmWindowManagerService, IWorkspaceWindowManagerService, ICodeElementsWindowManagerService
+    public class WindowManagerService : IWindowManagerService, ITemplateWindowManagerService, ILlmWindowManagerService, IWorkspaceWindowManagerService, ICodeElementsWindowManagerService, IBrowserWindowManagerService
     {       
         private readonly DockingManager dockingManager;
         private readonly MainView mainView;
@@ -276,6 +279,27 @@ namespace CodeGenerator.Presentation.WinForms.Services
             }
 
             _codeElementsTreeView.BindViewModel(treeViewModel);
+        }
+
+        public void ShowBrowserWindow(string url)
+        {
+            ShowBrowserWindow(new BrowserViewModel { Url = url });
+        }
+        private BrowserView? _browserView;
+        public void ShowBrowserWindow(BrowserViewModel viewModel)
+        {
+
+            if (_browserView == null || _browserView.IsDisposed)
+            {
+                _browserView = new BrowserView();
+                dockingManager.DockAsDocument(_browserView);
+                dockingManager.SetDockLabel(_browserView, viewModel.Title??"Browser");
+            }
+            else
+            {
+                dockingManager.SetDockVisibility(_browserView, true);
+            }
+            _browserView.BindViewModel(viewModel);
         }
         #endregion
 

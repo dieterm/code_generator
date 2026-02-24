@@ -8,7 +8,9 @@ using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.Events;
 using CodeGenerator.Core.Artifacts.FileSystem;
+using CodeGenerator.Core.Services;
 using CodeGenerator.Core.Templates;
+using CodeGenerator.Core.ViewModels.Browser;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
@@ -53,6 +55,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
         private WorkspaceArtifactDetailsViewModel? _workspaceDetailsViewModel;
         private readonly IWorkspaceWindowManagerService _windowManagerService;
         private readonly PluginManager _pluginManager;
+        private readonly MarkdownService _markdownService;
         /// <summary>
         /// The UndoRedoManager for this workspace
         /// </summary>
@@ -69,6 +72,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             IWorkspaceWindowManagerService windowManagerService,
             IMessageBoxService messageBoxService,
             PluginManager pluginManager,
+            MarkdownService markdownService,
             ILogger<WorkspaceTreeViewController> logger)
             : base(operationExecutor, messageBoxService, logger)
         {
@@ -79,6 +83,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             _templateManager = templateManager;
             _windowManagerService = windowManagerService;
             _pluginManager = pluginManager;
+            _markdownService = markdownService;
         }
 
         /// <summary>
@@ -437,23 +442,33 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 PreviewCommand = new RelayCommand(async () =>
                 {
                     var previewOutput = await templateInstance.RenderAsync(CancellationToken.None);
-                    var templateWindowManagerService = ServiceProviderHolder.GetRequiredService<IWindowManagerService>();
-                    string textContent = string.Empty;
+                    
+                    
                     if (previewOutput.Succeeded)
                     {
-                        textContent = previewOutput.Artifacts.OfType<FileArtifact>().First().GetTextContent(); 
+                        var markdownContent = previewOutput.Artifacts.OfType<FileArtifact>().First().GetTextContent();
                         
-                    } else
-                    {
-                        textContent = "Template rendering failed:\n" + string.Join("\n", previewOutput.Errors);
-                       
+                        // Convert markdown to HTML
+                        var htmlContent = _markdownService.ConvertToHtml(markdownContent, templateInstance.OutputFileName);
+                        
+                        var browserWindowManagerService = ServiceProviderHolder.GetRequiredService<IBrowserWindowManagerService>();
+                        browserWindowManagerService.ShowBrowserWindow(new BrowserViewModel
+                        {
+                            Title = templateInstance.OutputFileName,
+                            HtmlContent = htmlContent
+                        });
                     }
-                    templateWindowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel
+                    else
                     {
-                        FileName = templateInstance.OutputFileName,
-                        TextContent = textContent,
-                        TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.Text
-                    });
+                        var windowManagerService = ServiceProviderHolder.GetRequiredService<IWindowManagerService>();
+                        var textContent = "Template rendering failed:\n" + string.Join("\n", previewOutput.Errors);
+                        windowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel
+                        {
+                            FileName = templateInstance.OutputFileName,
+                            TextContent = textContent,
+                            TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.Text
+                        });
+                    }
                 })
             });
         }

@@ -1,8 +1,10 @@
-﻿using CodeGenerator.Core.Workspaces.Artifacts;
+﻿using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Shared.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,8 +28,18 @@ namespace CodeGenerator.Core.Workspaces.ViewModels.Common
             get { return _artifact; }
             set
             {
+                if (_artifact != null)
+                {
+                    UnsubscribeFromFieldChanges();
+                }
+                
                 SetProperty(ref _artifact, value);
                 BindArtifact(value);
+                
+                if (_artifact != null)
+                {
+                    SubscribeToFieldChanges();
+                }
             }
         }
 
@@ -43,6 +55,11 @@ namespace CodeGenerator.Core.Workspaces.ViewModels.Common
 
         WorkspaceArtifactBase? IArtifactEditViewModel.Artifact => Artifact;
 
+        /// <summary>
+        /// Event raised when any field value changes
+        /// </summary>
+        public event EventHandler<ArtifactPropertyChangedEventArgs>? ValueChanged;
+
         public ArtifactEditViewModel(string artifactName, TGeneralTab generalTab, params ArtifactEditViewTabModel[] optionalTabs)
         {
             _artifactName = artifactName;
@@ -53,6 +70,41 @@ namespace CodeGenerator.Core.Workspaces.ViewModels.Common
             }
             Tabs.Add(new ArtifactDocumentationTabViewModel());
             Tabs.Add(new ArtifactCustomPropertiesTabViewModel());
+        }
+
+        private void SubscribeToFieldChanges()
+        {
+            foreach (var tab in Tabs)
+            {
+                foreach (var field in tab.FieldCollection.FieldModels)
+                {
+                    field.PropertyChanged += OnFieldPropertyChanged;
+                }
+            }
+        }
+
+        private void UnsubscribeFromFieldChanges()
+        {
+            foreach (var tab in Tabs)
+            {
+                foreach (var field in tab.FieldCollection.FieldModels)
+                {
+                    field.PropertyChanged -= OnFieldPropertyChanged;
+                }
+            }
+        }
+
+        private void OnFieldPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (_artifact == null) return;
+            
+            if (e.PropertyName == nameof(FieldViewModelBase.Value) && sender is FieldViewModelBase field)
+            {
+                if (field.AutoUpdate)
+                {
+                    ValueChanged?.Invoke(this, new ArtifactPropertyChangedEventArgs(_artifact, field.Name, field.Value));
+                }
+            }
         }
 
         public FieldViewModelBase? GetFieldByName(string name)
@@ -69,5 +121,11 @@ namespace CodeGenerator.Core.Workspaces.ViewModels.Common
         public ArtifactDocumentationTabViewModel DocumentationTab { get { return Tabs.OfType<ArtifactDocumentationTabViewModel>().Single(); } }
         public ArtifactCustomPropertiesTabViewModel CustomPropertiesTab { get { return Tabs.OfType<ArtifactCustomPropertiesTabViewModel>().Single(); } }
         public TGeneralTab GeneralTab { get { return Tabs.OfType<TGeneralTab>().Single(); } }
+
+        public override void DisposeViewModel()
+        {
+            UnsubscribeFromFieldChanges();
+            base.DisposeViewModel();
+        }
     }
 }

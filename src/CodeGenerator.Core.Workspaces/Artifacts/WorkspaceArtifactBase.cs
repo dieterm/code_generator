@@ -305,6 +305,10 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
 
             docs.AppendLine();
             docs.AppendLine("## Children");
+            docs.AppendLine("{{ for child_artifact in Artifact.children }}");
+            docs.AppendLine("- {{ child_artifact }}");
+            docs.AppendLine("{{ end }}");
+            docs.AppendLine("## Example");
             foreach (var child in Children)
             {
                 docs.AppendLine($"- {child}");
@@ -315,7 +319,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             docs.AppendLine("| --- | --- | --- |");
             foreach(var param in Context?.NamespaceParameters ?? new ReadOnlyDictionary<string, string>(new Dictionary<string, string>()))
             {
-                docs.AppendLine($"| {param.Key} | {param.Value} |  |");
+                docs.AppendLine($"| {param.Key} | {{{{{param.Key}}}}} | {param.Value} |");
             }
             docs.AppendLine("| Workspace | {{Workspace}} | The workspace root artifact |");
             docs.AppendLine("| Artifact | {{Artifact}} | The current artifact |");

@@ -18,7 +18,7 @@ using CodeGenerator.Shared.Operations;
 using CodeGenerator.UserControls.ViewModels;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Extensions.Logging;
-using WorkspaceEditViewModel = CodeGenerator.Core.Workspaces.ViewModels.Workspace.WorkspaceEditViewModel;
+using WorkspaceArtifactEditViewModel = CodeGenerator.Core.Workspaces.ViewModels.Workspace.WorkspaceArtifactEditViewModel;
 
 namespace CodeGenerator.Application.Controllers.Workspace
 {
@@ -29,7 +29,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
     public class WorkspaceArtifactController : WorkspaceArtifactControllerBase<WorkspaceArtifact>
     {
         private readonly IDatasourceFactory _datasourceFactory;
-        private WorkspaceEditViewModel? _editViewModel;
+        private WorkspaceArtifactEditViewModel? _editViewModel;
 
         public WorkspaceArtifactController(
             OperationExecutor operationExecutor,
@@ -101,7 +101,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
         {
             if (_editViewModel == null)
             {
-                _editViewModel = new WorkspaceEditViewModel();
+                _editViewModel = new WorkspaceArtifactEditViewModel();
+                _editViewModel.ValueChanged += OnEditViewModelValueChanged;
             }
             
             _editViewModel.Artifact = artifact;

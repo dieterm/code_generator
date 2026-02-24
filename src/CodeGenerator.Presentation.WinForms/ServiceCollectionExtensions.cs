@@ -15,6 +15,7 @@ using CodeGenerator.Core.LLM.Copilot;
 using CodeGenerator.Core.LLM.Ollama;
 using CodeGenerator.Core.LLM.Services;
 using CodeGenerator.Core.MessageBus;
+using CodeGenerator.Core.Services;
 using CodeGenerator.Core.Workspaces.Datasources.Csv;
 using CodeGenerator.Core.Workspaces.Datasources.Csv.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Directory.ViewModels;
@@ -91,6 +92,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ILlmWindowManagerService>((s) => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<WindowManagerService>(s));
         services.AddSingleton<IWorkspaceWindowManagerService>((s) => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<WindowManagerService>(s));
         services.AddSingleton<ICodeElementsWindowManagerService>((s) => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<WindowManagerService>(s));
+        services.AddSingleton<IBrowserWindowManagerService>((s) => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<WindowManagerService>(s));
         // Resources
         services.AddSingleton<ITreeNodeIconResolver<ResourceManagerTreeNodeIcon>, ResourceManagerTreeNodeIconResolver>();
 
