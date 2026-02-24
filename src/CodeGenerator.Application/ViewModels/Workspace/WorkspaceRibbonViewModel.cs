@@ -1,4 +1,4 @@
-using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.Workspace;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Ribbon;

@@ -3,6 +3,7 @@ using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.Shared.Views;
 using CodeGenerator.UserControls.ViewModels;
 using CodeGenerator.UserControls.Views;
+using CodeGenerator.UserControls.Views.Views;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeGenerator.UserControls;
@@ -27,6 +28,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IView<MultiSelectFieldModel>, MultiSelectField>();
         services.AddTransient<IView<MultiLineTextFieldModel>, MultiLineTextField>();
         services.AddTransient<IView<LabelFieldModel>, LabelField>();
+        services.AddTransient<IView<SingleButtonFieldModel>, SingleButtonField>();
         return services;
     }
 }

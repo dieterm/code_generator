@@ -1,6 +1,7 @@
 using CodeGenerator.Core.Artifacts;
-using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
+using CodeGenerator.Core.Workspaces.Artifacts.Workspace;
+
 //using CodeGenerator.Core.Workspaces.Models;
 using CodeGenerator.Core.Workspaces.Settings;
 using Microsoft.Extensions.Logging;

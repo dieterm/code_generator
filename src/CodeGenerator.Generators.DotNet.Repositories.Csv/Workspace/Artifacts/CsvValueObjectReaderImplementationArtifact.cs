@@ -1,6 +1,7 @@
 ﻿using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.CodeArchitecture.OnionArchitecture;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes;
 using CodeGenerator.Domain.CodeElements;
 using CodeGenerator.Shared.Memento;
@@ -150,7 +151,7 @@ namespace CodeGenerator.Generators.DotNet.Repositories.Csv.Workspace.Artifacts
             // Fallback: navigate via ancestor ScopeArtifact — needed when AttachedToWorkspace fires
             // before the full tree is constructed (FindDescendantById traverses Children which may
             // not yet contain all restored artifacts at that point)
-            var scope = this.FindAncesterOfType<Core.Workspaces.Artifacts.Scopes.ScopeArtifact>();
+            var scope = this.FindAncesterOfType<OnionScopeArtifact>();
             if (scope != null)
             {
                 foreach (var domain in scope.Domains)

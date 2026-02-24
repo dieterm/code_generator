@@ -306,7 +306,7 @@ EndProject
         public void AddProjectReference(DotNetProjectReference projectRef)
         {
             var subfolder = projectRef.ProjectArtifact.SolutionSubFolder;
-            var subFolders = new Stack<string>(subfolder?.Split(Path.DirectorySeparatorChar) ?? Array.Empty<string>());
+            var subFolders = new Stack<string>(subfolder?.Split(Path.DirectorySeparatorChar).Reverse() ?? Array.Empty<string>());
             DotNetSolutionFolder targetFolder = this;
             while (subFolders.Any())
             {

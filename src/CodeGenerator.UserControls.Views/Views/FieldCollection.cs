@@ -36,7 +36,7 @@ namespace CodeGenerator.UserControls.Views
 
             _fieldCollectionModel = fieldCollection;
             
-            foreach (var fieldModel in fieldCollection.FieldModels)
+            foreach (var fieldModel in fieldCollection.FieldModels.Reverse())
             {
                 var view = viewFactory.CreateView(fieldModel);
 
@@ -44,7 +44,7 @@ namespace CodeGenerator.UserControls.Views
                 {
                     detailsControl.Tag = fieldModel;
                     Controls.Add(detailsControl);
-                    detailsControl.Dock = DockStyle.Fill;
+                    detailsControl.Dock = DockStyle.Top;
                 }
             }
 

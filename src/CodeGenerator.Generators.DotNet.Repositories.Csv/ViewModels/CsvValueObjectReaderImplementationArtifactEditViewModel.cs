@@ -1,5 +1,6 @@
 ﻿using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.CodeElements.ViewModels.EditFields;
+using CodeGenerator.Core.Workspaces.Artifacts.CodeArchitecture.OnionArchitecture;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes;
 using CodeGenerator.Domain.CodeElements;
 using CodeGenerator.Generators.DotNet.Repositories.Csv.Workspace.Artifacts;
@@ -105,7 +106,7 @@ namespace CodeGenerator.Generators.DotNet.Repositories.Csv.ViewModels
 
             if (_csvValueObjectReaderImplementationArtifact != null)
             {
-                var scope = _csvValueObjectReaderImplementationArtifact.FindAncesterOfType<Core.Workspaces.Artifacts.Scopes.ScopeArtifact>();
+                var scope = _csvValueObjectReaderImplementationArtifact.FindAncesterOfType<OnionScopeArtifact>();
                 if (scope != null)
                 {
                     foreach (var valueType in scope.Domains.SelectMany(d => d.ValueTypes))

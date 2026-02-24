@@ -1,6 +1,6 @@
 using CodeGenerator.Core.Artifacts.CodeGeneration;
-using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
+using CodeGenerator.Core.Workspaces.Artifacts.Workspace;
 using CodeGenerator.Core.Workspaces.Generators;
 
 namespace CodeGenerator.Core.Generators;

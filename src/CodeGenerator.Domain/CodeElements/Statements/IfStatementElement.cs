@@ -25,9 +25,12 @@ namespace CodeGenerator.Domain.CodeElements
         /// </summary>
         public List<ElseIfBranch> ElseIfBranches { get; set; } = new();
 
-        public IfStatementElement() { }
+        public IfStatementElement() 
+        {
+            Name = "If";
+        }
 
-        public IfStatementElement(string condition)
+        public IfStatementElement(string condition) : this()
         {
             Condition = condition;
         }

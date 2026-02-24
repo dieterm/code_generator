@@ -211,7 +211,7 @@ Options...
         //var closeMenuItem = new ToolStripMenuItem("Close", null, (s, e) => editControl.Close());
         //fileMenu.DropDownItems.Add(closeMenuItem);
 
-        fileMenu.DropDownItems.Add(new ToolStripSeparator());
+        //fileMenu.DropDownItems.Add(new ToolStripSeparator());
 
         var saveMenuItem = new ToolStripMenuItem("Save", null, (s, e) => EditControl_HandleSave());
         saveMenuItem.ShortcutKeys = Keys.Control | Keys.S;
@@ -840,6 +840,23 @@ Options...
                 var content = File.ReadAllText(_viewModel.TemplateFilePath);
                 editControl.Text = content;
                 IsDirty = false;
+
+                if (_viewModel.PreviewCommand != null)
+                {
+                    var previewMenuItem = editControl.ContextMenuStrip.Items.OfType<ToolStripMenuItem>().FirstOrDefault(m => m.Text == "Preview");
+                    if (previewMenuItem == null) { 
+                        previewMenuItem=  new ToolStripMenuItem("Preview") { 
+                            Command = _viewModel.PreviewCommand, 
+                            CommandParameter = _viewModel.TemplateInstance 
+                        };
+                        editControl.ContextMenuStrip.Items.Insert(0, previewMenuItem);
+                    } 
+                    else
+                    {
+                        previewMenuItem.Command = _viewModel.PreviewCommand;
+                        previewMenuItem.CommandParameter = _viewModel.TemplateInstance;
+                    }
+                }
             }
             catch (Exception ex)
             {

@@ -33,6 +33,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="CodeGenerator\Generators\DotNetProjectGenerator.scriban" />
+    <None Include="CodeGenerator\Workspace\ContainerArtifact.scriban" />
+    <None Include="CodeGenerator\Workspace\ContainerArtifactController.scriban" />
+    <None Include="CodeGenerator\Workspace\WorkspaceArtifact.scriban" />
+    <None Include="CodeGenerator\Workspace\WorkspaceArtifactController.scriban" />
     <None Include="CSharp\Controller.scriban" />
     <None Include="CSharp\DbContext.scriban" />
     <None Include="CSharp\EntitiesClassTemplate.scriban" />
@@ -117,6 +122,10 @@
     <None Include="Yaml\scriban_template_support_problem.zip" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CodeGenerator\Generators\DotNetProjectGenerator.scriban.def" />
+    <Content Include="CodeGenerator\Workspace\ContainerArtifact.scriban.def" />
+    <Content Include="CodeGenerator\Workspace\ContainerArtifactController.scriban.def" />
+    <Content Include="CodeGenerator\Workspace\WorkspaceArtifact.scriban.def" />
     <Content Include="CSharp\EntitiesClassTemplate.scriban.def" />
     <Content Include="CSharp\NewTemplate.scriban.def" />
     <Content Include="CSharp\ProjectXYZ.Shared\bin\Debug\net8.0\ProjectXYZ.Shared.dll" />

@@ -19,13 +19,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.CodeArchitecture.NTierArchitec
 
         public IArtifact CreateScopeArtifact(string scopeName)
         {
-            var scopeArtifact = new ScopeArtifact(scopeName);
-            foreach (var layerFactory in _codeArchitectureManager.NTierArchitecture.Layers)
-            {
-                scopeArtifact.AddChild(layerFactory.CreateLayer(scopeName));
-            }
-            scopeArtifact.AddChild(new SubScopesContainerArtifact());
-            return scopeArtifact;
+            return new NTierScopeArtifact(scopeName, _codeArchitectureManager.NTierArchitecture.Layers);
         }
     }
 }

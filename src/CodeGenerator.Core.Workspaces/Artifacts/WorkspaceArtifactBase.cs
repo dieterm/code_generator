@@ -1,5 +1,7 @@
 ﻿using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
+using CodeGenerator.Core.Workspaces.Artifacts.Workspace;
 using CodeGenerator.Core.Workspaces.MessageBus;
 using CodeGenerator.Core.Workspaces.MessageBus.Events;
 using CodeGenerator.Core.Workspaces.Services;
@@ -10,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,10 +43,10 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
 
             var cancelableArgs = (e as CancelablePropertyChangingEventArgs)!;
             var undoRedoManager = ServiceProviderHolder.GetRequiredService<UndoRedoManager>();
-            
+
             var oldValue = cancelableArgs.OldValue;
             var newValue = cancelableArgs.NewValue;
-            
+
             // Property change opnemen
             undoRedoManager.RecordAction(new PropertyChangeAction(
                 artifact, e.PropertyName!, oldValue, newValue,
@@ -57,15 +60,15 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             //}
         }
 
-   
+
 
         protected WorkspaceArtifactBase(ArtifactState state, List<string> errors)
-    :       base(state, errors)
+    : base(state, errors)
         {
             ParentChanged += WorkspaceArtifactBase_ParentChanged;
             ChildAdded += WorkspaceArtifactBase_ChildAdded;
         }
-        
+
         private void WorkspaceArtifactBase_ChildAdded(object? sender, Core.Artifacts.Events.ChildAddedEventArgs e)
         {
             var messageBus = ServiceProviderHolder.GetRequiredService<WorkspaceMessageBus>();
@@ -104,22 +107,22 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
                     }
                 }
             ));
-            
+
         }
         #region Workspace Access
         public virtual WorkspaceArtifact? Workspace { get { return _workspace; } }
         private void WorkspaceArtifactBase_ParentChanged(object? sender, ParentChangedEventArgs e)
         {
-            if(_observingParent != null)
+            if (_observingParent != null)
             {
-                if(_workspace != null)
+                if (_workspace != null)
                 {
                     _observingParent.DetachedFromWorkspace -= ObservingParent_DetachedFromWorkspace;
                     _workspace = null;
                     OnDetachedFromWorkspace();
                 }
-                else 
-                { 
+                else
+                {
                     _observingParent.AttachedToWorkspace -= ObservingParent_AttachedToWorkspace;
                 }
                 _observingParent = null;
@@ -127,28 +130,29 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             if (e.NewParent is WorkspaceArtifactBase observableParent)
             {
                 _observingParent = observableParent;
-                if(_observingParent.Workspace != null)
+                if (_observingParent.Workspace != null)
                 {
                     _workspace = _observingParent.Workspace;
                     _observingParent.DetachedFromWorkspace += ObservingParent_DetachedFromWorkspace;
                     RaisePropertyChangedEvent(nameof(Workspace));
                     OnAttachedToWorkspace();
-                } 
+                }
                 else
                 {
                     _observingParent.AttachedToWorkspace += ObservingParent_AttachedToWorkspace;
                 }
-            } 
+            }
         }
 
         private void ObservingParent_AttachedToWorkspace(object? sender, EventArgs e)
         {
-            if(_workspace != _observingParent!.Workspace)
+            if (_workspace != _observingParent!.Workspace)
             {
                 _workspace = _observingParent.Workspace;
                 RaisePropertyChangedEvent(nameof(Workspace));
             }
-            if (_workspace != null) { 
+            if (_workspace != null)
+            {
                 OnAttachedToWorkspace();
                 _observingParent.AttachedToWorkspace -= ObservingParent_AttachedToWorkspace;
                 _observingParent.DetachedFromWorkspace += ObservingParent_DetachedFromWorkspace;
@@ -179,7 +183,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         {
             DetachedFromWorkspace?.Invoke(this, EventArgs.Empty);
         }
-        
+
         #endregion
 
         public WorkspaceArtifactContext? Context { get { return GetResultingContext(); } }
@@ -187,7 +191,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         protected void RaiseContextChanged()
         {
             RaisePropertyChangedEvent(nameof(Context));
-            foreach(var child in Children.OfType<WorkspaceArtifactBase>())
+            foreach (var child in Children.OfType<WorkspaceArtifactBase>())
             {
                 child.RaiseContextChanged();
             }
@@ -200,7 +204,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             if (parentContext == null && ownContext == null)
                 return null;
 
-            if(parentContext == null)
+            if (parentContext == null)
                 return ownContext;
 
             if (ownContext == null)
@@ -211,12 +215,12 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             var namespaceParameters = new Dictionary<string, string>();
             if (parentContext != null)
             {
-                foreach(var parameter in parentContext.NamespaceParameters)
+                foreach (var parameter in parentContext.NamespaceParameters)
                 {
                     namespaceParameters.Add(parameter.Key, parameter.Value);
                 }
             }
-            foreach(var parameter in ownContext.NamespaceParameters) 
+            foreach (var parameter in ownContext.NamespaceParameters)
             {
                 namespaceParameters[parameter.Key] = parameter.Value;
             }
@@ -245,8 +249,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         protected void PublishArtifactConstructionEvent()
         {
             var messageBus = ServiceProviderHolder.GetRequiredService<WorkspaceMessageBus>();
-            
-            messageBus.PublishArtifactConstruction( this);
+
+            messageBus.PublishArtifactConstruction(this);
         }
 
         /// <summary>
@@ -264,8 +268,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
 
         public T EnsureChildArtifactExists<T>(Func<T>? factory = null, Func<T, bool>? predicate = null) where T : WorkspaceArtifactBase
         {
-            if(factory == null) factory = () => Activator.CreateInstance<T>();
-            if(predicate == null) predicate = (a) => true;
+            if (factory == null) factory = () => Activator.CreateInstance<T>();
+            if (predicate == null) predicate = (a) => true;
             var childArtifact = Children.OfType<T>().FirstOrDefault(predicate);
             if (childArtifact == null)
             {
@@ -279,6 +283,50 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         {
             ParentChanged -= WorkspaceArtifactBase_ParentChanged;
             ChildAdded -= WorkspaceArtifactBase_ChildAdded;
+        }
+
+        public virtual string GetDefaultDocumentationTemplate()
+        {
+            StringBuilder docs = new StringBuilder();
+
+            docs.AppendLine($"# Documentation for {ToString()}");
+            docs.AppendLine();
+            docs.AppendLine($"This is the documentation for {ToString()}.");
+
+            docs.AppendLine("## Properties");
+            docs.AppendLine("| Property | Value | Description |");
+            docs.AppendLine("| --- | --- | --- |");
+            foreach (var prop in GetType().GetProperties())
+            {
+                var value = prop.GetValue(this)?.ToString() ?? "null";
+                var templateHelper = new TemplateHelpers();
+                docs.AppendLine($"| {{{{Artifact.{templateHelper.SnakeCase(prop.Name)}}}}} | {value} |  |");
+            }
+
+            docs.AppendLine();
+            docs.AppendLine("## Children");
+            foreach (var child in Children)
+            {
+                docs.AppendLine($"- {child}");
+            }
+            docs.AppendLine();
+            docs.AppendLine("## Available Template Parameters");
+            docs.AppendLine("| Parameter | Value | Description |");
+            docs.AppendLine("| --- | --- | --- |");
+            foreach(var param in Context?.NamespaceParameters ?? new ReadOnlyDictionary<string, string>(new Dictionary<string, string>()))
+            {
+                docs.AppendLine($"| {param.Key} | {param.Value} |  |");
+            }
+            docs.AppendLine("| Workspace | {{Workspace}} | The workspace root artifact |");
+            docs.AppendLine("| Artifact | {{Artifact}} | The current artifact |");
+
+
+            return docs.ToString();
+        }
+
+        public virtual string GetDocumentationTemplateFileName()
+        {
+            return $"{Id}_Documentation.md.scriban";
         }
     }
 }

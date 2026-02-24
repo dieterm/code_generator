@@ -4,6 +4,7 @@ using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Generators.MessageBus;
 using CodeGenerator.Core.Generators.Settings;
 using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.CodeArchitecture.OnionArchitecture;
 using CodeGenerator.Core.Workspaces.Generators;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.DotNet;
@@ -42,7 +43,7 @@ namespace CodeGenerator.Generators.DotNet.Generators
             var scopeDecorator = scopeFolderArtifact.GetDecoratorOfType<ScopeArtifactRefDecorator>();
             if( scopeDecorator == null) throw new ArgumentException("FolderArtifact does not have a ScopeArtifactRefDecorator");
             if(scopeDecorator.ScopeArtifact==null) throw new ArgumentException("ScopeArtifactRefDecorator does not have a ScopeArtifact");
-            var scopeArtifact = scopeDecorator.ScopeArtifact;
+            var scopeArtifact = scopeDecorator.ScopeArtifact as OnionScopeArtifact;
             
             var layers = new List<IArtifact>()
             {
@@ -74,7 +75,7 @@ namespace CodeGenerator.Generators.DotNet.Generators
                 var dotNetProjectArtifact = new DotNetProjectArtifact(folderName, language, projectType, (layer == scopeArtifact.Presentations) ? winformsTargetFramework : targetFramework);
                 dotNetProjectArtifact.SolutionSubFolder = scopeArtifact.GetSolutionSubFolder();
                 AddChildArtifactToParent(layerFolderArtifact, dotNetProjectArtifact, args.Result);
-                PublishDotNetProjectCreated(dotNetProjectArtifact, args.Result, layerArtifact.LayerName, scopeArtifact.Name);
+                PublishDotNetProjectCreated(dotNetProjectArtifact, args.Result, layerArtifact.LayerName, scopeArtifact.FullName);
             }
             return Task.CompletedTask;
         }

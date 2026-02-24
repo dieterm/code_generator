@@ -19,13 +19,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.CodeArchitecture.HexagonArchit
 
         public IArtifact CreateScopeArtifact(string scopeName)
         {
-            var scopeArtifact = new ScopeArtifact(scopeName);
-            foreach (var layerFactory in _codeArchitectureManager.HexagonArchitecture.Layers)
-            {
-                scopeArtifact.AddChild(layerFactory.CreateLayer(scopeName));
-            }
-            scopeArtifact.AddChild(new SubScopesContainerArtifact());
-            return scopeArtifact;
+            return new HexagonScopeArtifact(scopeName, _codeArchitectureManager.HexagonArchitecture.Layers);
         }
     }
 }

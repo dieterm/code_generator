@@ -48,6 +48,11 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             return domain;
         }
 
-        
+        public DomainArtifact? AddDomain(string domainName)
+        {
+            var domain = new DomainArtifact(domainName);
+            AddChild(domain);
+            return domain;
+        }
     }
 }

@@ -36,6 +36,12 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Scopes
             var newScope = (codeArchitecture.ScopeFactory.CreateScopeArtifact(scopeName) as ScopeArtifact)!;
             return AddChild(newScope);
         }
+        public TScope AddScope<TScope>(string scopeName) where TScope : ScopeArtifact
+        {
+            var codeArchitecture = Workspace!.CodeArchitecture!;
+            var newScope = (codeArchitecture.ScopeFactory.CreateScopeArtifact(scopeName) as TScope)!;
+            return AddChild(newScope);
+        }
 
         #region Implement IEnumerable<ScopeArtifact>
         public IEnumerator<ScopeArtifact> GetEnumerator()

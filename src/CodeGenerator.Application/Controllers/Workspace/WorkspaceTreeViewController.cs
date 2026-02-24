@@ -3,15 +3,18 @@ using CodeGenerator.Application.Controllers.Workspace.Datasources;
 using CodeGenerator.Application.Controllers.Workspace.Domains;
 using CodeGenerator.Application.Controllers.Workspace.Scopes;
 using CodeGenerator.Application.Services;
+using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.Events;
+using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
+using CodeGenerator.Core.Workspaces.Artifacts.Workspace;
 using CodeGenerator.Core.Workspaces.MessageBus;
 using CodeGenerator.Core.Workspaces.Operations.Scopes;
 using CodeGenerator.Core.Workspaces.Services;
@@ -19,10 +22,13 @@ using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Plugin.Host;
 using CodeGenerator.Shared;
+using CodeGenerator.Shared.ExtensionMethods;
+using CodeGenerator.Shared.Models;
 using CodeGenerator.Shared.Operations;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.UndoRedo;
 using CodeGenerator.Shared.ViewModels;
+using CodeGenerator.TemplateEngines.Scriban;
 using DocumentFormat.OpenXml.Office2013.Drawing.Chart;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.Extensions.DependencyInjection;
@@ -184,17 +190,23 @@ namespace CodeGenerator.Application.Controllers.Workspace
             
             // get default settings for new workspace
             var workspaceSettings = WorkspaceSettings.Instance;
+
             var workspace = new WorkspaceArtifact(workspaceName)
             {
                 WorkspaceFilePath = filePath,
-                RootNamespace = workspaceSettings.RootNamespace,
+                RootNamespace = workspaceName,
                 OutputDirectory = workspaceSettings.DefaultOutputDirectory,
                 DefaultTargetFramework = workspaceSettings.DefaultTargetFramework,
                 DefaultLanguage = workspaceSettings.DefaultLanguage,
                 CodeArchitectureId = workspaceSettings.DefaultCodeArchitectureId,
                 DependencyInjectionFrameworkId = workspaceSettings.DefaultDependencyInjectionFrameworkId
             };
-
+            var outputDirectoryParStr = new ParameterizedString(workspaceSettings.DefaultOutputDirectory);
+            workspace.OutputDirectory = outputDirectoryParStr.GetOutput(new Dictionary<string, string>
+            {
+                { WorkspaceArtifact.SETTINGS_PARAMETER_WORKSPACE_DIRECTORY, workspace.WorkspaceDirectory }
+            });
+            
             var datasourcesContainer = workspace.AddChild(new DatasourcesContainerArtifact());
             var scopesContainer = workspace.AddChild(new ScopesContainerArtifact());
             //var addScopeOperation = ServiceProviderHolder.GetRequiredService<AddScopeOperation>();
@@ -392,6 +404,58 @@ namespace CodeGenerator.Application.Controllers.Workspace
                 });
             }
             domain.AddEntity(entityArtifact);
+        }
+
+        public void ShowArtifactDocumentation(WorkspaceArtifactBase workspaceArtifactBase)
+        {
+            var documentationFolder = Path.Combine(CurrentWorkspace?.WorkspaceDirectory!, "Documentation");
+            if (!Directory.Exists(documentationFolder))
+            {
+                Directory.CreateDirectory(documentationFolder);
+            }
+            var documentationFilePath = Path.Combine(documentationFolder, workspaceArtifactBase.GetDocumentationTemplateFileName());
+            if (!File.Exists(documentationFilePath)) {
+                File.WriteAllText(documentationFilePath, workspaceArtifactBase.GetDefaultDocumentationTemplate());
+            }
+            var fileName = Path.GetFileName(documentationFilePath);
+            var templateId = TemplateIdParser.BuildWorkspaceTemplateId(workspaceArtifactBase.GetType().Name, fileName);
+            var template = new ScribanFileTemplate(templateId, documentationFilePath);
+            var templateInstance = new ScribanTemplateInstance(template) { OutputFileName = documentationFilePath.GetFileNameWithoutExtension() };
+            templateInstance.SetParameter("Artifact", workspaceArtifactBase);
+            templateInstance.SetParameter("Workspace", CurrentWorkspace);
+            foreach (var namespaceParameter in workspaceArtifactBase.Context?.NamespaceParameters)
+            {
+                templateInstance.SetParameter(namespaceParameter.Key, namespaceParameter.Value);
+            }
+            var templateWindowManagerService = ServiceProviderHolder.GetRequiredService<ITemplateWindowManagerService>();
+
+            templateWindowManagerService.ShowScribanTemplateEditView(new ViewModels.Template.ScribanTemplateEditViewModel
+            {
+                TemplateFilePath = documentationFilePath,
+                TabLabel = fileName,
+                TemplateInstance = templateInstance,
+                PreviewCommand = new RelayCommand(async () =>
+                {
+                    var previewOutput = await templateInstance.RenderAsync(CancellationToken.None);
+                    var templateWindowManagerService = ServiceProviderHolder.GetRequiredService<IWindowManagerService>();
+                    string textContent = string.Empty;
+                    if (previewOutput.Succeeded)
+                    {
+                        textContent = previewOutput.Artifacts.OfType<FileArtifact>().First().GetTextContent(); 
+                        
+                    } else
+                    {
+                        textContent = "Template rendering failed:\n" + string.Join("\n", previewOutput.Errors);
+                       
+                    }
+                    templateWindowManagerService.ShowArtifactPreview(new ArtifactPreviewViewModel
+                    {
+                        FileName = templateInstance.OutputFileName,
+                        TextContent = textContent,
+                        TextLanguageSchema = ArtifactPreviewViewModel.KnownLanguages.Text
+                    });
+                })
+            });
         }
     }
 }

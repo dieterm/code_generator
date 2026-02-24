@@ -8,11 +8,12 @@ using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Application.ViewModels.Workspace.Domains.Factories;
 using CodeGenerator.Application.ViewModels.Workspace.Domains.Specifications;
 using CodeGenerator.Core.Artifacts.TreeNode;
+using CodeGenerator.Core.CodeElements;
+using CodeGenerator.Core.CodeElements.Services;
 using CodeGenerator.Core.LLM;
 using CodeGenerator.Core.LLM.Copilot;
 using CodeGenerator.Core.LLM.Ollama;
 using CodeGenerator.Core.LLM.Services;
-using CodeGenerator.Core.CodeElements;
 using CodeGenerator.Core.MessageBus;
 using CodeGenerator.Core.Workspaces.Datasources.Csv;
 using CodeGenerator.Core.Workspaces.Datasources.Csv.ViewModels;
@@ -27,23 +28,24 @@ using CodeGenerator.Core.Workspaces.Datasources.SqlServer.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Xml.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Yaml.ViewModels;
 using CodeGenerator.Core.Workspaces.ViewModels;
+using CodeGenerator.Core.Workspaces.ViewModels.Workspace;
+using CodeGenerator.Generators.DotNet.ApplicationScope;
+using CodeGenerator.Generators.DotNet.Repositories.Csv;
+using CodeGenerator.Generators.DotNet.WinformsRibbonApplication;
 using CodeGenerator.Presentation.WinForms.Resources;
 using CodeGenerator.Presentation.WinForms.Services;
 using CodeGenerator.Presentation.WinForms.Views;
 using CodeGenerator.Presentation.WinForms.Views.Application;
 using CodeGenerator.Presentation.WinForms.Views.Domains;
+using CodeGenerator.Presentation.WinForms.Views.Workspace;
 using CodeGenerator.Presentation.WinForms.Views.Workspace.Domains.Factories;
 using CodeGenerator.Presentation.WinForms.Views.Workspace.Domains.Specifications;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.Views;
 using CodeGenerator.UserControls;
 using CodeGenerator.UserControls.Ribbon;
-using CodeGenerator.Generators.DotNet.WinformsRibbonApplication;
-using CodeGenerator.Generators.DotNet.ApplicationScope;
-using CodeGenerator.Generators.DotNet.Repositories.Csv;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using CodeGenerator.Core.CodeElements.Services;
 
 namespace CodeGenerator.Presentation.WinForms;
 
@@ -107,7 +109,8 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddViewMappings(this IServiceCollection services)
     {
         // Workspace
-        services.AddTransient<IView<WorkspaceEditViewModel>, WorkspaceEditView>();
+        //services.AddTransient<IView<WorkspaceEditViewModel>, WorkspaceEditView>();
+        services.AddTransient<IView<WorkspaceEditViewModel>, WorkspaceArtifactEditView>();
 
         // Datasources - Relational
         services.AddTransient<IView<MysqlDatasourceEditViewModel>, MysqlDatasourceEditView>();

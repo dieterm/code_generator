@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Core.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.CodeArchitecture.OnionArchitecture;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
@@ -6,8 +7,10 @@ using CodeGenerator.Core.Workspaces.MessageBus.EventHandlers;
 using CodeGenerator.Core.Workspaces.MessageBus.Events;
 using CodeGenerator.Core.Workspaces.Operations.Domains;
 using CodeGenerator.Core.Workspaces.Services;
+using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.CodeElements;
 using CodeGenerator.Domain.CodeElements.Statements;
+using CodeGenerator.Domain.DataTypes;
 using CodeGenerator.Domain.ProgrammingLanguages.CSharp;
 using CodeGenerator.Generators.DotNet.Repositories.Csv.Workspace.Artifacts;
 using CodeGenerator.Shared;
@@ -58,7 +61,7 @@ namespace CodeGenerator.Generators.DotNet.Repositories.Csv.Workspace.Subscribers
             };
             newServiceCommand.SubCommands.Add(newCsvRepositoryCommand);
 
-            var domains = _workspaceContextProvider.CurrentWorkspace!.GetAllScopes(false, true).SelectMany(s => s.Domains).ToList();
+            var domains = _workspaceContextProvider.CurrentWorkspace!.GetAllScopes(false, true).OfType<OnionScopeArtifact>().SelectMany(s => s.Domains).ToList();
             foreach (var domain in domains)
             {
                 var domainCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)
@@ -80,21 +83,51 @@ namespace CodeGenerator.Generators.DotNet.Repositories.Csv.Workspace.Subscribers
 
         private void CreateCsvRepositoryFromTableInDomain(TableArtifact artifact, DomainArtifact domain)
         {
-            // 1. add CsvValueObjectReader to Services container in the infrastructure layer
-            // In the generator also make sure the required nuget-packages are added to the dotnetproject artifact (CsvHelper)
-            var targetScope = domain.Scope;
-            var servicesNamespace = targetScope.Infrastructure.Services.Context.Namespace;
-            var existingCsvReader = targetScope.Infrastructure.Services.Children.OfType<CsvValueObjectReaderArtifact>().FirstOrDefault();
-            if (existingCsvReader == null) { 
-                var infrastructureLayer = targetScope.Infrastructure.Services.AddChild(new CsvValueObjectReaderArtifact(CreateCsvValueObjectReader(servicesNamespace)));
-            }
-            // 2. add CsvRow class to ValueTypes in domain
-            var className = $"{artifact.Name}CsvRow";
-            var valueType = artifact.ToValueTypeArtifact(className);
-            domain.AddValueType(valueType);
+            if(_workspaceContextProvider.CurrentWorkspace!.CodeArchitectureId == OnionCodeArchitecture.ARCHITECTURE_ID) 
+            { 
+                // 1. add CsvValueObjectReader to Services container in the infrastructure layer
+                // In the generator also make sure the required nuget-packages are added to the dotnetproject artifact (CsvHelper)
+                var sharedScope = (_workspaceContextProvider.CurrentWorkspace!.FindScope(CodeArchitectureScopes.SHARED_SCOPE, false))!;
+                var csvSubScope = (sharedScope?.EnsureScope("Csv") as OnionScopeArtifact)!;
+                var existingCsvReader = csvSubScope.Infrastructure.Services.Children.OfType<CsvValueObjectReaderArtifact>().FirstOrDefault();
+                if (existingCsvReader == null) { 
+                    var infrastructureLayer = csvSubScope.Infrastructure.Services.AddChild(new CsvValueObjectReaderArtifact(CreateCsvValueObjectReader(csvSubScope.Infrastructure.Services.Context.Namespace)));
+                }
+                var sharedCsvDomain = csvSubScope.Domains.FindDomain("Csv", false);
+                if(sharedCsvDomain == null)
+                {
+                    sharedCsvDomain = csvSubScope.Domains.AddDomain("Csv");
+                }
+                var existingCsvRowValueType = sharedCsvDomain.ValueTypes.SingleOrDefault(vt => vt is CsvRowArtifact);
+                if(existingCsvRowValueType==null)
+                {
+                    var csvRowValueType = new CsvRowArtifact(CreateCsvRow(sharedCsvDomain.Context.Namespace));
+                    csvRowValueType.AddProperty(new PropertyArtifact("CsvLine", GenericDataTypes.Int.Id, false));
+                    sharedCsvDomain.AddValueType(csvRowValueType);
+                }
 
-            // 3. add CsvValueObjectReaderImplementation class to Services in Infrastructure-layer, inheriting from CsvValueObjectReader and using the '<Table>CsvRow' class
-            targetScope.Infrastructure.Services.AddChild(new CsvValueObjectReaderImplementationArtifact(CreateCsvValueObjectReaderImplementation(servicesNamespace, className, artifact.Name), valueType.Id));
+                // 2. add CsvRow class to ValueTypes in domain
+                var className = $"{artifact.Name}CsvRow";
+                var valueType = artifact.ToValueTypeArtifact(className);
+                domain.AddValueType(valueType);
+
+                // 3. add CsvValueObjectReaderImplementation class to Services in Infrastructure-layer, inheriting from CsvValueObjectReader and using the '<Table>CsvRow' class
+                var targetScope = (domain.Scope as OnionScopeArtifact)!;
+                targetScope.Infrastructure.Services.AddChild(new CsvValueObjectReaderImplementationArtifact(CreateCsvValueObjectReaderImplementation(targetScope.Infrastructure.Services.Context.Namespace, className, artifact.Name), valueType.Id));
+            }
+        }
+
+        private CodeFileElement CreateCsvRow(string @namespace)
+        {
+            var className = "CsvRow";
+            var codeFileElement = new CodeFileElement(className, CSharpLanguage.Instance);
+            var cls_CsvRow = codeFileElement.AddNamespace(@namespace, new ClassElement(className)
+            {
+                BaseTypes = [new TypeReference("IValueObject")]
+            });
+    
+            cls_CsvRow.Properties.Add(new PropertyElement("CsvLine", TypeReference.Common.UInt) { HasSetter = true });
+            return codeFileElement;
         }
 
         private CodeFileElement CreateCsvValueObjectReaderImplementation(string @namespace, string valueTypeclassName, string tableName)
@@ -136,7 +169,7 @@ namespace CodeGenerator.Generators.DotNet.Repositories.Csv.Workspace.Subscribers
                 {
                     Modifiers = ElementModifiers.Abstract,
                     GenericTypeParameters = [new GenericTypeParameterElement(typeT.TypeName)],
-                    GenericConstraints = [new GenericConstraintElement(typeT.TypeName) { ConstraintTypes = [new TypeReference("IValueObject")] }],
+                    GenericConstraints = [new GenericConstraintElement(typeT.TypeName) { ConstraintTypes = [new TypeReference("CsvRow")] }],
                     BaseTypes = [TypeReference.Generic("IProgress", new TypeReference("Progress"))]
                 });
             

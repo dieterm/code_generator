@@ -178,10 +178,11 @@ public abstract class ArtifactTreeViewController<TTreeViewModel, TArtifactContro
         }
         else if(artifact is WorkspaceArtifactBase workspaceArtifact)
         {
-            throw new InvalidOperationException("Workspace artifacts should have their own controller to provide context menu commands. Please implement a controller for this artifact type.");
+            Logger.LogWarning("No controller found for artifact {ArtifactId} of type {ArtifactType}. Attempting to get context menu commands from the artifact itself.", artifact.Id, artifact.GetType().FullName);
+            //throw new InvalidOperationException("Workspace artifacts should have their own controller to provide context menu commands. Please implement a controller for this artifact type.");
             var commands = new List<ArtifactTreeNodeCommand>();
             workspaceArtifact.PublishArtifactContextMenuOpeningEvent(commands);
-            return commands;
+            return MergeContextMenuCommands(commands);
         }
         return Enumerable.Empty<ArtifactTreeNodeCommand>();
     }

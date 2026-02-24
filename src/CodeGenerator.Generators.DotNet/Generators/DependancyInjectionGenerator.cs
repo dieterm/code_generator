@@ -7,6 +7,7 @@ using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Templates.Settings;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
+using CodeGenerator.Core.Workspaces.Artifacts.Workspace;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.CodeElements;
 using CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection;

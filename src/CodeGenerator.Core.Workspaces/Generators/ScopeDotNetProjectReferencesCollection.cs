@@ -11,7 +11,7 @@ namespace CodeGenerator.Core.Workspaces.Generators
     {
         protected override string GetKeyForItem(ScopeDotNetProjectReferences item)
         {
-            return item.ScopeArtifact.Name;
+            return item.ScopeArtifact.FullName;
         }
     }
 }

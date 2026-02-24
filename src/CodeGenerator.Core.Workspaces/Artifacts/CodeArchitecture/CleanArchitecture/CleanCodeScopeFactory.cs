@@ -19,13 +19,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.CodeArchitecture.CleanArchitec
 
         public IArtifact CreateScopeArtifact(string scopeName)
         {
-            var scopeArtifact = new ScopeArtifact(scopeName);
-            foreach (var layerFactory in _codeArchitectureManager.CleanArchitecture.Layers)
-            {
-                scopeArtifact.AddChild(layerFactory.CreateLayer(scopeName));
-            }
-            scopeArtifact.AddChild(new SubScopesContainerArtifact());
-            return scopeArtifact;
+            return new CleanCodeScopeArtifact(scopeName, _codeArchitectureManager.CleanArchitecture.Layers);
         }
     }
 }

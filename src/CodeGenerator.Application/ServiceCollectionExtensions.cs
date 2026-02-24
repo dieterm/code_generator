@@ -52,6 +52,7 @@ using CodeGenerator.Presentation.WinForms.ViewModels;
 using CodeGenerator.Shared.Operations;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.UndoRedo;
+using CodeGenerator.Shared.Views;
 using CodeGenerator.TemplateEngines.DotNetProject;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -236,6 +237,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IOperation, AddValueTypeToDomainOperation>(sp => Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<AddValueTypeToDomainOperation>(sp));
 
         services.AddWorkspaceServices(configuration);
+
+        
 
         // Register Services
         services.AddSingleton<GeneratorOrchestrator>();

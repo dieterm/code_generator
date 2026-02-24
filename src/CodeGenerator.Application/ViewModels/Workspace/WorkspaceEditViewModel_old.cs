@@ -1,5 +1,5 @@
 using CodeGenerator.Application.Controllers.Base;
-using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.Workspace;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection;
 using CodeGenerator.Domain.DotNet;
@@ -13,11 +13,11 @@ namespace CodeGenerator.Application.ViewModels.Workspace
     /// <summary>
     /// ViewModel for editing workspace properties
     /// </summary>
-    public class WorkspaceEditViewModel : ViewModelBase
+    public class WorkspaceEditViewModel_old : ViewModelBase
     {
         private WorkspaceArtifact? _workspace;
 
-        public WorkspaceEditViewModel()
+        public WorkspaceEditViewModel_old()
         {
             NameField = new SingleLineTextFieldModel { Label = "Workspace Name", Name = nameof(WorkspaceArtifact.Name) };
             DescriptionField = new MultiLineTextFieldModel { Label = "Description", Name = nameof(WorkspaceArtifact.Description) };

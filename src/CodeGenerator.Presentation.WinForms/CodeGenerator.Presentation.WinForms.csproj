@@ -10,10 +10,13 @@
 
   <ItemGroup>
     <Compile Remove="Views\TemplateTreeView.Designer.cs" />
+    <Compile Remove="Views\Workspaces\WorkspaceEditView.cs" />
+    <Compile Remove="Views\Workspaces\WorkspaceEditView.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Remove="Views\TemplateTreeView.resx" />
+    <EmbeddedResource Remove="Views\Workspaces\WorkspaceEditView.resx" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Build" Version="18.0.2">

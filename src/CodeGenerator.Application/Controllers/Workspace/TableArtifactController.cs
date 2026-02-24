@@ -8,6 +8,7 @@ using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Artifacts.Templates;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.CodeArchitecture.OnionArchitecture;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes;
@@ -72,8 +73,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
             };
             createObjectCommand.SubCommands.Add(newEntityCommand);
 
-
-            var domains = TreeViewController.CurrentWorkspace!.GetAllScopes(false, true).SelectMany(s => s.Domains).ToList();
+            var allScopes = TreeViewController.CurrentWorkspace!.GetAllScopes(false, true);
+            var domains = allScopes.OfType<OnionScopeArtifact>().SelectMany(s => s.Domains).ToList();
             foreach (var domain in domains)
             {
                 var domainCommand = new ArtifactTreeNodeCommand(ArtifactTreeNodeCommandGroup.COMMAND_GROUP_MANAGE)

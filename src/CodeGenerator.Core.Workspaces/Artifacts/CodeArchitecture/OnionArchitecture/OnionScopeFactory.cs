@@ -20,15 +20,8 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.CodeArchitecture.OnionArchitec
 
         public IArtifact CreateScopeArtifact(string scopeName)
         {
-            var scopeArtifact = new ScopeArtifact(scopeName);
-            foreach (var layerFactory in _codeArchitectureManager.OnionArchitecture.Layers)
-            {
-                scopeArtifact.AddChild(layerFactory.CreateLayer(scopeName));
-            }
-            scopeArtifact.AddChild(new SubScopesContainerArtifact());
+            var scopeArtifact = new OnionScopeArtifact(scopeName, _codeArchitectureManager.OnionArchitecture.Layers);
             return scopeArtifact;
         }
-
-
     }
 }

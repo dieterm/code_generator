@@ -61,5 +61,29 @@ namespace CodeGenerator.Domain.CodeElements
         {
             Name = name;
         }
+
+        public ConstructorElement AddConstructor(params ParameterElement[] parameters)
+        {
+            var ctor = new ConstructorElement(parameters);
+            Constructors.Add(ctor);
+            return ctor;
+        }
+
+        public ConstructorElement AddConstructor(params StatementElement[] statements)
+        {
+            var ctor = new ConstructorElement();
+            ctor.Body.Statements.AddRange(statements);
+            Constructors.Add(ctor);
+            return ctor;
+        }
+
+        public ConstructorElement AddConstructor(Action<List<ParameterElement>> initParameters, Action<CompositeStatement> initBody)
+        {
+            var ctor = new ConstructorElement();
+            initParameters(ctor.Parameters);
+            initBody(ctor.Body);
+            Constructors.Add(ctor);
+            return ctor;
+        }
     }
 }

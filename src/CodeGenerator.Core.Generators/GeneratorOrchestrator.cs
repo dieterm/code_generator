@@ -2,7 +2,7 @@ using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.CodeGeneration;
 using CodeGenerator.Core.Generators.MessageBus;
 using CodeGenerator.Core.Settings.Generators;
-using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.Workspace;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Shared;
 using Microsoft.Extensions.Logging;

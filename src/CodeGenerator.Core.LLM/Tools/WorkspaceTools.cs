@@ -1,7 +1,8 @@
 using CodeGenerator.Core.Artifacts;
-using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.CodeArchitecture.OnionArchitecture;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
+using CodeGenerator.Core.Workspaces.Artifacts.Workspace;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Domain.DataTypes;
 using CodeGenerator.Shared;
@@ -90,9 +91,9 @@ namespace CodeGenerator.Core.LLM.Tools
         {
             return _uiInvoker(() =>
             {
-                var scope = GetWorkspace().FindScope(scopeName);
-                var domains = scope.Domains.Select(d => d.Name).ToList();
-                return domains.Count == 0
+                var scope = GetWorkspace().FindScope(scopeName) as OnionScopeArtifact;
+                var domains = scope?.Domains.Select(d => d.Name).ToList();
+                return domains == null || domains.Count == 0
                     ? $"No domains found in scope '{scopeName}'."
                     : $"Domains in '{scopeName}': {string.Join(", ", domains)}";
             });
@@ -104,9 +105,9 @@ namespace CodeGenerator.Core.LLM.Tools
         {
             return _uiInvoker(() =>
             {
-                var domain = GetWorkspace().FindDomain(scopeName, domainName);
-                var entities = domain.Entities.GetEntities().Select(e => e.Name).ToList();
-                return entities.Count == 0
+                var domain = (GetWorkspace().FindScope(scopeName) as OnionScopeArtifact)?.FindDomain(domainName);
+                var entities = domain?.Entities.GetEntities().Select(e => e.Name).ToList();
+                return entities == null || entities.Count == 0
                     ? $"No entities found in domain '{domainName}'."
                     : $"Entities in '{domainName}': {string.Join(", ", entities)}";
             });

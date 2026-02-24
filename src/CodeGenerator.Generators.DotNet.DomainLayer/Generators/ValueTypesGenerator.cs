@@ -1,6 +1,7 @@
 ﻿using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Generators;
 using CodeGenerator.Core.Generators.Settings;
+using CodeGenerator.Core.Workspaces.Artifacts.CodeArchitecture.OnionArchitecture;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes;
@@ -50,7 +51,12 @@ namespace CodeGenerator.Generators.DotNet.DomainLayer.Generators
                 _logger.LogWarning("The code architecture of the workspace is not Onion, skipping generation");
             }
 
-            var scope = e.Result.Workspace.FindScope(e.Scope);
+            var scope = e.Result.Workspace.FindScope(e.Scope) as OnionScopeArtifact;
+            if (scope == null)
+            {
+                _logger.LogWarning("The scope is not an OnionScopeArtifact, skipping generation");
+                return;
+            }
 
             var domainLayer = scope.Domains;
             if (domainLayer == null)

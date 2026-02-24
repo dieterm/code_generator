@@ -4,10 +4,21 @@ using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.Workspace;
 using CodeGenerator.Core.Workspaces.Services;
+using CodeGenerator.Core.Workspaces.ViewModels;
+using CodeGenerator.Core.Workspaces.ViewModels.Common;
+using CodeGenerator.Core.Workspaces.ViewModels.Workspace;
+using CodeGenerator.Domain.CodeArchitecture;
+using CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection;
+using CodeGenerator.Domain.DotNet;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.ExtensionMethods;
 using CodeGenerator.Shared.Operations;
+using CodeGenerator.UserControls.ViewModels;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Extensions.Logging;
+using WorkspaceEditViewModel = CodeGenerator.Core.Workspaces.ViewModels.Workspace.WorkspaceEditViewModel;
 
 namespace CodeGenerator.Application.Controllers.Workspace
 {
@@ -85,15 +96,15 @@ namespace CodeGenerator.Application.Controllers.Workspace
             return ShowPropertiesAsync(artifact);
         }
 
+        
         private void EnsureEditViewModel(WorkspaceArtifact artifact)
         {
             if (_editViewModel == null)
             {
                 _editViewModel = new WorkspaceEditViewModel();
-                _editViewModel.ValueChanged += OnEditViewModelValueChanged;
             }
-
-            _editViewModel.Workspace = artifact;
+            
+            _editViewModel.Artifact = artifact;
         }
 
         private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
@@ -120,5 +131,6 @@ namespace CodeGenerator.Application.Controllers.Workspace
             TreeViewController.ShowArtifactDetailsView(_editViewModel!);
             return Task.CompletedTask;
         }
+
     }
 }

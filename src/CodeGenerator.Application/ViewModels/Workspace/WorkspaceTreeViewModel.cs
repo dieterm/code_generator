@@ -2,7 +2,7 @@ using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.ViewModels;
-using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.Workspace;
 
 namespace CodeGenerator.Application.ViewModels.Workspace
 {

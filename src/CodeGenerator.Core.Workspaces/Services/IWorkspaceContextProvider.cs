@@ -1,4 +1,5 @@
 ﻿using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.Workspace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,5 +22,7 @@ namespace CodeGenerator.Core.Workspaces.Services
         /// The currently active workspace
         /// </summary>
         WorkspaceArtifact? CurrentWorkspace { get; }
+
+        void ShowArtifactDocumentation(WorkspaceArtifactBase artifact);
     }
 }

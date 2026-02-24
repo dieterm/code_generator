@@ -1,4 +1,5 @@
 using CodeGenerator.Application.ViewModels.Workspace.Datasources;
+using CodeGenerator.Core.Workspaces.Artifacts.CodeArchitecture.OnionArchitecture;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Core.Workspaces.Services;
@@ -206,14 +207,17 @@ namespace CodeGenerator.Presentation.WinForms.Views
 
         private void CollectDomains(ScopeArtifact scope, List<DomainArtifact> domains)
         {
-            if (scope.Domains != null)
+            if(scope is OnionScopeArtifact onionScope)
             {
-                foreach (var domain in scope.Domains)
+                if (onionScope.Domains != null)
                 {
-                    domains.Add(domain);
-                    if (domain.SubDomains != null)
+                    foreach (var domain in onionScope.Domains)
                     {
-                        CollectSubDomains(domains, domain);
+                        domains.Add(domain);
+                        if (domain.SubDomains != null)
+                        {
+                            CollectSubDomains(domains, domain);
+                        }
                     }
                 }
             }

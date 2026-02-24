@@ -70,6 +70,7 @@ namespace CodeGenerator.Domain.CodeElements
             public static TypeReference Void => new("void");
             public static TypeReference String => new("string");
             public static TypeReference Int => new("int");
+            public static TypeReference UInt => new("uint");
             public static TypeReference Long => new("long");
             public static TypeReference Bool => new("bool");
             public static TypeReference Double => new("double");
@@ -78,10 +79,19 @@ namespace CodeGenerator.Domain.CodeElements
             public static TypeReference DateTime => new("DateTime");
             public static TypeReference Guid => new("Guid");
             public static TypeReference Task => new("Task");
+
+            
+
             public static TypeReference TaskOf(TypeReference innerType) => Generic("Task", innerType);
             public static TypeReference ListOf(TypeReference innerType) => Generic("List", innerType);
             public static TypeReference IEnumerableOf(TypeReference innerType) => Generic("IEnumerable", innerType);
             public static TypeReference DictionaryOf(TypeReference keyType, TypeReference valueType) => Generic("Dictionary", keyType, valueType);
+        }
+
+        public static class Winforms
+        {
+            public static TypeReference Form => new("Form", "System.Windows.Forms");
+            public static TypeReference IContainer => new("IContainer", "System.ComponentModel");
         }
     }
 }

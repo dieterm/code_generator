@@ -11,7 +11,7 @@ using CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Views.TreeNode;
 
-namespace CodeGenerator.Core.Workspaces.Artifacts
+namespace CodeGenerator.Core.Workspaces.Artifacts.Workspace
 {
     /// <summary>
     /// Represents a workspace - the root container for all datasources and configuration
@@ -20,6 +20,7 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
     {
         public const string CONTEXT_PARAMETER_WORKSPACE_ROOT_NAMESPACE = "WorkspaceRootNamespace";
         public const string CONTEXT_PARAMETER_LANGUAGE = "Language";
+        public const string SETTINGS_PARAMETER_WORKSPACE_DIRECTORY = "WorkspaceDirectory";
 
         public WorkspaceArtifact(string name = "Workspace")
         {
@@ -176,12 +177,12 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         /// <summary>
         /// Gets the datasources container
         /// </summary>
-        public DatasourcesContainerArtifact Datasources { get { return this.EnsureChildArtifactExists<DatasourcesContainerArtifact>(); } }
+        public DatasourcesContainerArtifact Datasources { get { return EnsureChildArtifactExists<DatasourcesContainerArtifact>(); } }
 
         /// <summary>
         /// Gets the scopes container
         /// </summary>
-        public ScopesContainerArtifact Scopes { get { return this.EnsureChildArtifactExists<ScopesContainerArtifact>(); } }
+        public ScopesContainerArtifact Scopes { get { return EnsureChildArtifactExists<ScopesContainerArtifact>(); } }
 
         //public ScopeArtifact? FindScopeOrDefault(string scopeName)
         //{
@@ -193,11 +194,11 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
             return Scopes.FindScope(scopeName, exceptionIfNotFound);
         }
 
-        public DomainArtifact? FindDomain(string scopeName, string domainName, bool exceptionIfNotFound = true)
-        {
-            var scope = FindScope(scopeName);
-            return scope?.FindDomain(domainName, exceptionIfNotFound);
-        }
+        //public DomainArtifact? FindDomain(string scopeName, string domainName, bool exceptionIfNotFound = true)
+        //{
+        //    var scope = FindScope(scopeName);
+        //    return scope?.FindDomain(domainName, exceptionIfNotFound);
+        //}
 
         public bool CanBeginEdit()
         {

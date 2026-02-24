@@ -1,5 +1,7 @@
 ﻿using CodeGenerator.Core.Settings.Application;
 using CodeGenerator.Core.Settings.Models;
+using CodeGenerator.Core.Workspaces.Artifacts.Workspace;
+using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection;
@@ -40,17 +42,31 @@ namespace CodeGenerator.Core.Workspaces.Settings
             workspaceSection.Items.Add(rootNamespaceSetting);
 
             //DefaultOutputDirectory:FolderFieldModel
-            var outputDirectoryField = new FolderFieldModel
+            //var outputDirectoryField = new FolderFieldModel
+            //{
+            //    Label = "Default Output Directory",
+            //    Name = nameof(_settings.DefaultOutputDirectory),
+            //    IsRequired = true,
+            //    Value = _settings.DefaultOutputDirectory,
+            //    Description = "The default directory where generated code files will be saved."
+            //};
+            var outputDirectoryField = new ParameterizedStringFieldModel
             {
                 Label = "Default Output Directory",
                 Name = nameof(_settings.DefaultOutputDirectory),
                 IsRequired = true,
                 Value = _settings.DefaultOutputDirectory,
-                Description = "The default directory where generated code files will be saved."
             };
+            var worspaceContext = ServiceProviderHolder.GetRequiredService<IWorkspaceContextProvider>();
+            var workspaceDirectory = worspaceContext.CurrentWorkspace?.WorkspaceDirectory ?? "C:\\Path\\To\\Workspace";
+            outputDirectoryField.AddParameter(new Shared.Models.ParameterizedStringParameter { 
+                Description = "The workspace directory root", 
+                Parameter = WorkspaceArtifact.SETTINGS_PARAMETER_WORKSPACE_DIRECTORY, 
+                ExampleValue = workspaceDirectory
+            });
             outputDirectoryField.PropertyChanged += OutputDirectoryField_PropertyChanged;
             outputDirectoryField.Disposed += OutputDirectoryField_Disposed;
-            var outputDirectorySetting = new SettingsItem<FolderFieldModel>(outputDirectoryField, nameof(_settings.DefaultOutputDirectory), "Default Output Directory", _settings.DefaultOutputDirectory);
+            var outputDirectorySetting = new SettingsItem<ParameterizedStringFieldModel>(outputDirectoryField, nameof(_settings.DefaultOutputDirectory), "Default Output Directory", _settings.DefaultOutputDirectory);
             workspaceSection.Items.Add(outputDirectorySetting);
 
             //DefaultTargetFramework:ComboboxFieldModel
@@ -73,7 +89,7 @@ namespace CodeGenerator.Core.Workspaces.Settings
                 Label = "Default Language",
                 Name = nameof(_settings.DefaultLanguage),
                 IsRequired = true,
-                Items = DotNetLanguages.AllLanguages.Select(language => new ComboboxItem { Value = language.DotNetCommandLineArgument, DisplayName = $"{language.DotNetCommandLineArgument} (*.{language.ProjectFileExtension})" }).ToList(),
+                Items = DotNetLanguages.AllLanguages.Select(language => new ComboboxItem { Value = language.Id, DisplayName = $"{language.DotNetCommandLineArgument} (*.{language.ProjectFileExtension})" }).ToList(),
                 Value = _settings.DefaultLanguage
             };
             defaultLanguageField.PropertyChanged += DefaultLanguageField_PropertyChanged;
@@ -210,13 +226,13 @@ namespace CodeGenerator.Core.Workspaces.Settings
 
         private void OutputDirectoryField_Disposed(object? sender, EventArgs e)
         {
-            ((FolderFieldModel)sender!).PropertyChanged -= OutputDirectoryField_PropertyChanged;
-            ((FolderFieldModel)sender!).Disposed -= OutputDirectoryField_Disposed;
+            ((ParameterizedStringFieldModel)sender!).PropertyChanged -= OutputDirectoryField_PropertyChanged;
+            ((ParameterizedStringFieldModel)sender!).Disposed -= OutputDirectoryField_Disposed;
         }
 
         private void OutputDirectoryField_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            _settings.DefaultOutputDirectory = ((FolderFieldModel)sender!).Value as string;
+            _settings.DefaultOutputDirectory = ((ParameterizedStringFieldModel)sender!).Value as string;
         }
 
         private void RootNamespaceField_Disposed(object? sender, EventArgs e)

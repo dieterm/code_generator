@@ -17,6 +17,7 @@
     <Compile Remove="Controllers\Workspace\DomainsContainerController.cs" />
     <Compile Remove="ViewModels\UserControls\TableArtifactFieldModel.cs" />
     <Compile Remove="ViewModels\Workspace\WorkspaceDetailsViewModel.cs" />
+    <Compile Remove="ViewModels\Workspace\WorkspaceEditViewModel_old.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,5 @@
 using CodeGenerator.Core.Workspaces.Artifacts;
+using CodeGenerator.Core.Workspaces.Artifacts.CodeArchitecture.OnionArchitecture;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Core.Workspaces.Services;
@@ -29,7 +30,7 @@ namespace CodeGenerator.Core.Workspaces.Operations.Domains
             if (string.IsNullOrWhiteSpace(parameters.DomainName))
                 return "Domain name cannot be empty.";
 
-            var scope = _workspaceContextProvider.CurrentWorkspace.FindDescendantById<ScopeArtifact>(parameters.ScopeId);
+            var scope = _workspaceContextProvider.CurrentWorkspace.FindDescendantById<OnionScopeArtifact>(parameters.ScopeId);
             var existingDomain = scope.Domains.FirstOrDefault(d => d.Name.Equals(parameters.DomainName, StringComparison.OrdinalIgnoreCase));
             if (existingDomain != null)
                 return $"Domain '{parameters.DomainName}' with id '{existingDomain.Id}' already exists in scope '{scope.Name}'.";
@@ -43,7 +44,7 @@ namespace CodeGenerator.Core.Workspaces.Operations.Domains
             if (validationError != null)
                 return OperationResult.Fail(validationError);
 
-            var scope = _workspaceContextProvider.CurrentWorkspace!.FindDescendantById<ScopeArtifact>(parameters.ScopeId);
+            var scope = _workspaceContextProvider.CurrentWorkspace!.FindDescendantById<OnionScopeArtifact>(parameters.ScopeId);
             parameters.ParentContainer = scope.Domains;
             parameters.CreatedDomain = parameters.ParentContainer.AddChild(new DomainArtifact(parameters.DomainName));
 

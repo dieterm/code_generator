@@ -33,44 +33,17 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // lblTitle
             // 
             lblTitle.AutoSize = true;
-            lblTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            lblTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             lblTitle.Location = new Point(10, 10);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(166, 21);
+            lblTitle.Size = new Size(176, 21);
             lblTitle.TabIndex = 0;
             lblTitle.Text = "Workspace Properties";
-            // 
-            // tableLayoutPanel
-            // 
-            tableLayoutPanel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            tableLayoutPanel.AutoSize = true;
-            tableLayoutPanel.ColumnCount = 1;
-            tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel.Controls.Add(txtName, 0, 0);
-            tableLayoutPanel.Controls.Add(txtDescription, 0, 1);
-            tableLayoutPanel.Controls.Add(txtRootNamespace, 0, 2);
-            tableLayoutPanel.Controls.Add(folderOutputDirectory, 0, 3);
-            tableLayoutPanel.Controls.Add(cbxTargetFramework, 0, 4);
-            tableLayoutPanel.Controls.Add(cbxLanguage, 0, 5);
-            tableLayoutPanel.Controls.Add(cbxCodeArchitecture, 0, 6);
-            tableLayoutPanel.Controls.Add(cbxDependencyInjectionFramework, 0, 7);
-            tableLayoutPanel.Location = new Point(10, 40);
-            tableLayoutPanel.Name = "tableLayoutPanel";
-            tableLayoutPanel.RowCount = 8;
-            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tableLayoutPanel.Size = new Size(380, 460);
-            tableLayoutPanel.TabIndex = 1;
             // 
             // txtName
             // 
             txtName.Dock = DockStyle.Top;
+            txtName.ErrorMessageVisible = true;
             txtName.Label = "Workspace Name:";
             txtName.Location = new Point(3, 3);
             txtName.Name = "txtName";
@@ -80,6 +53,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // txtDescription
             // 
             txtDescription.Dock = DockStyle.Top;
+            txtDescription.ErrorMessageVisible = true;
             txtDescription.Label = "Description:";
             txtDescription.Location = new Point(3, 59);
             txtDescription.Name = "txtDescription";
@@ -89,6 +63,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // txtRootNamespace
             // 
             txtRootNamespace.Dock = DockStyle.Top;
+            txtRootNamespace.ErrorMessageVisible = true;
             txtRootNamespace.Label = "Root Namespace:";
             txtRootNamespace.Location = new Point(3, 175);
             txtRootNamespace.Name = "txtRootNamespace";
@@ -107,6 +82,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // cbxTargetFramework
             // 
             cbxTargetFramework.Dock = DockStyle.Top;
+            cbxTargetFramework.ErrorMessageVisible = true;
             cbxTargetFramework.Label = "Default Target Framework:";
             cbxTargetFramework.Location = new Point(3, 287);
             cbxTargetFramework.Name = "cbxTargetFramework";
@@ -116,6 +92,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // cbxLanguage
             // 
             cbxLanguage.Dock = DockStyle.Top;
+            cbxLanguage.ErrorMessageVisible = true;
             cbxLanguage.Label = "Default Language:";
             cbxLanguage.Location = new Point(3, 343);
             cbxLanguage.Name = "cbxLanguage";
@@ -125,6 +102,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // cbxCodeArchitecture
             // 
             cbxCodeArchitecture.Dock = DockStyle.Top;
+            cbxCodeArchitecture.ErrorMessageVisible = true;
             cbxCodeArchitecture.Label = "Code Architecture:";
             cbxCodeArchitecture.Location = new Point(3, 399);
             cbxCodeArchitecture.Name = "cbxCodeArchitecture";
@@ -134,11 +112,40 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // cbxDependencyInjectionFramework
             // 
             cbxDependencyInjectionFramework.Dock = DockStyle.Top;
+            cbxDependencyInjectionFramework.ErrorMessageVisible = true;
             cbxDependencyInjectionFramework.Label = "Dependency Injection Framework:";
             cbxDependencyInjectionFramework.Location = new Point(3, 455);
             cbxDependencyInjectionFramework.Name = "cbxDependencyInjectionFramework";
             cbxDependencyInjectionFramework.Size = new Size(374, 50);
             cbxDependencyInjectionFramework.TabIndex = 7;
+            // 
+            // tableLayoutPanel
+            // 
+            tableLayoutPanel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel.AutoSize = true;
+            tableLayoutPanel.ColumnCount = 1;
+            tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel.Controls.Add(txtName, 0, 0);
+            tableLayoutPanel.Controls.Add(txtDescription, 0, 1);
+            tableLayoutPanel.Controls.Add(txtRootNamespace, 0, 2);
+            tableLayoutPanel.Controls.Add(folderOutputDirectory, 0, 3);
+            tableLayoutPanel.Controls.Add(cbxTargetFramework, 0, 4);
+            tableLayoutPanel.Controls.Add(cbxLanguage, 0, 5);
+            tableLayoutPanel.Controls.Add(cbxCodeArchitecture, 0, 6);
+            tableLayoutPanel.Controls.Add(cbxDependencyInjectionFramework, 0, 7);
+            tableLayoutPanel.Location = new Point(10, 40);
+            tableLayoutPanel.Name = "tableLayoutPanel";
+            tableLayoutPanel.RowCount = 8;
+            tableLayoutPanel.RowStyles.Add(new RowStyle());
+            tableLayoutPanel.RowStyles.Add(new RowStyle());
+            tableLayoutPanel.RowStyles.Add(new RowStyle());
+            tableLayoutPanel.RowStyles.Add(new RowStyle());
+            tableLayoutPanel.RowStyles.Add(new RowStyle());
+            tableLayoutPanel.RowStyles.Add(new RowStyle());
+            tableLayoutPanel.RowStyles.Add(new RowStyle());
+            tableLayoutPanel.RowStyles.Add(new RowStyle());
+            tableLayoutPanel.Size = new Size(380, 508);
+            tableLayoutPanel.TabIndex = 1;
             // 
             // WorkspaceEditView
             // 
@@ -149,7 +156,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             Controls.Add(lblTitle);
             Name = "WorkspaceEditView";
             Padding = new Padding(10);
-            Size = new Size(400, 520);
+            Size = new Size(400, 557);
             tableLayoutPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();

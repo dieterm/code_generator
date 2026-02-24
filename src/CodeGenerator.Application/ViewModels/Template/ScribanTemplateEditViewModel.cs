@@ -1,5 +1,6 @@
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.TemplateEngines.Scriban;
+using System.Windows.Input;
 
 namespace CodeGenerator.Application.ViewModels.Template;
 
@@ -11,6 +12,14 @@ public class ScribanTemplateEditViewModel : ViewModelBase
     private string _templateFilePath = string.Empty;
     private string _tabLabel = "Template Editor";
     private ScribanTemplateInstance? _templateInstance;
+
+    private ICommand? _previewCommand;
+    public ICommand? PreviewCommand
+    {
+        get { return _previewCommand; }
+        set { SetProperty(ref _previewCommand, value); }
+    }
+
 
     /// <summary>
     /// Path to the Scriban template file

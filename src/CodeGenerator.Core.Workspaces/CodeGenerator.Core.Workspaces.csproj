@@ -14,6 +14,7 @@
     <Compile Remove="Models\WorkspaceFile.cs" />
     <Compile Remove="Operations\Domains\AddEntityWithPropertiesToDomainOperation.cs" />
     <Compile Remove="Operations\Domains\AddEntityWithPropertiesToDomainParams.cs" />
+    <Compile Remove="ViewModels\WorkspaceArtifactEditViewModel.cs" />
   </ItemGroup>
 
   <ItemGroup>

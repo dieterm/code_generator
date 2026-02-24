@@ -6,7 +6,7 @@ namespace CodeGenerator.Shared.ViewModels;
 /// <summary>
 /// Base class for all ViewModels implementing INotifyPropertyChanged
 /// </summary>
-public abstract class ViewModelBase : INotifyPropertyChanged, IDisposable
+public abstract class ViewModelBase :  IViewModel
 {
     public event PropertyChangedEventHandler? PropertyChanged;
     public event EventHandler? Disposed;

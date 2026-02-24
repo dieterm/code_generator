@@ -6,8 +6,17 @@ namespace CodeGenerator.Core.CodeElements.Artifacts;
 
 public class GenericConstraintElementArtifact : CodeElementArtifactBase<GenericConstraintElement>
 {
-    public GenericConstraintElementArtifact(GenericConstraintElement constraintElement) : base(constraintElement) { }
-    public GenericConstraintElementArtifact(ArtifactState artifactState, List<string> errors) : base(artifactState, errors) { }
+    public GenericConstraintElementArtifact(GenericConstraintElement constraintElement) 
+        : base(constraintElement)
+    {
+        AddChild(new BaseTypesContainerArtifact(constraintElement.ConstraintTypes));
+
+    }
+    public GenericConstraintElementArtifact(ArtifactState artifactState, List<string> errors) 
+        : base(artifactState, errors) 
+    {
+
+    }
 
     public override string TreeNodeText => $"where {CodeElement.TypeParameterName}";
     public override ITreeNodeIcon TreeNodeIcon => new ResourceManagerTreeNodeIcon("filter");
@@ -39,5 +48,6 @@ public class GenericConstraintElementArtifact : CodeElementArtifactBase<GenericC
         }
     }
 
-    public List<TypeReference> ConstraintTypes => CodeElement.ConstraintTypes;
+    //public List<TypeReference> ConstraintTypes => CodeElement.ConstraintTypes;
+    public BaseTypesContainerArtifact ConstraintTypes { get { return Children.OfType<BaseTypesContainerArtifact>().Single(); } }
 }
