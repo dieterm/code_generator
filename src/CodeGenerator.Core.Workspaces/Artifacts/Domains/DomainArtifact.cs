@@ -99,7 +99,10 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
         public string NamespacePattern
         {
             get { return GetValue<string>(nameof(NamespacePattern)); }
-            set { SetValue(nameof(NamespacePattern), value); }
+            set { 
+                if(SetValue(nameof(NamespacePattern), value)) 
+                    RaiseContextChanged(); 
+            }
         }
 
         public string Namespace         
@@ -120,11 +123,11 @@ namespace CodeGenerator.Core.Workspaces.Artifacts.Domains
             }
         }
 
-        private string GetWorkspaceRootNamespace()
-        {
-            var workspaceContext = ServiceProviderHolder.GetRequiredService<IWorkspaceContextProvider>();
-            return workspaceContext.CurrentWorkspace?.RootNamespace ?? string.Empty;
-        }
+        //private string GetWorkspaceRootNamespace()
+        //{
+        //    var workspaceContext = ServiceProviderHolder.GetRequiredService<IWorkspaceContextProvider>();
+        //    return workspaceContext.CurrentWorkspace?.RootNamespace ?? string.Empty;
+        //}
 
         /// <summary>
         /// Gets the EntitiesContainerArtifact for this domain

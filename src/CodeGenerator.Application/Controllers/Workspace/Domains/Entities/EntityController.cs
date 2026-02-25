@@ -1,7 +1,7 @@
 using CodeGenerator.Application.Controllers.Base;
-using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
+using CodeGenerator.Core.Workspaces.ViewModels.Domain;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -10,10 +10,8 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Entities
     /// <summary>
     /// Controller for EntityArtifact
     /// </summary>
-    public class EntityController : WorkspaceArtifactControllerBase<EntityArtifact>
+    public class EntityController : WorkspaceArtifactControllerBase<EntityArtifact, EntityArtifactEditViewModel>
     {
-        private EntityEditViewModel? _editViewModel;
-
         public EntityController(
             OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
@@ -79,32 +77,5 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Entities
 
         #endregion
 
-        protected override Task OnSelectedInternalAsync(EntityArtifact artifact, CancellationToken cancellationToken)
-        {
-            return ShowPropertiesAsync(artifact);
-        }
-
-        private void EnsureEditViewModel(EntityArtifact artifact)
-        {
-            if (_editViewModel == null)
-            {
-                _editViewModel = new EntityEditViewModel();
-                _editViewModel.ValueChanged += OnEditViewModelValueChanged;
-            }
-
-            _editViewModel.Entity = artifact;
-        }
-
-        private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
-        {
-            TreeViewController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
-        }
-
-        private Task ShowPropertiesAsync(EntityArtifact entity)
-        {
-            EnsureEditViewModel(entity);
-            TreeViewController.ShowArtifactDetailsView(_editViewModel!);
-            return Task.CompletedTask;
-        }
     }
 }

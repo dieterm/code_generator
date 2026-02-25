@@ -3,10 +3,7 @@ using CodeGenerator.Application.Controllers.Workspace.Datasources;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels.Template;
 using CodeGenerator.Application.ViewModels.Workspace;
-using CodeGenerator.Application.ViewModels.Workspace.Datasources;
 using CodeGenerator.Application.ViewModels.Workspace.Domains;
-using CodeGenerator.Application.ViewModels.Workspace.Domains.Factories;
-using CodeGenerator.Application.ViewModels.Workspace.Domains.Specifications;
 using CodeGenerator.Core.Artifacts.TreeNode;
 using CodeGenerator.Core.CodeElements;
 using CodeGenerator.Core.CodeElements.Services;
@@ -30,6 +27,7 @@ using CodeGenerator.Core.Workspaces.Datasources.Xml.ViewModels;
 using CodeGenerator.Core.Workspaces.Datasources.Yaml.ViewModels;
 using CodeGenerator.Core.Workspaces.ViewModels;
 using CodeGenerator.Core.Workspaces.ViewModels.Common;
+using CodeGenerator.Core.Workspaces.ViewModels.Datasources;
 using CodeGenerator.Core.Workspaces.ViewModels.Workspace;
 using CodeGenerator.Generators.DotNet.ApplicationScope;
 using CodeGenerator.Generators.DotNet.Repositories.Csv;
@@ -40,8 +38,7 @@ using CodeGenerator.Presentation.WinForms.Views;
 using CodeGenerator.Presentation.WinForms.Views.Application;
 using CodeGenerator.Presentation.WinForms.Views.Domains;
 using CodeGenerator.Presentation.WinForms.Views.Workspace;
-using CodeGenerator.Presentation.WinForms.Views.Workspace.Domains.Factories;
-using CodeGenerator.Presentation.WinForms.Views.Workspace.Domains.Specifications;
+
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.Views;
 using CodeGenerator.UserControls;
@@ -131,35 +128,17 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IView<DirectoryDatasourceEditViewModel>, DirectoryDatasourceEditView>();
         services.AddTransient<IView<TemplateParametersViewModel>, TemplateParametersView>();
 
-        // Datasources - Relational schema objects
-        services.AddTransient<IView<ColumnEditViewModel>, ColumnEditView>();
-        services.AddTransient<IView<IndexEditViewModel>, IndexEditView>();
-        services.AddTransient<IView<ForeignKeyEditViewModel>, ForeignKeyEditView>();
-        services.AddTransient<IView<TableEditViewModel>, TableEditView>();
-
-        // Scopes & Domains
-        services.AddTransient<IView<ScopeEditViewModel>, ScopeEditView>();
-        services.AddTransient<IView<DomainEditViewModel>, DomainEditView>();
-
         // Entities
-        services.AddTransient<IView<EntityEditViewModel>, EntityEditView>();
-        services.AddTransient<IView<EntityStateEditViewModel>, EntityStateEditView>();
-        services.AddTransient<IView<PropertyEditViewModel>, PropertyEditView>();
         services.AddTransient<IView<EntityRelationEditViewModel>, EntityRelationEditView>();
-
-        // Value Types
-        services.AddTransient<IView<ValueTypeEditViewModel>, ValueTypeEditView>();
-
+        services.AddTransient<IView<TableDataExtractionFieldModel>, TableDataExtractionField>();
+        services.AddTransient<IView<IndexColumnSelectionFieldModel>, IndexColumnSelectionField>();
+        services.AddTransient<IView<ForeignKeyColumnMappingFieldModel>, ForeignKeyColumnMappingField>();
         // Entity Views
         services.AddTransient<IView<EntityEditViewEditViewModel>, EntityEditViewEditView>();
         services.AddTransient<IView<EntityEditViewFieldEditViewModel>, EntityEditViewFieldEditView>();
         services.AddTransient<IView<EntityListViewEditViewModel>, EntityListViewEditView>();
         services.AddTransient<IView<EntityListViewColumnEditViewModel>, EntityListViewColumnEditView>();
         services.AddTransient<IView<EntitySelectViewEditViewModel>, EntitySelectViewEditView>();
-
-        // Domain Specifications & Factories
-        services.AddTransient<IView<DomainSpecificationEditViewModel>, DomainSpecificationEditView>();
-        services.AddTransient<IView<DomainFactoryEditViewModel>, DomainFactoryEditView>();
 
         return services;
     }

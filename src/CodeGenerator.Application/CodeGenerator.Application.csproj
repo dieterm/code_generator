@@ -9,13 +9,24 @@
 
   <ItemGroup>
     <Compile Remove="Settings\**" />
+    <Compile Remove="ViewModels\Workspace\Domains\Factories\**" />
+    <Compile Remove="ViewModels\Workspace\Domains\Specifications\**" />
     <EmbeddedResource Remove="Settings\**" />
+    <EmbeddedResource Remove="ViewModels\Workspace\Domains\Factories\**" />
+    <EmbeddedResource Remove="ViewModels\Workspace\Domains\Specifications\**" />
     <None Remove="Settings\**" />
+    <None Remove="ViewModels\Workspace\Domains\Factories\**" />
+    <None Remove="ViewModels\Workspace\Domains\Specifications\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Controllers\Workspace\DomainsContainerController.cs" />
     <Compile Remove="ViewModels\UserControls\TableArtifactFieldModel.cs" />
+    <Compile Remove="ViewModels\Workspace\Domains\EntityEditViewModel.cs" />
+    <Compile Remove="ViewModels\Workspace\Domains\EntityStateEditViewModel.cs" />
+    <Compile Remove="ViewModels\Workspace\Domains\PropertyEditViewModel.cs" />
+    <Compile Remove="ViewModels\Workspace\Domains\ScopeEditViewModel.cs" />
+    <Compile Remove="ViewModels\Workspace\Domains\ValueTypeEditViewModel.cs" />
     <Compile Remove="ViewModels\Workspace\WorkspaceDetailsViewModel.cs" />
     <Compile Remove="ViewModels\Workspace\WorkspaceEditViewModel_old.cs" />
   </ItemGroup>

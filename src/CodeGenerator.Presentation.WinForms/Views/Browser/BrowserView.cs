@@ -22,7 +22,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Browser
             
             webView = new WebView2
             {
-                Dock = DockStyle.Fill
+                Dock = System.Windows.Forms.DockStyle.Fill
             };
             Controls.Add(webView);
             Load += BrowserView_Load;

@@ -1,3 +1,4 @@
+using CodeGenerator.Shared.Views;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,6 +18,10 @@ namespace CodeGenerator.Shared.ViewModels
         private string? _errorMessage;
         private string? _tooltip;
         private bool _isRequired;
+        private bool _autoBind = false;
+        private bool _autoUpdate = false;
+        private bool _visible = true;
+        private FieldDockStyle _dock = FieldDockStyle.Top;
 
         protected FieldViewModelBase()
         {
@@ -39,18 +44,32 @@ namespace CodeGenerator.Shared.ViewModels
             propertyInfo?.SetValue(Target, value);
             return propertyInfo!=null;
         }
-        private bool _autoBind = false;
+        
         public bool AutoBind
         {
             get { return _autoBind; }
             set { SetProperty(ref _autoBind, value); }
         }
-        private bool _autoUpdate = false;
+        
         public bool AutoUpdate
         {
             get { return _autoUpdate; }
             set { SetProperty(ref _autoUpdate, value); }
         }
+        
+        public bool Visible
+        {
+            get { return _visible; }
+            set { SetProperty(ref _visible, value); }
+        }
+
+        
+        public FieldDockStyle Dock
+        {
+            get { return _dock; }
+            set { SetProperty(ref _dock, value); }
+        }
+
 
         /// <summary>
         /// Name of property that this field is bound to. 

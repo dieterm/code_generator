@@ -29,9 +29,17 @@ namespace CodeGenerator.UserControls.Views.Views
                 return;
 
             if(_viewModel!=null)
+            {
+                DataBindings.Clear();
                 _viewModel.PropertyChanged -= OnViewModelPropertyChanged;
+            }
 
             _viewModel = viewModel;
+
+            if (_viewModel != null)
+            {
+                DataBindings.Add("Visible", viewModel, nameof(viewModel.Visible), false, DataSourceUpdateMode.OnPropertyChanged).ControlUpdateMode = ControlUpdateMode.OnPropertyChanged;
+            }
 
             LoadValueViewModel();
 
@@ -62,7 +70,7 @@ namespace CodeGenerator.UserControls.Views.Views
                 
                 Size = userControl.Size;
                 Controls.Add(userControl);
-                userControl.Dock = DockStyle.Fill;
+                userControl.Dock = System.Windows.Forms.DockStyle.Fill;
             } 
             else
             {

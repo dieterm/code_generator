@@ -386,7 +386,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
         //    }
         //}
 
-        public override void ShowArtifactDetailsView(ViewModelBase? detailsModel)
+        public override void ShowArtifactDetailsView(IViewModel? detailsModel)
         {
             if (_workspaceDetailsViewModel == null)
             {

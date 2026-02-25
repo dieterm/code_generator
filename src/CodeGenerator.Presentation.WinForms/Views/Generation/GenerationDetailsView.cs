@@ -30,7 +30,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Generation
 
             artifactDetailsTreeView.AutoAdjustMultiLineHeight = true;
             artifactDetailsTreeView.AutoGenerateColumns = true;
-            artifactDetailsTreeView.Dock = DockStyle.Fill;
+            artifactDetailsTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             artifactDetailsTreeView.Location = new Point(0, 0);
             artifactDetailsTreeView.Name = "artifactDetailsTreeView";
             artifactDetailsTreeView.TabIndex = 0;

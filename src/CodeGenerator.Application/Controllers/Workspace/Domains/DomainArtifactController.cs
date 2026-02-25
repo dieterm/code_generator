@@ -3,6 +3,7 @@ using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.ViewModels;
+using CodeGenerator.Core.Workspaces.ViewModels.Domain;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -11,10 +12,8 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
     /// <summary>
     /// Controller for DomainArtifact
     /// </summary>
-    public class DomainArtifactController : WorkspaceArtifactControllerBase<DomainArtifact>
+    public class DomainArtifactController : WorkspaceArtifactControllerBase<DomainArtifact, DomainArtifactEditViewModel>
     {
-        private DomainEditViewModel? _editViewModel;
-
         public DomainArtifactController(
             OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
@@ -82,35 +81,6 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
         }
 
         #endregion
-
-        protected override Task OnSelectedInternalAsync(DomainArtifact artifact, CancellationToken cancellationToken)
-        {
-            return ShowPropertiesAsync(artifact);
-        }
-
-        private void EnsureEditViewModel(DomainArtifact artifact)
-        {
-            if (_editViewModel == null)
-            {
-                _editViewModel = new DomainEditViewModel();
-                _editViewModel.ValueChanged += OnEditViewModelValueChanged;
-            }
-
-            _editViewModel.Domain = artifact;
-        }
-
-        private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
-        {
-            TreeViewController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
-        }
-
-        private Task ShowPropertiesAsync(DomainArtifact domain)
-        {
-            EnsureEditViewModel(domain);
-            TreeViewController.ShowArtifactDetailsView(_editViewModel!);
-            return Task.CompletedTask;
-        }
-
 
     }
 }

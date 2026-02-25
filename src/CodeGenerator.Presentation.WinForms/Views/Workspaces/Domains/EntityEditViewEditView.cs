@@ -64,7 +64,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
                 var emptyLabel = new Label
                 {
                     Text = "No fields defined. Add fields via the context menu on the Edit View node.",
-                    Dock = DockStyle.Top,
+                    Dock = System.Windows.Forms.DockStyle.Top,
                     AutoSize = true,
                     ForeColor = SystemColors.GrayText,
                     Padding = new Padding(10)
@@ -76,7 +76,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
 
             var previewContainer = new TableLayoutPanel
             {
-                Dock = DockStyle.Top,
+                Dock = System.Windows.Forms.DockStyle.Top,
                 AutoSize = true,
                 ColumnCount = 1,
                 Padding = new Padding(5)
@@ -90,7 +90,7 @@ namespace CodeGenerator.Presentation.WinForms.Views.Domains
                 var control = CreatePreviewControl(field);
                 if (control != null)
                 {
-                    control.Dock = DockStyle.Top;
+                    control.Dock = System.Windows.Forms.DockStyle.Top;
                     control.Enabled = !field.IsReadOnly;
                     previewContainer.Controls.Add(control, 0, rowIndex);
                     rowIndex++;

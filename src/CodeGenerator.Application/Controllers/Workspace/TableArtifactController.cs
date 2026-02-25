@@ -2,7 +2,6 @@ using CodeGenerator.Application.Controllers.ArtifactPreview;
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
-using CodeGenerator.Application.ViewModels.Workspace.Datasources;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Artifacts.Templates;
@@ -14,6 +13,7 @@ using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Settings;
+using CodeGenerator.Core.Workspaces.ViewModels.Datasources;
 using CodeGenerator.Domain.Databases.RelationalDatabases;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.Operations;
@@ -30,7 +30,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// </summary>
     public class TableArtifactController : WorkspaceArtifactControllerBase<TableArtifact>
     {
-        private TableEditViewModel? _editViewModel;
+        private TableArtifactEditViewModel? _editViewModel;
         private readonly TemplateEngineManager _templateEngineManager;
         private readonly IWindowManagerService _windowManagerService;
         private static List<CreateScriptCommandInfo>? _createScriptCommands;
@@ -298,21 +298,21 @@ namespace CodeGenerator.Application.Controllers.Workspace
         {
             if (_editViewModel == null)
             {
-                _editViewModel = new TableEditViewModel();
+                _editViewModel = new TableArtifactEditViewModel();
                 _editViewModel.ValueChanged += OnEditViewModelValueChanged;
                 _editViewModel.RequestCreateEntities += EditViewModel_RequestCreateEntities;
                 _editViewModel.RequestCreateValueTypes += EditViewModel_RequestCreateValueTypes;
                 _editViewModel.RequestLoadData += EditViewModel_RequestLoadData;
             }
 
-            _editViewModel.Table = artifact;
+            _editViewModel.Artifact = artifact;
         }
 
         private async void EditViewModel_RequestLoadData(object? sender, EventArgs e)
         {
-            _editViewModel.PropertiesDistinctValues.Clear();
+            _editViewModel.DataExtractionField.PropertiesDistinctValues.Clear();
 
-            var dataProvider = _editViewModel.Table?.GetDecoratorOfType<TemplateDatasourceProviderDecorator>();
+            var dataProvider = _editViewModel.Artifact?.GetDecoratorOfType<TemplateDatasourceProviderDecorator>();
             if (dataProvider == null) return;
             var data = await dataProvider?.LoadDataAsync(Logger, null, null, CancellationToken.None);
 
@@ -339,7 +339,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
            
             foreach(var kvp in columnValues) {
-                _editViewModel.PropertiesDistinctValues.Add(new UserControls.ViewModels.MultiSelectFieldModel {
+                _editViewModel.DataExtractionField.PropertiesDistinctValues.Add(new UserControls.ViewModels.MultiSelectFieldModel {
                     Label = kvp.Key,
                     Name = kvp.Key,
                     Items = kvp.Value.Distinct().Select(v => new ComboboxItem { DisplayName = v, Value = v }).ToList()

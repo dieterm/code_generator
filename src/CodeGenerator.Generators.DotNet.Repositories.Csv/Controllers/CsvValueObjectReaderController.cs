@@ -1,5 +1,4 @@
 ﻿using CodeGenerator.Application.Controllers.Workspace;
-using CodeGenerator.Application.ViewModels.Workspace.Datasources;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Generators.DotNet.Repositories.Csv.ViewModels;

@@ -4,8 +4,8 @@ namespace CodeGenerator.Core.CodeElements.ViewModels;
 
 public class CodeElementArtifactDetailsViewModel : ViewModelBase
 {
-    private ViewModelBase? _detailsViewModel;
-    public ViewModelBase? DetailsViewModel
+    private IViewModel? _detailsViewModel;
+    public IViewModel? DetailsViewModel
     {
         get { return _detailsViewModel; }
         set { SetProperty(ref _detailsViewModel, value); }

@@ -21,13 +21,11 @@ namespace CodeGenerator.Core.Workspaces.ViewModels.Scopes
         }
     }
 
-    public class ScopeGeneralTabViewModel : ArtifactEditViewTabModel
+    public class ScopeGeneralTabViewModel : ArtifactEditViewTabModel<ScopeArtifact>
     {
         public LabelFieldModel FullNameField { get; }
         public SingleLineTextFieldModel NameField { get; }
         public ParameterizedStringFieldModel NamespaceField { get; }
-
-        private ScopeArtifact? _scope;
 
         public ScopeGeneralTabViewModel() : base("General")
         {
@@ -68,59 +66,26 @@ namespace CodeGenerator.Core.Workspaces.ViewModels.Scopes
 
         public override void BindArtifact(WorkspaceArtifactBase? artifactBase)
         {
-            // Unsubscribe from old scope
-            if (_scope != null)
-            {
-                _scope.PropertyChanged -= Scope_PropertyChanged;
-            }
-
             base.BindArtifact(artifactBase);
 
-            _scope = artifactBase as ScopeArtifact;
-
-            // Subscribe to scope property changes
-            if (_scope != null)
-            {
-                UpdateNamespaceParameters();
-                _scope.PropertyChanged += Scope_PropertyChanged;
-            }
+            NamespaceField.SetParameters(Artifact?.Context?.NamespaceParameters);
         }
 
-        private void Scope_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        protected override void OnArtifactPropertyChanged(ScopeArtifact artifact, string propertyName)
         {
-            if (e.PropertyName == nameof(ScopeArtifact.Context))
+            if (propertyName == nameof(ScopeArtifact.Context))
             {
-                UpdateNamespaceParameters();
+                NamespaceField.SetParameters(Artifact?.Context?.NamespaceParameters);
             }
-            else if (e.PropertyName == nameof(ScopeArtifact.FullName))
+            else if (propertyName == nameof(ScopeArtifact.FullName))
             {
-                FullNameField.Value = _scope?.FullName;
+                FullNameField.Value = artifact.FullName;
             }
-            else if (e.PropertyName == nameof(ScopeArtifact.Name))
+            else if (propertyName == nameof(ScopeArtifact.Name))
             {
-                FullNameField.Value = _scope?.FullName;
+                FullNameField.Value = artifact.FullName;
             }
         }
 
-        private void UpdateNamespaceParameters()
-        {
-            if (_scope == null) return;
-
-            var context = _scope.Context;
-            if (context?.NamespaceParameters == null) return;
-
-            NamespaceField.Parameters.Clear();
-            
-            foreach (var (paramName, paramValue) in context.NamespaceParameters)
-            {
-                NamespaceField.AddParameter(new ParameterizedStringParameter
-                {
-                    Parameter = paramName,
-                    ExampleValue = paramValue
-                });
-            }
-            
-            NamespaceField.RefreshParameterizedString();
-        }
     }
 }

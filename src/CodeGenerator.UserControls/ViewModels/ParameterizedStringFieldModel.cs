@@ -4,6 +4,7 @@ using CodeGenerator.Shared.ViewModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,6 +64,30 @@ namespace CodeGenerator.UserControls.ViewModels
             }
             OnPropertyChanged(nameof(Preview));
         }
+
+        /// <summary>
+        /// Clear existing parameters and set new parameters from the provided dictionary.
+        /// The key is used as the parameter name and the value is used as the example value for that parameter.
+        /// After setting the parameters, it refreshes the parameterized string to update the preview accordingly.
+        /// </summary>
+        public void SetParameters(ReadOnlyDictionary<string, string>? parameters)
+        {
+            Parameters.Clear();
+            
+            if (parameters == null) return;
+
+            foreach (var (paramName, paramValue) in parameters)
+            {
+                AddParameter(new ParameterizedStringParameter
+                {
+                    Parameter = paramName,
+                    ExampleValue = paramValue
+                });
+            }
+
+            RefreshParameterizedString();
+        }
+
         public void AddParameterToValue(ParameterizedStringParameter parameter, int caretPosition)
         {
             var parameterPattern = ParameterTemplate.Replace(ParameterizedString.ParameterTemplatePlaceholder, parameter.Parameter);

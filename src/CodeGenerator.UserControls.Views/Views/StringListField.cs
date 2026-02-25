@@ -41,12 +41,16 @@ namespace CodeGenerator.UserControls.Views
         public void BindViewModel(StringListFieldModel viewModel)
         {
             if (_viewModel != null)
+            {
+                DataBindings.Clear();
                 _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
+            }
 
             _viewModel = viewModel;
 
             if (_viewModel == null) return;
 
+            DataBindings.Add("Visible", viewModel, nameof(viewModel.Visible), false, DataSourceUpdateMode.OnPropertyChanged).ControlUpdateMode = ControlUpdateMode.OnPropertyChanged;
             grpBox.Text = _viewModel.Label ?? grpBox.Text;
             lstItems.DataSource = _viewModel.Items;
             UpdateButtonStates();

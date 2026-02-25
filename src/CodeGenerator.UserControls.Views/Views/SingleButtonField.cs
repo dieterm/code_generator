@@ -24,9 +24,11 @@ namespace CodeGenerator.UserControls.Views.Views
 
         public void BindViewModel(SingleButtonFieldModel viewModel)
         {
+            DataBindings.Clear();
             lblLabel.DataBindings.Clear();
             btnCommand.DataBindings.Clear();
             _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+            DataBindings.Add("Visible", viewModel, nameof(viewModel.Visible), false, DataSourceUpdateMode.OnPropertyChanged).ControlUpdateMode = ControlUpdateMode.OnPropertyChanged;
             lblLabel.DataBindings.Add(nameof(lblLabel.Text), _viewModel, nameof(_viewModel.Label));
             btnCommand.DataBindings.Add(nameof(btnCommand.Text), _viewModel, nameof(_viewModel.ButtonText));
             btnCommand.Command = _viewModel.Command;

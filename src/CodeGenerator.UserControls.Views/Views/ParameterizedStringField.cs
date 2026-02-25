@@ -49,6 +49,7 @@ namespace CodeGenerator.UserControls.Views
 
             ViewModel = viewModel;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+            DataBindings.Add("Visible", viewModel, nameof(viewModel.Visible), false, DataSourceUpdateMode.OnPropertyChanged).ControlUpdateMode = ControlUpdateMode.OnPropertyChanged;
             // Bind the ViewModel properties to the control's UI elements
             lblLabel.DataBindings.Add("Text", viewModel, nameof(viewModel.Label), false, DataSourceUpdateMode.OnPropertyChanged);
             txtValue.DataBindings.Add("Text", viewModel, nameof(viewModel.Value), false, DataSourceUpdateMode.OnPropertyChanged);
@@ -67,6 +68,7 @@ namespace CodeGenerator.UserControls.Views
 
         private void ClearDataBindings()
         {
+            DataBindings.Clear();
             lblLabel.DataBindings.Clear();
             txtValue.DataBindings.Clear();
             lblPreview.DataBindings.Clear();

@@ -142,7 +142,7 @@ namespace CodeGenerator.Core.LLM.Views
                 Font = new Font("Segoe UI", 8F, FontStyle.Bold),
                 ForeColor = Color.FromArgb(100, 100, 100),
                 AutoSize = true,
-                Dock = DockStyle.Top,
+                Dock = System.Windows.Forms.DockStyle.Top,
                 Margin = new Padding(0, 0, 0, 2)
             };
 
@@ -151,7 +151,7 @@ namespace CodeGenerator.Core.LLM.Views
                 Text = message.Content,
                 Font = new Font("Segoe UI", 9.5F),
                 AutoSize = true,
-                Dock = DockStyle.Top,
+                Dock = System.Windows.Forms.DockStyle.Top,
                 MaximumSize = new Size(_messagesPanel.ClientSize.Width - 50, 0)
             };
 
@@ -195,7 +195,7 @@ namespace CodeGenerator.Core.LLM.Views
                 Font = new Font("Segoe UI", 8F, FontStyle.Bold),
                 ForeColor = Color.FromArgb(100, 100, 120),
                 AutoSize = true,
-                Dock = DockStyle.Top,
+                Dock = System.Windows.Forms.DockStyle.Top,
                 Margin = new Padding(0, 0, 0, 2)
             };
 
@@ -205,7 +205,7 @@ namespace CodeGenerator.Core.LLM.Views
                 Font = new Font("Segoe UI", 9F, FontStyle.Bold),
                 ForeColor = Color.FromArgb(60, 60, 140),
                 AutoSize = true,
-                Dock = DockStyle.Top,
+                Dock = System.Windows.Forms.DockStyle.Top,
                 Margin = new Padding(0, 0, 0, 2)
             };
 
@@ -215,7 +215,7 @@ namespace CodeGenerator.Core.LLM.Views
                 Font = new Font("Consolas", 8.5F),
                 ForeColor = Color.FromArgb(80, 80, 80),
                 AutoSize = true,
-                Dock = DockStyle.Top,
+                Dock = System.Windows.Forms.DockStyle.Top,
                 MaximumSize = new Size(_messagesPanel.ClientSize.Width - 50, 0),
                 Margin = new Padding(0, 0, 0, 2)
             };
@@ -226,7 +226,7 @@ namespace CodeGenerator.Core.LLM.Views
                 Font = new Font("Consolas", 8.5F),
                 ForeColor = message.ToolResult != null ? Color.FromArgb(0, 100, 0) : Color.FromArgb(160, 140, 0),
                 AutoSize = true,
-                Dock = DockStyle.Top,
+                Dock = System.Windows.Forms.DockStyle.Top,
                 MaximumSize = new Size(_messagesPanel.ClientSize.Width - 50, 0)
             };
 

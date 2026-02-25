@@ -332,5 +332,10 @@ namespace CodeGenerator.Core.Workspaces.Artifacts
         {
             return $"{Id}_Documentation.md.scriban";
         }
+
+        public override string ToString()
+        {
+            return TreeNodeText;
+        }
     }
 }

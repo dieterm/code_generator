@@ -45,6 +45,7 @@ public partial class CheckboxField : UserControl, IView<CheckboxFieldModel>
 
     private void ClearDataBindings()
     {
+        DataBindings.Clear();
         chkValue.DataBindings.Clear();
     }
 
@@ -61,6 +62,7 @@ public partial class CheckboxField : UserControl, IView<CheckboxFieldModel>
         if (_viewModel == null)
             return;
 
+        DataBindings.Add("Visible", viewModel, nameof(viewModel.Visible), false, DataSourceUpdateMode.OnPropertyChanged).ControlUpdateMode = ControlUpdateMode.OnPropertyChanged;
         chkValue.Text = _viewModel.Label;
         chkValue.Checked = _viewModel.Value is bool b && b;
         

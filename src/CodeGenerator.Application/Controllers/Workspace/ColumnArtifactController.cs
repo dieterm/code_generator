@@ -1,10 +1,10 @@
 using CodeGenerator.Application.Controllers.Base;
-using CodeGenerator.Application.ViewModels.Workspace.Datasources;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Models;
 using CodeGenerator.Core.Workspaces.Services;
+using CodeGenerator.Core.Workspaces.ViewModels.Datasources;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -13,11 +13,9 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// <summary>
     /// Controller for ColumnArtifact
     /// </summary>
-    public class ColumnArtifactController : WorkspaceArtifactControllerBase<ColumnArtifact>
+    public class ColumnArtifactController : WorkspaceArtifactControllerBase<ColumnArtifact, ColumnArtifactEditViewModel>
     {
         private readonly IDatasourceFactory _datasourceFactory;
-        private ColumnEditViewModel? _editViewModel;
-
         public ColumnArtifactController(
             OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
@@ -90,24 +88,13 @@ namespace CodeGenerator.Application.Controllers.Workspace
         {
             EnsureEditViewModel(artifact);
             PopulateDataTypes(artifact);
-            TreeViewController.ShowArtifactDetailsView(_editViewModel!);
+            TreeViewController.ShowArtifactDetailsView(EditViewModel!);
             return Task.CompletedTask;
-        }
-
-        private void EnsureEditViewModel(ColumnArtifact artifact)
-        {
-            if (_editViewModel == null)
-            {
-                _editViewModel = new ColumnEditViewModel();
-                _editViewModel.ValueChanged += OnEditViewModelValueChanged;
-            }
-
-            _editViewModel.Column = artifact;
         }
         
         private void PopulateDataTypes(ColumnArtifact column)
         {
-            if (_editViewModel == null) return;
+            if (EditViewModel == null) return;
 
             // Find parent datasource
             IArtifact? current = column.Parent;
@@ -133,14 +120,10 @@ namespace CodeGenerator.Application.Controllers.Workspace
                         UseAllowedValues = m.SupportsAllowedValues
                     }).ToList();
 
-                    _editViewModel.SetAvailableDataTypes(items);
+                    EditViewModel.SetAvailableDataTypes(items);
                 }
             }
         }
 
-        private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
-        {
-            TreeViewController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
-        }
     }
 }

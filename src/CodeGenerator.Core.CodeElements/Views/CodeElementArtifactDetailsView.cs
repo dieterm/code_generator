@@ -62,7 +62,7 @@ public partial class CodeElementArtifactDetailsView : UserControl, IView<CodeEle
         if (view is UserControl detailsControl)
         {
             Controls.Add(detailsControl);
-            detailsControl.Dock = DockStyle.Fill;
+            detailsControl.Dock = System.Windows.Forms.DockStyle.Fill;
         }
     }
 

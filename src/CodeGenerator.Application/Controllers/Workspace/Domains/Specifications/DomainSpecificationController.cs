@@ -1,7 +1,7 @@
 using CodeGenerator.Application.Controllers.Base;
-using CodeGenerator.Application.ViewModels.Workspace.Domains.Specifications;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Specifications;
+using CodeGenerator.Core.Workspaces.ViewModels.Domain;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -10,10 +10,8 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Specifications
     /// <summary>
     /// Controller for DomainSpecificationArtifact
     /// </summary>
-    public class DomainSpecificationController : WorkspaceArtifactControllerBase<DomainSpecificationArtifact>
+    public class DomainSpecificationController : WorkspaceArtifactControllerBase<DomainSpecificationArtifact, DomainSpecificationArtifactEditViewModel>
     {
-        private DomainSpecificationEditViewModel? _editViewModel;
-
         public DomainSpecificationController(OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
             ILogger<DomainSpecificationController> logger)
@@ -75,33 +73,5 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Specifications
         }
 
         #endregion
-
-        protected override Task OnSelectedInternalAsync(DomainSpecificationArtifact artifact, CancellationToken cancellationToken)
-        {
-            return ShowPropertiesAsync(artifact);
-        }
-
-        private void EnsureEditViewModel(DomainSpecificationArtifact artifact)
-        {
-            if (_editViewModel == null)
-            {
-                _editViewModel = new DomainSpecificationEditViewModel();
-                _editViewModel.ValueChanged += OnEditViewModelValueChanged;
-            }
-
-            _editViewModel.Specification = artifact;
-        }
-
-        private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
-        {
-            TreeViewController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
-        }
-
-        private Task ShowPropertiesAsync(DomainSpecificationArtifact specification)
-        {
-            EnsureEditViewModel(specification);
-            TreeViewController.ShowArtifactDetailsView(_editViewModel!);
-            return Task.CompletedTask;
-        }
     }
 }

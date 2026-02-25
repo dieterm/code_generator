@@ -9,13 +9,48 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\Workspaces\Domains\Factories\**" />
+    <Compile Remove="Views\Workspaces\Domains\Specifications\**" />
+    <EmbeddedResource Remove="Views\Workspaces\Domains\Factories\**" />
+    <EmbeddedResource Remove="Views\Workspaces\Domains\Specifications\**" />
+    <None Remove="Views\Workspaces\Domains\Factories\**" />
+    <None Remove="Views\Workspaces\Domains\Specifications\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Views\TemplateTreeView.Designer.cs" />
+    <Compile Remove="Views\Workspaces\Datasources\ColumnEditView.cs" />
+    <Compile Remove="Views\Workspaces\Datasources\ColumnEditView.Designer.cs" />
+    <Compile Remove="Views\Workspaces\Datasources\ForeignKeyEditView.cs" />
+    <Compile Remove="Views\Workspaces\Datasources\ForeignKeyEditView.Designer.cs" />
+    <Compile Remove="Views\Workspaces\Datasources\IndexEditView.cs" />
+    <Compile Remove="Views\Workspaces\Datasources\IndexEditView.Designer.cs" />
+    <Compile Remove="Views\Workspaces\Datasources\TableEditView.cs" />
+    <Compile Remove="Views\Workspaces\Datasources\TableEditView.Designer.cs" />
+    <Compile Remove="Views\Workspaces\Domains\DomainEditView.cs" />
+    <Compile Remove="Views\Workspaces\Domains\DomainEditView.Designer.cs" />
+    <Compile Remove="Views\Workspaces\Domains\EntityEditView.cs" />
+    <Compile Remove="Views\Workspaces\Domains\EntityEditView.Designer.cs" />
+    <Compile Remove="Views\Workspaces\Domains\EntityStateEditView.cs" />
+    <Compile Remove="Views\Workspaces\Domains\EntityStateEditView.Designer.cs" />
+    <Compile Remove="Views\Workspaces\Domains\PropertyEditView.cs" />
+    <Compile Remove="Views\Workspaces\Domains\PropertyEditView.Designer.cs" />
+    <Compile Remove="Views\Workspaces\Domains\ScopeEditView.cs" />
+    <Compile Remove="Views\Workspaces\Domains\ScopeEditView.Designer.cs" />
+    <Compile Remove="Views\Workspaces\Domains\ValueTypeEditView.cs" />
+    <Compile Remove="Views\Workspaces\Domains\ValueTypeEditView.Designer.cs" />
     <Compile Remove="Views\Workspaces\WorkspaceEditView.cs" />
     <Compile Remove="Views\Workspaces\WorkspaceEditView.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Remove="Views\TemplateTreeView.resx" />
+    <EmbeddedResource Remove="Views\Workspaces\Datasources\ColumnEditView.resx" />
+    <EmbeddedResource Remove="Views\Workspaces\Datasources\ForeignKeyEditView.resx" />
+    <EmbeddedResource Remove="Views\Workspaces\Datasources\IndexEditView.resx" />
+    <EmbeddedResource Remove="Views\Workspaces\Datasources\TableEditView.resx" />
+    <EmbeddedResource Remove="Views\Workspaces\Domains\PropertyEditView.resx" />
+    <EmbeddedResource Remove="Views\Workspaces\Domains\ScopeEditView.resx" />
     <EmbeddedResource Remove="Views\Workspaces\WorkspaceEditView.resx" />
   </ItemGroup>
   <ItemGroup>
@@ -44,7 +79,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="Views\Workspaces\Scopes\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeGenerator.Application\CodeGenerator.Application.csproj" />

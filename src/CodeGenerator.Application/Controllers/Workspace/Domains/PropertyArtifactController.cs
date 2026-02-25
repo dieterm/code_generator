@@ -1,8 +1,8 @@
 using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Controllers.Workspace;
-using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
+using CodeGenerator.Core.Workspaces.ViewModels.Domain;
 using CodeGenerator.Domain.NamingConventions;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
@@ -12,10 +12,8 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
     /// <summary>
     /// Controller for PropertyArtifact
     /// </summary>
-    public class PropertyArtifactController : WorkspaceArtifactControllerBase<PropertyArtifact>
+    public class PropertyArtifactController : WorkspaceArtifactControllerBase<PropertyArtifact, PropertyArtifactEditViewModel>
     {
-        private PropertyEditViewModel? _editViewModel;
-
         public PropertyArtifactController(OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
             ILogger<PropertyArtifactController> logger)
@@ -106,32 +104,5 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains
 
         #endregion
 
-        protected override Task OnSelectedInternalAsync(PropertyArtifact artifact, CancellationToken cancellationToken)
-        {
-            return ShowPropertiesAsync(artifact);
-        }
-
-        private void EnsureEditViewModel(PropertyArtifact artifact)
-        {
-            if (_editViewModel == null)
-            {
-                _editViewModel = new PropertyEditViewModel();
-                _editViewModel.ValueChanged += OnEditViewModelValueChanged;
-            }
-
-            _editViewModel.Property = artifact;
-        }
-
-        private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
-        {
-            TreeViewController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
-        }
-
-        private Task ShowPropertiesAsync(PropertyArtifact property)
-        {
-            EnsureEditViewModel(property);
-            TreeViewController.ShowArtifactDetailsView(_editViewModel!);
-            return Task.CompletedTask;
-        }
     }
 }

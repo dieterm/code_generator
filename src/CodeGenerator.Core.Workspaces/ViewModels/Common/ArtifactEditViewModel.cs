@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace CodeGenerator.Core.Workspaces.ViewModels.Common
 {
-    public  class ArtifactEditViewModel<TArtifact, TGeneralTab> : ViewModelBase, IArtifactEditViewModel 
+    public abstract class ArtifactEditViewModel<TArtifact, TGeneralTab> : ViewModelBase, IArtifactEditViewModel 
         where TArtifact : WorkspaceArtifactBase
-        where TGeneralTab : ArtifactEditViewTabModel
+        where TGeneralTab : ArtifactEditViewTabModel<TArtifact>
     {
         private string _artifactName;
         public string ArtifactName
@@ -53,7 +53,10 @@ namespace CodeGenerator.Core.Workspaces.ViewModels.Common
 
         public ObservableCollection<ArtifactEditViewTabModel> Tabs { get; } = [];
 
-        WorkspaceArtifactBase? IArtifactEditViewModel.Artifact => Artifact;
+        WorkspaceArtifactBase? IArtifactEditViewModel.Artifact { 
+            get { return Artifact; } 
+            set { Artifact = value as TArtifact; }
+        }
 
         /// <summary>
         /// Event raised when any field value changes
@@ -102,9 +105,18 @@ namespace CodeGenerator.Core.Workspaces.ViewModels.Common
             {
                 if (field.AutoUpdate)
                 {
-                    ValueChanged?.Invoke(this, new ArtifactPropertyChangedEventArgs(_artifact, field.Name, field.Value));
+                    OnValueChanged(_artifact, field.Name, field.Value);
                 }
             }
+        }
+
+        protected void OnValueChanged(TArtifact artifact, string propertyName, object? newValue)
+        {
+            ValueChanged?.Invoke(this, new ArtifactPropertyChangedEventArgs(artifact, propertyName, newValue));
+        }
+        protected void OnValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
+        {
+            ValueChanged?.Invoke(sender, e);
         }
 
         public FieldViewModelBase? GetFieldByName(string name)

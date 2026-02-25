@@ -22,7 +22,7 @@ namespace CodeGenerator.Core.Workspaces.ViewModels.Workspace
         }
     }
 
-    public class WorkspaceGeneralTabViewModel : ArtifactEditViewTabModel
+    public class WorkspaceGeneralTabViewModel : ArtifactEditViewTabModel<WorkspaceArtifact>
     {
         public SingleLineTextFieldModel NameField { get; }
         public MultiLineTextFieldModel DescriptionField { get; }

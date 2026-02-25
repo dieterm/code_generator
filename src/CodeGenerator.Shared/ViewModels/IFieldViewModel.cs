@@ -1,3 +1,4 @@
+using CodeGenerator.Shared.Views;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,6 +18,8 @@ namespace CodeGenerator.Shared.ViewModels
         bool IsRequired { get; set; }
         bool AutoBind { get; set; }
         bool AutoUpdate { get; set; }
+        bool Visible { get; set; }
+        public FieldDockStyle Dock { get; set; }
         bool SetValue<T>(T value);
         T GetValue<T>();
         /// <summary>

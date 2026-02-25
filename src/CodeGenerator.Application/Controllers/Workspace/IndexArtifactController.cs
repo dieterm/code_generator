@@ -1,7 +1,7 @@
 using CodeGenerator.Application.Controllers.Base;
-using CodeGenerator.Application.ViewModels.Workspace.Datasources;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
+using CodeGenerator.Core.Workspaces.ViewModels.Datasources;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -10,10 +10,8 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// <summary>
     /// Controller for IndexArtifact
     /// </summary>
-    public class IndexArtifactController : WorkspaceArtifactControllerBase<IndexArtifact>
+    public class IndexArtifactController : WorkspaceArtifactControllerBase<IndexArtifact, IndexArtifactEditViewModel>
     {
-        private IndexEditViewModel? _editViewModel;
-
         public IndexArtifactController(OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
             ILogger<IndexArtifactController> logger)
@@ -64,27 +62,6 @@ namespace CodeGenerator.Application.Controllers.Workspace
 
         #endregion
 
-        protected override Task OnSelectedInternalAsync(IndexArtifact artifact, CancellationToken cancellationToken)
-        {
-            EnsureEditViewModel(artifact);
-            TreeViewController.ShowArtifactDetailsView(_editViewModel!);
-            return Task.CompletedTask;
-        }
-
-        private void EnsureEditViewModel(IndexArtifact artifact)
-        {
-            if (_editViewModel == null)
-            {
-                _editViewModel = new IndexEditViewModel();
-                _editViewModel.ValueChanged += OnEditViewModelValueChanged;
-            }
-
-            _editViewModel.Index = artifact;
-        }
-
-        private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
-        {
-            TreeViewController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
-        }
+       
     }
 }

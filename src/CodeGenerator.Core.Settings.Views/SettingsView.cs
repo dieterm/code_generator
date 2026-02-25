@@ -72,7 +72,7 @@ namespace CodeGenerator.Core.Settings.Views
                     var fieldView = CreateFieldView(settingsItem);
                     if (fieldView != null)
                     {
-                        fieldView.Dock = DockStyle.Top;
+                        fieldView.Dock = System.Windows.Forms.DockStyle.Top;
                         splitContainer1.Panel2.Controls.Add(fieldView);
                         splitContainer1.Panel2.Controls.SetChildIndex(fieldView, 0);
                     }

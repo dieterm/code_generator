@@ -20,7 +20,7 @@ namespace CodeGenerator.Application.Controllers.Generation
         /// <summary>
         /// Event raised when the details view for a selected artifact should be shown
         /// </summary>
-        public event EventHandler<ViewModelBase?>? ShowArtifactDetailsRequested;
+        public event EventHandler<IViewModel?>? ShowArtifactDetailsRequested;
 
         public GenerationTreeViewController(
             OperationExecutor operationExecutor,
@@ -54,7 +54,7 @@ namespace CodeGenerator.Application.Controllers.Generation
             TreeViewModel.RootArtifact = generationResult?.RootArtifact;
         }
 
-        public override void ShowArtifactDetailsView(ViewModelBase? detailsModel)
+        public override void ShowArtifactDetailsView(IViewModel? detailsModel)
         {
             ShowArtifactDetailsRequested?.Invoke(this, detailsModel);
         }

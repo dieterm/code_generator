@@ -16,10 +16,8 @@ namespace CodeGenerator.Application.Controllers.Workspace.Scopes
     /// <summary>
     /// Controller for ScopeArtifact
     /// </summary>
-    public class ScopeArtifactController : WorkspaceArtifactControllerBase<ScopeArtifact>
+    public class ScopeArtifactController : WorkspaceArtifactControllerBase<ScopeArtifact, ScopeArtifactEditViewModel>
     {
-        private ScopeArtifactEditViewModel? _editViewModel;
-
         public ScopeArtifactController(OperationExecutor operationExecutor, WorkspaceTreeViewController treeViewController, ILogger<ScopeArtifactController> logger)
             : base(operationExecutor, treeViewController, logger)
         {
@@ -85,33 +83,5 @@ namespace CodeGenerator.Application.Controllers.Workspace.Scopes
         }
 
         #endregion
-
-        protected override Task OnSelectedInternalAsync(ScopeArtifact artifact, CancellationToken cancellationToken)
-        {
-            return ShowPropertiesAsync(artifact);
-        }
-
-        private void EnsureEditViewModel(ScopeArtifact artifact)
-        {
-            if (_editViewModel == null)
-            {
-                _editViewModel = new ScopeArtifactEditViewModel();
-                _editViewModel.ValueChanged += OnEditViewModelValueChanged;
-            }
-
-            _editViewModel.Artifact = artifact;
-        }
-
-        private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
-        {
-            TreeViewController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
-        }
-
-        private Task ShowPropertiesAsync(ScopeArtifact scope)
-        {
-            EnsureEditViewModel(scope);
-            TreeViewController.ShowArtifactDetailsView(_editViewModel!);
-            return Task.CompletedTask;
-        }
     }
 }

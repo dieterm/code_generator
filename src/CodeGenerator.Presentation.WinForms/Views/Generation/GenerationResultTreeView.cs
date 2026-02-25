@@ -70,7 +70,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
                 if (_generationTreeView == null)
                 {
                     _generationTreeView = new Generation.GenerationTreeView();
-                    _generationTreeView.Dock = DockStyle.Fill;
+                    _generationTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
                     splitContainer1.Panel1.Controls.Clear();
                     splitContainer1.Panel1.Controls.Add(_generationTreeView);
                 }
@@ -82,7 +82,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
                 if (_generationDetailsView == null)
                 {
                     _generationDetailsView = new Generation.GenerationDetailsView();
-                    _generationDetailsView.Dock = DockStyle.Fill;
+                    _generationDetailsView.Dock = System.Windows.Forms.DockStyle.Fill;
                     splitContainer1.Panel2.Controls.Clear();
                     splitContainer1.Panel2.Controls.Add(_generationDetailsView);
                 }

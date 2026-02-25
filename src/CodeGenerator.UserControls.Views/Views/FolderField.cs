@@ -80,6 +80,7 @@ namespace CodeGenerator.UserControls.Views
 
         private void ClearDataBindings()
         {
+            DataBindings.Clear();
             lblLabel.DataBindings.Clear();
             txtValue.DataBindings.Clear();
             lblErrorMessage.DataBindings.Clear();
@@ -98,6 +99,7 @@ namespace CodeGenerator.UserControls.Views
             if (_viewModel == null)
                 return;
 
+            DataBindings.Add("Visible", viewModel, nameof(viewModel.Visible), false, DataSourceUpdateMode.OnPropertyChanged).ControlUpdateMode = ControlUpdateMode.OnPropertyChanged;
             lblLabel.DataBindings.Add("Text", viewModel, nameof(viewModel.Label), false, DataSourceUpdateMode.OnPropertyChanged);
             txtValue.DataBindings.Add("Text", viewModel, nameof(viewModel.Value), false, DataSourceUpdateMode.OnPropertyChanged);
             lblErrorMessage.DataBindings.Add("Text", viewModel, nameof(viewModel.ErrorMessage), false, DataSourceUpdateMode.OnPropertyChanged);

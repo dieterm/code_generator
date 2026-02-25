@@ -25,15 +25,17 @@ namespace CodeGenerator.UserControls.ViewModels
                     if(_isChangingValues)
                         return;
                     _isChangingValues = true;
-
+                    
                     if (value == null)
                     {
                         Value = null;
+                        if(AutoBind) ValueSetter(null);
                         Tooltip = string.Empty;
                     }
                     else
                     {
                         Value = value.Value;
+                        if (AutoBind) ValueSetter(value.Value);
                         Tooltip = value.Tooltip;
                     }
 
@@ -51,7 +53,10 @@ namespace CodeGenerator.UserControls.ViewModels
                     if (_isChangingValues)
                         return;
                     _isChangingValues = true;
-                    
+                    if (AutoBind)
+                    {
+                        ValueSetter(value);
+                    }
                     // Update SelectedItem based on Value
                     if (value != null && Items?.Count>0)
                     {

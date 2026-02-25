@@ -1,7 +1,7 @@
 using CodeGenerator.Application.Controllers.Base;
-using CodeGenerator.Application.ViewModels.Workspace.Domains.Factories;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Factories;
+using CodeGenerator.Core.Workspaces.ViewModels.Domain;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
@@ -10,10 +10,9 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Factories
     /// <summary>
     /// Controller for DomainFactoryArtifact
     /// </summary>
-    public class DomainFactoryController : WorkspaceArtifactControllerBase<DomainFactoryArtifact>
+    public class DomainFactoryController : WorkspaceArtifactControllerBase<DomainFactoryArtifact, DomainFactoryArtifactEditViewModel>
     {
-        private DomainFactoryEditViewModel? _editViewModel;
-
+        
         public DomainFactoryController(OperationExecutor operationExecutor, WorkspaceTreeViewController workspaceController, ILogger<DomainFactoryController> logger)
             : base(operationExecutor, workspaceController, logger)
         {
@@ -74,32 +73,5 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Factories
 
         #endregion
 
-        protected override Task OnSelectedInternalAsync(DomainFactoryArtifact artifact, CancellationToken cancellationToken)
-        {
-            return ShowPropertiesAsync(artifact);
-        }
-
-        private void EnsureEditViewModel(DomainFactoryArtifact artifact)
-        {
-            if (_editViewModel == null)
-            {
-                _editViewModel = new DomainFactoryEditViewModel();
-                _editViewModel.ValueChanged += OnEditViewModelValueChanged;
-            }
-
-            _editViewModel.Factory = artifact;
-        }
-
-        private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
-        {
-            TreeViewController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
-        }
-
-        private Task ShowPropertiesAsync(DomainFactoryArtifact factory)
-        {
-            EnsureEditViewModel(factory);
-            TreeViewController.ShowArtifactDetailsView(_editViewModel!);
-            return Task.CompletedTask;
-        }
     }
 }

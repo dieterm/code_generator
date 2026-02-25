@@ -270,7 +270,7 @@ namespace CodeGenerator.Application.Controllers.Workspace
             try
             {
                 await _workspaceTreeViewController.SaveWorkspaceAsync();
-                _messageBus.ReportApplicationStatus($"Saved workspace: {_workspaceTreeViewController.CurrentWorkspace.Name}");
+                _messageBus.ReportApplicationStatus($"Saved workspace: {_workspaceTreeViewController.CurrentWorkspace?.Name}");
             }
             catch (Exception ex)
             {

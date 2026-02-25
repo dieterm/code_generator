@@ -23,7 +23,7 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Csv.ViewModels
         }
     }
 
-    public class CsvDatasourceGeneralTabViewModel : ArtifactEditViewTabModel
+    public class CsvDatasourceGeneralTabViewModel : ArtifactEditViewTabModel<CsvDatasourceArtifact>
     {
         public UserControlFieldModel UserControlField { get; set; }
         public CsvDatasourceGeneralTabViewModel() : base("General")

@@ -26,19 +26,17 @@ namespace CodeGenerator.Application.Controllers.Workspace
     /// Controller for WorkspaceArtifact
     /// Handles context menus and detail views for the workspace root node
     /// </summary>
-    public class WorkspaceArtifactController : WorkspaceArtifactControllerBase<WorkspaceArtifact>
+    public class WorkspaceArtifactController : WorkspaceArtifactControllerBase<WorkspaceArtifact, WorkspaceArtifactEditViewModel>
     {
-        private readonly IDatasourceFactory _datasourceFactory;
-        private WorkspaceArtifactEditViewModel? _editViewModel;
-
+        //private readonly IDatasourceFactory _datasourceFactory;
         public WorkspaceArtifactController(
             OperationExecutor operationExecutor,
-            IDatasourceFactory datasourceFactory, 
+            //IDatasourceFactory datasourceFactory, 
             WorkspaceTreeViewController workspaceController,
             ILogger<WorkspaceArtifactController> logger
             ): base(operationExecutor, workspaceController, logger)
         {
-            _datasourceFactory = datasourceFactory;
+            //_datasourceFactory = datasourceFactory;
         }
 
         protected override IEnumerable<ArtifactTreeNodeCommand> GetCommands(WorkspaceArtifact artifact)
@@ -91,47 +89,14 @@ namespace CodeGenerator.Application.Controllers.Workspace
             return commands;
         }
 
-        protected override Task OnSelectedInternalAsync(WorkspaceArtifact artifact, CancellationToken cancellationToken)
-        {
-            return ShowPropertiesAsync(artifact);
-        }
-
-        
-        private void EnsureEditViewModel(WorkspaceArtifact artifact)
-        {
-            if (_editViewModel == null)
-            {
-                _editViewModel = new WorkspaceArtifactEditViewModel();
-                _editViewModel.ValueChanged += OnEditViewModelValueChanged;
-            }
-            
-            _editViewModel.Artifact = artifact;
-        }
-
-        private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
-        {
-            // Notify the controller about the property change
-            if (e.Artifact is IArtifact artifact)
-            {
-                TreeViewController.OnArtifactPropertyChanged(artifact, e.PropertyName, e.NewValue);
-            }
-        }
-
-        private async Task AddDatasourceAsync(WorkspaceArtifact workspace, string typeId)
-        {
-            var datasource = TreeViewController.AddDatasource(typeId, $"New {typeId} Datasource");
-            if (datasource != null)
-            {
-                await TreeViewController.SaveWorkspaceAsync();
-            }
-        }
-
-        private Task ShowPropertiesAsync(WorkspaceArtifact workspace)
-        {
-            EnsureEditViewModel(workspace);
-            TreeViewController.ShowArtifactDetailsView(_editViewModel!);
-            return Task.CompletedTask;
-        }
+        //private async Task AddDatasourceAsync(WorkspaceArtifact workspace, string typeId)
+        //{
+        //    var datasource = TreeViewController.AddDatasource(typeId, $"New {typeId} Datasource");
+        //    if (datasource != null)
+        //    {
+        //        await TreeViewController.SaveWorkspaceAsync();
+        //    }
+        //}
 
     }
 }

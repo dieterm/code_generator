@@ -469,7 +469,7 @@ namespace CodeGenerator.Application.Controllers.Template
 
         }
 
-        public override void ShowArtifactDetailsView(ViewModelBase? detailsModel)
+        public override void ShowArtifactDetailsView(IViewModel? detailsModel)
         {
 
             if (_artifactDetailsViewModel == null)

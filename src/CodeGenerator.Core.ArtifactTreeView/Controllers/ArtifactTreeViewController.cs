@@ -155,7 +155,7 @@ public abstract class ArtifactTreeViewController<TTreeViewModel, TArtifactContro
         await SelectArtifactAsync(e);
     }
 
-    public abstract void ShowArtifactDetailsView(ViewModelBase? detailsModel);
+    public abstract void ShowArtifactDetailsView(IViewModel? detailsModel);
    
 
     /// <summary>

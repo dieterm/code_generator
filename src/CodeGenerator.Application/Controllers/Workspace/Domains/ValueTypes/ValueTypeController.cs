@@ -1,10 +1,10 @@
 using CodeGenerator.Application.Controllers.Base;
-using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.ValueTypes;
 using CodeGenerator.Core.Workspaces.Operations.Domains;
+using CodeGenerator.Core.Workspaces.ViewModels.Domain;
 using CodeGenerator.Domain.DataTypes;
 using CodeGenerator.Domain.NamingConventions;
 using CodeGenerator.Shared;
@@ -16,10 +16,8 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.ValueTypes
     /// <summary>
     /// Controller for ValueTypeArtifact
     /// </summary>
-    public class ValueTypeController : WorkspaceArtifactControllerBase<ValueTypeArtifact>
+    public class ValueTypeController : WorkspaceArtifactControllerBase<ValueTypeArtifact, ValueTypeArtifactEditViewModel>
     {
-        private ValueTypeEditViewModel? _editViewModel;
-
         public ValueTypeController(OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
             ILogger<ValueTypeController> logger)
@@ -144,32 +142,5 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.ValueTypes
 
         #endregion
 
-        protected override Task OnSelectedInternalAsync(ValueTypeArtifact artifact, CancellationToken cancellationToken)
-        {
-            return ShowPropertiesAsync(artifact);
-        }
-
-        private void EnsureEditViewModel(ValueTypeArtifact artifact)
-        {
-            if (_editViewModel == null)
-            {
-                _editViewModel = new ValueTypeEditViewModel();
-                _editViewModel.ValueChanged += OnEditViewModelValueChanged;
-            }
-
-            _editViewModel.ValueType = artifact;
-        }
-
-        private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
-        {
-            TreeViewController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
-        }
-
-        private Task ShowPropertiesAsync(ValueTypeArtifact valueType)
-        {
-            EnsureEditViewModel(valueType);
-            TreeViewController.ShowArtifactDetailsView(_editViewModel!);
-            return Task.CompletedTask;
-        }
     }
 }

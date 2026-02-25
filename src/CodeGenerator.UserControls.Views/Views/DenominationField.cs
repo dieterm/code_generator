@@ -78,10 +78,11 @@ namespace CodeGenerator.UserControls.Views
             // unsubscribe from old model
             if(_viewModel!=null)
             {
-
+                DataBindings.Clear();
                 _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
             }
             _viewModel = viewModel;
+            DataBindings.Add("Visible", viewModel, nameof(viewModel.Visible), false, DataSourceUpdateMode.OnPropertyChanged).ControlUpdateMode = ControlUpdateMode.OnPropertyChanged;
             txtDutch.BindViewModel(viewModel.Dutch);
             txtFrench.BindViewModel(viewModel.French);
             txtEnglish.BindViewModel(viewModel.English);

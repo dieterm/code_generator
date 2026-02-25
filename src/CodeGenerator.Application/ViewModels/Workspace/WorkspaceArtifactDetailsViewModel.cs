@@ -9,8 +9,8 @@ namespace CodeGenerator.Application.ViewModels.Workspace
 {
     public class WorkspaceArtifactDetailsViewModel : ViewModelBase
     {
-        private ViewModelBase? _detailsViewModel;
-        public ViewModelBase? DetailsViewModel
+        private IViewModel? _detailsViewModel;
+        public IViewModel? DetailsViewModel
         {
             get { return _detailsViewModel; }
             set { SetProperty(ref _detailsViewModel, value); }

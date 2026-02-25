@@ -44,7 +44,7 @@ namespace CodeGenerator.UserControls.Views
                 {
                     detailsControl.Tag = fieldModel;
                     Controls.Add(detailsControl);
-                    detailsControl.Dock = DockStyle.Top;
+                    detailsControl.Dock = (System.Windows.Forms.DockStyle)(int)fieldModel.Dock;
                 } 
                 else
                 {
@@ -69,7 +69,7 @@ namespace CodeGenerator.UserControls.Views
                         {
                             detailsControl.Tag = fieldModel;
                             Controls.Add(detailsControl);
-                            detailsControl.Dock = DockStyle.Fill;
+                            detailsControl.Dock = (System.Windows.Forms.DockStyle)(int)fieldModel.Dock;
                         }
                     });
                     break;

@@ -1,9 +1,9 @@
 using CodeGenerator.Application.Controllers.Base;
-using CodeGenerator.Application.ViewModels.Workspace.Domains;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains;
 using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Core.Workspaces.Operations.Domains;
+using CodeGenerator.Core.Workspaces.ViewModels.Domain;
 using CodeGenerator.Domain.DataTypes;
 using CodeGenerator.Domain.NamingConventions;
 using CodeGenerator.Shared;
@@ -15,10 +15,8 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Entities
     /// <summary>
     /// Controller for EntityStateArtifact
     /// </summary>
-    public class EntityStateController : WorkspaceArtifactControllerBase<EntityStateArtifact>
+    public class EntityStateController : WorkspaceArtifactControllerBase<EntityStateArtifact, EntityStateArtifactEditViewModel>
     {
-        private EntityStateEditViewModel? _editViewModel;
-
         public EntityStateController(OperationExecutor operationExecutor,
             WorkspaceTreeViewController workspaceController,
             ILogger<EntityStateController> logger)
@@ -146,32 +144,5 @@ namespace CodeGenerator.Application.Controllers.Workspace.Domains.Entities
 
         #endregion
 
-        protected override Task OnSelectedInternalAsync(EntityStateArtifact artifact, CancellationToken cancellationToken)
-        {
-            return ShowPropertiesAsync(artifact);
-        }
-
-        private void EnsureEditViewModel(EntityStateArtifact artifact)
-        {
-            if (_editViewModel == null)
-            {
-                _editViewModel = new EntityStateEditViewModel();
-                _editViewModel.ValueChanged += OnEditViewModelValueChanged;
-            }
-
-            _editViewModel.EntityState = artifact;
-        }
-
-        private void OnEditViewModelValueChanged(object? sender, ArtifactPropertyChangedEventArgs e)
-        {
-            TreeViewController.OnArtifactPropertyChanged(e.Artifact, e.PropertyName, e.NewValue);
-        }
-
-        private Task ShowPropertiesAsync(EntityStateArtifact state)
-        {
-            EnsureEditViewModel(state);
-            TreeViewController.ShowArtifactDetailsView(_editViewModel!);
-            return Task.CompletedTask;
-        }
     }
 }

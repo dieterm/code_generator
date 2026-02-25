@@ -27,7 +27,7 @@ namespace CodeGenerator.Presentation.WinForms.Views
             // 
             // TreeView
             // 
-            TreeView.Dock = DockStyle.Fill;
+            TreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             TreeView.LabelEdit = true;
             TreeView.FullRowSelect = true;
             TreeView.HideSelection = false;

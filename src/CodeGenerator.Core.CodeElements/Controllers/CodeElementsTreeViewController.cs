@@ -72,7 +72,7 @@ namespace CodeGenerator.Core.CodeElements.Controllers
                 }
             }
         }
-        public override void ShowArtifactDetailsView(ViewModelBase? detailsModel)
+        public override void ShowArtifactDetailsView(IViewModel? detailsModel)
         {
             if (_codeElementDetailsViewModel == null)
             {
