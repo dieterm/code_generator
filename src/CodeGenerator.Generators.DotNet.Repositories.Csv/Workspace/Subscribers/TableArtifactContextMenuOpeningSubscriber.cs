@@ -5,7 +5,6 @@ using CodeGenerator.Core.Workspaces.Artifacts.Domains.Entities;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.MessageBus.EventHandlers;
 using CodeGenerator.Core.Workspaces.MessageBus.Events;
-using CodeGenerator.Core.Workspaces.Operations.Domains;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Domain.CodeArchitecture;
 using CodeGenerator.Domain.CodeElements;
@@ -13,16 +12,6 @@ using CodeGenerator.Domain.CodeElements.Statements;
 using CodeGenerator.Domain.DataTypes;
 using CodeGenerator.Domain.ProgrammingLanguages.CSharp;
 using CodeGenerator.Generators.DotNet.Repositories.Csv.Workspace.Artifacts;
-using CodeGenerator.Shared;
-using CodeGenerator.Shared.Operations;
-using DocumentFormat.OpenXml.InkML;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace CodeGenerator.Generators.DotNet.Repositories.Csv.Workspace.Subscribers
 {

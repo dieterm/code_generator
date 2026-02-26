@@ -38,14 +38,23 @@ using CodeGenerator.Presentation.WinForms.Views;
 using CodeGenerator.Presentation.WinForms.Views.Application;
 using CodeGenerator.Presentation.WinForms.Views.Domains;
 using CodeGenerator.Presentation.WinForms.Views.Workspace;
-
+using CodeGenerator.Core.Workspaces.Views;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.Views;
 using CodeGenerator.UserControls;
 using CodeGenerator.UserControls.Ribbon;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
+using CodeGenerator.Core.Workspaces.Datasources.Directory;
+using CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly;
+using CodeGenerator.Core.Workspaces.Datasources.Excel;
+using CodeGenerator.Core.Workspaces.Datasources.Json;
+using CodeGenerator.Core.Workspaces.Datasources.Mysql;
+using CodeGenerator.Core.Workspaces.Datasources.OpenApi;
+using CodeGenerator.Core.Workspaces.Datasources.PostgreSql;
+using CodeGenerator.Core.Workspaces.Datasources.SqlServer;
+using CodeGenerator.Core.Workspaces.Datasources.Xml;
+using CodeGenerator.Core.Workspaces.Datasources.Yaml;
 namespace CodeGenerator.Presentation.WinForms;
 
 /// <summary>
@@ -72,8 +81,22 @@ public static class ServiceCollectionExtensions
         services.AddOllamaLlmProvider(configuration);
 
         services.AddCodeElementsServices(configuration);
+        
+        // Register workspace views
+        services.AddWorkspaceViewsServices(configuration);
+
         // Register Datasources
         services.AddCsvDatasourceServices(configuration);
+        services.AddDirectoryDatasourceServices(configuration);
+        services.AddDotNetAssemblyDatasourceServices(configuration);
+        services.AddExcelDatasourceServices(configuration);
+        services.AddJsonDatasourceServices(configuration);
+        services.AddMysqlDatasourceServices(configuration);
+        services.AddOpenApiDatasourceServices(configuration);
+        services.AddPostgreSqlDatasourceServices(configuration);
+        services.AddSqlServerDatasourceServices(configuration);
+        services.AddXmlDatasourceServices(configuration);
+        services.AddYamlDatasourceServices(configuration);
 
         // Register Generators
         services.AddDotNetWinformsRibbonApplicationGeneratorServices(configuration);
@@ -96,50 +119,7 @@ public static class ServiceCollectionExtensions
         // View Factory
         services.AddSingleton<IViewFactory, CodeGeneratorViewFactory>();
 
-        // ViewModel ? View registrations (used by IViewFactory / WorkspaceArtifactDetailsView)
-        services.AddViewMappings();
-
         return services;
     }
 
-    /// <summary>
-    /// Registers all IView&lt;TViewModel&gt; mappings so the ViewFactory can resolve
-    /// the correct View for any ViewModel. Add new mappings here when creating new View/ViewModel pairs.
-    /// </summary>
-    private static IServiceCollection AddViewMappings(this IServiceCollection services)
-    {
-        // Workspace
-        //services.AddTransient<IView<WorkspaceEditViewModel>, WorkspaceEditView>();
-        services.AddTransient<IView<IArtifactEditViewModel>, ArtifactEditView>();
-
-        // Datasources - Relational
-        services.AddTransient<IView<MysqlDatasourceEditViewModel>, MysqlDatasourceEditView>();
-        services.AddTransient<IView<SqlServerDatasourceEditViewModel>, SqlServerDatasourceEditView>();
-        services.AddTransient<IView<PostgreSqlDatasourceEditViewModel>, PostgreSqlDatasourceEditView>();
-        services.AddTransient<IView<ExcelDatasourceEditViewModel>, ExcelDatasourceEditView>();
-
-        // Datasources - File-based
-        services.AddTransient<IView<CsvDatasourceEditViewModel>, CodeGenerator.Core.Workspaces.Datasources.Csv.Views.CsvDatasourceEditView>();
-        services.AddTransient<IView<JsonDatasourceEditViewModel>, JsonDatasourceEditView>();
-        services.AddTransient<IView<XmlDatasourceEditViewModel>, XmlDatasourceEditView>();
-        services.AddTransient<IView<YamlDatasourceEditViewModel>, YamlDatasourceEditView>();
-        services.AddTransient<IView<DotNetAssemblyDatasourceEditViewModel>, DotNetAssemblyDatasourceEditView>();
-        services.AddTransient<IView<OpenApiDatasourceEditViewModel>, OpenApiDatasourceEditView>();
-        services.AddTransient<IView<DirectoryDatasourceEditViewModel>, DirectoryDatasourceEditView>();
-        services.AddTransient<IView<TemplateParametersViewModel>, TemplateParametersView>();
-
-        // Entities
-        services.AddTransient<IView<EntityRelationEditViewModel>, EntityRelationEditView>();
-        services.AddTransient<IView<TableDataExtractionFieldModel>, TableDataExtractionField>();
-        services.AddTransient<IView<IndexColumnSelectionFieldModel>, IndexColumnSelectionField>();
-        services.AddTransient<IView<ForeignKeyColumnMappingFieldModel>, ForeignKeyColumnMappingField>();
-        // Entity Views
-        services.AddTransient<IView<EntityEditViewEditViewModel>, EntityEditViewEditView>();
-        services.AddTransient<IView<EntityEditViewFieldEditViewModel>, EntityEditViewFieldEditView>();
-        services.AddTransient<IView<EntityListViewEditViewModel>, EntityListViewEditView>();
-        services.AddTransient<IView<EntityListViewColumnEditViewModel>, EntityListViewColumnEditView>();
-        services.AddTransient<IView<EntitySelectViewEditViewModel>, EntitySelectViewEditView>();
-
-        return services;
-    }
 }

@@ -1,5 +1,10 @@
+using CodeGenerator.Application.Controllers.Workspace;
+using CodeGenerator.Core.Workspaces.Datasources.Excel.Controllers;
 using CodeGenerator.Core.Workspaces.Datasources.Excel.Services;
+using CodeGenerator.Core.Workspaces.Datasources.Excel.ViewModels;
+using CodeGenerator.Core.Workspaces.Datasources.Excel.Views;
 using CodeGenerator.Core.Workspaces.Services;
+using CodeGenerator.Shared.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,7 +24,8 @@ public static class ServiceCollectionExtensions
     {
         // Register the datasource provider
         services.AddSingleton<IDatasourceProvider, ExcelDatasourceProvider>();
-
+        services.AddSingleton<IWorkspaceArtifactController, ExcelDatasourceController>();
+        services.AddTransient<IView<ExcelDatasourceEditViewModel>, ExcelDatasourceEditView>();
         // Register the schema reader
         services.AddTransient<ExcelSchemaReader>();
 

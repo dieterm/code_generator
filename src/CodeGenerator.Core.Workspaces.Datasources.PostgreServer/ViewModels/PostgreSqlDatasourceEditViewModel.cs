@@ -16,9 +16,7 @@ public class PostgreSqlDatasourceEditViewModel : ViewModelBase
     private readonly PostgreSqlSchemaReader _schemaReader;
     private PostgreSqlDatasourceArtifact? _datasource;
     private bool _isLoading;
-    private bool _isConnecting;
-    private string? _connectionStatus;
-    private string? _errorMessage;
+    private CancellationTokenSource? _loadingCts;
 
     public PostgreSqlDatasourceEditViewModel()
     {
@@ -46,6 +44,22 @@ public class PostgreSqlDatasourceEditViewModel : ViewModelBase
             }
         };
 
+        ObjectImportField = new DatasourceObjectImportFieldModel
+        {
+            GroupBoxText = "Available Tables and Views",
+            LoadButtonText = "Load Tables/Views",
+            AddSelectedButtonText = "Add Selected",
+            AddAllButtonVisible = false,
+            Columns = new List<DatasourceObjectColumnDefinition>
+            {
+                new() { HeaderText = "Name", Width = 180 },
+                new() { HeaderText = "Schema", Width = 100 },
+                new() { HeaderText = "Type", Width = 80 }
+            },
+            LoadCommand = new AsyncRelayCommand(async () => await LoadDatabaseObjectsAsync()),
+            AddSelectedCommand = new AsyncRelayCommand(async () => await AddSelectedObjectAsync())
+        };
+
         // Subscribe to field changes
         NameField.PropertyChanged += OnFieldChanged;
         ServerField.PropertyChanged += OnFieldChanged;
@@ -54,8 +68,6 @@ public class PostgreSqlDatasourceEditViewModel : ViewModelBase
         UsernameField.PropertyChanged += OnFieldChanged;
         PasswordField.PropertyChanged += OnFieldChanged;
         SslModeField.PropertyChanged += OnFieldChanged;
-
-        AvailableObjects = new ObservableCollection<DatabaseObjectViewModel>();
     }
 
     /// <summary>
@@ -97,48 +109,7 @@ public class PostgreSqlDatasourceEditViewModel : ViewModelBase
     public SingleLineTextFieldModel UsernameField { get; }
     public SingleLineTextFieldModel PasswordField { get; }
     public ComboboxFieldModel SslModeField { get; }
-
-    /// <summary>
-    /// Available tables and views from the database
-    /// </summary>
-    public ObservableCollection<DatabaseObjectViewModel> AvailableObjects { get; }
-
-    /// <summary>
-    /// Currently selected object in the list
-    /// </summary>
-    private DatabaseObjectViewModel? _selectedObject;
-    public DatabaseObjectViewModel? SelectedObject
-    {
-        get => _selectedObject;
-        set => SetProperty(ref _selectedObject, value);
-    }
-
-    /// <summary>
-    /// Is the view model currently connecting
-    /// </summary>
-    public bool IsConnecting
-    {
-        get => _isConnecting;
-        private set => SetProperty(ref _isConnecting, value);
-    }
-
-    /// <summary>
-    /// Connection status message
-    /// </summary>
-    public string? ConnectionStatus
-    {
-        get => _connectionStatus;
-        private set => SetProperty(ref _connectionStatus, value);
-    }
-
-    /// <summary>
-    /// Error message (if any)
-    /// </summary>
-    public string? ErrorMessage
-    {
-        get => _errorMessage;
-        private set => SetProperty(ref _errorMessage, value);
-    }
+    public DatasourceObjectImportFieldModel ObjectImportField { get; }
 
     /// <summary>
     /// Event raised when a table/view should be added to the workspace
@@ -165,9 +136,9 @@ public class PostgreSqlDatasourceEditViewModel : ViewModelBase
             PasswordField.Value = _datasource.Password;
             SslModeField.Value = _datasource.SslMode;
 
-            AvailableObjects.Clear();
-            ConnectionStatus = null;
-            ErrorMessage = null;
+            ObjectImportField.Items.Clear();
+            ObjectImportField.StatusText = null;
+            ObjectImportField.ErrorText = null;
         }
         finally
         {
@@ -206,50 +177,53 @@ public class PostgreSqlDatasourceEditViewModel : ViewModelBase
     {
         if (_datasource == null) return;
 
-        IsConnecting = true;
-        ErrorMessage = null;
-        ConnectionStatus = "Connecting...";
-        AvailableObjects.Clear();
+        _loadingCts?.Cancel();
+        _loadingCts = new CancellationTokenSource();
+        var token = CancellationTokenSource.CreateLinkedTokenSource(_loadingCts.Token, cancellationToken).Token;
+
+        ObjectImportField.IsLoading = true;
+        ObjectImportField.ErrorText = null;
+        ObjectImportField.StatusText = "Connecting...";
+        ObjectImportField.Items.Clear();
 
         try
         {
-            // First test connection
-            var isValid = await _datasource.ValidateAsync(cancellationToken);
+            var isValid = await _datasource.ValidateAsync(token);
             if (!isValid)
             {
-                ErrorMessage = "Could not connect to the database. Please check your connection settings.";
-                ConnectionStatus = "Connection failed";
+                ObjectImportField.ErrorText = "Could not connect to the database. Please check your connection settings.";
+                ObjectImportField.StatusText = "Connection failed";
                 return;
             }
 
-            ConnectionStatus = "Loading tables and views...";
+            ObjectImportField.StatusText = "Loading tables and views...";
 
-            // Load tables and views
             var objects = await _schemaReader.GetTablesAndViewsAsync(
                 _datasource.ConnectionString,
-                cancellationToken);
+                token);
 
             foreach (var obj in objects)
             {
-                AvailableObjects.Add(new DatabaseObjectViewModel
+                ObjectImportField.Items.Add(new DatasourceObjectItemViewModel
                 {
-                    Name = obj.Name,
-                    Schema = obj.Schema,
-                    ObjectType = obj.ObjectType,
-                    DisplayName = obj.DisplayName
+                    Text = obj.Name,
+                    SubItems = new List<string> { obj.Schema, obj.ObjectType.ToString() },
+                    ImageKey = obj.ObjectType == DatabaseObjectType.Table ? "table" : "eye",
+                    Tag = obj
                 });
             }
 
-            ConnectionStatus = $"Found {objects.Count} tables and views";
+            ObjectImportField.StatusText = $"Found {objects.Count} tables and views";
         }
+        catch (OperationCanceledException) { }
         catch (Exception ex)
         {
-            ErrorMessage = $"Error: {ex.Message}";
-            ConnectionStatus = "Error loading schema";
+            ObjectImportField.ErrorText = $"Error: {ex.Message}";
+            ObjectImportField.StatusText = "Error loading schema";
         }
         finally
         {
-            IsConnecting = false;
+            ObjectImportField.IsLoading = false;
         }
     }
 
@@ -258,16 +232,19 @@ public class PostgreSqlDatasourceEditViewModel : ViewModelBase
     /// </summary>
     public async Task AddSelectedObjectAsync(CancellationToken cancellationToken = default)
     {
-        if (_datasource == null || SelectedObject == null) return;
+        if (_datasource == null || ObjectImportField.SelectedItem == null) return;
+
+        var dbObject = ObjectImportField.SelectedItem.Tag as DatabaseObjectInfo;
+        if (dbObject == null) return;
 
         try
         {
-            if (SelectedObject.ObjectType == DatabaseObjectType.Table)
+            if (dbObject.ObjectType == DatabaseObjectType.Table)
             {
                 var table = await _schemaReader.ImportTableAsync(
                     _datasource.ConnectionString,
-                    SelectedObject.Name,
-                    SelectedObject.Schema,
+                    dbObject.Name,
+                    dbObject.Schema,
                     _datasource.Name,
                     cancellationToken);
 
@@ -277,8 +254,8 @@ public class PostgreSqlDatasourceEditViewModel : ViewModelBase
             {
                 var view = await _schemaReader.ImportViewAsync(
                     _datasource.ConnectionString,
-                    SelectedObject.Name,
-                    SelectedObject.Schema,
+                    dbObject.Name,
+                    dbObject.Schema,
                     _datasource.Name,
                     cancellationToken);
 
@@ -287,7 +264,7 @@ public class PostgreSqlDatasourceEditViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Error importing object: {ex.Message}";
+            ObjectImportField.ErrorText = $"Error importing object: {ex.Message}";
         }
     }
 }

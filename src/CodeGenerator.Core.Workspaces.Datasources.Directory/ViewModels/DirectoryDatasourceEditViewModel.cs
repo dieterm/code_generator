@@ -1,6 +1,7 @@
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.Directory.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.Directory.Services;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
 using System.ComponentModel;
@@ -15,10 +16,7 @@ public class DirectoryDatasourceEditViewModel : ViewModelBase
     private readonly DirectorySchemaReader _schemaReader;
     private DirectoryDatasourceArtifact? _datasource;
     private bool _isLoading;
-    private bool _isScanning;
-    private string? _statusMessage;
-    private string? _errorMessage;
-    private DirectorySummary? _directorySummary;
+    private CancellationTokenSource? _loadingCts;
 
     public DirectoryDatasourceEditViewModel()
     {
@@ -42,6 +40,22 @@ public class DirectoryDatasourceEditViewModel : ViewModelBase
         {
             Label = "Include Subdirectories",
             Name = "IncludeSubdirectories"
+        };
+
+        ObjectImportField = new DatasourceObjectImportFieldModel
+        {
+            GroupBoxText = "Directory Summary",
+            LoadButtonText = "Scan Directory",
+            AddSelectedButtonText = "Import Table",
+            AddAllButtonVisible = false,
+            InfoLabelVisible = true,
+            Columns = new List<DatasourceObjectColumnDefinition>
+            {
+                new() { HeaderText = "Property", Width = 140 },
+                new() { HeaderText = "Value", Width = 200 }
+            },
+            LoadCommand = new AsyncRelayCommand(async () => await ScanDirectoryAsync()),
+            AddSelectedCommand = new AsyncRelayCommand(async () => await ImportTableAsync())
         };
 
         // Subscribe to field changes
@@ -87,42 +101,7 @@ public class DirectoryDatasourceEditViewModel : ViewModelBase
     public FolderFieldModel DirectoryPathField { get; }
     public SingleLineTextFieldModel SearchPatternField { get; }
     public CheckboxFieldModel IncludeSubdirectoriesField { get; }
-
-    /// <summary>
-    /// Directory summary after scanning
-    /// </summary>
-    public DirectorySummary? DirectorySummary
-    {
-        get => _directorySummary;
-        private set => SetProperty(ref _directorySummary, value);
-    }
-
-    /// <summary>
-    /// Is the view model currently scanning directory
-    /// </summary>
-    public bool IsScanning
-    {
-        get => _isScanning;
-        private set => SetProperty(ref _isScanning, value);
-    }
-
-    /// <summary>
-    /// Status message
-    /// </summary>
-    public string? StatusMessage
-    {
-        get => _statusMessage;
-        private set => SetProperty(ref _statusMessage, value);
-    }
-
-    /// <summary>
-    /// Error message (if any)
-    /// </summary>
-    public string? ErrorMessage
-    {
-        get => _errorMessage;
-        private set => SetProperty(ref _errorMessage, value);
-    }
+    public DatasourceObjectImportFieldModel ObjectImportField { get; }
 
     /// <summary>
     /// Event raised when a table should be added to the workspace
@@ -146,9 +125,10 @@ public class DirectoryDatasourceEditViewModel : ViewModelBase
             SearchPatternField.Value = _datasource.SearchPattern;
             IncludeSubdirectoriesField.Value = _datasource.IncludeSubdirectories;
 
-            DirectorySummary = null;
-            StatusMessage = null;
-            ErrorMessage = null;
+            ObjectImportField.Items.Clear();
+            ObjectImportField.InfoText = null;
+            ObjectImportField.StatusText = null;
+            ObjectImportField.ErrorText = null;
         }
         finally
         {
@@ -177,9 +157,6 @@ public class DirectoryDatasourceEditViewModel : ViewModelBase
         _datasource.IncludeSubdirectories = IncludeSubdirectoriesField.Value is bool b && b;
     }
 
-    /// <summary>
-    /// Scan the directory and get summary information
-    /// </summary>
     public async Task ScanDirectoryAsync(CancellationToken cancellationToken = default)
     {
         if (_datasource == null) return;
@@ -187,55 +164,59 @@ public class DirectoryDatasourceEditViewModel : ViewModelBase
         var directoryPath = DirectoryPathField.Value?.ToString();
         if (string.IsNullOrEmpty(directoryPath))
         {
-            ErrorMessage = "Please select a directory first.";
+            ObjectImportField.ErrorText = "Please select a directory first.";
             return;
         }
 
         if (!System.IO.Directory.Exists(directoryPath))
         {
-            ErrorMessage = "The specified directory does not exist.";
+            ObjectImportField.ErrorText = "The specified directory does not exist.";
             return;
         }
 
-        IsScanning = true;
-        ErrorMessage = null;
-        StatusMessage = "Scanning directory...";
-        DirectorySummary = null;
+        _loadingCts?.Cancel();
+        _loadingCts = new CancellationTokenSource();
+        var token = CancellationTokenSource.CreateLinkedTokenSource(_loadingCts.Token, cancellationToken).Token;
+
+        ObjectImportField.IsLoading = true;
+        ObjectImportField.ErrorText = null;
+        ObjectImportField.StatusText = "Scanning directory...";
+        ObjectImportField.Items.Clear();
 
         try
         {
+            DirectorySummary? summary = null;
             await Task.Run(() =>
             {
                 var searchPattern = SearchPatternField.Value?.ToString() ?? "*.*";
-                DirectorySummary = _schemaReader.GetDirectorySummary(directoryPath, searchPattern);
-            }, cancellationToken);
+                summary = _schemaReader.GetDirectorySummary(directoryPath, searchPattern);
+            }, token);
 
-            if (DirectorySummary != null)
+            if (summary != null)
             {
-                if (!string.IsNullOrEmpty(DirectorySummary.AccessError))
-                {
-                    StatusMessage = $"Scanned with warnings: {DirectorySummary.AccessError}";
-                }
-                else
-                {
-                    StatusMessage = $"Found {DirectorySummary.TotalFileCount} files in {DirectorySummary.TotalDirectoryCount + 1} directories ({DirectorySummary.TotalSizeFormatted})";
-                }
+                ObjectImportField.InfoText = !string.IsNullOrEmpty(summary.AccessError)
+                    ? $"Scanned with warnings: {summary.AccessError}"
+                    : null;
+
+                ObjectImportField.Items.Add(new DatasourceObjectItemViewModel { Text = "Total Files", SubItems = new List<string> { summary.TotalFileCount.ToString() } });
+                ObjectImportField.Items.Add(new DatasourceObjectItemViewModel { Text = "Total Directories", SubItems = new List<string> { (summary.TotalDirectoryCount + 1).ToString() } });
+                ObjectImportField.Items.Add(new DatasourceObjectItemViewModel { Text = "Total Size", SubItems = new List<string> { summary.TotalSizeFormatted } });
+
+                ObjectImportField.StatusText = $"Found {summary.TotalFileCount} files in {summary.TotalDirectoryCount + 1} directories ({summary.TotalSizeFormatted})";
             }
         }
+        catch (OperationCanceledException) { }
         catch (Exception ex)
         {
-            ErrorMessage = $"Error: {ex.Message}";
-            StatusMessage = "Error scanning directory";
+            ObjectImportField.ErrorText = $"Error: {ex.Message}";
+            ObjectImportField.StatusText = "Error scanning directory";
         }
         finally
         {
-            IsScanning = false;
+            ObjectImportField.IsLoading = false;
         }
     }
 
-    /// <summary>
-    /// Import the directory structure as a table
-    /// </summary>
     public async Task ImportTableAsync(CancellationToken cancellationToken = default)
     {
         if (_datasource == null) return;
@@ -243,13 +224,13 @@ public class DirectoryDatasourceEditViewModel : ViewModelBase
         var directoryPath = DirectoryPathField.Value?.ToString();
         if (string.IsNullOrEmpty(directoryPath))
         {
-            ErrorMessage = "Please select a directory first.";
+            ObjectImportField.ErrorText = "Please select a directory first.";
             return;
         }
 
         if (!System.IO.Directory.Exists(directoryPath))
         {
-            ErrorMessage = "The specified directory does not exist.";
+            ObjectImportField.ErrorText = "The specified directory does not exist.";
             return;
         }
 
@@ -263,11 +244,11 @@ public class DirectoryDatasourceEditViewModel : ViewModelBase
                 cancellationToken);
 
             AddTableRequested?.Invoke(this, new AddTableEventArgs(table));
-            StatusMessage = $"Imported table: {table.Name}";
+            ObjectImportField.StatusText = $"Imported table: {table.Name}";
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Error importing directory: {ex.Message}";
+            ObjectImportField.ErrorText = $"Error importing directory: {ex.Message}";
         }
     }
 }

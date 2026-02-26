@@ -1,10 +1,8 @@
 using CodeGenerator.Application.Controllers;
 using CodeGenerator.Application.Controllers.ArtifactPreview;
-using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Application.Controllers.Generation;
 using CodeGenerator.Application.Controllers.Template;
 using CodeGenerator.Application.Controllers.Workspace;
-using CodeGenerator.Application.Controllers.Workspace.Datasources;
 using CodeGenerator.Application.Controllers.Workspace.Domains;
 using CodeGenerator.Application.Controllers.Workspace.Domains.Entities;
 using CodeGenerator.Application.Controllers.Workspace.Domains.Events;
@@ -14,7 +12,6 @@ using CodeGenerator.Application.Controllers.Workspace.Domains.Services;
 using CodeGenerator.Application.Controllers.Workspace.Domains.Specifications;
 using CodeGenerator.Application.Controllers.Workspace.Domains.ValueTypes;
 using CodeGenerator.Application.Controllers.Workspace.Scopes;
-using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Application.ViewModels.Generation;
 using CodeGenerator.Application.ViewModels.Template;
@@ -29,16 +26,6 @@ using CodeGenerator.Core.Settings.ViewModels;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Templates.Settings;
 using CodeGenerator.Core.Workspaces;
-using CodeGenerator.Core.Workspaces.Datasources.Directory;
-using CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly;
-using CodeGenerator.Core.Workspaces.Datasources.Excel;
-using CodeGenerator.Core.Workspaces.Datasources.Json;
-using CodeGenerator.Core.Workspaces.Datasources.Mysql;
-using CodeGenerator.Core.Workspaces.Datasources.OpenApi;
-using CodeGenerator.Core.Workspaces.Datasources.PostgreSql;
-using CodeGenerator.Core.Workspaces.Datasources.SqlServer;
-using CodeGenerator.Core.Workspaces.Datasources.Xml;
-using CodeGenerator.Core.Workspaces.Datasources.Yaml;
 using CodeGenerator.Core.Workspaces.MessageBus;
 using CodeGenerator.Core.Workspaces.Operations.Domains;
 using CodeGenerator.Core.Workspaces.Operations.Scopes;
@@ -53,7 +40,6 @@ using CodeGenerator.Presentation.WinForms.ViewModels;
 using CodeGenerator.Shared.Operations;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.UndoRedo;
-using CodeGenerator.Shared.Views;
 using CodeGenerator.TemplateEngines.DotNetProject;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -131,17 +117,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IWorkspaceArtifactController, WorkspaceArtifactController>();
 
         services.AddSingleton<IWorkspaceArtifactController, DatasourcesContainerController>();
-        services.AddSingleton<IWorkspaceArtifactController, MysqlDatasourceController>();
-        services.AddSingleton<IWorkspaceArtifactController, SqlServerDatasourceController>();
-        services.AddSingleton<IWorkspaceArtifactController, PostgreSqlDatasourceController>();
-        services.AddSingleton<IWorkspaceArtifactController, ExcelDatasourceController>();
-        
-        services.AddSingleton<IWorkspaceArtifactController, JsonDatasourceController>();
-        services.AddSingleton<IWorkspaceArtifactController, XmlDatasourceController>();
-        services.AddSingleton<IWorkspaceArtifactController, YamlDatasourceController>();
-        services.AddSingleton<IWorkspaceArtifactController, DotNetAssemblyDatasourceController>();
-        services.AddSingleton<IWorkspaceArtifactController, OpenApiDatasourceController>();
-        services.AddSingleton<IWorkspaceArtifactController, DirectoryDatasourceController>();
         services.AddSingleton<IWorkspaceArtifactController, TableArtifactController>();
         services.AddSingleton<IWorkspaceArtifactController, ViewArtifactController>();
         services.AddSingleton<IWorkspaceArtifactController, ColumnArtifactController>();
@@ -197,19 +172,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ITemplateArtifactController, RootArtifactController>();
         services.AddSingleton<ITemplateArtifactController, TemplateArtifactController>();
         services.AddSingleton<ITemplateArtifactController, ExistingFolderArtifactController>();
-
-        // Register Datasource Providers
-        services.AddMysqlDatasourceServices(configuration);
-        services.AddSqlServerDatasourceServices(configuration);
-        services.AddPostgreSqlDatasourceServices(configuration);
-        services.AddExcelDatasourceServices(configuration);
-        //
-        services.AddJsonDatasourceServices(configuration);
-        services.AddXmlDatasourceServices(configuration);
-        services.AddYamlDatasourceServices(configuration);
-        services.AddDotNetAssemblyDatasourceServices(configuration);
-        services.AddOpenApiDatasourceServices(configuration);
-        services.AddDirectoryDatasourceServices(configuration);
 
         // Register Message Bus systems
         services.AddSingleton<ApplicationMessageBus>();

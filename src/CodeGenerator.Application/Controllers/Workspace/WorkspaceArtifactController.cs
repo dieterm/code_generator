@@ -1,22 +1,7 @@
-using CodeGenerator.Application.Controllers.Base;
-using CodeGenerator.Application.Services;
-using CodeGenerator.Application.ViewModels.Workspace;
 using CodeGenerator.Core.Artifacts;
-using CodeGenerator.Core.Templates;
-using CodeGenerator.Core.Workspaces.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Workspace;
-using CodeGenerator.Core.Workspaces.Services;
-using CodeGenerator.Core.Workspaces.ViewModels;
-using CodeGenerator.Core.Workspaces.ViewModels.Common;
-using CodeGenerator.Core.Workspaces.ViewModels.Workspace;
-using CodeGenerator.Domain.CodeArchitecture;
-using CodeGenerator.Domain.DesignPatterns.Structural.DependancyInjection;
-using CodeGenerator.Domain.DotNet;
-using CodeGenerator.Shared;
 using CodeGenerator.Shared.ExtensionMethods;
 using CodeGenerator.Shared.Operations;
-using CodeGenerator.UserControls.ViewModels;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Extensions.Logging;
 using WorkspaceArtifactEditViewModel = CodeGenerator.Core.Workspaces.ViewModels.Workspace.WorkspaceArtifactEditViewModel;
 

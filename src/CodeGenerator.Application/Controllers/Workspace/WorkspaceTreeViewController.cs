@@ -1,7 +1,4 @@
 using CodeGenerator.Application.Controllers.Base;
-using CodeGenerator.Application.Controllers.Workspace.Datasources;
-using CodeGenerator.Application.Controllers.Workspace.Domains;
-using CodeGenerator.Application.Controllers.Workspace.Scopes;
 using CodeGenerator.Application.Services;
 using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Application.ViewModels.Workspace;
@@ -18,7 +15,6 @@ using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Artifacts.Scopes;
 using CodeGenerator.Core.Workspaces.Artifacts.Workspace;
 using CodeGenerator.Core.Workspaces.MessageBus;
-using CodeGenerator.Core.Workspaces.Operations.Scopes;
 using CodeGenerator.Core.Workspaces.Services;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Domain.CodeArchitecture;
@@ -31,13 +27,8 @@ using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.UndoRedo;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.TemplateEngines.Scriban;
-using DocumentFormat.OpenXml.Office2013.Drawing.Chart;
-using DocumentFormat.OpenXml.Wordprocessing;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
 
 namespace CodeGenerator.Application.Controllers.Workspace
 {

@@ -13,13 +13,7 @@ using CodeGenerator.Domain.CodeElements;
 using CodeGenerator.Domain.ProgrammingLanguages;
 using CodeGenerator.Generators.DotNet.Events;
 using CodeGenerator.TemplateEngines.Scriban;
-using DocumentFormat.OpenXml.Vml.Office;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CodeGenerator.Generators.DotNet.DomainLayer.Generators
 {

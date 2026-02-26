@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeGenerator.Core.Workspaces\CodeGenerator.Core.Workspaces.csproj" />
+    <ProjectReference Include="..\CodeGenerator.Shared\CodeGenerator.Shared.csproj" />
+    <ProjectReference Include="..\CodeGenerator.UserControls.Views\CodeGenerator.UserControls.Views.csproj" />
+    <ProjectReference Include="..\CodeGenerator.UserControls\CodeGenerator.UserControls.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="ArtifactEditView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Datasources\DatasourceObjectImportField.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Datasources\ForeignKeyColumnMappingField.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Datasources\IndexColumnSelectionField.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Datasources\TableDataExtractionField.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Domains\EntityEditViewEditView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Domains\EntityEditViewFieldEditView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Domains\EntityListViewColumnEditView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Domains\EntityListViewEditView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Domains\EntityRelationEditView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Domains\EntitySelectViewEditView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+  </ItemGroup>
+
+</Project>

@@ -1,5 +1,6 @@
 using CodeGenerator.Core.Workspaces.Datasources.Excel.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.Excel.Services;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
 using System.Collections.ObjectModel;
@@ -15,9 +16,7 @@ public class ExcelDatasourceEditViewModel : ViewModelBase
     private readonly ExcelSchemaReader _schemaReader;
     private ExcelDatasourceArtifact? _datasource;
     private bool _isLoading;
-    private bool _isLoadingSheets;
-    private string? _statusMessage;
-    private string? _errorMessage;
+    private CancellationTokenSource? _loadingCts;
 
     public ExcelDatasourceEditViewModel()
     {
@@ -35,12 +34,28 @@ public class ExcelDatasourceEditViewModel : ViewModelBase
         };
         FirstRowIsHeaderField = new BooleanFieldModel { Label = "First Row is Header", Name = "FirstRowIsHeader" };
 
+        ObjectImportField = new DatasourceObjectImportFieldModel
+        {
+            GroupBoxText = "Available Sheets",
+            LoadButtonText = "Load Sheets",
+            AddSelectedButtonText = "Add Selected",
+            AddAllButtonText = "Add All",
+            AddAllButtonVisible = true,
+            Columns = new List<DatasourceObjectColumnDefinition>
+            {
+                new() { HeaderText = "Sheet Name", Width = 180 },
+                new() { HeaderText = "Columns", Width = 80 },
+                new() { HeaderText = "Rows", Width = 80 }
+            },
+            LoadCommand = new AsyncRelayCommand(async () => await LoadSheetsAsync()),
+            AddSelectedCommand = new AsyncRelayCommand(async () => await AddSelectedSheetAsync()),
+            AddAllCommand = new AsyncRelayCommand(async () => await AddAllSheetsAsync())
+        };
+
         // Subscribe to field changes
         NameField.PropertyChanged += OnFieldChanged;
         FilePathField.PropertyChanged += OnFieldChanged;
         FirstRowIsHeaderField.PropertyChanged += OnFieldChanged;
-
-        AvailableSheets = new ObservableCollection<SheetViewModel>();
     }
 
     /// <summary>
@@ -78,48 +93,7 @@ public class ExcelDatasourceEditViewModel : ViewModelBase
     public SingleLineTextFieldModel NameField { get; }
     public FileFieldModel FilePathField { get; }
     public BooleanFieldModel FirstRowIsHeaderField { get; }
-
-    /// <summary>
-    /// Available sheets from the Excel file
-    /// </summary>
-    public ObservableCollection<SheetViewModel> AvailableSheets { get; }
-
-    /// <summary>
-    /// Currently selected sheet in the list
-    /// </summary>
-    private SheetViewModel? _selectedSheet;
-    public SheetViewModel? SelectedSheet
-    {
-        get => _selectedSheet;
-        set => SetProperty(ref _selectedSheet, value);
-    }
-
-    /// <summary>
-    /// Is the view model currently loading sheets
-    /// </summary>
-    public bool IsLoadingSheets
-    {
-        get => _isLoadingSheets;
-        private set => SetProperty(ref _isLoadingSheets, value);
-    }
-
-    /// <summary>
-    /// Status message
-    /// </summary>
-    public string? StatusMessage
-    {
-        get => _statusMessage;
-        private set => SetProperty(ref _statusMessage, value);
-    }
-
-    /// <summary>
-    /// Error message (if any)
-    /// </summary>
-    public string? ErrorMessage
-    {
-        get => _errorMessage;
-        private set => SetProperty(ref _errorMessage, value);
-    }
+    public DatasourceObjectImportFieldModel ObjectImportField { get; }
 
     /// <summary>
     /// Event raised when a sheet should be added to the workspace
@@ -142,9 +116,9 @@ public class ExcelDatasourceEditViewModel : ViewModelBase
             FilePathField.Value = _datasource.FilePath;
             FirstRowIsHeaderField.Value = _datasource.FirstRowIsHeader;
 
-            AvailableSheets.Clear();
-            StatusMessage = null;
-            ErrorMessage = null;
+            ObjectImportField.Items.Clear();
+            ObjectImportField.StatusText = null;
+            ObjectImportField.ErrorText = null;
         }
         finally
         {
@@ -172,9 +146,6 @@ public class ExcelDatasourceEditViewModel : ViewModelBase
         _datasource.FirstRowIsHeader = FirstRowIsHeaderField.Value is bool firstRowIsHeader && firstRowIsHeader;
     }
 
-    /// <summary>
-    /// Load sheets from the Excel file
-    /// </summary>
     public async Task LoadSheetsAsync(CancellationToken cancellationToken = default)
     {
         if (_datasource == null) return;
@@ -182,54 +153,65 @@ public class ExcelDatasourceEditViewModel : ViewModelBase
         var filePath = FilePathField.Value?.ToString();
         if (string.IsNullOrEmpty(filePath))
         {
-            ErrorMessage = "Please select an Excel file first.";
+            ObjectImportField.ErrorText = "Please select an Excel file first.";
             return;
         }
 
         if (!File.Exists(filePath))
         {
-            ErrorMessage = "The specified file does not exist.";
+            ObjectImportField.ErrorText = "The specified file does not exist.";
             return;
         }
 
-        IsLoadingSheets = true;
-        ErrorMessage = null;
-        StatusMessage = "Loading sheets...";
-        AvailableSheets.Clear();
+        _loadingCts?.Cancel();
+        _loadingCts = new CancellationTokenSource();
+        var token = CancellationTokenSource.CreateLinkedTokenSource(_loadingCts.Token, cancellationToken).Token;
+
+        ObjectImportField.IsLoading = true;
+        ObjectImportField.ErrorText = null;
+        ObjectImportField.StatusText = "Loading sheets...";
+        ObjectImportField.Items.Clear();
 
         try
         {
-            var sheets = await _schemaReader.GetSheetsAsync(filePath, cancellationToken);
+            var sheets = await _schemaReader.GetSheetsAsync(filePath, token);
 
             foreach (var sheet in sheets)
             {
-                AvailableSheets.Add(SheetViewModel.FromSheetInfo(sheet));
+                ObjectImportField.Items.Add(new DatasourceObjectItemViewModel
+                {
+                    Text = sheet.Name,
+                    SubItems = new List<string> { sheet.ColumnCount.ToString(), sheet.RowCount.ToString() },
+                    ImageKey = "table",
+                    Tag = sheet
+                });
             }
 
-            StatusMessage = $"Found {sheets.Count} sheets";
+            ObjectImportField.StatusText = $"Found {sheets.Count} sheets";
         }
+        catch (OperationCanceledException) { }
         catch (Exception ex)
         {
-            ErrorMessage = $"Error: {ex.Message}";
-            StatusMessage = "Error loading sheets";
+            ObjectImportField.ErrorText = $"Error: {ex.Message}";
+            ObjectImportField.StatusText = "Error loading sheets";
         }
         finally
         {
-            IsLoadingSheets = false;
+            ObjectImportField.IsLoading = false;
         }
     }
 
-    /// <summary>
-    /// Add the selected sheet to the workspace as a table
-    /// </summary>
     public async Task AddSelectedSheetAsync(CancellationToken cancellationToken = default)
     {
-        if (_datasource == null || SelectedSheet == null) return;
+        if (_datasource == null || ObjectImportField.SelectedItem == null) return;
+
+        var sheetInfo = ObjectImportField.SelectedItem.Tag as SheetInfo;
+        var sheetName = sheetInfo?.Name ?? ObjectImportField.SelectedItem.Text;
 
         var filePath = FilePathField.Value?.ToString();
         if (string.IsNullOrEmpty(filePath))
         {
-            ErrorMessage = "Please select an Excel file first.";
+            ObjectImportField.ErrorText = "Please select an Excel file first.";
             return;
         }
 
@@ -237,7 +219,7 @@ public class ExcelDatasourceEditViewModel : ViewModelBase
         {
             var table = await _schemaReader.ImportSheetAsync(
                 filePath,
-                SelectedSheet.Name,
+                sheetName,
                 _datasource.Name,
                 _datasource.FirstRowIsHeader,
                 cancellationToken);
@@ -246,13 +228,10 @@ public class ExcelDatasourceEditViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Error importing sheet: {ex.Message}";
+            ObjectImportField.ErrorText = $"Error importing sheet: {ex.Message}";
         }
     }
 
-    /// <summary>
-    /// Add all sheets to the workspace as tables
-    /// </summary>
     public async Task AddAllSheetsAsync(CancellationToken cancellationToken = default)
     {
         if (_datasource == null) return;
@@ -260,19 +239,22 @@ public class ExcelDatasourceEditViewModel : ViewModelBase
         var filePath = FilePathField.Value?.ToString();
         if (string.IsNullOrEmpty(filePath))
         {
-            ErrorMessage = "Please select an Excel file first.";
+            ObjectImportField.ErrorText = "Please select an Excel file first.";
             return;
         }
 
         try
         {
-            foreach (var sheet in AvailableSheets)
+            foreach (var item in ObjectImportField.Items)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
+                var sheetInfo = item.Tag as SheetInfo;
+                var sheetName = sheetInfo?.Name ?? item.Text;
+
                 var table = await _schemaReader.ImportSheetAsync(
                     filePath,
-                    sheet.Name,
+                    sheetName,
                     _datasource.Name,
                     _datasource.FirstRowIsHeader,
                     cancellationToken);
@@ -280,11 +262,11 @@ public class ExcelDatasourceEditViewModel : ViewModelBase
                 AddSheetRequested?.Invoke(this, new AddSheetEventArgs(table));
             }
 
-            StatusMessage = $"Added {AvailableSheets.Count} sheets";
+            ObjectImportField.StatusText = $"Added {ObjectImportField.Items.Count} sheets";
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Error importing sheets: {ex.Message}";
+            ObjectImportField.ErrorText = $"Error importing sheets: {ex.Message}";
         }
     }
 }

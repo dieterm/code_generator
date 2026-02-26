@@ -1,6 +1,8 @@
 using CodeGenerator.Application.Controllers.ArtifactPreview;
 using CodeGenerator.Application.Controllers.Base;
+using CodeGenerator.Application.Controllers.Workspace;
 using CodeGenerator.Application.Services;
+using CodeGenerator.Application.ViewModels;
 using CodeGenerator.Core.Artifacts;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Core.Workspaces.Datasources.Csv.Artifacts;
@@ -9,7 +11,7 @@ using CodeGenerator.Shared;
 using CodeGenerator.Shared.Operations;
 using Microsoft.Extensions.Logging;
 
-namespace CodeGenerator.Application.Controllers.Workspace.Datasources;
+namespace CodeGenerator.Core.Workspaces.Datasources.Csv.Controllers;
 
 /// <summary>
 /// Controller for CSV datasource artifacts
@@ -63,7 +65,7 @@ public class CsvDatasourceController : WorkspaceArtifactControllerBase<CsvDataso
                 Execute = async (a) =>
                 {
                     var previewController = ServiceProviderHolder.GetRequiredService<ArtifactPreviewController>();
-                    previewController.ShowExistingFile(artifact.FilePath, ViewModels.ArtifactPreviewViewModel.KnownLanguages.Text);
+                    previewController.ShowExistingFile(artifact.FilePath, ArtifactPreviewViewModel.KnownLanguages.Text);
                     
                     await Task.CompletedTask;
                 }

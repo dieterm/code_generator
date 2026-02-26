@@ -1,3 +1,4 @@
+using CodeGenerator.Presentation.WinForms.Views;
 using CodeGenerator.UserControls.Views;
 
 namespace CodeGenerator.Core.Workspaces.Datasources.Csv.Views
@@ -25,20 +26,9 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Csv.Views
             chkFirstRowIsHeader = new BooleanField();
             txtFieldDelimiter = new SingleLineTextField();
             txtRowTerminator = new SingleLineTextField();
-            grpFileInfo = new GroupBox();
-            panelFileInfoButtons = new Panel();
-            btnAnalyze = new Button();
-            btnImport = new Button();
-            lblFileInfo = new Label();
-            lstColumns = new ListView();
-            colColumnName = new ColumnHeader();
-            colDataType = new ColumnHeader();
-            lblStatus = new Label();
-            lblError = new Label();
+            objectImportField = new DatasourceObjectImportField();
             grpFile.SuspendLayout();
             tableLayoutFile.SuspendLayout();
-            grpFileInfo.SuspendLayout();
-            panelFileInfoButtons.SuspendLayout();
             SuspendLayout();
             // 
             // lblTitle
@@ -135,105 +125,19 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Csv.Views
             txtRowTerminator.Size = new Size(362, 30);
             txtRowTerminator.TabIndex = 4;
             // 
-            // grpFileInfo
+            // objectImportField
             // 
-            grpFileInfo.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            grpFileInfo.Controls.Add(lstColumns);
-            grpFileInfo.Controls.Add(panelFileInfoButtons);
-            grpFileInfo.Controls.Add(lblFileInfo);
-            grpFileInfo.Controls.Add(lblStatus);
-            grpFileInfo.Controls.Add(lblError);
-            grpFileInfo.Location = new Point(10, 270);
-            grpFileInfo.Name = "grpFileInfo";
-            grpFileInfo.Size = new Size(380, 250);
-            grpFileInfo.TabIndex = 2;
-            grpFileInfo.TabStop = false;
-            grpFileInfo.Text = "File Structure";
-            // 
-            // panelFileInfoButtons
-            // 
-            panelFileInfoButtons.Controls.Add(btnAnalyze);
-            panelFileInfoButtons.Controls.Add(btnImport);
-            panelFileInfoButtons.Dock = DockStyle.Top;
-            panelFileInfoButtons.Location = new Point(3, 19);
-            panelFileInfoButtons.Name = "panelFileInfoButtons";
-            panelFileInfoButtons.Size = new Size(374, 35);
-            panelFileInfoButtons.TabIndex = 0;
-            // 
-            // btnAnalyze
-            // 
-            btnAnalyze.Location = new Point(3, 6);
-            btnAnalyze.Name = "btnAnalyze";
-            btnAnalyze.Size = new Size(100, 26);
-            btnAnalyze.TabIndex = 0;
-            btnAnalyze.Text = "Analyze File";
-            btnAnalyze.UseVisualStyleBackColor = true;
-            // 
-            // btnImport
-            // 
-            btnImport.Enabled = false;
-            btnImport.Location = new Point(109, 6);
-            btnImport.Name = "btnImport";
-            btnImport.Size = new Size(100, 26);
-            btnImport.TabIndex = 1;
-            btnImport.Text = "Import Table";
-            btnImport.UseVisualStyleBackColor = true;
-            // 
-            // lblFileInfo
-            // 
-            lblFileInfo.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            lblFileInfo.Location = new Point(6, 57);
-            lblFileInfo.Name = "lblFileInfo";
-            lblFileInfo.Size = new Size(368, 20);
-            lblFileInfo.TabIndex = 1;
-            // 
-            // lstColumns
-            // 
-            lstColumns.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            lstColumns.Columns.AddRange(new ColumnHeader[] { colColumnName, colDataType });
-            lstColumns.FullRowSelect = true;
-            lstColumns.GridLines = true;
-            lstColumns.Location = new Point(6, 80);
-            lstColumns.MultiSelect = false;
-            lstColumns.Name = "lstColumns";
-            lstColumns.Size = new Size(368, 130);
-            lstColumns.TabIndex = 2;
-            lstColumns.UseCompatibleStateImageBehavior = false;
-            lstColumns.View = View.Details;
-            // 
-            // colColumnName
-            // 
-            colColumnName.Text = "Column Name";
-            colColumnName.Width = 200;
-            // 
-            // colDataType
-            // 
-            colDataType.Text = "Inferred Type";
-            colDataType.Width = 120;
-            // 
-            // lblStatus
-            // 
-            lblStatus.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            lblStatus.Location = new Point(6, 213);
-            lblStatus.Name = "lblStatus";
-            lblStatus.Size = new Size(368, 15);
-            lblStatus.TabIndex = 3;
-            // 
-            // lblError
-            // 
-            lblError.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            lblError.ForeColor = Color.Red;
-            lblError.Location = new Point(6, 228);
-            lblError.Name = "lblError";
-            lblError.Size = new Size(368, 18);
-            lblError.TabIndex = 4;
-            lblError.Visible = false;
+            objectImportField.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            objectImportField.Location = new Point(10, 270);
+            objectImportField.Name = "objectImportField";
+            objectImportField.Size = new Size(380, 250);
+            objectImportField.TabIndex = 2;
             // 
             // CsvDatasourceEditView
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(grpFileInfo);
+            Controls.Add(objectImportField);
             Controls.Add(grpFile);
             Controls.Add(lblTitle);
             Name = "CsvDatasourceEditView";
@@ -242,8 +146,6 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Csv.Views
             grpFile.ResumeLayout(false);
             grpFile.PerformLayout();
             tableLayoutFile.ResumeLayout(false);
-            grpFileInfo.ResumeLayout(false);
-            panelFileInfoButtons.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -258,15 +160,6 @@ namespace CodeGenerator.Core.Workspaces.Datasources.Csv.Views
         private BooleanField chkFirstRowIsHeader;
         private SingleLineTextField txtFieldDelimiter;
         private SingleLineTextField txtRowTerminator;
-        private GroupBox grpFileInfo;
-        private Panel panelFileInfoButtons;
-        private Button btnAnalyze;
-        private Button btnImport;
-        private Label lblFileInfo;
-        private ListView lstColumns;
-        private ColumnHeader colColumnName;
-        private ColumnHeader colDataType;
-        private Label lblStatus;
-        private Label lblError;
+        private DatasourceObjectImportField objectImportField;
     }
 }

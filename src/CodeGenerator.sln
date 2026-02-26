@@ -219,6 +219,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Generators.Do
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Domain.DotNet.Winforms", "CodeGenerator.Domain.DotNet.Winforms\CodeGenerator.Domain.DotNet.Winforms.csproj", "{9C34E7A5-1AD8-4CFC-8327-48CDB8E43F02}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Core.Workspaces.Views", "CodeGenerator.Core.Workspaces.Views\CodeGenerator.Core.Workspaces.Views.csproj", "{0E89DF97-A08A-4AAB-BA3A-FE6FA66AF263}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -900,6 +902,18 @@ Global
 		{9C34E7A5-1AD8-4CFC-8327-48CDB8E43F02}.Release|x64.Build.0 = Release|Any CPU
 		{9C34E7A5-1AD8-4CFC-8327-48CDB8E43F02}.Release|x86.ActiveCfg = Release|Any CPU
 		{9C34E7A5-1AD8-4CFC-8327-48CDB8E43F02}.Release|x86.Build.0 = Release|Any CPU
+		{0E89DF97-A08A-4AAB-BA3A-FE6FA66AF263}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E89DF97-A08A-4AAB-BA3A-FE6FA66AF263}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E89DF97-A08A-4AAB-BA3A-FE6FA66AF263}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0E89DF97-A08A-4AAB-BA3A-FE6FA66AF263}.Debug|x64.Build.0 = Debug|Any CPU
+		{0E89DF97-A08A-4AAB-BA3A-FE6FA66AF263}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0E89DF97-A08A-4AAB-BA3A-FE6FA66AF263}.Debug|x86.Build.0 = Debug|Any CPU
+		{0E89DF97-A08A-4AAB-BA3A-FE6FA66AF263}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E89DF97-A08A-4AAB-BA3A-FE6FA66AF263}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E89DF97-A08A-4AAB-BA3A-FE6FA66AF263}.Release|x64.ActiveCfg = Release|Any CPU
+		{0E89DF97-A08A-4AAB-BA3A-FE6FA66AF263}.Release|x64.Build.0 = Release|Any CPU
+		{0E89DF97-A08A-4AAB-BA3A-FE6FA66AF263}.Release|x86.ActiveCfg = Release|Any CPU
+		{0E89DF97-A08A-4AAB-BA3A-FE6FA66AF263}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

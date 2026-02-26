@@ -1,5 +1,10 @@
+using CodeGenerator.Application.Controllers.Workspace;
+using CodeGenerator.Core.Workspaces.Datasources.Xml.Controllers;
 using CodeGenerator.Core.Workspaces.Datasources.Xml.Services;
+using CodeGenerator.Core.Workspaces.Datasources.Xml.ViewModels;
+using CodeGenerator.Core.Workspaces.Datasources.Xml.Views;
 using CodeGenerator.Core.Workspaces.Services;
+using CodeGenerator.Shared.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,6 +24,8 @@ public static class ServiceCollectionExtensions
     {
         // Register the datasource provider
         services.AddSingleton<IDatasourceProvider, XmlDatasourceProvider>();
+        services.AddSingleton<IWorkspaceArtifactController, XmlDatasourceController>();
+        services.AddTransient<IView<XmlDatasourceEditViewModel>, XmlDatasourceEditView>();
 
         // Register the schema reader
         services.AddTransient<XmlSchemaReader>();

@@ -1,16 +1,9 @@
 ﻿using CodeGenerator.Application.Controllers.Base;
 using CodeGenerator.Core.CodeElements.ViewModels.EditFields;
-using CodeGenerator.Core.Workspaces.Artifacts.Relational;
 using CodeGenerator.Domain.CodeElements;
 using CodeGenerator.Generators.DotNet.Repositories.Csv.Workspace.Artifacts;
 using CodeGenerator.Shared.ViewModels;
-using DocumentFormat.OpenXml.Spreadsheet;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CodeGenerator.Generators.DotNet.Repositories.Csv.ViewModels
 {

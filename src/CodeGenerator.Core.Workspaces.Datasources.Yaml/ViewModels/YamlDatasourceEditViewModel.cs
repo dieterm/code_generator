@@ -1,5 +1,6 @@
 using CodeGenerator.Core.Workspaces.Datasources.Yaml.Artifacts;
 using CodeGenerator.Core.Workspaces.Datasources.Yaml.Services;
+using CodeGenerator.Shared;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.UserControls.ViewModels;
 using System.ComponentModel;
@@ -14,10 +15,7 @@ public class YamlDatasourceEditViewModel : ViewModelBase
     private readonly YamlSchemaReader _schemaReader;
     private YamlDatasourceArtifact? _datasource;
     private bool _isLoading;
-    private bool _isLoadingFile;
-    private string? _statusMessage;
-    private string? _errorMessage;
-    private YamlFileInfoViewModel? _fileInfo;
+    private CancellationTokenSource? _loadingCts;
 
     public YamlDatasourceEditViewModel()
     {
@@ -32,6 +30,23 @@ public class YamlDatasourceEditViewModel : ViewModelBase
             Filter = "YAML Files (*.yaml;*.yml)|*.yaml;*.yml|All Files (*.*)|*.*",
             DefaultExtension = ".yaml",
             SelectionMode = FileSelectionMode.Open
+        };
+
+        ObjectImportField = new DatasourceObjectImportFieldModel
+        {
+            GroupBoxText = "File Structure",
+            LoadButtonText = "Analyze File",
+            AddSelectedButtonText = "Import Table",
+            AddAllButtonVisible = false,
+            InfoLabelVisible = true,
+            Columns = new List<DatasourceObjectColumnDefinition>
+            {
+                new() { HeaderText = "Property Name", Width = 160 },
+                new() { HeaderText = "Data Type", Width = 100 },
+                new() { HeaderText = "Nullable", Width = 60 }
+            },
+            LoadCommand = new AsyncRelayCommand(async () => await LoadFileInfoAsync()),
+            AddSelectedCommand = new AsyncRelayCommand(async () => await ImportTableAsync())
         };
 
         // Subscribe to field changes
@@ -73,42 +88,7 @@ public class YamlDatasourceEditViewModel : ViewModelBase
     // Field ViewModels
     public SingleLineTextFieldModel NameField { get; }
     public FileFieldModel FilePathField { get; }
-
-    /// <summary>
-    /// File info after loading
-    /// </summary>
-    public YamlFileInfoViewModel? FileInfo
-    {
-        get => _fileInfo;
-        private set => SetProperty(ref _fileInfo, value);
-    }
-
-    /// <summary>
-    /// Is the view model currently loading file info
-    /// </summary>
-    public bool IsLoadingFile
-    {
-        get => _isLoadingFile;
-        private set => SetProperty(ref _isLoadingFile, value);
-    }
-
-    /// <summary>
-    /// Status message
-    /// </summary>
-    public string? StatusMessage
-    {
-        get => _statusMessage;
-        private set => SetProperty(ref _statusMessage, value);
-    }
-
-    /// <summary>
-    /// Error message (if any)
-    /// </summary>
-    public string? ErrorMessage
-    {
-        get => _errorMessage;
-        private set => SetProperty(ref _errorMessage, value);
-    }
+    public DatasourceObjectImportFieldModel ObjectImportField { get; }
 
     /// <summary>
     /// Event raised when a table should be added to the workspace
@@ -130,9 +110,10 @@ public class YamlDatasourceEditViewModel : ViewModelBase
             NameField.Value = _datasource.Name;
             FilePathField.Value = _datasource.FilePath;
 
-            FileInfo = null;
-            StatusMessage = null;
-            ErrorMessage = null;
+            ObjectImportField.Items.Clear();
+            ObjectImportField.InfoText = null;
+            ObjectImportField.StatusText = null;
+            ObjectImportField.ErrorText = null;
         }
         finally
         {
@@ -159,9 +140,6 @@ public class YamlDatasourceEditViewModel : ViewModelBase
         _datasource.FilePath = FilePathField.Value?.ToString() ?? string.Empty;
     }
 
-    /// <summary>
-    /// Load file info from the YAML file
-    /// </summary>
     public async Task LoadFileInfoAsync(CancellationToken cancellationToken = default)
     {
         if (_datasource == null) return;
@@ -169,49 +147,63 @@ public class YamlDatasourceEditViewModel : ViewModelBase
         var filePath = FilePathField.Value?.ToString();
         if (string.IsNullOrEmpty(filePath))
         {
-            ErrorMessage = "Please select a YAML file first.";
+            ObjectImportField.ErrorText = "Please select a YAML file first.";
             return;
         }
 
         if (!File.Exists(filePath))
         {
-            ErrorMessage = "The specified file does not exist.";
+            ObjectImportField.ErrorText = "The specified file does not exist.";
             return;
         }
 
-        IsLoadingFile = true;
-        ErrorMessage = null;
-        StatusMessage = "Analyzing file...";
-        FileInfo = null;
+        _loadingCts?.Cancel();
+        _loadingCts = new CancellationTokenSource();
+        var token = CancellationTokenSource.CreateLinkedTokenSource(_loadingCts.Token, cancellationToken).Token;
+
+        ObjectImportField.IsLoading = true;
+        ObjectImportField.ErrorText = null;
+        ObjectImportField.StatusText = "Analyzing file...";
+        ObjectImportField.Items.Clear();
 
         try
         {
-            var info = await _schemaReader.GetFileInfoAsync(filePath, cancellationToken);
-            FileInfo = YamlFileInfoViewModel.FromYamlFileInfo(info);
+            var info = await _schemaReader.GetFileInfoAsync(filePath, token);
+            var fileInfoVm = YamlFileInfoViewModel.FromYamlFileInfo(info);
 
             if (info.IsSequence)
             {
-                StatusMessage = $"Sequence with {info.ItemCount} items, {info.PropertyCount} properties detected";
+                ObjectImportField.InfoText = $"Sequence with {info.ItemCount} items, {info.PropertyCount} properties detected";
             }
             else
             {
-                StatusMessage = $"Mapping with {info.PropertyCount} properties detected";
+                ObjectImportField.InfoText = $"Mapping with {info.PropertyCount} properties detected";
             }
+
+            foreach (var prop in fileInfoVm.Properties)
+            {
+                ObjectImportField.Items.Add(new DatasourceObjectItemViewModel
+                {
+                    Text = prop.Name,
+                    SubItems = new List<string> { prop.TypeDisplay, prop.IsNullable ? "Yes" : "No" },
+                    Tag = prop
+                });
+            }
+
+            ObjectImportField.StatusText = $"Found {fileInfoVm.Properties.Count} properties";
         }
+        catch (OperationCanceledException) { }
         catch (Exception ex)
         {
-            ErrorMessage = $"Error: {ex.Message}";
-            StatusMessage = "Error analyzing file";
+            ObjectImportField.ErrorText = $"Error: {ex.Message}";
+            ObjectImportField.StatusText = "Error analyzing file";
         }
         finally
         {
-            IsLoadingFile = false;
+            ObjectImportField.IsLoading = false;
         }
     }
 
-    /// <summary>
-    /// Import the YAML file as a table
-    /// </summary>
     public async Task ImportTableAsync(CancellationToken cancellationToken = default)
     {
         if (_datasource == null) return;
@@ -219,13 +211,13 @@ public class YamlDatasourceEditViewModel : ViewModelBase
         var filePath = FilePathField.Value?.ToString();
         if (string.IsNullOrEmpty(filePath))
         {
-            ErrorMessage = "Please select a YAML file first.";
+            ObjectImportField.ErrorText = "Please select a YAML file first.";
             return;
         }
 
         if (!File.Exists(filePath))
         {
-            ErrorMessage = "The specified file does not exist.";
+            ObjectImportField.ErrorText = "The specified file does not exist.";
             return;
         }
 
@@ -237,11 +229,11 @@ public class YamlDatasourceEditViewModel : ViewModelBase
                 cancellationToken);
 
             AddTableRequested?.Invoke(this, new AddTableEventArgs(table));
-            StatusMessage = $"Imported table: {table.Name}";
+            ObjectImportField.StatusText = $"Imported table: {table.Name}";
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Error importing file: {ex.Message}";
+            ObjectImportField.ErrorText = $"Error importing file: {ex.Message}";
         }
     }
 }

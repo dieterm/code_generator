@@ -1,5 +1,10 @@
+using CodeGenerator.Application.Controllers.Workspace;
+using CodeGenerator.Application.Controllers.Workspace.Datasources;
 using CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly.Services;
+using CodeGenerator.Core.Workspaces.Datasources.DotNetAssembly.ViewModels;
 using CodeGenerator.Core.Workspaces.Services;
+using CodeGenerator.Presentation.WinForms.Views;
+using CodeGenerator.Shared.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,7 +24,8 @@ public static class ServiceCollectionExtensions
     {
         // Register the datasource provider
         services.AddSingleton<IDatasourceProvider, DotNetAssemblyDatasourceProvider>();
-
+        services.AddSingleton<IWorkspaceArtifactController, DotNetAssemblyDatasourceController>();
+        services.AddTransient<IView<DotNetAssemblyDatasourceEditViewModel>, DotNetAssemblyDatasourceEditView>();
         // Register the schema reader
         services.AddTransient<AssemblySchemaReader>();
 

@@ -1,5 +1,10 @@
+using CodeGenerator.Application.Controllers.Workspace;
+using CodeGenerator.Core.Workspaces.Datasources.Json.Controllers;
 using CodeGenerator.Core.Workspaces.Datasources.Json.Services;
+using CodeGenerator.Core.Workspaces.Datasources.Json.ViewModels;
+using CodeGenerator.Core.Workspaces.Datasources.Json.Views;
 using CodeGenerator.Core.Workspaces.Services;
+using CodeGenerator.Shared.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,7 +24,8 @@ public static class ServiceCollectionExtensions
     {
         // Register the datasource provider
         services.AddSingleton<IDatasourceProvider, JsonDatasourceProvider>();
-
+        services.AddSingleton<IWorkspaceArtifactController, JsonDatasourceController>();
+        services.AddTransient<IView<JsonDatasourceEditViewModel>, JsonDatasourceEditView>();
         // Register the schema reader
         services.AddTransient<JsonSchemaReader>();
 

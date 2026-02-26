@@ -10,7 +10,6 @@ using CodeGenerator.Core.Artifacts.FileSystem;
 using CodeGenerator.Core.Artifacts.Templates;
 using CodeGenerator.Core.Templates;
 using CodeGenerator.Core.Workspaces.Artifacts.Relational;
-using CodeGenerator.Core.Workspaces.Datasources.Mysql.Artifacts;
 using CodeGenerator.Core.Workspaces.Settings;
 using CodeGenerator.Shared;
 using CodeGenerator.Shared.ExtensionMethods;
@@ -18,17 +17,7 @@ using CodeGenerator.Shared.Operations;
 using CodeGenerator.Shared.Ribbon;
 using CodeGenerator.Shared.ViewModels;
 using CodeGenerator.TemplateEngines.Scriban;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
-using MySqlConnector;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Dynamic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CodeGenerator.Application.Controllers.Template
 {
